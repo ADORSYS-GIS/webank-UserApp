@@ -3,21 +3,13 @@
     max-width: 100%;
     margin: 0 auto;
     padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
   
-  .footer {
-    padding: 60px 0 30px;
-  }
-  
-  .footer a {
-    color: #555555;
-    text-decoration: underline;
-  }
-  
-  .footer a:hover {
-    color: #000000;
-  }
-
   .container h1 {
     font-family: 'Arial', sans-serif; 
     font-weight: bold; 
@@ -28,7 +20,6 @@
   .container h4 {
     margin-bottom: 40px; /* This adds space between the <h4> and the OTP input */
   }
-
   .container button {
     background-color: #007bff; /* Blue background */
     color: white; /* White text */
@@ -49,9 +40,14 @@
   /* Countdown text styles */
   .countdown-text{
     display: flex;
-    align-items: center;
     justify-content: space-between;
     margin: 24px 0px;
+    display: flex;
+    flex-direction: column; /* Stacks the elements vertically */
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 16px;
   }
 
   /* Countdown text paragraph styles */
@@ -59,7 +55,8 @@
 
   font-size: 13px;
   font-weight: 400;
-  color: #2d1d35
+  color: #2d1d35;
+  margin-bottom: 20px
 }
 
 /* Countdown text button styles */

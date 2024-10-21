@@ -44,9 +44,6 @@ export default function App() {
   }, [seconds]) //Re-run this effect whenever 'seconds' changes
   
 
-  
-
-
   return (
     <>
       <div className="container">
@@ -58,23 +55,29 @@ export default function App() {
 
       <div className='countdown-text'>
         <p>
-          Time Remaining:{""}
+          Resend OTP in {""}
           <span style={{fontWeight: 600}}>
             {minutes < 10 ? `0${minutes}` : minutes}:
-            {seconds < 10 ? `0${seconds}` : seconds}:
+            {seconds < 10 ? `0${seconds}` : seconds}
           </span>
         </p>
 
         {/* button to resend OTP */}
-        <button
-        disabled={seconds > 0 || minutes > 0}
-        style={{
-          color:seconds > 0 || minutes > 0 ? "#DFE3E8" : "#FF5630"
-        }}
-        onClick={resendOTP}
-        >
-          Resend OTP
-        </button>
+        <p>
+          Didn't  you receive the  OTP?{" "}
+          <button
+            disabled={seconds > 0 || minutes > 0}
+            style={{
+              color: seconds > 0 || minutes > 0 ? "#DFE3E8" : "#007FFF",
+              background: 'none',
+              border: 'none',
+              cursor: seconds > 0 || minutes > 0 ? 'not-allowed' : 'pointer',
+            }}
+            onClick={resendOTP}
+          >
+            Resend OTP
+          </button>
+        </p>
 
       </div>
     </>

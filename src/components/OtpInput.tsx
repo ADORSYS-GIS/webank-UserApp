@@ -54,7 +54,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
   };
 
   // Event handler when the user changes input value
-  const inputOnChange = (
+  const handleOTPInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     idx: number
   ) => {
@@ -146,7 +146,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
 
   // Render the OTP input fields
   return (
-    <div className="otp-group">
+    <div>
       {valueItems.map((digit, idx) => (
         <input
           key={idx}
@@ -157,7 +157,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
           maxLength={valueLength} 
           className="otp-input" 
           value={digit} // Current value of the input field
-          onChange={(e) => inputOnChange(e, idx)} // Handle input change
+          onChange={(e) => handleOTPInputChange(e, idx)} // Handle input change
           onKeyDown={inputOnKeyDown} // Handle key press events
           onFocus={inputOnFocus} // Handle input focus
         />
