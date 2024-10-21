@@ -1,10 +1,10 @@
 import './App.css'
+import Register from "./components/Register.tsx";
+
 
 function App() {
   return (
-    <>
-    <p><center>WEBANK</center></p>
-    </>
+    <Register/>
   )
 }
 
