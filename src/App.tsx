@@ -1,11 +1,13 @@
-import './App.css'
+import "./App.css";
 
 function App() {
   return (
     <>
-    <p><center>WEBANK</center></p>
+      <p>
+        <center>WEBANK</center>
+      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
