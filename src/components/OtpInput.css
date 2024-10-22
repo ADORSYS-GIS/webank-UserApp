@@ -1,4 +1,4 @@
-  .otp-input {
+.otp-input {
   width: 50px;
   height: 50px;
   margin: 0 10px; /* Space between each input box */
@@ -7,11 +7,9 @@
   text-align: center; /* Center the input text */
   font-size: 30px; /* Adjust font size for better readability */
   transition: border-color 0.3s ease; /* Smooth transition for border color */
-  }
+}
 
-  .otp-input:focus {
-    border-color: #007bff; /* Change border color to blue when focused */
-    outline: none; /* Remove default outline */
-  }
-  
-  
+.otp-input:focus {
+  border-color: #007bff; /* Change border color to blue when focused */
+  outline: none; /* Remove default outline */
+}
