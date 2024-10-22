@@ -1,11 +1,8 @@
-import './App.css'
+import "./App.css";
 import Register from "./components/Register.tsx";
 
-
 function App() {
-  return (
-    <Register/>
-  )
+  return <Register />;
 }
 
-export default App
+export default App;
