@@ -9,7 +9,6 @@
     "prettier:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "lint:check": "eslint --max-warnings=0 \"src/**/*.{js,jsx,ts,tsx,json}\"",
     "ts:check": "tsc --noEmit",
-    "test:unit": "vitest",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,7 +21,7 @@
     "tailwindcss": "^3.4.14"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.25.7",
+    "@babel/preset-react": "^7.25.9",
     "@babel/preset-typescript": "^7.25.7",
     "@testing-library/jest-dom": "^6.6.2",
     "@testing-library/react": "^16.0.1",
@@ -37,6 +36,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.6",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.3.3",
     "typescript": "^5.6.3",
     "vite": "^5.2.10",
