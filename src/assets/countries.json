@@ -1,0 +1,107 @@
+[
+  {
+    "value": "+237",
+    "label": "Cameroon",
+    "flag": "https://flagcdn.com/w40/cm.png"
+  },
+  {
+    "value": "+1",
+    "label": "United States",
+    "flag": "https://flagcdn.com/w40/us.png"
+  },
+  {
+    "value": "+44",
+    "label": "United Kingdom",
+    "flag": "https://flagcdn.com/w40/gb.png"
+  },
+  {
+    "value": "+33",
+    "label": "France",
+    "flag": "https://flagcdn.com/w40/fr.png"
+  },
+  {
+    "value": "+49",
+    "label": "Germany",
+    "flag": "https://flagcdn.com/w40/de.png"
+  },
+  {
+    "value": "+91",
+    "label": "India",
+    "flag": "https://flagcdn.com/w40/in.png"
+  },
+  {
+    "value": "+234",
+    "label": "Nigeria",
+    "flag": "https://flagcdn.com/w40/ng.png"
+  },
+  {
+    "value": "+86",
+    "label": "China",
+    "flag": "https://flagcdn.com/w40/cn.png"
+  },
+  {
+    "value": "+81",
+    "label": "Japan",
+    "flag": "https://flagcdn.com/w40/jp.png"
+  },
+  {
+    "value": "+61",
+    "label": "Australia",
+    "flag": "https://flagcdn.com/w40/au.png"
+  },
+  {
+    "value": "+55",
+    "label": "Brazil",
+    "flag": "https://flagcdn.com/w40/br.png"
+  },
+  {
+    "value": "+7",
+    "label": "Russia",
+    "flag": "https://flagcdn.com/w40/ru.png"
+  },
+  {
+    "value": "+62",
+    "label": "Indonesia",
+    "flag": "https://flagcdn.com/w40/id.png"
+  },
+  {
+    "value": "+27",
+    "label": "South Africa",
+    "flag": "https://flagcdn.com/w40/za.png"
+  },
+  {
+    "value": "+52",
+    "label": "Mexico",
+    "flag": "https://flagcdn.com/w40/mx.png"
+  },
+  {
+    "value": "+82",
+    "label": "South Korea",
+    "flag": "https://flagcdn.com/w40/kr.png"
+  },
+  {
+    "value": "+34",
+    "label": "Spain",
+    "flag": "https://flagcdn.com/w40/es.png"
+  },
+  {
+    "value": "+39",
+    "label": "Italy",
+    "flag": "https://flagcdn.com/w40/it.png"
+  },
+  {
+    "value": "+47",
+    "label": "Norway",
+    "flag": "https://flagcdn.com/w40/no.png"
+  },
+  {
+    "value": "+351",
+    "label": "Portugal",
+    "flag": "https://flagcdn.com/w40/pt.png"
+  },
+  {
+    "value": "+41",
+    "label": "Switzerland",
+    "flag": "https://flagcdn.com/w40/ch.png"
+  }
+]

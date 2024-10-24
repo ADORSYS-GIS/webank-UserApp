@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import OtpInput from "./components/OtpInput";
+import OtpInput from "./pages/OtpInput.tsx";
 import "./App.css";
+import Register from "./pages/Register.tsx";
 
 export default function App() {
   //State variables to manage OTP inputs , minutes and seconds
@@ -42,6 +43,9 @@ export default function App() {
 
   return (
     <>
+      <div>
+        <Register />;
+      </div>
       <div className="container">
         <h1>OTP Verification</h1>
         <h4>Enter the verification code we just sent to your phone number</h4>
