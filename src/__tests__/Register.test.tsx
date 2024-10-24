@@ -15,7 +15,7 @@ describe("Register component", () => {
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     // Enter a valid phone number
-    fireEvent.change(phoneNumberInput, { target: { value: "654704027" } });
+    fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
 
     const sendOTPButton = getByText("Send OTP");
     sendOTPButton.removeAttribute("disabled");
