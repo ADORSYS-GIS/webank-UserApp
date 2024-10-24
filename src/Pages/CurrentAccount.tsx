@@ -1,6 +1,4 @@
-import React from 'react';
 import Logo from '../assets/Webank.png';
-import { faAdjust } from 'react-icons/fa'; // Import the specific icon
 
 function CurrentAccount() {
     return (
@@ -8,9 +6,6 @@ function CurrentAccount() {
             <div className="logo-container">
                 <div className="logo">
                     <img src={Logo} alt="Logo WeBank" className="w-50 h-20"/>
-                </div>
-                <div className="icon">
-                    <faAdjust/>
                 </div>
             </div>
             <div className="text-container bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-70 w-100">
