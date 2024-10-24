@@ -13,10 +13,10 @@ function CurrentAccount() {
                 </div>
             </div>
             <div className="text-container bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-70 w-100 px-6">
-                <h2 className="text-2xl font-bold text-black">Current Account</h2>
-                <p className="text-white">Account Number</p><br/>
-                <p className="text-black">CM-******1215</p>
-                <p className="text-white">Available Balance</p><br/>
+                <h2 className="text-2xl font-bold text-black mb-6">Current Account</h2>
+                <p className="text-white">Account Number</p>
+                <p className="text-black ">CM-******1215</p>
+                <p className="text-white">Available Balance</p>
                 <p className="text-black">1,000 XAF</p>
             </div>
             <div className="h-5 w-5 "></div>
