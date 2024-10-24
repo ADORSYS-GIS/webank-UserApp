@@ -145,21 +145,24 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
   // Render the OTP input fields
   return (
     <div>
-      {valueItems.map((digit, idx) => (
-        <input
-          key={idx}
-          type="text"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          pattern="\d{1}" // Regex pattern to allow only one digit
-          maxLength={valueLength}
-          className="otp-input"
-          value={digit} // Current value of the input field
-          onChange={(e) => handleOTPInputChange(e, idx)} // Handle input change
-          onKeyDown={inputOnKeyDown} // Handle key press events
-          onFocus={inputOnFocus} // Handle input focus
-        />
-      ))}
+      <div>
+        {valueItems.map((digit, idx) => (
+          <input
+            key={idx}
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            pattern="\d{1}" // Regex pattern to allow only one digit
+            maxLength={valueLength}
+            className="otp-input"
+            value={digit} // Current value of the input field
+            onChange={(e) => handleOTPInputChange(e, idx)} // Handle input change
+            onKeyDown={inputOnKeyDown} // Handle key press events
+            onFocus={inputOnFocus} // Handle input focus
+          />
+        ))}
+      </div>
+      <button>Verify</button>
     </div>
   );
 }

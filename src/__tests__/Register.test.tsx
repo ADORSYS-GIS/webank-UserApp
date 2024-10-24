@@ -1,6 +1,6 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Register from "../pages/Register";
+import Register from "../pages/RegisterPage";
 
 describe("Register component", () => {
   it("renders correctly", () => {
