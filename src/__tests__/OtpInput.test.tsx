@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { faker } from "@faker-js/faker";
-import OtpInput, { Props } from "../pages/OtpInput.tsx";
+import OtpInput, { Props } from "../components/OtpInput.tsx";
 import { describe, it, expect, vi } from "vitest";
 
 describe("<OtpInput />", () => {
