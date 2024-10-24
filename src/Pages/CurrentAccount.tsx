@@ -1,14 +1,18 @@
 import Logo from '../assets/Webank.png';
+import { FaAdjust } from "react-icons/fa";
 
 function CurrentAccount() {
     return (
-        <div className="container flex flex-col">
-            <div className="logo-container">
+        <div className="container px-4 flex flex-col">
+            <div className="flex flex-row justify-between items-center">
                 <div className="logo">
-                    <img src={Logo} alt="Logo WeBank" className="w-50 h-20"/>
+                    <img src={Logo} alt="Logo WeBank" className="w-20"/>
+                </div>
+                <div className="theme-change ">
+                    <FaAdjust />
                 </div>
             </div>
-            <div className="text-container bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-70 w-100">
+            <div className="text-container bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-70 w-100 px-6">
                 <h2 className="text-2xl font-bold text-black">Current Account</h2>
                 <p className="text-white">Account Number</p><br/>
                 <p className="text-black">CM-******1215</p>
@@ -16,7 +20,7 @@ function CurrentAccount() {
                 <p className="text-black">1,000 XAF</p>
             </div>
             <div className="h-5 w-5 "></div>
-            <div className="history  bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-80 w-100">
+            <div className="history  bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-80 w-100 px-6">
                 <h2 className="text-black font-bold ">
                     History
                 </h2>
