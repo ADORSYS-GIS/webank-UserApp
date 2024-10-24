@@ -1,9 +1,10 @@
 import './App.css'
+import CurrentAccount from "./Pages/CurrentAccount.tsx";
 
 function App() {
   return (
     <>
-    <p><center>WEBANK</center></p>
+      <CurrentAccount />
     </>
   )
 }
