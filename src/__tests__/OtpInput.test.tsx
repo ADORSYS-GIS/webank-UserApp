@@ -208,7 +208,6 @@ describe("<OtpInput />", () => {
     }
   });
 
-
   it("should allow pasting of digits (same length as valueLength)", () => {
     // Generate a random numeric value and determine its length
     const value = faker.number.int({ min: 10, max: 999999 }).toString();

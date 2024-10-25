@@ -53,7 +53,8 @@ const Otp = () => {
         <button
           type="button"
           className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
-        onClick={handleverifyClick}>
+          onClick={handleverifyClick}
+        >
           Verify Account
         </button>
       </div>

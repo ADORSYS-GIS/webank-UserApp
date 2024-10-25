@@ -19,16 +19,21 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
   }, [value, valueLength]);
 
   const focusToNextInput = (target: HTMLElement) => {
-    const nextElementSibling = target.nextElementSibling as HTMLInputElement | null;
+    const nextElementSibling =
+      target.nextElementSibling as HTMLInputElement | null;
     if (nextElementSibling) nextElementSibling.focus();
   };
 
   const focusToPrevInput = (target: HTMLElement) => {
-    const previousElementSibling = target.previousElementSibling as HTMLInputElement | null;
+    const previousElementSibling =
+      target.previousElementSibling as HTMLInputElement | null;
     if (previousElementSibling) previousElementSibling.focus();
   };
 
-  const handleOTPInputChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+  const handleOTPInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    idx: number,
+  ) => {
     const target = e.target;
     let targetValue = target.value.trim();
     const isTargetValueDigit = RE_DIGIT.test(targetValue);
@@ -38,7 +43,8 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
     const targetValueLength = targetValue.length;
 
     if (targetValueLength === 1) {
-      const newValue = value.substring(0, idx) + targetValue + value.substring(idx + 1);
+      const newValue =
+        value.substring(0, idx) + targetValue + value.substring(idx + 1);
       onChange(newValue);
       if (isTargetValueDigit) focusToNextInput(target);
     } else if (targetValueLength === valueLength) {
@@ -65,7 +71,8 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
 
   const inputOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const { target } = e;
-    const prevInputEl = target.previousElementSibling as HTMLInputElement | null;
+    const prevInputEl =
+      target.previousElementSibling as HTMLInputElement | null;
     if (prevInputEl && prevInputEl.value === "") prevInputEl.focus();
     target.setSelectionRange(0, target.value.length);
   };
@@ -75,7 +82,8 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
       <header className="mb-8 ">
         <h1 className="text-3xl font-bold mb-2">OTP Verification</h1>
         <p className="text-[15px]">
-          Enter the 4-digit verification code that was sent to your phone number.
+          Enter the 4-digit verification code that was sent to your phone
+          number.
         </p>
       </header>
       <form className="flex items-center justify-center gap-3">
@@ -96,7 +104,6 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
         ))}
       </form>
 
-      
       {/* <div className="text-sm text-slate-500 mt-4">
         Didn't receive code? <a className="font-medium text-indigo-500 hover:text-indigo-600" href="#0">Resend</a>
       </div> */}
