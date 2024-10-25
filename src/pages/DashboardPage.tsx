@@ -8,7 +8,7 @@ function CurrentAccount() {
         <div className="logo">
           <img src={Logo} alt="Logo WeBank" className="w-20" />
         </div>
-        <div className="theme-change ">
+        <div className="theme-change">
           <FaAdjust />
         </div>
       </div>
