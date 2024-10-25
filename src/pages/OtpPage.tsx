@@ -39,7 +39,7 @@ const Otp = () => {
   }, [seconds, minutes]); // Dependency array ensures the effect re-runs when 'seconds' or 'minutes' change
 
   return (
-    <div className="container">
+    <div className="mother">
       <h1>OTP Verification</h1>
       <h4>Enter the verification code we just sent to your phone number</h4>
       {/* Render the OTP input */}

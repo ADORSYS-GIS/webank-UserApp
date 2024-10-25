@@ -1,6 +1,7 @@
 import "./App.css";
 import Register from "./pages/RegisterPage.tsx";
 import Otp from "./pages/OtpPage.tsx";
+import DashboardPage from "./pages/DashboardPage.tsx";
 
 export default function App() {
   return (
@@ -8,9 +9,11 @@ export default function App() {
       <div>
         <Register />;
       </div>
-
       <div>
         <Otp />
+      </div>
+      <div>
+        <DashboardPage />
       </div>
     </>
   );
