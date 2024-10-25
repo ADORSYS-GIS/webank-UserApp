@@ -39,32 +39,46 @@ const Otp = () => {
   }, [seconds, minutes]); // Dependency array ensures the effect re-runs when 'seconds' or 'minutes' change
 
   return (
-    <div className="container">
-      <h1>OTP Verification</h1>
-      <h4>Enter the verification code we just sent to your phone number</h4>
+    <div className="flex flex-col justify-center items-center min-h-screen py-10">
       {/* Render the OTP input */}
       <OtpInput value={otp} valueLength={4} onChange={onChange} />
-      <div className="countdown-text">
-        <p>
-          {/* Display countdown timer in mm:ss format */}
+
+      <div className="mx-auto mt-10 w-full max-w-xs lg:max-w-md">
+        <button
+          type="button"
+          className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
+        >
+          Verify Account
+        </button>
+      </div>
+
+      <div className="flex flex-col items-center mt-5 mb-5">
+        <p className="text-[13px] font-normal text-[#2d1d35] mb-5 text-center">
           Resend OTP in{" "}
-          <span style={{ fontWeight: 600 }}>
+          <span className="font-semibold">
             {minutes < 10 ? `0${minutes}` : minutes}:
             {seconds < 10 ? `0${seconds}` : seconds}
           </span>
         </p>
         <div className="countdown-wrapper">
-          <p>Didn't receive the OTP?</p>
-          <button
-            disabled={seconds > 0 || minutes > 0}
-            style={{
-              color: seconds > 0 || minutes > 0 ? "#DFE3E8" : "#007FFF",
-              cursor: seconds > 0 || minutes > 0 ? "not-allowed" : "pointer",
-            }}
-            onClick={resendOTP}
-          >
-            Resend OTP
-          </button>
+          <p>
+            Didn't you receive the OTP?{" "}
+            <a
+              className={`${
+                seconds > 0 || minutes > 0 ? "text-gray-400" : "text-blue-500"
+              } cursor-${seconds > 0 || minutes > 0 ? "not-allowed" : "pointer"}`}
+              onClick={(e) => {
+                if (seconds > 0 || minutes > 0) {
+                  e.preventDefault();
+                } else {
+                  resendOTP();
+                }
+              }}
+              style={{ textDecoration: "none" }}
+            >
+              Resend OTP
+            </a>
+          </p>
         </div>
       </div>
     </div>

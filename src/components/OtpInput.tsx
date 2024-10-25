@@ -1,175 +1,105 @@
 import React, { useMemo } from "react";
 import { RE_DIGIT } from "../constants";
-import "./OtpInput.css";
+
 export type Props = {
   value: string;
   valueLength: number;
-  // Callback to handle changes in OTP value
   onChange: (value: string) => void;
 };
 
 export default function OtpInput({ value, valueLength, onChange }: Props) {
-  // Memoize the array of input values based on the current OTP value and length
   const valueItems = useMemo(() => {
     const valueArray = value.split("");
     const items: Array<string> = [];
-
-    // Loop through each input position
     for (let i = 0; i < valueLength; i++) {
       const char = valueArray[i];
-
-      // If the character matches a digit, use it, otherwise use an empty string
-      if (RE_DIGIT.test(char)) {
-        items.push(char);
-      } else {
-        items.push("");
-      }
+      items.push(RE_DIGIT.test(char) ? char : "");
     }
-
     return items;
   }, [value, valueLength]);
 
-  // Function to focus on the next input field
   const focusToNextInput = (target: HTMLElement) => {
-    const nextElementSibling =
-      target.nextElementSibling as HTMLInputElement | null;
-
-    // Focus on the next input field if it exists
-    if (nextElementSibling) {
-      nextElementSibling.focus();
-    }
+    const nextElementSibling = target.nextElementSibling as HTMLInputElement | null;
+    if (nextElementSibling) nextElementSibling.focus();
   };
 
-  // Function to focus on the previous input field
   const focusToPrevInput = (target: HTMLElement) => {
-    const previousElementSibling =
-      target.previousElementSibling as HTMLInputElement | null;
-
-    // Focus on the previous input field if it exists
-    if (previousElementSibling) {
-      previousElementSibling.focus();
-    }
+    const previousElementSibling = target.previousElementSibling as HTMLInputElement | null;
+    if (previousElementSibling) previousElementSibling.focus();
   };
 
-  // Event handler when the user changes input value
-  const handleOTPInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    idx: number,
-  ) => {
+  const handleOTPInputChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
     const target = e.target;
     let targetValue = target.value.trim();
-    const isTargetValueDigit = RE_DIGIT.test(targetValue); // Check if it's a valid digit
+    const isTargetValueDigit = RE_DIGIT.test(targetValue);
+    if (!isTargetValueDigit && targetValue !== "") return;
 
-    // If it's not a digit and not empty, do nothing
-    if (!isTargetValueDigit && targetValue !== "") {
-      return;
-    }
-
-    const nextInputEl = target.nextElementSibling as HTMLInputElement | null;
-
-    // If the next input has a value, don't delete the current one
-    if (!isTargetValueDigit && nextInputEl && nextInputEl.value !== "") {
-      return;
-    }
-
-    // If input is invalid or empty, set a space (clears the value)
     targetValue = isTargetValueDigit ? targetValue : " ";
-
     const targetValueLength = targetValue.length;
 
-    // If input length is 1, update the OTP value
     if (targetValueLength === 1) {
-      const newValue =
-        value.substring(0, idx) + targetValue + value.substring(idx + 1);
-
+      const newValue = value.substring(0, idx) + targetValue + value.substring(idx + 1);
       onChange(newValue);
-
-      // Focus to the next input field if a valid digit was entered
-      if (!isTargetValueDigit) {
-        return;
-      }
-
-      focusToNextInput(target);
+      if (isTargetValueDigit) focusToNextInput(target);
     } else if (targetValueLength === valueLength) {
-      // If all digits are entered, update the entire value and blur the input
       onChange(targetValue);
       target.blur();
     }
   };
 
-  // Event handler for keydown events in the input fields
   const inputOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const { key } = e;
     const target = e.target as HTMLInputElement;
-
-    // Handle arrow key navigation
     if (key === "ArrowRight" || key === "ArrowDown") {
       e.preventDefault();
       return focusToNextInput(target);
     }
-
     if (key === "ArrowLeft" || key === "ArrowUp") {
       e.preventDefault();
       return focusToPrevInput(target);
     }
-
     const targetValue = target.value;
-
-    // Select the entire input value if the same digit is typed
     target.setSelectionRange(0, targetValue.length);
-
-    // If the Backspace key is pressed and the current input is empty, move to the previous input
-    if (e.key !== "Backspace" || targetValue !== "") {
-      return;
-    }
-
-    focusToPrevInput(target);
+    if (e.key === "Backspace" && targetValue === "") focusToPrevInput(target);
   };
 
-  // Event handler for when the input field gains focus
   const inputOnFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     const { target } = e;
-
-    // Keep focusing back until the previous input has a value
-    const prevInputEl =
-      target.previousElementSibling as HTMLInputElement | null;
-
-    if (prevInputEl && prevInputEl.value === "") {
-      return prevInputEl.focus();
-    }
-
-    // Select the entire input value on focus
+    const prevInputEl = target.previousElementSibling as HTMLInputElement | null;
+    if (prevInputEl && prevInputEl.value === "") prevInputEl.focus();
     target.setSelectionRange(0, target.value.length);
   };
 
-  // Render the OTP input fields
   return (
-    <div>
-      <div>
+    <div className="max-w-md  bg-white px-4 sm:px-8 py-10 ">
+      <header className="mb-8 ">
+        <h1 className="text-3xl font-bold mb-2">OTP Verification</h1>
+        <p className="text-[15px]">
+          Enter the 4-digit verification code that was sent to your phone number.
+        </p>
+      </header>
+      <form className="flex items-center justify-center gap-3">
         {valueItems.map((digit, idx) => (
           <input
             key={idx}
             type="text"
             inputMode="numeric"
             autoComplete="one-time-code"
-            pattern="\d{1}" // Regex pattern to allow only one digit
-            maxLength={valueLength}
-            className="otp-input"
-            value={digit} // Current value of the input field
-            onChange={(e) => handleOTPInputChange(e, idx)} // Handle input change
-            onKeyDown={inputOnKeyDown} // Handle key press events
-            onFocus={inputOnFocus} // Handle input focus
+            pattern="\d{1}"
+            maxLength={1}
+            className="w-14 h-17 text-center text-2xl font-extrabold text-slate-900 bg-white border border-slate-300 hover:border-slate-400 appearance-none rounded-lg p-5 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            value={digit}
+            onChange={(e) => handleOTPInputChange(e, idx)}
+            onKeyDown={inputOnKeyDown}
+            onFocus={inputOnFocus}
           />
         ))}
-      </div>
-      <div className="mt-20 w-full max-w-sm lg:max-w-md">
-        <button
-          type="button"
-          className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
-        >
-          Verify
-        </button>
-      </div>
+      </form>
+
+      
+      {/* <div className="text-sm text-slate-500 mt-4">
+        Didn't receive code? <a className="font-medium text-indigo-500 hover:text-indigo-600" href="#0">Resend</a>
+      </div> */}
     </div>
   );
 }
