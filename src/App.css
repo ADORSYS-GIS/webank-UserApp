@@ -21,22 +21,6 @@
 .container h4 {
   margin-bottom: 40px; /* This adds space between the <h4> and the OTP input */
 }
-.container button {
-  background-color: #007bff; /* Blue background */
-  color: white; /* White text */
-  padding: 12px 130px; /* Adjust padding for larger button */
-  border: none; /* Remove border */
-  border-radius: 8px; /* Rounded corners */
-  font-size: 16px; /* Adjust font size */
-  cursor: pointer; /* Show hand cursor */
-  margin-top: 100px; /* Add space above the button */
-  transition: background-color 0.3s ease; /* Smooth background color transition */
-  border-radius: 100px; /* makes surroundings to be round */
-}
-
-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
-}
 
 /* Countdown text styles */
 .countdown-text {
