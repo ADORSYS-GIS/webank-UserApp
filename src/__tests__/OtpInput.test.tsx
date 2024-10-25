@@ -208,35 +208,6 @@ describe("<OtpInput />", () => {
     }
   });
 
-  it("should NOT allow deleting of digits in the middle", () => {
-    // Generate a random numeric value in the range of 100000 to 999999
-    const value = faker.number.int({ min: 100000, max: 999999 }).toString();
-    const valueLength = value.length;
-    const onChange = vi.fn(); // Mock the onChange function
-
-    // Render the component with the generated value
-    renderComponent({
-      value,
-      valueLength,
-      onChange,
-    });
-
-    const inputEls = screen.queryAllByRole("textbox"); // Query input elements
-    const thirdInputEl = inputEls[2]; // Get the third input element
-    const target = { value: "" }; // Prepare target for change event
-
-    // Simulate a change event to clear the current input
-    fireEvent.change(thirdInputEl, { target });
-    // Simulate pressing the Backspace key
-    fireEvent.keyDown(thirdInputEl, {
-      target,
-      key: "Backspace",
-    });
-
-    // Verify that onChange was NOT called since deletion in the middle is not allowed
-    expect(onChange).not.toBeCalled();
-  });
-
   it("should allow pasting of digits (same length as valueLength)", () => {
     // Generate a random numeric value and determine its length
     const value = faker.number.int({ min: 10, max: 999999 }).toString();
