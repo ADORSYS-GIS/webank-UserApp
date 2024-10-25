@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
-.container {
+.mother {
   width: 800px;
   max-width: 100%;
   margin: 0 auto;
@@ -11,14 +11,14 @@
   text-align: center;
 }
 
-.container h1 {
+.mother h1 {
   font-family: "Arial", sans-serif;
   font-weight: bold;
   font-size: 2rem;
   color: #333;
 }
 
-.container h4 {
+.mother h4 {
   margin-bottom: 40px; /* This adds space between the <h4> and the OTP input */
 }
 

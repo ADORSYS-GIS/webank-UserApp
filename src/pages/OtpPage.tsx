@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
+import { useNavigate } from "react-router-dom";
 
 const Otp = () => {
+  const navigate = useNavigate();
+  const handleverifyClick = () => {
+    navigate("/dashboard");
+  };
   // State variables to track minutes and seconds
   const [otp, setOtp] = useState("");
   const onChange = (value: string) => setOtp(value);
@@ -20,6 +25,7 @@ const Otp = () => {
     const interval = setInterval(() => {
       // Decrease seconds if greater than 0
       if (seconds > 0) {
+        otp;
         setSeconds(seconds - 1);
       }
       // If seconds reach 0, and minutes are greater than 0, decrease minutes
@@ -36,14 +42,23 @@ const Otp = () => {
 
     // Cleanup: clear the interval when the component unmounts or when seconds/minutes change
     return () => clearInterval(interval);
-  }, [seconds, minutes]); // Dependency array ensures the effect re-runs when 'seconds' or 'minutes' change
+  }, [seconds, minutes, otp]); // Dependency array ensures the effect re-runs when 'seconds' or 'minutes' change
 
   return (
-    <div className="container">
+    <div className="mother">
       <h1>OTP Verification</h1>
       <h4>Enter the verification code we just sent to your phone number</h4>
       {/* Render the OTP input */}
       <OtpInput value={otp} valueLength={4} onChange={onChange} />
+      <div className="mt-20 w-full max-w-sm lg:max-w-md">
+        <button
+          type="button"
+          className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
+          onClick={handleverifyClick}
+        >
+          Verify
+        </button>
+      </div>
       <div className="countdown-text">
         <p>
           {/* Display countdown timer in mm:ss format */}
