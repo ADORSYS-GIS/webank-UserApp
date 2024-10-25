@@ -1,20 +1,18 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Register from "./pages/RegisterPage";
+import OtpPage from "./pages/OtpPage";
+import DashboardPage from "./pages/DashboardPage";
 import "./App.css";
-import Register from "./pages/RegisterPage.tsx";
-import Otp from "./pages/OtpPage.tsx";
-import DashboardPage from "./pages/DashboardPage.tsx";
-
-export default function App() {
+const App: React.FC = () => {
   return (
-    <>
-      <div>
-        <Register />;
-      </div>
-      <div>
-        <Otp />
-      </div>
-      <div>
-        <DashboardPage />
-      </div>
-    </>
+    <Router>
+      <Routes>
+        {/* Define the routes */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/otp" element={<OtpPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+      </Routes>
+    </Router>
   );
-}
+};
+export default App;

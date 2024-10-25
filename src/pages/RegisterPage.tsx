@@ -3,6 +3,7 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
+//import { useNavigate } from "react-router-dom";
 
 type CountryOption = {
   value: string;
@@ -11,6 +12,7 @@ type CountryOption = {
 };
 
 const Register: React.FC = () => {
+  //  const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
   );
@@ -63,6 +65,7 @@ const Register: React.FC = () => {
       // Simulate a network request with setTimeout
       await new Promise((resolve) => setTimeout(resolve, 2000));
       alert("OTP sent!"); // Notify user upon success
+      //navigate("/otp");
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again."); // Notify user upon error
@@ -73,7 +76,7 @@ const Register: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">
-      <div className="mt-10">
+      <div className="mt-70">
         <img
           src={WebankLogo}
           alt="WeBank Logo"

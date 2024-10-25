@@ -162,7 +162,6 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
           />
         ))}
       </div>
-      <button>Verify</button>
     </div>
   );
 }

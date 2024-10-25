@@ -19,7 +19,7 @@ function CurrentAccount() {
         <p className="text-white">Available Balance</p>
         <p className="text-black">1,000 XAF</p>
       </div>
-      <div className="h-5 w-5 "></div>
+      <div className="h-5 w-5"></div>
       <div className="history  bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-80 w-100 px-6">
         <h2 className="text-black font-bold ">History</h2>
       </div>
