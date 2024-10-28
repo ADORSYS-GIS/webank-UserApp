@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+/*Styling for Register Page */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover\:bg-gray-100:hover {
+  background-color: #f7fafc; /* Tailwind's gray-100 */
+}
+
+.items-center {
+  align-items: center;
+}
+
+.material-icons {
+  font-size: 30px; /* Size for caret icon */
+}
+
+.p-2 {
+  padding: 8px; /* Padding for dropdown items */
+}
+
+/* Additional styles for responsiveness */
+@media (max-width: 768px) {
+  .relative {
+    width: 100%; /* Full width on mobile */
+  }
+
+  .flex-1 {
+    /*flex: 1; !* Allow input to take full space *!*/
+    width: 100%;
+  }
+
+  .rounded-lg {
+    border-radius: 0.5rem; /* Make buttons and dropdowns more rounded */
+  }
+}
+/* End of Styling for Registration Page */
