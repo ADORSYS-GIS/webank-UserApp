@@ -6,11 +6,6 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-<<<<<<< HEAD
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "prettier:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "preview": "vite preview"
-=======
     "test": "vitest",
     "prettier:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "lint:check": "eslint --max-warnings=0 \"src/**/*.{js,jsx,ts,tsx,json}\"",
@@ -18,7 +13,6 @@
     "test:unit": "vitest",
     "preview": "vite preview",
     "coverage": "vitest run --coverage"
->>>>>>> main
   },
   "dependencies": {
     "@types/jest": "^29.5.14",
