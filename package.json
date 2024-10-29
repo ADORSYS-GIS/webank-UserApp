@@ -15,6 +15,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@adorsys-gis/storage": "^1.0.3",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.7.9",
     "jose": "^5.9.6",
@@ -47,6 +48,7 @@
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.14",
+    "tslib": "^2.8.0",
     "typescript": "^5.6.3",
     "vite": "^5.2.10",
     "vite-plugin-pwa": "^0.20.5",

@@ -4,18 +4,15 @@ import Register from "./pages/RegisterPage";
 import OtpPage from "./pages/OtpPage";
 import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header"; // Import the new Header component
-import { useEffect } from "react";
-import generateKeyPair from "./services/keyManagement/generateKey"; // Import the generate function
+import { useEffect } from "react"; // Import the generate function
 import "./App.css";
+import storeKeyPair from "./services/keyManagement/storeKey";
 
 const App: React.FC = () => {
   useEffect(() => {
     const handleAppInstalled = async () => {
-      console.log("App installed successfully. Generating key pair...");
-
-      // Generate RSA key pair
-      await generateKeyPair();
-      console.log("Key pair generated successfully.");
+      await storeKeyPair();
+      console.log("Key pair generated and stored successfully.");
     };
 
     // Listen for the appinstalled event
