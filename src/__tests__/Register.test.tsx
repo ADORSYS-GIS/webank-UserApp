@@ -1,6 +1,7 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Register from "../pages/RegisterPage";
+import generateKeyPair from "../services/keyManagement/generateKey";
 
 describe("Register component", () => {
   it("renders correctly", () => {
@@ -20,7 +21,7 @@ describe("Register component", () => {
     const sendOTPButton = getByText("Send OTP");
     sendOTPButton.removeAttribute("disabled");
     fireEvent.click(sendOTPButton);
-
+    await waitFor(() => expect(generateKeyPair))
     await waitFor(() => expect(window.alert).toHaveBeenCalledTimes(1), {
       timeout: 2000,
     });
