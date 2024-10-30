@@ -3,8 +3,11 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
-import storeKeyPair from "../services/keyManagement/storeKey.ts";
+import storeKeyPair, {
+  retrieveKeyPair,
+} from "../services/keyManagement/storeKey.ts";
 import checkKeyPairExists from "../services/keyManagement/checkKeyPairExists.ts";
+import { generateJWT } from "../services/keyManagement/jwtService.ts";
 
 type CountryOption = {
   value: string;
@@ -69,6 +72,22 @@ const Register: React.FC = () => {
         console.log("Generating key pair...");
         await storeKeyPair();
         console.log("Key pair generated and stored successfully.");
+        // Retrieve keys using a known key ID, for example, 1
+        // Adjust this to the appropriate key ID
+        const { publicKey, privateKey } = await retrieveKeyPair(1);
+
+        // Check if keys are retrieved successfully
+        if (!publicKey || !privateKey) {
+          throw new Error("Failed to retrieve keys from IndexedDB.");
+        }
+
+        // Generate JWT with the full phone number
+        const jwtToken = await generateJWT(
+          fullPhoneNumber ,
+          publicKey,
+          privateKey,
+        );
+        console.log("Generated JWT:", jwtToken);
       } else {
         console.log("Key pair already exists. Skipping generation.");
       }
