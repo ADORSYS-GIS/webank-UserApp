@@ -3,6 +3,7 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
+import generateKeyPair from "../services/keyManagement/generateKey";
 //import { useNavigate } from "react-router-dom";
 
 type CountryOption = {
@@ -60,8 +61,11 @@ const Register: React.FC = () => {
     }
     setIsLoading(true); // Set loading state
     try {
-      // Replace with your actual OTP sending logic
+
       console.log("Sending OTP to:", phoneNumber);
+      console.log("Generating key pair...");
+      await generateKeyPair();
+      console.log("Key pair generated successfully.");
       // Simulate a network request with setTimeout
       await new Promise((resolve) => setTimeout(resolve, 2000));
       alert("OTP sent!"); // Notify user upon success
