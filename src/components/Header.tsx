@@ -1,6 +1,6 @@
 // src/components/Header.tsx
-import React, { useState, useEffect } from 'react';
-import InstallButton from './Installbutton';
+import React, { useState, useEffect } from "react";
+import InstallButton from "./Installbutton";
 
 const Header: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
@@ -14,11 +14,14 @@ const Header: React.FC = () => {
     };
 
     // Listen for the beforeinstallprompt event
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
     // Cleanup the event listener on component unmount
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt,
+      );
     };
   }, []);
 
