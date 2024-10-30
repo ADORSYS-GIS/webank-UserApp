@@ -12,6 +12,9 @@ async function generateKeyPair() {
 
   console.log("Public Key:", publicJWK);
   console.log("Private Key:", privateJWK);
+
+  // Return the keys
+  return { publicJWK, privateJWK };
 }
 
 export default generateKeyPair;
