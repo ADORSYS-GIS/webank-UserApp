@@ -5,7 +5,6 @@ import OtpPage from "./pages/OtpPage";
 import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header";
 import "./App.css";
-import storeKeyPair from "./services/keyManagement/storeKey";
 
 const App: React.FC = () => {
   return (

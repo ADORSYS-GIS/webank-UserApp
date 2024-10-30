@@ -3,8 +3,8 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
-import generateKeyPair from "../services/keyManagement/generateKey";
-//import { useNavigate } from "react-router-dom";
+import storeKeyPair from "../services/keyManagement/storeKey.ts";
+import checkKeyPairExists from "../services/keyManagement/checkKeyPairExists.ts";
 
 type CountryOption = {
   value: string;
@@ -61,15 +61,25 @@ const Register: React.FC = () => {
     }
     setIsLoading(true); // Set loading state
     try {
-
       console.log("Sending OTP to:", phoneNumber);
-      console.log("Generating key pair...");
-      await generateKeyPair();
-      console.log("Key pair generated successfully.");
+
+      // Check if a key pair already exists
+      const keyPairExists = await checkKeyPairExists();
+      if (!keyPairExists) {
+        console.log("Generating key pair...");
+        await storeKeyPair();
+        console.log("Key pair generated and stored successfully.");
+      } else {
+        console.log("Key pair already exists. Skipping generation.");
+      }
+
       // Simulate a network request with setTimeout
       await new Promise((resolve) => setTimeout(resolve, 2000));
+
       alert("OTP sent!"); // Notify user upon success
-      //navigate("/otp");
+
+      // Navigate to OTP page (uncomment the line below if needed)
+      // navigate("/otp");
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again."); // Notify user upon error

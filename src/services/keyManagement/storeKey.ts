@@ -1,61 +1,36 @@
-import { StorageFactory } from '@adorsys-gis/storage';
-import { DBSchema } from 'idb';
-import generateKeyPair from './generateKey'; // Import your existing key generation function
-
-interface MyDatabase extends DBSchema {
-  keys: {
-    key: number; // Represents a unique identifier for the key record
-    value: {
-      Key: JsonWebKey; // Key in JWK format
-    };
-  };
-}
-
-// Initialize the storage with the schema
-const storage: StorageFactory<MyDatabase> = new StorageFactory<MyDatabase>('KeysDB', 1, {
-  upgrade: (db) => {
-    if (!db.objectStoreNames.contains('keys')) {
-      db.createObjectStore('keys', {
-        keyPath: 'keyId',
-        autoIncrement: true // Use 'key' as a unique identifier for the record
-      });
-    }
-  },
-});
+import storage from "./storageSetup"; // Import the initialized storage
+import generateKeyPair from "./generateKey"; // Import your existing key generation function
 
 // Function to store a key pair in IndexedDB
 export async function storeKeyPair() {
-  console.log("App installed successfully. Generating key pair...");
+  const { publicKey, privateKey } = await generateKeyPair(); // Generate the key pair
 
-  const { publicKey, privateKey } = await generateKeyPair(); // This should return the keys in JWK format
-  console.log("Key pair generated successfully.");
-
-  // Store the key pair in IndexedDB directly
-  await storage.insert('keys', {
+  // Store both keys in a single record in IndexedDB
+  await storage.insert("keys", {
     value: {
-      pub: { ...publicKey }, // Directly use the public key
-    }
+      pub: { ...publicKey }, // Store public key
+      priv: { ...privateKey }, // Store private key
+    },
   });
 
-  await storage.insert('keys', {
-    value: {
-      priv: { ...privateKey }, // Directly use the private key
-    }
-  });
-
-  console.log("Key pair stored successfully with key ID");
+  console.log("Key pair stored successfully in IndexedDB.");
 }
 
-// Function to retrieve a key pair by its key ID from IndexedDB
+// Function to retrieve the key pair from IndexedDB
 export async function retrieveKeyPair(keyId: number) {
-  const retrievedRecord = await storage.findOne('keys', keyId);
+  const retrievedRecord = await storage.findOne("keys", keyId);
 
   if (retrievedRecord) {
-    console.log("Retrieved key pair:", retrievedRecord.value);
+    const { pub: publicKey, priv: privateKey } = retrievedRecord.value; // Destructure the keys
+    console.log("Retrieved public key:", publicKey);
+    console.log("Retrieved private key:", privateKey);
+
+    return { publicKey, privateKey }; // Return keys separately
   } else {
     console.error("No key pair found with key ID:", keyId);
   }
-  return retrievedRecord?.value || null;
+
+  return { publicKey: null, privateKey: null }; // Return null if not found
 }
 
 export default storeKeyPair;
