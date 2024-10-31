@@ -68,8 +68,48 @@
 
 * **5.1 Whitebox Overall System**
 
-    (Include a diagram here showing the major frontend components and their interactions. Example: Authentication component, API service layer, UI components (Dashboard, Transactions, Profile), Redux store.)
+Below is a Sequence Diagram that gives an concrete flow and a clear picture of the interactions 
 
+![reference image](/Docs/Sequence-Diagram.png)
+
+* **5.2 Explanation of flow**
+
+* ***5.3.1 User Registration***
+
+![reference image](/Docs/Mockups/Registration.png)
+
+1. The user enters their phone number to register, which is handled by the frontend React component.
+2. The frontend component sends a `registrationRequest` with the phone number to the API Service Layer.
+3. The API Service Layer forwards the request to the Backend API to register the user.
+4. The Backend API processes the registration, generates an OTP, and sends it back through the API Service Layer to the frontend.
+5. The frontend then displays a message indicating the OTP has been sent.
+
+* ***5.3.2 OTP Verification***
+
+![reference image](/Docs/Mockups/Otp-Verification.png)
+
+1. The user enters the OTP they received for verification.
+2. The frontend component sends a `verifyOtpRequest` with the OTP and user information to the API Service Layer.
+3. The API Service Layer forwards this to the Backend API for OTP verification.
+4. Once verified, the Backend API sends a success status back to the frontend.
+5. The frontend updates the Redux store to reflect that the user is verified, and the store then updates the frontend.
+
+* ***5.3.3 Balance Inquiry***
+
+![reference image](/Docs/Mockups/Dashboard.png)
+
+
+1. The user requests to view their account balance.
+2. The frontend component sends a `balanceInquiryRequest` with the user’s ID to the API Service Layer.
+3. The API Service Layer requests the balance from the Backend API.
+4. The Backend API returns the balance, which the API Service Layer passes back to the frontend.
+5. The frontend component updates the Redux store with the balance data, which triggers the frontend to display the balance to the user in the UI.
+
+---
+
+
+
+    
 * **5.2 Blackbox Building Blocks**
     * **Authentication Component:**
         * Handle storage of account credentials
