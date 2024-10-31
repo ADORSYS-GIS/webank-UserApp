@@ -1,7 +1,7 @@
 import * as jose from "jose";
 
 async function generateKeyPair() {
-  // Generate an RSA key pair
+  // Generate an EC key pair
   const { publicKey, privateKey } = await jose.generateKeyPair("ES256", {
     extractable: true,
   });
