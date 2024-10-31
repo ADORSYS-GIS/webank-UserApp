@@ -4,7 +4,6 @@ import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import generateKeyPair from "../services/keyManagement/generateKey";
-import { generateJWT } from "../services/keyManagement/jwtService"; // Adjust the path as necessary
 
 //import { useNavigate } from "react-router-dom";
 
@@ -53,33 +52,20 @@ const Register: React.FC = () => {
       alert("Please enter a phone number."); // Notify user if phone number is empty
       return;
     }
-  
+
     const fullPhoneNumber = selectedCountry?.value + phoneNumber;
-  
+
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
     if (!phoneNumberObj || !phoneNumberObj.isValid()) {
       alert("Please enter a valid phone number.");
       return;
     }
-    
+
     setIsLoading(true); // Set loading state
     try {
       console.log("Sending OTP to:", phoneNumber);
       console.log("Generating key pair...");
-      
-      // Destructure the returned keys
-      const { publicJWK, privateJWK } = await generateKeyPair();
-      console.log("Key pair generated successfully.");
-      console.log("Public Key:", publicJWK);
-      console.log("Private Key:", privateJWK);
-  
-      // Now you can use publicJWK and privateJWK for JWT generation
-      const data = { phoneNumber: fullPhoneNumber };
-  
-      // Generate the JWT (this function would need to be implemented)
-      const jwt = await generateJWT(data, publicJWK, privateJWK);
-      console.log("Generated JWT:", jwt);
-  
+      await generateKeyPair();
       // Simulate a network request to send the OTP
       await new Promise((resolve) => setTimeout(resolve, 2000));
       alert("OTP sent!"); // Notify user upon success
@@ -90,8 +76,6 @@ const Register: React.FC = () => {
       setIsLoading(false); // Reset loading state
     }
   };
-  
-  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">

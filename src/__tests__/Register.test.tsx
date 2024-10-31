@@ -21,7 +21,7 @@ describe("Register component", () => {
     const sendOTPButton = getByText("Send OTP");
     sendOTPButton.removeAttribute("disabled");
     fireEvent.click(sendOTPButton);
-    await waitFor(() => expect(generateKeyPair))
+    await waitFor(() => expect(generateKeyPair));
     await waitFor(() => expect(window.alert).toHaveBeenCalledTimes(1), {
       timeout: 2000,
     });
