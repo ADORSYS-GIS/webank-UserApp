@@ -1,20 +1,19 @@
-import storage from "./storageSetup"; // Import the initialized storage
-import generateKeyPair from "./generateKey"; // Import your existing key generation function
+import storage from "./storageSetup";
+import generateKeyPair from "./generateKey";
 
 // Function to store a key pair in IndexedDB
 export async function storeKeyPair() {
-  const { publicKey, privateKey, kid } = await generateKeyPair(); // Generate the key pair
+  const { publicKey, privateKey, kid } = await generateKeyPair(); 
 
   // Store both keys in a single record in IndexedDB
   await storage.insert("keys", {
     value: {
-      pub: { ...publicKey }, // Store public key
+      pub: { ...publicKey }, 
       priv: { ...privateKey },
-      id: kid, // Store private key
+      id: kid,
     },
   });
 
-  console.log("Key pair stored successfully in IndexedDB.");
 }
 
 // Function to retrieve the key pair from IndexedDB
@@ -22,16 +21,15 @@ export async function retrieveKeyPair(id: number) {
   const retrievedRecord = await storage.findOne("keys", id);
 
   if (retrievedRecord) {
-    const { pub: publicKey, priv: privateKey } = retrievedRecord.value; // Destructure the keys
-    console.log("Retrieved public key:", publicKey);
-    console.log("Retrieved private key:", privateKey);
+    const { pub: publicKey, priv: privateKey } = retrievedRecord.value; 
 
-    return { publicKey, privateKey }; // Return keys separately
+
+    return { publicKey, privateKey }; 
   } else {
     console.error("No key pair found with key ID:", id);
   }
 
-  return { publicKey: null, privateKey: null }; // Return null if not found
+  return { publicKey: null, privateKey: null };
 }
 
 export default storeKeyPair;

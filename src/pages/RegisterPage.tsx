@@ -3,11 +3,7 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
-import storeKeyPair, {
-  retrieveKeyPair,
-} from "../services/keyManagement/storeKey.ts";
-import checkKeyPairExists from "../services/keyManagement/checkKeyPairExists.ts";
-import { generateJWT } from "../services/keyManagement/jwtService.ts";
+import { sendOtpWithKeyManagement } from "../services/keyManagement/registerService.ts";
 
 type CountryOption = {
   value: string;
@@ -49,63 +45,42 @@ const Register: React.FC = () => {
     }
   };
 
-  const handleSendOTP = async () => {
-    if (!phoneNumber.trim()) {
-      alert("Please enter a phone number."); // Notify user if phone number is empty
-      return;
-    }
 
-    const fullPhoneNumber = selectedCountry?.value + phoneNumber;
+const handleSendOTP = async () => {
+  if (!phoneNumber.trim()) {
+    alert("Please enter a phone number."); // Notify user if phone number is empty
+    return;
+  }
 
-    const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
-    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
-      alert("Please enter a valid phone number.");
-      return;
-    }
-    setIsLoading(true); // Set loading state
-    try {
-      console.log("Sending OTP to:", phoneNumber);
+  const fullPhoneNumber = selectedCountry?.value + phoneNumber;
+  const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
+  if (!phoneNumberObj || !phoneNumberObj.isValid()) {
+    alert("Please enter a valid phone number.");
+    return;
+  }
 
-      // Check if a key pair already exists
-      const keyPairExists = await checkKeyPairExists();
-      if (!keyPairExists) {
-        console.log("Generating key pair...");
-        await storeKeyPair();
-        console.log("Key pair generated and stored successfully.");
-        // Retrieve keys using a known key ID, for example, 1
-        // Adjust this to the appropriate key ID
-        const { publicKey, privateKey } = await retrieveKeyPair(1);
+  setIsLoading(true); // Set loading state
 
-        // Check if keys are retrieved successfully
-        if (!publicKey || !privateKey) {
-          throw new Error("Failed to retrieve keys from IndexedDB.");
-        }
+  try {
+    console.log("Sending OTP to:", phoneNumber);
 
-        // Generate JWT with the full phone number
-        const jwtToken = await generateJWT(
-          fullPhoneNumber ,
-          publicKey,
-          privateKey,
-        );
-        console.log("Generated JWT:", jwtToken);
-      } else {
-        console.log("Key pair already exists. Skipping generation.");
-      }
+    await sendOtpWithKeyManagement(fullPhoneNumber);
 
-      // Simulate a network request with setTimeout
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Simulate a network request with setTimeout
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      alert("OTP sent!"); // Notify user upon success
+    alert("OTP sent!"); // Notify user upon success
 
-      // Navigate to OTP page (uncomment the line below if needed)
-      // navigate("/otp");
-    } catch (error) {
-      console.error("Error sending OTP:", error);
-      alert("Failed to send OTP. Please try again."); // Notify user upon error
-    } finally {
-      setIsLoading(false); // Reset loading state
-    }
-  };
+    // Navigate to OTP page 
+    // navigate("/otp");
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    alert("Failed to send OTP. Please try again."); // Notify user upon error
+  } finally {
+    setIsLoading(false); // Reset loading state
+  }
+};
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">

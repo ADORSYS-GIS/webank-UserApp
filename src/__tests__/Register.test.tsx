@@ -1,9 +1,12 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Register from "../pages/RegisterPage";
-import generateKeyPair from "../services/keyManagement/generateKey";
+import { sendOtpWithKeyManagement } from "../services/keyManagement/registerService";
+
 
 describe("Register component", () => {
+
+
   it("renders correctly", () => {
     const { getByText } = render(<Register />);
     expect(getByText("Register for a bank account")).toBeInTheDocument();
@@ -21,7 +24,7 @@ describe("Register component", () => {
     const sendOTPButton = getByText("Send OTP");
     sendOTPButton.removeAttribute("disabled");
     fireEvent.click(sendOTPButton);
-    await waitFor(() => expect(generateKeyPair));
+    await waitFor(() => expect(sendOtpWithKeyManagement))
     await waitFor(() => expect(window.alert).toHaveBeenCalledTimes(1), {
       timeout: 2000,
     });

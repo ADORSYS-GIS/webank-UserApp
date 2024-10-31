@@ -7,7 +7,6 @@ function hashPayload(payload: string): string {
 
 export async function generateJWT(
   data: string,
-  publicKeyJWK: jose.JWK,
   privateKeyJWK: jose.JWK,
 ): Promise<string> {
   // Hash the payload
@@ -16,7 +15,6 @@ export async function generateJWT(
   // Create the JWT payload
   const jwtPayload = {
     hash: hashedPayload,
-    publicKey: publicKeyJWK, // Use the public key as is
   };
 
   try {
