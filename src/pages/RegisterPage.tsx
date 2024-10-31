@@ -19,8 +19,8 @@ const Register: React.FC = () => {
     countryOptions[0],
   );
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<boolean>(false); // State to control dropdown visibility
-  const [searchTerm, setSearchTerm] = useState<string>(""); // State to handle search input
+  const [isOpen, setIsOpen] = useState<boolean>(false); 
+  const [searchTerm, setSearchTerm] = useState<string>(""); 
 
   // Filter the country options based on the search term
   const filteredCountries = countryOptions.filter((country) =>
@@ -29,11 +29,11 @@ const Register: React.FC = () => {
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
-    setIsOpen(false); // Close the dropdown when a country is selected
+    setIsOpen(false); 
   };
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen); // Toggle dropdown visibility
+    setIsOpen(!isOpen); 
   };
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const handlePhoneNumberChange = (
@@ -41,7 +41,7 @@ const Register: React.FC = () => {
   ) => {
     const value = event.target.value;
 
-    // Use the imported regex constant for validation
+
     if (PHONE_NUMBER_REGEX.test(value)) {
       setPhoneNumber(value);
     }
@@ -49,7 +49,7 @@ const Register: React.FC = () => {
 
   const handleSendOTP = async () => {
     if (!phoneNumber.trim()) {
-      alert("Please enter a phone number."); // Notify user if phone number is empty
+      alert("Please enter a phone number."); 
       return;
     }
 
@@ -61,16 +61,13 @@ const Register: React.FC = () => {
       return;
     }
 
-    setIsLoading(true); // Set loading state
+    setIsLoading(true); 
     try {
-      console.log("Sending OTP to:", phoneNumber);
-      console.log("Generating key pair...");
       await generateKeyPair();
       // Simulate a network request to send the OTP
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("OTP sent!"); // Notify user upon success
+      alert("OTP sent!"); 
     } catch (error) {
-      console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again."); // Notify user upon error
     } finally {
       setIsLoading(false); // Reset loading state
