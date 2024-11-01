@@ -10,9 +10,6 @@ async function generateKeyPair() {
   const publicJWK = await jose.exportJWK(publicKey);
   const privateJWK = await jose.exportJWK(privateKey);
 
-  console.log("Public Key:", publicJWK);
-  console.log("Private Key:", privateJWK);
-
   // Return both keys
   return { publicKey: publicJWK, privateKey: privateJWK };
 }
