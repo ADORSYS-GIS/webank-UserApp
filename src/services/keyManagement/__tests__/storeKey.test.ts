@@ -1,14 +1,14 @@
-import { describe, it, expect } from 'vitest'; // Import necessary functions from Vitest
-import storage from '../storageSetup'; // Import the initialized storage
-import { storeKeyPair, retrieveKeyPair } from '../storeKey'; // Adjust the import to the correct module path
+import { describe, it, expect } from "vitest"; // Import necessary functions from Vitest
+import storage from "../storageSetup"; // Import the initialized storage
+import { storeKeyPair, retrieveKeyPair } from "../storeKey"; // Adjust the import to the correct module path
 
-describe('Key Pair Storage Tests', () => {
-  it('should store and retrieve a key pair correctly', async () => {
+describe("Key Pair Storage Tests", () => {
+  it("should store and retrieve a key pair correctly", async () => {
     // Step 1: Store a key pair
     await storeKeyPair(); // Call the function to store the key pair
 
     // Step 2: Retrieve the keys stored in IndexedDB
-    const storedKeys = await storage.findAll('keys'); // Get all records from the 'keys' store
+    const storedKeys = await storage.findAll("keys"); // Get all records from the 'keys' store
     expect(storedKeys).toHaveLength(1); // Check that one key pair is stored
 
     const { value } = storedKeys[0]; // Get the stored record
@@ -24,7 +24,7 @@ describe('Key Pair Storage Tests', () => {
     expect(retrievedKeys.privateKey).toEqual(privateKey); // Check if the retrieved private key matches
   });
 
-  it('should return null for a non-existent key ID', async () => {
+  it("should return null for a non-existent key ID", async () => {
     const retrievedKeys = await retrieveKeyPair(999); // Attempt to retrieve with a non-existent ID
     expect(retrievedKeys.publicKey).toBeNull(); // Expect public key to be null
     expect(retrievedKeys.privateKey).toBeNull(); // Expect private key to be null

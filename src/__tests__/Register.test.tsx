@@ -9,31 +9,37 @@ describe("Register component", () => {
     window.alert = vi.fn();
   });
 
-  it('sends OTP on button click', async () => {
+  it("sends OTP on button click", async () => {
     const { getByText, getByPlaceholderText } = render(<Register />);
-    const phoneNumberInput = getByPlaceholderText('Phone number');
-  
+    const phoneNumberInput = getByPlaceholderText("Phone number");
+
     // Simulate user entering a phone number
-    fireEvent.change(phoneNumberInput, { target: { value: '657040277' } });
-    
+    fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
+
     // Enable and click the send OTP button
-    const sendOTPButton = getByText('Send OTP');
-    sendOTPButton.removeAttribute('disabled');
+    const sendOTPButton = getByText("Send OTP");
+    sendOTPButton.removeAttribute("disabled");
     fireEvent.click(sendOTPButton);
-  
+
     // Wait for the alert to be shown
     await waitFor(() => expect(window.alert).toHaveBeenCalledWith("OTP sent!")); // Verify alert message
-  }); 
+  });
 
   it("displays error message on invalid phone number", async () => {
     const { getByText, getByPlaceholderText } = render(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
-    fireEvent.change(phoneNumberInput, { target: { value: "788475847587458" } });
+    fireEvent.change(phoneNumberInput, {
+      target: { value: "788475847587458" },
+    });
     const sendOTPButton = getByText("Send OTP");
     fireEvent.click(sendOTPButton);
 
-    await waitFor(() => expect(window.alert).toHaveBeenCalledWith("Please enter a valid phone number."));
+    await waitFor(() =>
+      expect(window.alert).toHaveBeenCalledWith(
+        "Please enter a valid phone number.",
+      ),
+    );
   });
 
   it("allows only digits in phone number input", () => {
