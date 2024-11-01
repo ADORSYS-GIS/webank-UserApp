@@ -3,7 +3,8 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
-//import { useNavigate } from "react-router-dom";
+import storeKeyPair from "../services/keyManagement/storeKey.ts";
+import checkKeyPairExists from "../services/keyManagement/checkKeyPairExists.ts";
 
 type CountryOption = {
   value: string;
@@ -52,26 +53,42 @@ const Register: React.FC = () => {
     }
 
     const fullPhoneNumber = selectedCountry?.value + phoneNumber;
-
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
+
     if (!phoneNumberObj || !phoneNumberObj.isValid()) {
       alert("Please enter a valid phone number.");
       return;
     }
+
     setIsLoading(true); // Set loading state
     try {
-      // Replace with your actual OTP sending logic
       console.log("Sending OTP to:", phoneNumber);
-      // Simulate a network request with setTimeout
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Check if a key pair already exists
+      const keyPairExists = await checkKeyPairExists();
+      if (!keyPairExists) {
+        console.log("Generating key pair...");
+        await storeKeyPair();
+        console.log("Key pair generated and stored successfully.");
+      } else {
+        console.log("Key pair already exists. Skipping generation.");
+      }
+
+      // Call to send OTP logic (implement this)
+      await sendOTP(fullPhoneNumber); // Implement OTP sending logic here
       alert("OTP sent!"); // Notify user upon success
-      //navigate("/otp");
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again."); // Notify user upon error
     } finally {
       setIsLoading(false); // Reset loading state
     }
+  };
+
+  // Function to handle the actual OTP sending logic (implement as needed)
+  const sendOTP = async (phoneNumber: string) => {
+    // Implement the logic to send the OTP here
+    console.log("OTP sent to:", phoneNumber);
   };
 
   return (

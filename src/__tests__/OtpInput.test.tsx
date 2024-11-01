@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
 import { faker } from "@faker-js/faker";
 import OtpInput, { Props } from "../components/OtpInput.tsx";
 import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom";
 
 describe("<OtpInput />", () => {
   // Function to render the OtpInput component with given props
