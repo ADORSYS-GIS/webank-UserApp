@@ -70,7 +70,7 @@
 
 Below is a Sequence Diagram that gives an concrete flow and a clear picture of the interactions 
 
-![reference image](/Docs/Sequence-Diagram.png)
+![reference image](/Docs/SQdiagram/Sequence-Diagram.png)
 
 * **5.2 Explanation of flow**
 
