@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
 import CurrentAccount from "../pages/DashboardPage";
+import "@testing-library/jest-dom";
 
 describe("YourComponent", () => {
   it("should handle text elements correctly", () => {
