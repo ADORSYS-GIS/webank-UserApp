@@ -1,69 +1,32 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { storeKeyPair, retrieveKeyPair } from "../storeKey";
-import storage from "../storageSetup";
-import generateKeyPair from "../generateKey";
+import { describe, it, expect } from 'vitest'; // Import necessary functions from Vitest
+import storage from '../storageSetup'; // Import the initialized storage
+import { storeKeyPair, retrieveKeyPair } from '../storeKey'; // Adjust the import to the correct module path
 
-// Mocking storage and generateKeyPair functions
-vi.mock("../storageSetup", () => ({
-  default: {
-    insert: vi.fn(),
-    findOne: vi.fn(),
-  },
-}));
+describe('Key Pair Storage Tests', () => {
+  it('should store and retrieve a key pair correctly', async () => {
+    // Step 1: Store a key pair
+    await storeKeyPair(); // Call the function to store the key pair
 
-vi.mock("../generateKey", () => ({
-  default: vi.fn(async () => ({
-    publicKey: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-    privateKey: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-  })),
-}));
+    // Step 2: Retrieve the keys stored in IndexedDB
+    const storedKeys = await storage.findAll('keys'); // Get all records from the 'keys' store
+    expect(storedKeys).toHaveLength(1); // Check that one key pair is stored
 
-describe("Key Management Tests", () => {
-  beforeEach(() => {
-    vi.clearAllMocks(); // Clear mocks before each test to reset the calls
+    const { value } = storedKeys[0]; // Get the stored record
+    const { pub: publicKey, priv: privateKey } = value; // Destructure keys from the stored value
+
+    // Step 3: Ensure the public and private keys are not null
+    expect(publicKey).toBeDefined();
+    expect(privateKey).toBeDefined();
+
+    // Step 4: Retrieve the key pair using the key ID
+    const retrievedKeys = await retrieveKeyPair(1); // Use the ID from the stored record
+    expect(retrievedKeys.publicKey).toEqual(publicKey); // Check if the retrieved public key matches
+    expect(retrievedKeys.privateKey).toEqual(privateKey); // Check if the retrieved private key matches
   });
 
-  it("should store a key pair in IndexedDB", async () => {
-    await storeKeyPair();
-
-    expect(generateKeyPair).toHaveBeenCalledTimes(1);
-    expect(storage.insert).toHaveBeenCalledWith("keys", {
-      value: {
-        pub: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-        priv: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-      },
-    });
-    expect(storage.insert).toHaveBeenCalledTimes(1);
-  });
-
-  it("should retrieve the key pair from IndexedDB", async () => {
-    // Set up mock return for storage.findOne
-    storage.findOne.mockResolvedValue({
-      value: {
-        pub: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-        priv: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-      },
-    });
-
-    const keyPair = await retrieveKeyPair(1);
-
-    expect(storage.findOne).toHaveBeenCalledWith("keys", 1);
-    expect(storage.findOne).toHaveBeenCalledTimes(1);
-
-    expect(keyPair.publicKey).toEqual({ alg: "RSA-OAEP", kty: "RSA", use: "enc" });
-    expect(keyPair.privateKey).toEqual({ alg: "RSA-OAEP", kty: "RSA", use: "enc" });
-  });
-
-  it("should return null if no key pair is found", async () => {
-    // Set up mock return for storage.findOne with no record found
-    storage.findOne.mockResolvedValue(null);
-
-    const keyPair = await retrieveKeyPair(999); // Use an ID unlikely to exist
-
-    expect(storage.findOne).toHaveBeenCalledWith("keys", 999);
-    expect(storage.findOne).toHaveBeenCalledTimes(1);
-
-    expect(keyPair.publicKey).toBeNull();
-    expect(keyPair.privateKey).toBeNull();
+  it('should return null for a non-existent key ID', async () => {
+    const retrievedKeys = await retrieveKeyPair(999); // Attempt to retrieve with a non-existent ID
+    expect(retrievedKeys.publicKey).toBeNull(); // Expect public key to be null
+    expect(retrievedKeys.privateKey).toBeNull(); // Expect private key to be null
   });
 });

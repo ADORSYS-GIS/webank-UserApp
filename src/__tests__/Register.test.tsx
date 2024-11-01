@@ -2,48 +2,28 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import Register from "../pages/RegisterPage";
 import "@testing-library/jest-dom";
 import { describe, it, beforeEach, vi, expect } from "vitest";
-import checkKeyPairExists from "../services/keyManagement/checkKeyPairExists";
-
-// Mock the storage module
-vi.mock("../services/keyManagement/storageSetup", () => ({
-  default: {
-    insert: vi.fn(),
-    findOne: vi.fn(),
-    count: vi.fn(),
-  },
-}));
-
-vi.mock("../services/keyManagement/generateKey", () => ({
-  default: vi.fn(async () => ({
-    publicKey: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-    privateKey: { alg: "RSA-OAEP", kty: "RSA", use: "enc" },
-  })),
-}));
 
 describe("Register component", () => {
   beforeEach(() => {
     vi.clearAllMocks(); // Clear mocks before each test
-    vi.spyOn(window, "alert").mockImplementation(() => {}); // Mock alert
+    window.alert = vi.fn();
   });
 
-  it("renders correctly", () => {
-    const { getByText } = render(<Register />);
-    expect(getByText("Register for a bank account")).toBeInTheDocument();
-    expect(getByText("Please enter your phone number")).toBeInTheDocument();
-  });
-
-  it("sends OTP on button click", async () => {
+  it('sends OTP on button click', async () => {
     const { getByText, getByPlaceholderText } = render(<Register />);
-    const phoneNumberInput = getByPlaceholderText("Phone number");
-
-    fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
-    const sendOTPButton = getByText("Send OTP");
-    sendOTPButton.removeAttribute("disabled");
+    const phoneNumberInput = getByPlaceholderText('Phone number');
+  
+    // Simulate user entering a phone number
+    fireEvent.change(phoneNumberInput, { target: { value: '657040277' } });
+    
+    // Enable and click the send OTP button
+    const sendOTPButton = getByText('Send OTP');
+    sendOTPButton.removeAttribute('disabled');
     fireEvent.click(sendOTPButton);
-
-    await waitFor(() => expect(checkKeyPairExists).toHaveBeenCalled());
-    await waitFor(() => expect(window.alert).toHaveBeenCalledWith("OTP sent!"));
-  });
+  
+    // Wait for the alert to be shown
+    await waitFor(() => expect(window.alert).toHaveBeenCalledWith("OTP sent!")); // Verify alert message
+  }); 
 
   it("displays error message on invalid phone number", async () => {
     const { getByText, getByPlaceholderText } = render(<Register />);

@@ -51,18 +51,19 @@ const Register: React.FC = () => {
       alert("Please enter a phone number."); // Notify user if phone number is empty
       return;
     }
-
+  
     const fullPhoneNumber = selectedCountry?.value + phoneNumber;
-
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
+    
     if (!phoneNumberObj || !phoneNumberObj.isValid()) {
       alert("Please enter a valid phone number.");
       return;
     }
+  
     setIsLoading(true); // Set loading state
     try {
       console.log("Sending OTP to:", phoneNumber);
-
+  
       // Check if a key pair already exists
       const keyPairExists = await checkKeyPairExists();
       if (!keyPairExists) {
@@ -72,14 +73,11 @@ const Register: React.FC = () => {
       } else {
         console.log("Key pair already exists. Skipping generation.");
       }
-
-      // Simulate a network request with setTimeout
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
+  
+      // Call to send OTP logic (implement this)
+      await sendOTP(fullPhoneNumber); // Implement OTP sending logic here
       alert("OTP sent!"); // Notify user upon success
-
-      // Navigate to OTP page (uncomment the line below if needed)
-      // navigate("/otp");
+  
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again."); // Notify user upon error
@@ -87,6 +85,15 @@ const Register: React.FC = () => {
       setIsLoading(false); // Reset loading state
     }
   };
+  
+  // Function to handle the actual OTP sending logic (implement as needed)
+  const sendOTP = async (phoneNumber: string) => {
+    // Implement the logic to send the OTP here
+    console.log("OTP sent to:", phoneNumber);
+  };
+  
+  
+    
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">
