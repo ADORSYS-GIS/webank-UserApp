@@ -3,17 +3,15 @@ import generateKeyPair from "./generateKey";
 
 // Function to store a key pair in IndexedDB
 export async function storeKeyPair() {
-  const { publicKey, privateKey, kid } = await generateKeyPair(); 
+  const { publicKey, privateKey } = await generateKeyPair(); 
 
   // Store both keys in a single record in IndexedDB
   await storage.insert("keys", {
     value: {
-      pub: { ...publicKey }, 
+      pub: { ...publicKey },
       priv: { ...privateKey },
-      id: kid,
     },
   });
-
 }
 
 // Function to retrieve the key pair from IndexedDB
@@ -21,10 +19,9 @@ export async function retrieveKeyPair(id: number) {
   const retrievedRecord = await storage.findOne("keys", id);
 
   if (retrievedRecord) {
-    const { pub: publicKey, priv: privateKey } = retrievedRecord.value; 
+    const { pub: publicKey, priv: privateKey } = retrievedRecord.value;
 
-
-    return { publicKey, privateKey }; 
+    return { publicKey, privateKey };
   } else {
     console.error("No key pair found with key ID:", id);
   }

@@ -52,35 +52,33 @@ const handleSendOTP = async () => {
     return;
   }
 
-  const fullPhoneNumber = selectedCountry?.value + phoneNumber;
-  const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
-  if (!phoneNumberObj || !phoneNumberObj.isValid()) {
-    alert("Please enter a valid phone number.");
-    return;
-  }
+    const fullPhoneNumber = selectedCountry?.value + phoneNumber;
+    const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
 
-  setIsLoading(true); // Set loading state
+    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
+      alert("Please enter a valid phone number.");
+      return;
+    }
 
-  try {
-    console.log("Sending OTP to:", phoneNumber);
+    setIsLoading(true); // Set loading state
+    try {
 
-    await sendOtpWithKeyManagement(fullPhoneNumber);
+      await sendOtpWithKeyManagement(phoneNumber);
+      await sendOTP(fullPhoneNumber);
+      alert("OTP sent!"); 
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      alert("Failed to send OTP. Please try again."); 
+    } finally {
+      setIsLoading(false); // Reset loading state
+    }
+  };
 
-    // Simulate a network request with setTimeout
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+  // Function to handle the actual OTP sending logic (implement as needed)
+  const sendOTP = async (phoneNumber: string) => {
 
-    alert("OTP sent!"); // Notify user upon success
-
-    // Navigate to OTP page 
-    // navigate("/otp");
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    alert("Failed to send OTP. Please try again."); // Notify user upon error
-  } finally {
-    setIsLoading(false); // Reset loading state
-  }
-};
-
+    console.log("OTP sent to:", phoneNumber);
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">
