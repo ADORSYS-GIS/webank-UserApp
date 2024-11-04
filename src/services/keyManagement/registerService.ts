@@ -1,7 +1,7 @@
 import { generateJWT } from "./jwtService";
 import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
-import { sendOTP } from "./apiService";
+
 
 export async function sendOtpWithKeyManagement(
   phoneNumber: string,
@@ -23,8 +23,6 @@ export async function sendOtpWithKeyManagement(
     // Generate JWT with the full phone number
     jwtToken = await generateJWT(phoneNumber, privateKey);
 
-    // Send the JWT and phone number
-    await sendOTP(phoneNumber, jwtToken);
   } else {
     console.log("Key pair already exists. Skipping generation.");
   }
