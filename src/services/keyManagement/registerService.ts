@@ -21,6 +21,7 @@ export async function sendOtpWithKeyManagement(
 
     // Generate JWT with the full phone number
     jwtToken = await generateJWT(phoneNumber, privateKey);
+    console.log("Generated JWT:", jwtToken);
   } else {
     console.log("Key pair already exists. Skipping generation.");
   }
