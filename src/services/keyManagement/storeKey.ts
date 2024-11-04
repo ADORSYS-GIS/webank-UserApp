@@ -1,5 +1,5 @@
-import storage from "./storageSetup";
-import generateKeyPair from "./generateKey";
+import storage from "./storageSetup"; // Import the initialized storage
+import generateKeyPair from "./generateKey"; // Import your existing key generation function
 
 // Function to store a key pair in IndexedDB
 export async function storeKeyPair() {
