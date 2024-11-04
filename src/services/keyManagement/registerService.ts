@@ -3,7 +3,9 @@ import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
 import { sendOTP } from "./apiService";
 
-export async function sendOtpWithKeyManagement(phoneNumber: string): Promise<void> {
+export async function sendOtpWithKeyManagement(
+  phoneNumber: string,
+): Promise<void> {
   // Check if a key pair already exists
   const keyPairExists = await checkKeyPairExists();
   let jwtToken = ""; // Initialize JWT token

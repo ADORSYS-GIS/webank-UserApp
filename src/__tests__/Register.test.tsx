@@ -8,7 +8,6 @@ describe("Register component", () => {
     vi.clearAllMocks(); // Clear mocks before each test
     window.alert = vi.fn();
     vi.spyOn(window, "alert").mockImplementation(() => {});
-
   });
 
   it("sends OTP on button click", async () => {

@@ -45,12 +45,11 @@ const Register: React.FC = () => {
     }
   };
 
-
-const handleSendOTP = async () => {
-  if (!phoneNumber.trim()) {
-    alert("Please enter a phone number."); // Notify user if phone number is empty
-    return;
-  }
+  const handleSendOTP = async () => {
+    if (!phoneNumber.trim()) {
+      alert("Please enter a phone number."); // Notify user if phone number is empty
+      return;
+    }
 
     const fullPhoneNumber = selectedCountry?.value + phoneNumber;
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
@@ -62,13 +61,12 @@ const handleSendOTP = async () => {
 
     setIsLoading(true); // Set loading state
     try {
-
       await sendOtpWithKeyManagement(phoneNumber);
       await sendOTP(fullPhoneNumber);
-      alert("OTP sent!"); 
+      alert("OTP sent!");
     } catch (error) {
       console.error("Error sending OTP:", error);
-      alert("Failed to send OTP. Please try again."); 
+      alert("Failed to send OTP. Please try again.");
     } finally {
       setIsLoading(false); // Reset loading state
     }
@@ -76,7 +74,6 @@ const handleSendOTP = async () => {
 
   // Function to handle the actual OTP sending logic (implement as needed)
   const sendOTP = async (phoneNumber: string) => {
-
     console.log("OTP sent to:", phoneNumber);
   };
 

@@ -3,7 +3,7 @@ import generateKeyPair from "./generateKey";
 
 // Function to store a key pair in IndexedDB
 export async function storeKeyPair() {
-  const { publicKey, privateKey, kid } = await generateKeyPair(); 
+  const { publicKey, privateKey, kid } = await generateKeyPair();
 
   // Store both keys in a single record in IndexedDB
   await storage.insert("keys", {
