@@ -1,4 +1,4 @@
-import storage from "./storageSetup"; // Import the initialized storage
+import storage from "./storageSetup";
 
 // Function to check if a key pair exists in IndexedDB
 export async function checkKeyPairExists(): Promise<boolean> {

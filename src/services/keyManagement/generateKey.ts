@@ -11,7 +11,8 @@ async function generateKeyPair() {
   const privateJWK = await jose.exportJWK(privateKey);
 
   // Return both keys
-  return { publicKey: publicJWK, privateKey: privateJWK };
+  const kid = 1;
+  return { publicKey: publicJWK, privateKey: privateJWK, kid };
 }
 
 export default generateKeyPair;
