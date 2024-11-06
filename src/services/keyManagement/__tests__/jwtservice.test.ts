@@ -17,11 +17,13 @@ describe("JWT Generation", () => {
     // Convert privateKey to JWK for use with generateJWT
     const privateKeyJWK = await jose.exportJWK(privateKey);
 
+    // Convert publicKey to JWK for verification
+    const publicKeyJWK = await jose.exportJWK(publicKey);
+
     // Step 3: Call  the generateJWT function
-    const jwt = await generateJWT(data, privateKeyJWK);
+    const jwt = await generateJWT(data, privateKeyJWK, publicKeyJWK);
 
     // Step 4: Verify the JWT signature and payload
-    const publicKeyJWK = await jose.exportJWK(publicKey); // Convert publicKey to JWK for verification
     const { payload } = await jose.jwtVerify(
       jwt,
       await jose.importJWK(publicKeyJWK, "ES256"),
