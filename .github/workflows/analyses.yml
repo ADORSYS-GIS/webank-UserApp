@@ -117,6 +117,45 @@ jobs:
           path: node_modules
           key: ${{ github.sha }}
 
-      # Run unit tests
-      - name: Unit tests
-        run: npm run test:unit
+      # Run unit tests with code coverage
+      - name: Unit tests with Coverage
+        run: npm run test:unit -- --coverage
+
+      # Upload the coverage report for use in SonarQube analysis
+      - name: Upload coverage to Codecov
+        uses: actions/upload-artifact@v2
+        with:
+            name: coverage-report
+            path: coverage/lcov.info
+
+  # Step 6: Run SonarQube analysis
+  sonarqube:
+    name: SonarQube Analysis
+    needs: [build, unit_tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+
+     # Download the coverage report artifact from the unit_tests job
+      - name: Download coverage report
+        uses: actions/download-artifact@v2
+        with:
+             name: coverage-report
+     # Run SonarQube analysis with coverage report
+      - uses: sonarsource/sonarqube-scan-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+            args: "-Dsonar.javascript.lcov.reportPaths=coverage/lcov.info"
+
+      # If you wish to fail your job when the Quality Gate is red, uncomment the
+      # following lines. This would typically be used to fail a deployment.
+      # - uses: sonarsource/sonarqube-quality-gate-action@master
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
