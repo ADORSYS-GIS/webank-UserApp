@@ -142,7 +142,7 @@ jobs:
 
      # Download the coverage report artifact from the unit_tests job
       - name: Download coverage report
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
              name: coverage-report
      # Run SonarQube analysis with coverage report
@@ -153,9 +153,8 @@ jobs:
         with:
             args: "-Dsonar.javascript.lcov.reportPaths=coverage/lcov.info"
 
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+       #If you wish to fail your job when the Quality Gate is red
+      - uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
