@@ -7,6 +7,7 @@ interface MyDatabase extends DBSchema {
     value: {
       pub: JsonWebKey; // Public Key in JWK format
       priv: JsonWebKey; // Private Key in JWK format
+      kid: number;
     };
   };
 }
