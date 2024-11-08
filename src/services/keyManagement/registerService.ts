@@ -21,7 +21,7 @@ export async function sendOtpWithKeyManagement(
     }
 
     // Generate JWT with the full phone number
-    jwtToken = await generateJWT(phoneNumber, privateKey);
+    jwtToken = await generateJWT(phoneNumber, privateKey, publicKey);
 
     // Send the JWT and phone number
     await sendOTP(phoneNumber, jwtToken);
