@@ -139,22 +139,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-
-#
-#      #If you wish to fail your job when the Quality Gate is red
-#      - uses: sonarsource/sonarqube-quality-gate-action@master
-#        timeout-minutes: 5
-#        env:
-#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      # Check the SonarQube Quality Gate status
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
+      #If you wish to fail your job when the Quality Gate is red
+      - uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      # Display Quality Gate status result in the console
-      - name: Show SonarQube Quality Gate Status
-        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }}"
+           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
