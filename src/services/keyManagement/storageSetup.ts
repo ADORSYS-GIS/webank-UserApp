@@ -19,8 +19,7 @@ const storage: StorageFactory<MyDatabase> = new StorageFactory<MyDatabase>(
     upgrade: (db) => {
       if (!db.objectStoreNames.contains("keys")) {
         db.createObjectStore("keys", {
-          keyPath: "kid",
-          autoIncrement: true,
+          keyPath: "id",
         });
       }
     },
