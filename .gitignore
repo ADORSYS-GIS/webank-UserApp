@@ -13,7 +13,7 @@ dist
 dist-ssr
 dev-dist
 *.local
-
+.sonar
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
