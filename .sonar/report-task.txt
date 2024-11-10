@@ -2,5 +2,5 @@ projectKey=Webank-Userapp
 serverUrl=https://sonarqube.dev.sol.adorsys.com
 serverVersion=10.7.0.96327
 dashboardUrl=https://sonarqube.dev.sol.adorsys.com/dashboard?id=Webank-Userapp
-ceTaskId=ff89c215-5114-45ad-a14c-5807351f62aa
-ceTaskUrl=https://sonarqube.dev.sol.adorsys.com/api/ce/task?id=ff89c215-5114-45ad-a14c-5807351f62aa
+ceTaskId=76e902c0-91bf-4c10-9f46-40d7e91f857f
+ceTaskUrl=https://sonarqube.dev.sol.adorsys.com/api/ce/task?id=76e902c0-91bf-4c10-9f46-40d7e91f857f
