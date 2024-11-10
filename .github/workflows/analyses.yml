@@ -126,6 +126,14 @@ jobs:
       - name: Generate Coverage Report
         run: npm run coverage
 
+      # Upload the coverage report as an artifact
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v2
+        with:
+            name: coverage-report
+            path: coverage
+
+
   # Step 6: Run SonarQube analysis
   sonarqube:
     name: SonarQube Analysis
