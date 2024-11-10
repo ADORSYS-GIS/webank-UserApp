@@ -122,6 +122,10 @@ jobs:
       - name: Unit tests
         run: npm run test:unit
 
+      # Generate coverage report
+      - name: Generate Coverage Report
+        run: npm run coverage
+
   # Step 6: Run SonarQube analysis
   sonarqube:
     name: SonarQube Analysis
