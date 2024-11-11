@@ -158,7 +158,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
             args: |
-              -Dsonar.projectKey=${{ github.repository }}
+              -Dsonar.projectKey=Webank-Userapp
               -Dsonar.source=src
               -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
               -Dsonar.qualitygate.wait=true 
