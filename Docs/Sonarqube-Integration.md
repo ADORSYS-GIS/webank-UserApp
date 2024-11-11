@@ -9,7 +9,8 @@ This guide covers the setup, configuration, and usage of SonarQube to analyze co
 4. [Project Configuration](#4-react-project-configuration)
 5. [Running SonarQube Analysis Locally](#5-running-sonarqube-analysis-locally)
 6. [GitHub Actions CI/CD Integration](#6-github-actions-cicd-integration)
-7. [Advanced Configuration Options](#7-advanced-configuration-options)
+7. [Advanced Configuration Options](#7-troubleshooting-common-issues)
+8. [Conclusion](#8-conclusion)
 
 ## 1. Overview
 
@@ -35,9 +36,6 @@ If your organization provides a hosted SonarQube server, you can connect directl
     - Use your organization credentials to log in.
 
     * ![reference image](/Docs/sonarqube-images/log.png)
-
-
-
 
 2. Create a Project in SonarQube:
     - Go to Projects > Create Project.
@@ -223,14 +221,8 @@ jobs:
 5. **Quality Gate Check**: This step checks the quality gate status using the SonarQube Quality Gate Action.
 6. **Fail Workflow if Quality Gate Fails**: This step fails the workflow if the quality gate status is not "PASSED".
 
-## 7. Understanding SonarQube Analysis Reports
-After we push the code to the repository, this is what the workflow should like
-- ![reference image](/Docs/sonarqube-images/sonar-build.png)
 
-After all the job completed, we can see the report on the sonar
-
-
-## 8. Troubleshooting Common Issues
+## 7. Troubleshooting Common Issues
 
 1. **Invalid Project Key**: Ensure the project key in `sonar-project.properties` contains only allowed characters (-, _, ., :).
 
@@ -240,6 +232,6 @@ After all the job completed, we can see the report on the sonar
 
 4. **Report not created**:if you're using vite, make sure you update your vitest.config.ts by adding lcov in the reporter field
 
-## 9. Conclusion
+## 8. Conclusion
 
 This guide should provide you with a strong foundation to start using SonarQube in your development workflow, from initial setup to automating quality checks in CI/CD. SonarQube's powerful code analysis and customizable quality gates help maintain code integrity, reducing technical debt and preventing vulnerabilities from reaching production.
