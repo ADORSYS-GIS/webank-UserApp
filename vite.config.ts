@@ -6,13 +6,13 @@ import faroUploader from '@grafana/faro-rollup-plugin';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-
+    // Replace with the endpoint, stack id, app id and api key of ADORSYS' grafana cloud
     faroUploader({
       appName: 'webank-userapp',
-      endpoint: 'https://faro-api-prod-us-east-0.grafana.net/faro/api/v1',
-      appId: '2403',
-      stackId: '1085430',
-      apiKey: 'glc_eyJvIjoiMTI2Njk5OSIsIm4iOiJ1c2VyLWFwcC11cGxvYWQta2V5LWFwcHRva2VuIiwiayI6IjkyMzJSVjlOVzk4eG14NUpyQzIwVXFjcCIsIm0iOnsiciI6InVzIn19',
+      endpoint: 'END POINT',
+    appId: 'APP ID',
+      stackId: 'STACK ID',
+      apiKey: 'API KEY',
     }),
 
     react(), 

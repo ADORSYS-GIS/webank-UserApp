@@ -7,7 +7,8 @@ import { getWebInstrumentations, initializeFaro, ReactIntegration, ReactRouterVe
 import { TracingInstrumentation } from '@grafana/faro-web-tracing';
 
 initializeFaro({
-  url: 'https://faro-collector-prod-us-east-0.grafana.net/collect/44231aee736ba596035f91e852090587',
+  // Replace with ADORSYS' grafana cloud webank-userapp collector url
+  url: 'URL',
   app: {
     name: 'webank-userapp',
     version: '1.0.0',
