@@ -16,8 +16,6 @@
   },
   "dependencies": {
     "@adorsys-gis/storage": "^1.0.3",
-    "@grafana/faro-web-sdk": "^1.11.0",
-    "@grafana/faro-web-tracing": "^1.11.0",
     "axios": "^1.7.7",
     "axios-mock-adapter": "^2.1.0",
     "crypto-js": "^4.2.0",
@@ -34,7 +32,6 @@
   "devDependencies": {
     "@faker-js/faker": "^9.0.3",
     "@grafana/faro-react": "^1.11.0",
-    "@grafana/faro-rollup-plugin": "^0.1.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@types/crypto-js": "^4.2.2",
