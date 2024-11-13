@@ -10,7 +10,7 @@ export async function storeKeyPair() {
     value: {
       pub: { ...publicKey },
       priv: { ...privateKey },
-      kid: 1
+      kid: 1,
     },
   });
 }
