@@ -50,6 +50,7 @@
     "jsdom": "^25.0.1",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
+    "sonarqube-scanner": "^4.2.5",
     "tailwindcss": "^3.4.14",
     "tslib": "^2.8.0",
     "typescript": "^5.6.3",

@@ -6,13 +6,17 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+coverage
+!coverage/lcov.info
+!coverage/lcov-report
 
 node_modules
 dist
 dist-ssr
 dev-dist
 *.local
-
+.sonar
+*.sonar
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
