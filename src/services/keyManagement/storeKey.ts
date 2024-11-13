@@ -10,20 +10,21 @@ export async function storeKeyPair() {
     value: {
       pub: { ...publicKey },
       priv: { ...privateKey },
+      kid: 1
     },
   });
 }
 
 // Function to retrieve the key pair from IndexedDB
-export async function retrieveKeyPair(id: number) {
-  const retrievedRecord = await storage.findOne("keys", id);
+export async function retrieveKeyPair(kid: number) {
+  const retrievedRecord = await storage.findOne("keys", kid);
 
   if (retrievedRecord) {
     const { pub: publicKey, priv: privateKey } = retrievedRecord.value;
 
     return { publicKey, privateKey };
   } else {
-    console.error("No key pair found with key ID:", id);
+    console.error("No key pair found with key ID:", kid);
   }
 
   return { publicKey: null, privateKey: null };
