@@ -46,23 +46,34 @@ For a step-by-step walkthrough of this setup, visit the [Scribe Guide](https://s
 The architecture of logging and monitoring involves the interaction between Grafana Faro, Grafana Alloy, and Grafana Cloud. Grafana Faro collects logs and metrics directly from your application using embedded JavaScript functions, then pushes this data to Grafana Cloud via the Grafana Alloy agent.
 
 ### Diagram of Architecture
-                    +---------------+                     +-----------------+
-                    |  Your App     |                     | Grafana Cloud   |
-                    |  (Frontend)   | ------------------> | (Monitoring &   |
-                    |  Logs & Events|      Push Data      | Logging Platform|
-                    +---------------+                     +-----------------+
-                       |
-                       |
-                    +-------------+
-                    | Grafana Faro|
-                    | Plugin      |
-                    +-------------+
-                        |
-                        |
-                    +-------------+
-                    | Grafana Alloy|
-                    | Agent        |
-                    +-------------+
+```
+                   +-----------------+
+                   |   Your App      |
+                   |  (Frontend)     |
+                   +-----------------+
+                           |
+                           |  Logs & Events
+                           v
+                   +-----------------+
+                   |   Grafana Faro  |
+                   |    SDK Plugin   |
+                   +-----------------+
+                           |
+                           |  Collect & Send Data
+                           v
+                   +-----------------+
+                   | Grafana Alloy   |
+                   |   Agent         |
+                   +-----------------+
+                           |
+                           |  Forward Data
+                           v
+                   +-----------------+
+                   |   Grafana Cloud |
+                   | (Monitoring &   |
+                   | Logging Platform)|
+                   +-----------------+
+```
 
 
 1. **Application Logging**: The Faro plugin within your application captures logs and events (e.g., `pushLog`, `pushEvent`).
@@ -127,5 +138,4 @@ faro.api.pushError(error as Error);
 ---
 These functions allow you to control the granularity and frequency of logging, making it easy to capture significant actions and specific errors or warnings in real-time.
 
----
 ---
