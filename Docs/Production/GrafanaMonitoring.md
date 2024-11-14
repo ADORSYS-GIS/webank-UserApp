@@ -6,10 +6,9 @@ This guide will help you set up monitoring and logging for your systems using Gr
 
 2. [**ARCHITECTURE OF LOGGING AND MONITORING**](#2-architecture-of-logging-and-monitoring) 
 
-3. [**FURTHER CUSTOMIZATIONS**](#3-further-customizations)
+3. [**PACKAGES USED**](#3-packages-used)
 
-4. [**PACKAGES USED**](#4-packages-used)
-
+4. [**FURTHER CUSTOMIZATIONS**](#4-further-customizations)
 ---
 
 ## 1. SETUP
@@ -97,29 +96,36 @@ Grafana Faro’s API provides functions to log specific events or push customize
 
 ### Custom Log Example
 ```javascript
-import { faro } from '@grafana/faro-web-sdk';
-
-// Log a simple message
-faro.api.pushLog({
-  level: 'info',
-  message: 'User successfully signed in',
+faro.api.pushLog(`Search result for ${searchTerm} found ${response.data.length} games.`, {
+  level: LogLevel.INFO,
+  context: {
+    searchTerm: "searchTerm",
+    results: "Result",
+    userId: "userID"
+  }
 });
 ```
 
 ### Custom Event Example
 ```javascript
-// Log an event with additional context
 faro.api.pushEvent({
   name: 'UserSignIn',
   details: {
-    userId: '12345',
+    userId: 'userID',
     timestamp: new Date().toISOString(),
   },
 });
 ```
 
+### Custom Error Forwarding
+Usually used in try-catch blocks when the result is important and should be pushed to grafana.
+```javascript
+catch(error) {
+faro.api.pushError(error as Error);
+}
+```
+---
 These functions allow you to control the granularity and frequency of logging, making it easy to capture significant actions and specific errors or warnings in real-time.
 
 ---
-
-This guide provides a structured approach to getting started with Grafana Faro and Grafana Alloy for robust application monitoring and logging.
+---
