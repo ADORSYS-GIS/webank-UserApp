@@ -6,7 +6,8 @@ interface MyDatabase extends DBSchema {
     key: number; // Represents a unique identifier for the key record
     value: {
       pub: JsonWebKey; // Public Key in JWK format
-      priv: JsonWebKey; // Private Key in JWK format
+      priv: JsonWebKey;
+      kid: number; // Private Key in JWK format
     };
   };
 }
