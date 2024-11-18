@@ -1,0 +1,170 @@
+name: analyses
+
+# Trigger workflow on push and pull request events targeting the main branch.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Step 1: Install dependencies and cache node_modules
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the code from the repository
+      - uses: actions/checkout@v2
+      
+      # Install project dependencies using npm ci for clean install
+      - name: Install Dependencies
+        run: npm ci
+      
+      # Cache node_modules for future jobs to speed up workflow
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ github.sha }}
+
+  build:
+    needs: install 
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the code from the repository
+      - uses: actions/checkout@v2
+      
+      # Use cached node_modules to avoid reinstalling dependencies
+      - name: Cached node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ github.sha }}
+
+      # Run the build command
+      - name: Build
+        run: npm run build
+        
+
+  # Step 2: Run lint checks with ESLint
+  lint:
+    needs: install # Depends on the install job
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the code from the repository
+      - uses: actions/checkout@v2
+      
+      # Use cached node_modules to avoid reinstalling dependencies
+      - name: Cached node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ github.sha }}
+
+      # Run ESLint to check for code quality issues
+      - name: ESLint
+        run: npm run lint:check
+
+  # Step 3: Run Prettier to check code formatting
+  prettier:
+    needs: install # Depends on the install job
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the code from the repository
+      - uses: actions/checkout@v2
+      
+      # Use cached node_modules to avoid reinstalling dependencies
+      - name: Cached node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ github.sha }}
+
+      # Run Prettier to check code formatting
+      - name: Prettier
+        run: npm run prettier:check
+
+  # Step 4: Run TypeScript checks to ensure there are no type errors
+  typescript:
+    needs: install # Depends on the install job
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the code from the repository
+      - uses: actions/checkout@v2
+      
+      # Use cached node_modules to avoid reinstalling dependencies
+      - name: Cached node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ github.sha }}
+
+      # Run TypeScript checks
+      - name: TypeScript
+        run: npm run ts:check
+
+
+  # Step 5: Run unit tests
+  unit_tests:
+    needs: install # Depends on the install job
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the code from the repository
+      - uses: actions/checkout@v2
+      
+      # Use cached node_modules to avoid reinstalling dependencies
+      - name: Cached node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ github.sha }}
+
+      # Run unit tests
+      - name: Unit tests
+        run: npm run test:unit
+
+      # Generate coverage report
+      - name: Generate Coverage Report
+        run: npm run coverage
+
+      # Upload coverage report
+      - name: Upload coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage
+
+  # Step 6: Run SonarQube analysis
+  sonarqube:
+    name: SonarQube Analysis
+    needs: [build, unit_tests]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      #Download coverage report
+      - name: Download coverage Report
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage
+
+     # Run SonarQube analysis
+      - uses: sonarsource/sonarqube-scan-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+            args: |
+              -Dsonar.projectKey=Webank-Userapp
+              -Dsonar.source=src
+              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+              -Dsonar.qualitygate.wait=true 
+
+      #If you wish to fail your job when the Quality Gate is red
+      - uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
