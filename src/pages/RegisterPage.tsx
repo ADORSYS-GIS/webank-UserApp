@@ -4,6 +4,7 @@ import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import { sendOtpWithKeyManagement } from "../services/keyManagement/registerService.ts";
+import { useNavigate } from "react-router-dom";
 
 type CountryOption = {
   value: string;
@@ -12,7 +13,7 @@ type CountryOption = {
 };
 
 const Register: React.FC = () => {
-  //  const navigate = useNavigate();
+   const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
   );
@@ -64,6 +65,7 @@ const Register: React.FC = () => {
       await sendOtpWithKeyManagement(phoneNumber);
       await sendOTP(fullPhoneNumber);
       alert("OTP sent!");
+      navigate("/otp");
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
