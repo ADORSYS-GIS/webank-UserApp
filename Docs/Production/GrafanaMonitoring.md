@@ -13,7 +13,7 @@ This guide will help you set up monitoring and logging for your systems using Gr
 
 ## 1. SETUP
 
-Follow these steps to set up Grafana Alloy and Grafana Cloud for monitoring.
+Follow these steps to set up Grafana Cloud for monitoring.
 
 ### Step 1: Access Grafana
 1. Visit [Grafana's website](https://grafana.com/).
@@ -22,16 +22,6 @@ Follow these steps to set up Grafana Alloy and Grafana Cloud for monitoring.
 ### Step 2: Create a Grafana Cloud Account
 1. Upon logging in, create a Grafana Cloud account and name the Grafana stack offered in the free trial.
 2. Accept the default URL or customize it. This URL will serve as your monitoring domain.
-
-### Step 3: Configure Monitoring Platform
-1. Select the platform you want to monitor (e.g., Linux for Ubuntu).
-
-### Step 4: Run Grafana Alloy
-1. Install the Grafana Alloy agent on your machine by following Grafana’s installation instructions.
-
-### Step 5: Generate an API Token
-1. Create a new API token to authenticate data from the Alloy agent.
-2. Name your token for easy reference.
 
 ### Step 6: Install and Verify Connection
 1. Run the provided installation commands in your terminal.
@@ -43,7 +33,7 @@ For a step-by-step walkthrough of this setup, visit the [Scribe Guide](https://s
 
 ## 2. ARCHITECTURE OF LOGGING AND MONITORING
 
-The architecture of logging and monitoring involves the interaction between Grafana Faro, Grafana Alloy, and Grafana Cloud. Grafana Faro collects logs and metrics directly from your application using embedded JavaScript functions, then pushes this data to Grafana Cloud via the Grafana Alloy agent.
+The architecture of logging and monitoring involves the interaction between Grafana Faro, your application, and Grafana Cloud. Grafana Faro collects logs and metrics directly from your application using embedded JavaScript functions, then pushes this data to Grafana Cloud at your collector url.
 
 ### Diagram of Architecture
 ```
@@ -62,22 +52,14 @@ The architecture of logging and monitoring involves the interaction between Graf
                            |  Collect & Send Data
                            v
                    +-----------------+
-                   | Grafana Alloy   |
-                   |   Agent         |
-                   +-----------------+
-                           |
-                           |  Forward Data
-                           v
-                   +-----------------+
                    |   Grafana Cloud |
                    | (Monitoring &   |
                    | Logging Platform)|
                    +-----------------+
 ```
 
-
 1. **Application Logging**: The Faro plugin within your application captures logs and events (e.g., `pushLog`, `pushEvent`).
-2. **Data Transfer**: Grafana Alloy agent acts as a bridge to securely transfer logs and events from your app to Grafana Cloud.
+2. **Data Transfer**: The Faro plugin acts as a bridge to securely transfer logs and events from your app to Grafana Cloud.
 3. **Cloud Monitoring**: In Grafana Cloud, you can view and analyze the logs and events, set alerts, and generate insights.
 
 ---
