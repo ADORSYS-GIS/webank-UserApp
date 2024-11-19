@@ -3,7 +3,7 @@ name: Create and publish a Docker image
 on:
   push:
     branches:
-      - main
+      - 62-image-repository-and-container-registory-for-the-frontend
 
 env:
   REGISTRY: ghcr.io
