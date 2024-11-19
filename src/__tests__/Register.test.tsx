@@ -1,6 +1,7 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import Register from "../pages/RegisterPage";
 import "@testing-library/jest-dom";
+import { MemoryRouter } from "react-router-dom";
 import { describe, it, beforeEach, vi, expect } from "vitest";
 
 describe("Register component", () => {
@@ -10,8 +11,12 @@ describe("Register component", () => {
     vi.spyOn(window, "alert").mockImplementation(() => {});
   });
 
+  const renderWithRouter = (component: React.ReactNode) => {
+    return render(<MemoryRouter>{component}</MemoryRouter>);
+  };
+
   it("sends OTP on button click", async () => {
-    const { getByText, getByPlaceholderText } = render(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     // Simulate user entering a phone number
@@ -21,12 +26,13 @@ describe("Register component", () => {
     const sendOTPButton = getByText("Send OTP");
     sendOTPButton.removeAttribute("disabled");
     fireEvent.click(sendOTPButton);
+
     // Wait for the alert to be shown
     await waitFor(() => expect(window.alert).toHaveBeenCalledTimes(1));
   });
 
   it("displays error message on invalid phone number", async () => {
-    const { getByText, getByPlaceholderText } = render(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, {
@@ -43,7 +49,7 @@ describe("Register component", () => {
   });
 
   it("allows only digits in phone number input", () => {
-    const { getByPlaceholderText } = render(<Register />);
+    const { getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "123" } });
@@ -51,7 +57,7 @@ describe("Register component", () => {
   });
 
   it("allows empty string for clearing phone number input", () => {
-    const { getByPlaceholderText } = render(<Register />);
+    const { getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "123" } });
@@ -60,7 +66,7 @@ describe("Register component", () => {
   });
 
   it("displays country dropdown on click", () => {
-    const { getByText, getByPlaceholderText } = render(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);
@@ -68,7 +74,7 @@ describe("Register component", () => {
   });
 
   it("filters country options on search", () => {
-    const { getByText, getByPlaceholderText } = render(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);
@@ -79,7 +85,7 @@ describe("Register component", () => {
   });
 
   it("selects country on click", () => {
-    const { getByText, getByPlaceholderText } = render(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);
