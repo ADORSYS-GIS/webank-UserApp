@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine as builder
 
 WORKDIR /app
 
@@ -15,9 +15,11 @@ RUN npm run build
 
 FROM nginx:alpine
 
-ARG VITE_BACKEND_URL="wrong"
-
+ARG VITE_BACKEND_URL=dev
 ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+
+ARG VITE_FRONTEND_URL=dev
+ENV VITE_FRONTEND_URL=${VITE_FRONTEND_URL}
 
 ARG PORT=80
 ENV NGINX_PORT=${PORT}
