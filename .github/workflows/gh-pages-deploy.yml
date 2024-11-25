@@ -46,7 +46,6 @@ jobs:
         with:
           # Upload dist folder
           path: './dist'
-          deployment_id: 'WEBANK_USERAPP'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
