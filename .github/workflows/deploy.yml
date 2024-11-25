@@ -32,6 +32,5 @@ jobs:
           context: .
           build-args: |
             VITE_BACKEND_URL=https://localhost:8555
-            VITE_FRONTEND_URL=https://localhost:8555
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
