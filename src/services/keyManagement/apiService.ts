@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
-const { envVariables } = getProjectEnvVariables()
+const { envVariables } = getProjectEnvVariables();
 export const sendOTP = async (fullPhoneNumber: string, jwtToken: string) => {
   // Create the request object with both phone number and public key
   const requestBody = {
