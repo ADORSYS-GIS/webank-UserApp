@@ -1,7 +1,4 @@
-type ProjectEnvVariablesType = Pick<
-  ImportMetaEnv,
-  "VITE_BACKEND_URL"
->;
+type ProjectEnvVariablesType = Pick<ImportMetaEnv, "VITE_BACKEND_URL">;
 
 const projectEnvVariables: ProjectEnvVariablesType = {
   VITE_BACKEND_URL: "${VITE_BACKEND_URL}",
