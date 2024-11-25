@@ -3,7 +3,7 @@ name: Create and publish a Docker image
 on:
   push:
     branches:
-      - main
+      - docker-runtime
 
 env:
   REGISTRY: ghcr.io
@@ -30,5 +30,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          build-args: |
+            "VITE_BACKEND_URL="https://localhost:8555""
+            "VITE_FRONTEND_URL="https://localhost:8555""
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
