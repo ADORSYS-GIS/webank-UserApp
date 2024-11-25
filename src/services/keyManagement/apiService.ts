@@ -13,6 +13,8 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string) => {
   };
 
   try {
+    console.log(envVariables.VITE_BACKEND_URL);
+    console.log(envVariables.VITE_FRONTEND_URL);
     // Send the post request to the backend
     const response = await axios.post(
       `${envVariables.VITE_BACKEND_URL}/api/registration`,
