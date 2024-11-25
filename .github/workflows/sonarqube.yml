@@ -2,6 +2,11 @@ name: SonarQube Analyses
 
 on:
   workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
+      SONAR_HOST_URL:
+        required: true
 
 jobs:
   sonarqube:
