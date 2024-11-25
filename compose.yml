@@ -3,7 +3,7 @@ services:
     build:
       context: ./
     ports:
-      - "1245:80"
+      - "2456:80"
     environment:
+      VITE_FRONTEND_URL: http://localhost:8555'
       VITE_BACKEND_URL: 'http://localhost:8555'
-      VITE_FRONTEND_URL: 'http://localhost:8555'
