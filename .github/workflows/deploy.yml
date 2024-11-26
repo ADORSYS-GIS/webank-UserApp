@@ -33,4 +33,4 @@ jobs:
           build-args: |
             VITE_BACKEND_URL=/api
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:newest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
