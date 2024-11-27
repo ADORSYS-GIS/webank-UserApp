@@ -28,9 +28,7 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string) => {
     // Extract the account ID from the response
     accountId = response.data.split("Account ID: ")[1];
 
-
     return response.data;
-    
   } catch (error) {
     console.error("Error sending OTP:", error);
     throw new Error("Failed to send OTP");
@@ -38,4 +36,3 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string) => {
 };
 
 export const getAccountId = () => accountId;
-

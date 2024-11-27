@@ -6,7 +6,7 @@ import { getProjectEnvVariables } from "../../../shared/projectEnvVariables.ts";
 const { envVariables } = getProjectEnvVariables();
 
 describe("sendOTP", () => {
-  let mock: MockAdapter; 
+  let mock: MockAdapter;
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
@@ -20,9 +20,11 @@ describe("sendOTP", () => {
     const fullPhoneNumber = "1234567890";
     const jwtToken = "valid-token";
 
-
-    const mockResponse = "Registration successful for phone number: 1234567890. Account ID: 2LDztRXNQVQlCfxY3nXDPw%";
-    mock.onPost(`${envVariables.VITE_BACKEND_URL}/registration`).reply(200, mockResponse);
+    const mockResponse =
+      "Registration successful for phone number: 1234567890. Account ID: 2LDztRXNQVQlCfxY3nXDPw%";
+    mock
+      .onPost(`${envVariables.VITE_BACKEND_URL}/registration`)
+      .reply(200, mockResponse);
     const response = await sendOTP(fullPhoneNumber, jwtToken);
 
     expect(response).toBe(mockResponse);
