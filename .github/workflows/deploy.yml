@@ -25,7 +25,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.USERAPP_PAT }}
+          password: ${{ secrets.WEBANK_ONLINE_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
