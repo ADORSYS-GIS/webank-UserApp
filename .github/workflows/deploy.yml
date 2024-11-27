@@ -3,7 +3,7 @@ name: Create and publish a Docker image
 on:
   push:
     branches:
-      - '*'
+      - 'docker-runtime'
 
 env:
   REGISTRY: ghcr.io
@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-      
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
