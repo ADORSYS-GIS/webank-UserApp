@@ -21,9 +21,7 @@ const InstallButton: React.FC<InstallButtonProps> = ({ deferredPrompt }) => {
             console.log("User dismissed the installation prompt");
           }
         })
-        .catch((err) =>
-          console.log("Error handling installation prompt", err),
-        );
+        .catch((err) => console.log("Error handling installation prompt", err));
     }
   };
 

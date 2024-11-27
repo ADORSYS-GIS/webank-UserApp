@@ -8,7 +8,8 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const Header: React.FC = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
 
   useEffect(() => {
@@ -21,12 +22,18 @@ const Header: React.FC = () => {
       setIsInstalled(window.matchMedia("(display-mode: standalone)").matches);
     };
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
+    window.addEventListener(
+      "beforeinstallprompt",
+      handleBeforeInstallPrompt as EventListener,
+    );
     checkIfAppInstalled();
     window.addEventListener("appinstalled", () => setIsInstalled(true));
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt as EventListener,
+      );
       window.removeEventListener("appinstalled", () => setIsInstalled(true));
     };
   }, []);
