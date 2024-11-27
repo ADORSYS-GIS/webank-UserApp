@@ -1,4 +1,7 @@
 import axios from "axios";
+import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
+
+const { envVariables } = getProjectEnvVariables();
 export const sendOTP = async (fullPhoneNumber: string, jwtToken: string) => {
   // Create the request object with both phone number and public key
   const requestBody = {
@@ -10,8 +13,9 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string) => {
   };
 
   try {
+    // Send the post request to the backend
     const response = await axios.post(
-      "http://localhost:8080/api/registration",
+      `${envVariables.VITE_BACKEND_URL}/registration`,
       requestBody,
       { headers },
     );

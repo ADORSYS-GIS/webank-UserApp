@@ -1,0 +1,8 @@
+services:
+  test-frontend:
+    build:
+      context: ./
+    ports:
+      - "2456:80"
+    environment:
+      VITE_BACKEND_URL: 'http://localhost:8555'

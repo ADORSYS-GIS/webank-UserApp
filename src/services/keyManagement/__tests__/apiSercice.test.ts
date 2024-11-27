@@ -1,6 +1,9 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { sendOTP } from "../apiService";
+import { getProjectEnvVariables } from "../../../shared/projectEnvVariables.ts";
+
+const { envVariables } = getProjectEnvVariables();
 
 describe("sendOTP", () => {
   let mock: MockAdapter; // Explicitly declare the type
@@ -18,7 +21,7 @@ describe("sendOTP", () => {
     const jwtToken = "valid-token";
 
     mock
-      .onPost("http://localhost:8080/api/registration")
+      .onPost(`${envVariables.VITE_BACKEND_URL}/registration`)
       .reply(200, { message: "OTP sent" });
 
     const response = await sendOTP(fullPhoneNumber, jwtToken);
@@ -30,7 +33,7 @@ describe("sendOTP", () => {
     const fullPhoneNumber = "1234567890";
     const jwtToken = "valid-token";
 
-    mock.onPost("http://localhost:8080/api/registration").reply(500);
+    mock.onPost(`${envVariables.VITE_BACKEND_URL}/registration`).reply(500);
 
     await expect(sendOTP(fullPhoneNumber, jwtToken)).rejects.toThrow(
       "Failed to send OTP",
@@ -41,7 +44,7 @@ describe("sendOTP", () => {
     const fullPhoneNumber = "1234567890";
     const jwtToken = "invalid-token";
 
-    mock.onPost("http://localhost:8080/api/registration").reply(401);
+    mock.onPost(`${envVariables.VITE_BACKEND_URL}/registration`).reply(401);
 
     await expect(sendOTP(fullPhoneNumber, jwtToken)).rejects.toThrow(
       "Failed to send OTP",
@@ -56,7 +59,7 @@ describe("sendOTP", () => {
     const fullPhoneNumber = "1234567890";
     const jwtToken = "valid-token";
 
-    mock.onPost("http://localhost:8080/api/registration").networkError();
+    mock.onPost(`${envVariables.VITE_BACKEND_URL}/registration`).networkError();
 
     await expect(sendOTP(fullPhoneNumber, jwtToken)).rejects.toThrow(
       "Failed to send OTP",
