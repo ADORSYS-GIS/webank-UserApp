@@ -1,12 +1,12 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { sendOTP } from "../apiService";
+import { sendOTP, getAccountId } from "../apiService";
 import { getProjectEnvVariables } from "../../../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
 
 describe("sendOTP", () => {
-  let mock: MockAdapter; // Explicitly declare the type
+  let mock: MockAdapter; 
 
   beforeEach(() => {
     mock = new MockAdapter(axios);
@@ -16,17 +16,17 @@ describe("sendOTP", () => {
     mock.restore();
   });
 
-  it("should send OTP successfully with valid inputs", async () => {
+  it("should send OTP successfully and extract account ID", async () => {
     const fullPhoneNumber = "1234567890";
     const jwtToken = "valid-token";
 
-    mock
-      .onPost(`${envVariables.VITE_BACKEND_URL}/registration`)
-      .reply(200, { message: "OTP sent" });
 
+    const mockResponse = "Registration successful for phone number: 1234567890. Account ID: 2LDztRXNQVQlCfxY3nXDPw%";
+    mock.onPost(`${envVariables.VITE_BACKEND_URL}/registration`).reply(200, mockResponse);
     const response = await sendOTP(fullPhoneNumber, jwtToken);
 
-    expect(response).toEqual({ message: "OTP sent" });
+    expect(response).toBe(mockResponse);
+    expect(getAccountId()).toBe("2LDztRXNQVQlCfxY3nXDPw%"); // Account ID extracted from response
   });
 
   it("should throw an error when API responds with an error", async () => {
