@@ -4,6 +4,7 @@ import InstallButton from "./Installbutton";
 
 const Header: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [isInstalled, setIsInstalled] = useState<boolean>(false);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: Event) => {
@@ -13,8 +14,19 @@ const Header: React.FC = () => {
       setDeferredPrompt(event);
     };
 
+    const checkIfAppInstalled = () => {
+      // Check if the app is already installed (PWA)
+      setIsInstalled(window.matchMedia("(display-mode: standalone)").matches);
+    };
+
     // Listen for the beforeinstallprompt event
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    // Check if the app is installed
+    checkIfAppInstalled();
+
+    // Listen for when the app is launched in standalone mode
+    window.addEventListener("appinstalled", () => setIsInstalled(true));
 
     // Cleanup the event listener on component unmount
     return () => {
@@ -22,8 +34,13 @@ const Header: React.FC = () => {
         "beforeinstallprompt",
         handleBeforeInstallPrompt,
       );
+      window.removeEventListener("appinstalled", () => setIsInstalled(true));
     };
   }, []);
+
+  if (isInstalled) {
+    return null; // Return null to hide the header after installation
+  }
 
   return (
     <header className="bg-blue-600 text-white p-4 flex justify-between items-center">

@@ -3,6 +3,23 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+  base: './',
+  build: {
+    rollupOptions: {
+        output: {
+            format: 'es',
+            globals: {
+                react: 'React',
+                'react-dom': 'ReactDOM',
+            },
+            manualChunks(id) {
+                if (/projectEnvVariables.ts/.test(id)) {
+                    return 'projectEnvVariables'
+                }
+            },
+        },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
