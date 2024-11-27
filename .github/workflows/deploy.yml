@@ -34,6 +34,4 @@ jobs:
           build-args: |
             VITE_BACKEND_URL=/api
           push: true
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
