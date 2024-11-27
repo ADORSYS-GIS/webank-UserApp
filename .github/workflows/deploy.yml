@@ -12,7 +12,9 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout repository
@@ -23,7 +25,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.WEBANK_USERAPP_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
