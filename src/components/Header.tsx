@@ -1,45 +1,38 @@
-// src/components/Header.tsx
 import React, { useState, useEffect } from "react";
 import InstallButton from "./Installbutton";
 
+// Define a type for the BeforeInstallPromptEvent
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: string }>;
+}
+
 const Header: React.FC = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState<boolean>(false);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (event: Event) => {
-      // Prevent the mini-infobar from appearing on mobile
+    const handleBeforeInstallPrompt = (event: BeforeInstallPromptEvent) => {
       event.preventDefault();
-      // Save the event for triggering later
       setDeferredPrompt(event);
     };
 
     const checkIfAppInstalled = () => {
-      // Check if the app is already installed (PWA)
       setIsInstalled(window.matchMedia("(display-mode: standalone)").matches);
     };
 
-    // Listen for the beforeinstallprompt event
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
-    // Check if the app is installed
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
     checkIfAppInstalled();
-
-    // Listen for when the app is launched in standalone mode
     window.addEventListener("appinstalled", () => setIsInstalled(true));
 
-    // Cleanup the event listener on component unmount
     return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        handleBeforeInstallPrompt,
-      );
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt as EventListener);
       window.removeEventListener("appinstalled", () => setIsInstalled(true));
     };
   }, []);
 
   if (isInstalled) {
-    return null; // Return null to hide the header after installation
+    return null; // Hide the header after installation
   }
 
   return (

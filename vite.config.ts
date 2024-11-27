@@ -80,7 +80,7 @@ export default defineConfig({
             form_factor: 'wide',
           },
           {
-            src: '/Screenshot_dashboard.png',
+            src: '/Screenshot_register.png',
             type: 'image/png',
             sizes: '472x923',
             form_factor: 'narrow',

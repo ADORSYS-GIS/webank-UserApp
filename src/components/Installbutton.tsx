@@ -1,24 +1,27 @@
-// src/components/InstallButton.tsx
 import React from "react";
 
 interface InstallButtonProps {
-  deferredPrompt: Event | null;
+  deferredPrompt: {
+    prompt: () => Promise<void>;
+    userChoice: Promise<{ outcome: string }>;
+  } | null;
 }
 
 const InstallButton: React.FC<InstallButtonProps> = ({ deferredPrompt }) => {
   const handleInstallClick = () => {
     if (deferredPrompt) {
       // Show the install prompt
-      (deferredPrompt as any).prompt();
-      (deferredPrompt as any).userChoice
-        .then((choiceResult: any) => {
+      deferredPrompt.prompt();
+
+      deferredPrompt.userChoice
+        .then((choiceResult) => {
           if (choiceResult.outcome === "accepted") {
             console.log("User accepted the installation prompt");
           } else {
             console.log("User dismissed the installation prompt");
           }
         })
-        .catch((err: any) =>
+        .catch((err) =>
           console.log("Error handling installation prompt", err),
         );
     }
