@@ -1,29 +1,46 @@
-// src/components/Header.tsx
 import React, { useState, useEffect } from "react";
 import InstallButton from "./Installbutton";
 
+// Define a type for the BeforeInstallPromptEvent
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: string }>;
+}
+
 const Header: React.FC = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
+  const [isInstalled, setIsInstalled] = useState<boolean>(false);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (event: Event) => {
-      // Prevent the mini-infobar from appearing on mobile
+    const handleBeforeInstallPrompt = (event: BeforeInstallPromptEvent) => {
       event.preventDefault();
-      // Save the event for triggering later
       setDeferredPrompt(event);
     };
 
-    // Listen for the beforeinstallprompt event
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    const checkIfAppInstalled = () => {
+      setIsInstalled(window.matchMedia("(display-mode: standalone)").matches);
+    };
 
-    // Cleanup the event listener on component unmount
+    window.addEventListener(
+      "beforeinstallprompt",
+      handleBeforeInstallPrompt as EventListener,
+    );
+    checkIfAppInstalled();
+    window.addEventListener("appinstalled", () => setIsInstalled(true));
+
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
-        handleBeforeInstallPrompt,
+        handleBeforeInstallPrompt as EventListener,
       );
+      window.removeEventListener("appinstalled", () => setIsInstalled(true));
     };
   }, []);
+
+  if (isInstalled) {
+    return null; // Hide the header after installation
+  }
 
   return (
     <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
