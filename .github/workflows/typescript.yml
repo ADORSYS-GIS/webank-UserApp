@@ -2,7 +2,7 @@ name: typescript-analyses
 
 on:
   workflow_run:
-    workflows: [main-workflow]
+    workflows: ['main-workflow']
     types:
       - completed
 
