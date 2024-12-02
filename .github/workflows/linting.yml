@@ -1,9 +1,8 @@
-name: Lint Analyses
+name: lint analyses
 
 on:
   workflow_run:
-    workflows:
-      - Main Workflow
+    workflows: [main-workflow]
     types:
       - completed
 

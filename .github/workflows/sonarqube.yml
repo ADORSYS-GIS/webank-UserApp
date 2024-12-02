@@ -2,9 +2,7 @@ name: SonarQube Analyses
 
 on:
   workflow_run:
-    workflows:
-      - Main Workflow
-      - Unit Tests Analyses
+    workflows: [main-workflow, unit-tests-analyses]
     types:
       - completed
 

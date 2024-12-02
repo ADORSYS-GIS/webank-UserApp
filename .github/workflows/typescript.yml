@@ -1,9 +1,8 @@
-name: TypeScript Analyses
+name: typescript-analyses
 
 on:
   workflow_run:
-    workflows:
-      - Main Workflow
+    workflows: [main-workflow]
     types:
       - completed
 

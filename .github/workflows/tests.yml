@@ -1,9 +1,8 @@
-name: Unit Tests Analyses
+name: unit-tests-analyses
 
 on:
   workflow_run:
-    workflows:
-      - Main Workflow
+    workflows: [main-workflow]
     types:
       - completed
 

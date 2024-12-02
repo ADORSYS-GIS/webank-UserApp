@@ -1,9 +1,8 @@
-name: Prettier Analyses
+name: prettier analyses
 
 on:
   workflow_run:
-    workflows:
-      - Main Workflow
+    workflows: [main-workflow]
     types:
       - completed
 
