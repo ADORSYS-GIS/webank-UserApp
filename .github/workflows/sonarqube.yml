@@ -1,12 +1,12 @@
 name: SonarQube Analyses
 
 on:
-  workflow_call:
-    secrets:
-      SONAR_TOKEN:
-        required: true
-      SONAR_HOST_URL:
-        required: true
+  workflow_run:
+    workflows:
+      - Main Workflow
+      - Unit Tests Analyses
+    types:
+      - completed
 
 jobs:
   sonarqube:

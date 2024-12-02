@@ -1,7 +1,11 @@
 name: Lint Analyses
 
 on:
-  workflow_call:
+  workflow_run:
+    workflows:
+      - Main Workflow
+    types:
+      - completed
 
 jobs:
   lint:

@@ -1,7 +1,11 @@
 name: Unit Tests Analyses
 
 on:
-  workflow_call:
+  workflow_run:
+    workflows:
+      - Main Workflow
+    types:
+      - completed
 
 jobs:
   unit_tests:

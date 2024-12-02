@@ -31,28 +31,3 @@ jobs:
           key: ${{ github.sha }}
       - name: Build
         run: npm run build
-
-  lint:
-    needs: install
-    uses: ./.github/workflows/linting.yml
-
-  prettier:
-    needs: install
-    uses: ./.github/workflows/prettier.yml
-
-  typescript:
-    needs: install
-    uses: ./.github/workflows/typescript.yml
-
-  unit_tests:
-    needs: install
-    uses: ./.github/workflows/tests.yml
-
-  sonarqube:
-    needs: [build, unit_tests]
-    uses: ./.github/workflows/sonarqube.yml
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-
