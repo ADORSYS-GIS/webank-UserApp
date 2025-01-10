@@ -3,6 +3,7 @@ import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
 import { sendOTP } from "./apiService";
 
+let Key: string | null = null; // Declare `Key` at the module level for export
 export async function sendOtpWithKeyManagement(
   phoneNumber: string,
 ): Promise<void> {
@@ -22,10 +23,14 @@ export async function sendOtpWithKeyManagement(
 
     // Generate JWT with the full phone number
     jwtToken = await generateJWT(phoneNumber, privateKey, publicKey);
-
+    Key = JSON.stringify(publicKey);
     // Send the JWT and phone number
-    await sendOTP(phoneNumber, jwtToken);
+    const response = await sendOTP(phoneNumber, jwtToken, Key);
+    console.log(response);
+    return response;
   } else {
     console.log("Key pair already exists. Skipping generation.");
   }
 }
+// Export `Key`
+export const getKey = () => Key;

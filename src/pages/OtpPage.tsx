@@ -1,12 +1,48 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+import { getKey } from "../services/keyManagement/registerService.ts";
+import { PhoneNumber } from "libphonenumber-js";
 
 const Otp = () => {
   const navigate = useNavigate();
-  const handleverifyClick = () => {
-    navigate("/dashboard");
+  const location = useLocation();
+  const handleverifyClick = async () => {
+    try {
+      const otpHash = location.state?.otpHash;
+      const publicKey = getKey();
+      const fullPhoneNumber = location.state?.fullPhoneNumber;
+
+      if (!otpHash || !fullPhoneNumber) {
+        alert("Required data is missing!");
+        return;
+      }
+
+      console.log(otpHash);
+      console.log(fullPhoneNumber, publicKey, otp, otpHash);
+
+      const response = await axios.post("http://localhost:8080/api/otp/validate", {
+        phoneNumber: fullPhoneNumber,
+        publicKey: publicKey,
+        otpInput: otp,
+        otpHash: otpHash,
+      });
+
+      console.log(response);
+      if (response.data === true) {
+        alert("OTP Verified");
+        navigate("/dashboard");
+      } else {
+        alert("Invalid OTP");
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      alert("Invalid OTP");
+    }
   };
+
   // State variables to track minutes and seconds
   const [otp, setOtp] = useState("");
   const onChange = (value: string) => setOtp(value);

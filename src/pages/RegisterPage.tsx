@@ -59,24 +59,18 @@ const Register = () => {
       alert("Please enter a valid phone number.");
       return;
     }
-
     setIsLoading(true); // Set loading state
     try {
-      await sendOtpWithKeyManagement(phoneNumber);
-      await sendOTP(fullPhoneNumber);
+      const otpHash = await sendOtpWithKeyManagement(fullPhoneNumber);
+      console.log(fullPhoneNumber);
       alert("OTP sent!");
-      navigate("/otp");
+      navigate("/otp", { state: { otpHash, fullPhoneNumber } });
     } catch (error) {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
     } finally {
       setIsLoading(false); // Reset loading state
     }
-  };
-
-  // Function to handle the actual OTP sending logic (implement as needed)
-  const sendOTP = async (phoneNumber: string) => {
-    console.log("OTP sent to:", phoneNumber);
   };
 
   return (
