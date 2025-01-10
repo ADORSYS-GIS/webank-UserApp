@@ -32,7 +32,18 @@ const Otp = () => {
       console.log(response);
       if (response.data === true) {
         alert("OTP Verified");
-        navigate("/dashboard");
+        const response = await axios.post("http://localhost:8080/api/registration", { phoneNumber: fullPhoneNumber });
+        console.log(fullPhoneNumber, response.data);
+        if (response.status == 201) {
+          console.log("Registration successful");
+          alert("Registration successful");
+          const accountId = response.data.split("Account ID: ")[1];
+          navigate("/dashboard", { state: { accountId } });
+        }
+        else {
+          console.log("Registration failed", response);
+          alert("Registration failed");
+        }
       } else {
         alert("Invalid OTP");
         console.log(response);
@@ -107,9 +118,8 @@ const Otp = () => {
           <p>
             Didn't you receive the OTP?{" "}
             <a
-              className={`${
-                seconds > 0 || minutes > 0 ? "text-gray-400" : "text-blue-500"
-              } cursor-${seconds > 0 || minutes > 0 ? "not-allowed" : "pointer"}`}
+              className={`${seconds > 0 || minutes > 0 ? "text-gray-400" : "text-blue-500"
+                } cursor-${seconds > 0 || minutes > 0 ? "not-allowed" : "pointer"}`}
               onClick={(e) => {
                 if (seconds > 0 || minutes > 0) {
                   e.preventDefault();
