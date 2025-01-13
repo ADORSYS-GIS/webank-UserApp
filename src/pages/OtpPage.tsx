@@ -16,17 +16,20 @@ const Otp = () => {
         return;
       }
 
-      const response = await RequestToValidateOTP(fullPhoneNumber, otp, otpHash);
-      
+      const response = await RequestToValidateOTP(
+        fullPhoneNumber,
+        otp,
+        otpHash,
+      );
+
       if (response === true) {
-          alert("OTP Verified");
-          alert("Registration successful");
-          navigate("/dashboard");
-        }
-      else {
-          alert("Invalid OTP");
-          alert("Registration failed");
-        }
+        alert("OTP Verified");
+        alert("Registration successful");
+        navigate("/dashboard");
+      } else {
+        alert("Invalid OTP");
+        alert("Registration failed");
+      }
     } catch (error) {
       alert("Invalid OTP");
     }
@@ -96,8 +99,9 @@ const Otp = () => {
           <p>
             Didn't you receive the OTP?{" "}
             <a
-              className={`${seconds > 0 || minutes > 0 ? "text-gray-400" : "text-blue-500"
-                } cursor-${seconds > 0 || minutes > 0 ? "not-allowed" : "pointer"}`}
+              className={`${
+                seconds > 0 || minutes > 0 ? "text-gray-400" : "text-blue-500"
+              } cursor-${seconds > 0 || minutes > 0 ? "not-allowed" : "pointer"}`}
               onClick={(e) => {
                 if (seconds > 0 || minutes > 0) {
                   e.preventDefault();
