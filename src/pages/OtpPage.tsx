@@ -1,12 +1,40 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
 
 const Otp = () => {
   const navigate = useNavigate();
-  const handleverifyClick = () => {
-    navigate("/dashboard");
+  const location = useLocation();
+  const handleverifyClick = async () => {
+    try {
+      const otpHash = location.state?.otpHash;
+      const fullPhoneNumber = location.state?.fullPhoneNumber;
+
+      if (!otpHash || !fullPhoneNumber) {
+        alert("Required data is missing!");
+        return;
+      }
+
+      const response = await RequestToValidateOTP(
+        fullPhoneNumber,
+        otp,
+        otpHash,
+      );
+
+      if (response === true) {
+        alert("OTP Verified");
+        alert("Registration successful");
+        navigate("/dashboard");
+      } else {
+        alert("Invalid OTP");
+        alert("Registration failed");
+      }
+    } catch (error) {
+      alert("Invalid OTP");
+    }
   };
+
   // State variables to track minutes and seconds
   const [otp, setOtp] = useState("");
   const onChange = (value: string) => setOtp(value);
