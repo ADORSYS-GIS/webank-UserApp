@@ -18,29 +18,26 @@ const Register = () => {
     countryOptions[0],
   );
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<boolean>(false); // State to control dropdown visibility
-  const [searchTerm, setSearchTerm] = useState<string>(""); // State to handle search input
-
-  // Filter the country options based on the search term
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const filteredCountries = countryOptions.filter((country) =>
     country.label.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
-    setIsOpen(false); // Close the dropdown when a country is selected
+    setIsOpen(false);
   };
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen); // Toggle dropdown visibility
+    setIsOpen(!isOpen);
   };
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handlePhoneNumberChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = event.target.value;
-
-    // Use the imported regex constant for validation
     if (PHONE_NUMBER_REGEX.test(value)) {
       setPhoneNumber(value);
     }
@@ -48,7 +45,7 @@ const Register = () => {
 
   const handleSendOTP = async () => {
     if (!phoneNumber.trim()) {
-      alert("Please enter a phone number."); // Notify user if phone number is empty
+      alert("Please enter a phone number.");
       return;
     }
 
@@ -59,7 +56,8 @@ const Register = () => {
       alert("Please enter a valid phone number.");
       return;
     }
-    setIsLoading(true); // Set loading state
+
+    setIsLoading(true);
     try {
       const otpHash = await RequestToSendOTP(fullPhoneNumber);
       alert("OTP sent!");
@@ -68,7 +66,7 @@ const Register = () => {
       console.error("Error sending OTP:", error);
       alert("Failed to send OTP. Please try again.");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
 
@@ -100,7 +98,7 @@ const Register = () => {
             <div
               className="flex items-center justify-between cursor-pointer border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={toggleDropdown}
-              style={{ height: "48px" }} // Ensure height matches input
+              style={{ height: "48px" }}
             >
               <div className="flex items-center">
                 <img
@@ -120,7 +118,7 @@ const Register = () => {
                   placeholder="Search Country"
                   className="w-full p-2 border-b focus:outline-none"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {filteredCountries.map((option) => (
                   <div
@@ -143,7 +141,7 @@ const Register = () => {
 
           <input
             type="tel"
-            pattern="[0-9]*" // Regex pattern to allow only numbers
+            pattern="[0-9]*"
             placeholder="Phone number"
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
@@ -158,9 +156,9 @@ const Register = () => {
           type="button"
           onClick={handleSendOTP}
           className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
-          disabled={isLoading} // Disable button while loading
+          disabled={isLoading}
         >
-          {isLoading ? "Sending..." : "Send OTP"} {/* Show loading text */}
+          {isLoading ? "Sending..." : "Send OTP"}
         </button>
       </div>
     </div>

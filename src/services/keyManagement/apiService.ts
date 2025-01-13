@@ -1,13 +1,17 @@
 import axios from "axios";
-// import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
+import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
-// const { envVariables } = getProjectEnvVariables();
+const { envVariables } = getProjectEnvVariables();
 
-export const sendOTP = async (fullPhoneNumber: string, jwtToken: string, publicKey: string) => {
+export const sendOTP = async (
+  fullPhoneNumber: string,
+  jwtToken: string,
+  publicKey: string,
+) => {
   // Create the request object with both phone number and public key
   const requestBody = {
     phoneNumber: fullPhoneNumber,
-    publicKey: publicKey
+    publicKey: publicKey,
   };
   const headers = {
     "Content-Type": "application/json",
@@ -17,8 +21,8 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string, publicK
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
-      'http://localhost:8080/api/otp/send',
+      `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
+      // 'http://localhost:8080/api/otp/send',
       requestBody,
       { headers },
     );
@@ -30,7 +34,13 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string, publicK
   }
 };
 
-export const validateOTP = async (fullPhoneNumber: string, publicKey: string, otp: string, otpHash: string, jwtToken: string,) => {
+export const validateOTP = async (
+  fullPhoneNumber: string,
+  publicKey: string,
+  otp: string,
+  otpHash: string,
+  jwtToken: string,
+) => {
   // Create the request object with both phone number and public key
   const requestBody = {
     phoneNumber: fullPhoneNumber,
@@ -46,8 +56,8 @@ export const validateOTP = async (fullPhoneNumber: string, publicKey: string, ot
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // `${envVariables.VITE_BACKEND_URL}/api/otp/validate`,
-      "http://localhost:8080/api/otp/validate",
+      `${envVariables.VITE_BACKEND_URL}/api/otp/validate`,
+      // "http://localhost:8080/api/otp/validate",
       requestBody,
       { headers },
     );
