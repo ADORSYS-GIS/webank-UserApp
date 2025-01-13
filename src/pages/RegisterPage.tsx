@@ -3,7 +3,7 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
-import { sendOtpWithKeyManagement } from "../services/keyManagement/registerService.ts";
+import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
 
 type CountryOption = {
@@ -61,8 +61,7 @@ const Register = () => {
     }
     setIsLoading(true); // Set loading state
     try {
-      const otpHash = await sendOtpWithKeyManagement(fullPhoneNumber);
-      console.log(fullPhoneNumber);
+      const otpHash = await RequestToSendOTP(fullPhoneNumber);
       alert("OTP sent!");
       navigate("/otp", { state: { otpHash, fullPhoneNumber } });
     } catch (error) {

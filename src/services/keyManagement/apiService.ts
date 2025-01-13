@@ -1,8 +1,7 @@
 import axios from "axios";
-import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
+// import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
-const { envVariables } = getProjectEnvVariables();
-let accountId: string | null = null;
+// const { envVariables } = getProjectEnvVariables();
 
 export const sendOTP = async (fullPhoneNumber: string, jwtToken: string, publicKey: string) => {
   // Create the request object with both phone number and public key
@@ -18,15 +17,11 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string, publicK
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // `${envVariables.VITE_BACKEND_URL}/registration`,
+      // `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
       'http://localhost:8080/api/otp/send',
       requestBody,
       { headers },
     );
-
-    // Log the response from the backend
-    console.log("Response from backend:", publicKey);
-    console.log("Response from backend:", response.data);
 
     return response.data;
   } catch (error) {
@@ -35,4 +30,31 @@ export const sendOTP = async (fullPhoneNumber: string, jwtToken: string, publicK
   }
 };
 
-export const getAccountId = () => accountId;
+export const validateOTP = async (fullPhoneNumber: string, publicKey: string, otp: string, otpHash: string, jwtToken: string,) => {
+  // Create the request object with both phone number and public key
+  const requestBody = {
+    phoneNumber: fullPhoneNumber,
+    publicKey: publicKey,
+    otpInput: otp,
+    otpHash: otpHash,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the post request to the backend
+    const response = await axios.post(
+      // `${envVariables.VITE_BACKEND_URL}/api/otp/validate`,
+      "http://localhost:8080/api/otp/validate",
+      requestBody,
+      { headers },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error validating OTP:", error);
+    throw new Error("Incorrect OTP");
+  }
+};

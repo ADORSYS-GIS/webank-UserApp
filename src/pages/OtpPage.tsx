@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
-import { getKey } from "../services/keyManagement/registerService.ts";
-import { PhoneNumber } from "libphonenumber-js";
+import { RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
 
 const Otp = () => {
   const navigate = useNavigate();
@@ -11,7 +9,6 @@ const Otp = () => {
   const handleverifyClick = async () => {
     try {
       const otpHash = location.state?.otpHash;
-      const publicKey = getKey();
       const fullPhoneNumber = location.state?.fullPhoneNumber;
 
       if (!otpHash || !fullPhoneNumber) {
@@ -19,37 +16,18 @@ const Otp = () => {
         return;
       }
 
-      console.log(otpHash);
-      console.log(fullPhoneNumber, publicKey, otp, otpHash);
-
-      const response = await axios.post("http://localhost:8080/api/otp/validate", {
-        phoneNumber: fullPhoneNumber,
-        publicKey: publicKey,
-        otpInput: otp,
-        otpHash: otpHash,
-      });
-
-      console.log(response);
-      if (response.data === true) {
-        alert("OTP Verified");
-        const response = await axios.post("http://localhost:8080/api/registration", { phoneNumber: fullPhoneNumber });
-        console.log(fullPhoneNumber, response.data);
-        if (response.status == 201) {
-          console.log("Registration successful");
+      const response = await RequestToValidateOTP(fullPhoneNumber, otp, otpHash);
+      
+      if (response === true) {
+          alert("OTP Verified");
           alert("Registration successful");
-          const accountId = response.data.split("Account ID: ")[1];
-          navigate("/dashboard", { state: { accountId } });
+          navigate("/dashboard");
         }
-        else {
-          console.log("Registration failed", response);
+      else {
+          alert("Invalid OTP");
           alert("Registration failed");
         }
-      } else {
-        alert("Invalid OTP");
-        console.log(response);
-      }
     } catch (error) {
-      console.error("Error verifying OTP:", error);
       alert("Invalid OTP");
     }
   };
