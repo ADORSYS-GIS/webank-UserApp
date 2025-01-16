@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import { RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
+import { toast, ToastContainer } from "react-toastify";
 
 const Otp = () => {
   const navigate = useNavigate();
@@ -22,16 +23,16 @@ const Otp = () => {
         otpHash,
       );
 
-      if (response === true) {
-        alert("OTP Verified");
-        alert("Registration successful");
+      if (response.split(" ")[0] === "Registration") {
+        toast.success("Registration successful");
+        // Simulate an async action (e.g., sending OTP)
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         navigate("/dashboard");
       } else {
-        alert("Invalid OTP");
-        alert("Registration failed");
+        toast.error("Registration failed");
       }
     } catch (error) {
-      alert("Invalid OTP");
+      toast.error("Invalid OTP");
     }
   };
 
@@ -116,6 +117,8 @@ const Otp = () => {
           </p>
         </div>
       </div>
+      {/* Toast container */}
+      <ToastContainer />
     </div>
   );
 };

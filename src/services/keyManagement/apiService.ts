@@ -2,7 +2,7 @@ import axios from "axios";
 import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
-
+let accountId: string | null = null;
 export const sendOTP = async (
   fullPhoneNumber: string,
   jwtToken: string,
@@ -61,6 +61,8 @@ export const validateOTP = async (
       requestBody,
       { headers },
     );
+    accountId = response.data.split("Account ID: ")[1];
+    console.log(response);
 
     return response.data;
   } catch (error) {
@@ -68,3 +70,4 @@ export const validateOTP = async (
     throw new Error("Incorrect OTP");
   }
 };
+export const getAccountId = () => accountId;
