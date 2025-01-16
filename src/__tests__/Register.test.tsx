@@ -3,12 +3,15 @@ import Register from "../pages/RegisterPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, beforeEach, vi, expect } from "vitest";
+import { toast } from "react-toastify";
 
 describe("Register component", () => {
   beforeEach(() => {
     vi.clearAllMocks(); // Clear mocks before each test
     window.alert = vi.fn();
-    vi.spyOn(window, "alert").mockImplementation(() => {});
+    // Mock the toast.success and toast.error methods to return a mock ID (string or number)
+    vi.spyOn(toast, "success").mockImplementation(() => "mock-toast-id");
+    vi.spyOn(toast, "error").mockImplementation(() => "mock-toast-id");
   });
 
   const renderWithRouter = (component: React.ReactNode) => {
@@ -28,7 +31,7 @@ describe("Register component", () => {
     fireEvent.click(sendOTPButton);
 
     // Wait for the alert to be shown
-    await waitFor(() => expect(window.alert).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
   });
 
   it("displays error message on invalid phone number", async () => {
@@ -42,7 +45,7 @@ describe("Register component", () => {
     fireEvent.click(sendOTPButton);
 
     await waitFor(() =>
-      expect(window.alert).toHaveBeenCalledWith(
+      expect(toast.error).toHaveBeenCalledWith(
         "Please enter a valid phone number.",
       ),
     );

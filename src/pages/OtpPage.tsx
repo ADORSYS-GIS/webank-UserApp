@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
 
-
 const Otp = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,7 +25,7 @@ const Otp = () => {
 
       if (response.split(" ")[0] === "Registration") {
         toast.success("Registration successful");
-      // Simulate an async action (e.g., sending OTP)
+        // Simulate an async action (e.g., sending OTP)
         await new Promise((resolve) => setTimeout(resolve, 2000));
         navigate("/dashboard");
       } else {
