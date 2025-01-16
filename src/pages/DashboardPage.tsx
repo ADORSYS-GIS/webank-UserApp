@@ -1,8 +1,9 @@
 import Logo from "../assets/Webank.png";
 import { FaAdjust } from "react-icons/fa";
+import { getAccountId } from "../services/keyManagement/apiService";
 
 function CurrentAccount() {
-  const accountId = "123456789";
+  const accountId = getAccountId();
   return (
     <div className="container px-4 flex flex-col">
       <div className="flex flex-row justify-between items-center">

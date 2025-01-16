@@ -2,7 +2,7 @@ import axios from "axios";
 import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
-
+let accountId: string | null = null;
 export const sendOTP = async (
   fullPhoneNumber: string,
   jwtToken: string,
@@ -21,8 +21,8 @@ export const sendOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
-      // 'http://localhost:8080/api/otp/send',
+      // `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
+      'http://localhost:8080/api/otp/send',
       requestBody,
       { headers },
     );
@@ -56,12 +56,12 @@ export const validateOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/otp/validate`,
-      // "http://localhost:8080/api/otp/validate",
+      // `${envVariables.VITE_BACKEND_URL}/api/otp/validate`,
+      "http://localhost:8080/api/otp/validate",
       requestBody,
       { headers },
     );
-
+    accountId = response.data.split("Account ID: ")[1];
     console.log(response);
 
     return response.data;
@@ -70,3 +70,4 @@ export const validateOTP = async (
     throw new Error("Incorrect OTP");
   }
 };
+export const getAccountId = () => accountId;

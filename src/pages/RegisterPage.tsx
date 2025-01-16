@@ -5,6 +5,7 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 type CountryOption = {
   value: string;
@@ -45,7 +46,7 @@ const Register = () => {
 
   const handleSendOTP = async () => {
     if (!phoneNumber.trim()) {
-      alert("Please enter a phone number.");
+      toast.error("Please enter a phone number.");
       return;
     }
 
@@ -53,18 +54,21 @@ const Register = () => {
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
 
     if (!phoneNumberObj || !phoneNumberObj.isValid()) {
-      alert("Please enter a valid phone number.");
+      toast.error("Please enter a valid phone number.");
       return;
     }
 
     setIsLoading(true);
     try {
+      setIsLoading(true);
       const otpHash = await RequestToSendOTP(fullPhoneNumber);
-      alert("OTP sent!");
+      toast.success("OTP sent!");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       navigate("/otp", { state: { otpHash, fullPhoneNumber } });
     } catch (error) {
       console.error("Error sending OTP:", error);
-      alert("Failed to send OTP. Please try again.");
+      toast.error("Failed to send OTP. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -161,6 +165,8 @@ const Register = () => {
           {isLoading ? "Sending..." : "Send OTP"}
         </button>
       </div>
+      {/* Toast container */}
+      <ToastContainer />
     </div>
   );
 };
