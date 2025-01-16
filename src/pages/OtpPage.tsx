@@ -22,7 +22,7 @@ const Otp = () => {
         otpHash,
       );
 
-      if (response === true) {
+      if (response.split(" ")[0] === "Registration") {
         alert("OTP Verified");
         alert("Registration successful");
         navigate("/dashboard");

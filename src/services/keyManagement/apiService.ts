@@ -62,6 +62,8 @@ export const validateOTP = async (
       { headers },
     );
 
+    console.log(response);
+
     return response.data;
   } catch (error) {
     console.error("Error validating OTP:", error);

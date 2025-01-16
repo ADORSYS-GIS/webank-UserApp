@@ -36,7 +36,7 @@ export async function RequestToValidateOTP(
   phoneNumber: string,
   otp: string,
   otpHash: string,
-): Promise<boolean> {
+): Promise<string> {
   const { publicKey, jwtToken } = await KeyManagement(phoneNumber);
 
   Key = JSON.stringify(publicKey);
