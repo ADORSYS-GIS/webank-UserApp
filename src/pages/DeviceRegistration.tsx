@@ -23,7 +23,7 @@ const DeviceRegistration: React.FC = () => {
     } catch (error) {
       if (error instanceof Error) {
         setResponseMessage(
-          error.message || "Failed to register device. Try again."
+          error.message || "Failed to register device. Try again.",
         );
       } else {
         setResponseMessage("An unexpected error occurred.");
@@ -31,7 +31,6 @@ const DeviceRegistration: React.FC = () => {
       setIsLoading(false);
       setIsContentVisible(true);
     }
-    
   };
 
   return (
