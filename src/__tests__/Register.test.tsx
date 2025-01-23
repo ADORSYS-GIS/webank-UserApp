@@ -19,7 +19,9 @@ describe("Register component", () => {
   };
 
   it("sends OTP on button click", async () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     // Simulate user entering a phone number
@@ -35,7 +37,9 @@ describe("Register component", () => {
   });
 
   it("displays error message on invalid phone number", async () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, {
@@ -52,7 +56,9 @@ describe("Register component", () => {
   });
 
   it("allows only digits in phone number input", () => {
-    const { getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "123" } });
@@ -60,7 +66,9 @@ describe("Register component", () => {
   });
 
   it("allows empty string for clearing phone number input", () => {
-    const { getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "123" } });
@@ -69,7 +77,9 @@ describe("Register component", () => {
   });
 
   it("displays country dropdown on click", () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);
@@ -77,7 +87,9 @@ describe("Register component", () => {
   });
 
   it("filters country options on search", () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);
@@ -88,7 +100,9 @@ describe("Register component", () => {
   });
 
   it("selects country on click", () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);

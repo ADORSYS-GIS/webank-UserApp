@@ -34,6 +34,35 @@ export const sendOTP = async (
   }
 };
 
+export const initiateRegistration = async (
+  timeStamp: string,
+  jwtToken: string,
+) => {
+  // Create the request object with both phone number and public key
+  const requestBody = {
+    timeStamp,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the post request to the backend
+    const response = await axios.post(
+      // `${envVariables.VITE_BACKEND_URL}/api/dev/init`,
+      "http://localhost:8080/api/dev/init",
+      requestBody,
+      { headers },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    throw new Error("Failed to send OTP");
+  }
+};
+
 export const validateOTP = async (
   fullPhoneNumber: string,
   publicKey: string,

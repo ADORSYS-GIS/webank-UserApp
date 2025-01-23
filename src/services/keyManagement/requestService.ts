@@ -1,13 +1,12 @@
 import { generateJWT } from "./jwtService";
 import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
-import { sendOTP, validateOTP } from "./apiService";
+import { initiateRegistration, sendOTP, validateOTP } from "./apiService";
 
 let Key: string | null = null;
 
-export async function KeyManagement(phoneNumber: string) {
+export async function KeyManagement() {
   const keyPairExists = await checkKeyPairExists();
-  let jwtToken = "";
 
   if (!keyPairExists) {
     await storeKeyPair();
@@ -19,17 +18,26 @@ export async function KeyManagement(phoneNumber: string) {
     throw new Error("Failed to retrieve key pair.");
   }
 
-  jwtToken = await generateJWT(phoneNumber, privateKey, publicKey);
-
-  return { jwtToken, publicKey };
+  return { publicKey, privateKey };
 }
 
 export async function RequestToSendOTP(phoneNumber: string): Promise<string> {
-  const { jwtToken, publicKey } = await KeyManagement(phoneNumber);
+  const { publicKey, privateKey } = await KeyManagement();
 
   Key = JSON.stringify(publicKey);
 
+  const jwtToken = await generateJWT(phoneNumber, privateKey, publicKey);
+
   return await sendOTP(phoneNumber, jwtToken, Key);
+}
+
+export async function RequestToSendNonce(): Promise<string> {
+  const date = new Date();
+  const timeStamp = date.toISOString();
+  console.log(timeStamp);
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(timeStamp, privateKey, publicKey);
+  return await initiateRegistration(timeStamp, jwtToken);
 }
 
 export async function RequestToValidateOTP(
@@ -37,9 +45,11 @@ export async function RequestToValidateOTP(
   otp: string,
   otpHash: string,
 ): Promise<string> {
-  const { publicKey, jwtToken } = await KeyManagement(phoneNumber);
+  const { publicKey, privateKey } = await KeyManagement();
 
   Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(phoneNumber, privateKey, publicKey);
 
   return await validateOTP(phoneNumber, Key, otp, otpHash, jwtToken);
 }

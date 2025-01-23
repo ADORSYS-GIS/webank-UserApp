@@ -6,6 +6,7 @@ import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import useInitialization from "../hooks/useInitialization.ts";
 
 type CountryOption = {
   value: string;
@@ -13,7 +14,7 @@ type CountryOption = {
   flag: string;
 };
 
-const Register = () => {
+const Register = ({ initialShowSpinner = true }) => {
   const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
@@ -21,10 +22,15 @@ const Register = () => {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const filteredCountries = countryOptions.filter((country) =>
-    country.label.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner); // Start with spinner active
+
+  // Display spinner for a defined duration
+  setTimeout(() => {
+    setShowSpinner(false);
+  }, 2000); // Adjust the duration as needed
+
+  useInitialization();
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
@@ -53,18 +59,15 @@ const Register = () => {
     const fullPhoneNumber = selectedCountry?.value + phoneNumber;
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
 
-    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
+    if (!phoneNumberObj?.isValid()) {
       toast.error("Please enter a valid phone number.");
       return;
     }
 
     setIsLoading(true);
     try {
-      setIsLoading(true);
       const otpHash = await RequestToSendOTP(fullPhoneNumber);
       toast.success("OTP sent!");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
       navigate("/otp", { state: { otpHash, fullPhoneNumber } });
     } catch (error) {
       console.error("Error sending OTP:", error);
@@ -73,6 +76,24 @@ const Register = () => {
       setIsLoading(false);
     }
   };
+  if (showSpinner) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-700 text-center px-4">
+          Please wait while we initiate the bank account process. <br />
+          This might take some time...
+        </h1>
+        <div className="relative flex items-center justify-center">
+          <div className="animate-spin rounded-full h-40 w-40 border-t-4 border-b-4 border-purple-500"></div>
+          <img
+            src="https://www.svgrepo.com/show/509001/avatar-thinking-9.svg"
+            alt="Thinking Avatar"
+            className="absolute rounded-full h-28 w-28"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">
@@ -124,7 +145,7 @@ const Register = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                {filteredCountries.map((option) => (
+                {countryOptions.map((option) => (
                   <div
                     key={option.value}
                     className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
@@ -136,9 +157,6 @@ const Register = () => {
                     </span>
                   </div>
                 ))}
-                {filteredCountries.length === 0 && (
-                  <div className="p-2 text-gray-500">No results found</div>
-                )}
               </div>
             )}
           </div>
@@ -165,7 +183,6 @@ const Register = () => {
           {isLoading ? "Sending..." : "Send OTP"}
         </button>
       </div>
-      {/* Toast container */}
       <ToastContainer />
     </div>
   );
