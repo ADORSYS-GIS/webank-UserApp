@@ -6,15 +6,15 @@ import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import DeviceRegistration from "./pages/DeviceRegistration";
+import useInitialization from "./hooks/useInitialization";
 
 const App: React.FC = () => {
+  useInitialization()
   return (
     <HashRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<DeviceRegistration />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Register />} />
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
