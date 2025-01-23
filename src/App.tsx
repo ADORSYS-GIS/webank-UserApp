@@ -6,10 +6,10 @@ import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import useInitialization from "./hooks/useInitialization";
+// import useInitialization from "./hooks/useInitialization";
 
 const App: React.FC = () => {
-  useInitialization()
+  // useInitialization()
   return (
     <HashRouter>
       <Header />
