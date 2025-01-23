@@ -14,24 +14,23 @@ type CountryOption = {
   flag: string;
 };
 
-const Register = () => {
+const Register = ({ initialShowSpinner = true }) => {
   const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
-    countryOptions[0]
+    countryOptions[0],
   );
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showSpinner, setShowSpinner] = useState<boolean>(true); // Start with spinner active
+  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner); // Start with spinner active
 
+  // Display spinner for a defined duration
+  setTimeout(() => {
+    setShowSpinner(false);
+  }, 2000); // Adjust the duration as needed
 
-    // Display spinner for a defined duration
-    setTimeout(() => {
-      setShowSpinner(false);
-    }, 2000); // Adjust the duration as needed
-
-    useInitialization();
+  useInitialization();
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
@@ -43,7 +42,7 @@ const Register = () => {
   };
 
   const handlePhoneNumberChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = event.target.value;
     if (PHONE_NUMBER_REGEX.test(value)) {
@@ -77,7 +76,6 @@ const Register = () => {
       setIsLoading(false);
     }
   };
-
   if (showSpinner) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">
@@ -96,7 +94,6 @@ const Register = () => {
       </div>
     );
   }
-  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">
