@@ -24,7 +24,7 @@ const useInitialization = () => {
 
         // Step 3: Perform Proof of Work
         console.log("Starting Proof of Work...");
-        const powDifficulty = 6; // Adjust difficulty as required
+        const powDifficulty = 5; // Adjust difficulty as required
         console.time()
         const result = await performProofOfWork(initiationNonce, devicePub, powDifficulty);
 

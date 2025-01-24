@@ -26,17 +26,18 @@ export async function RequestToSendOTP(phoneNumber: string): Promise<string> {
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(phoneNumber, privateKey, publicKey);
+  const jwtToken = await generateJWT(privateKey, publicKey, phoneNumber);
 
   return await sendOTP(phoneNumber, jwtToken, Key);
 }
 
 export async function RequestToSendNonce(): Promise<string> {
+  const number = "hello world";
   const date = new Date();
   const timeStamp = date.toISOString();
   console.log(timeStamp);
   const { publicKey, privateKey } = await KeyManagement();
-  const jwtToken = await generateJWT(timeStamp, privateKey, publicKey);
+  const jwtToken = await generateJWT(privateKey, publicKey, timeStamp, number);
   return await initiateRegistration(timeStamp, jwtToken);
 }
 
@@ -49,7 +50,7 @@ export async function RequestToValidateOTP(
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(phoneNumber, privateKey, publicKey);
+  const jwtToken = await generateJWT(privateKey, publicKey, phoneNumber);
 
   return await validateOTP(phoneNumber, Key, otp, otpHash, jwtToken);
 }
