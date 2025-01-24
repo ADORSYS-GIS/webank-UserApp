@@ -1,7 +1,12 @@
 import { generateJWT } from "./jwtService";
 import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
-import { initiateRegistration, sendOTP, validateOTP } from "./apiService";
+import {
+  initiateRegistration,
+  sendOTP,
+  validateDeviceRegistration,
+  validateOTP,
+} from "./apiService";
 
 let Key: string | null = null;
 
@@ -32,14 +37,33 @@ export async function RequestToSendOTP(phoneNumber: string): Promise<string> {
 }
 
 export async function RequestToSendNonce(): Promise<string> {
-  const number = "hello world";
   const date = new Date();
   const timeStamp = date.toISOString();
   console.log(timeStamp);
   const { publicKey, privateKey } = await KeyManagement();
-  const jwtToken = await generateJWT(privateKey, publicKey, timeStamp, number);
+  const jwtToken = await generateJWT(privateKey, publicKey, timeStamp);
   return await initiateRegistration(timeStamp, jwtToken);
 }
+
+export const RequestToSendPowJWT = async (
+  initiationNonce: string,
+  powHash: string,
+): Promise<string> => {
+  try {
+    const { publicKey, privateKey } = await KeyManagement();
+
+    const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      initiationNonce,
+      powHash,
+    );
+    return await validateDeviceRegistration(initiationNonce, powHash, jwtToken);
+  } catch (error) {
+    console.error("Error constructing and sending PoW jwt:", error);
+    throw new Error("Failed to construct and send PoW jwt");
+  }
+};
 
 export async function RequestToValidateOTP(
   phoneNumber: string,
