@@ -28,7 +28,7 @@ const Register = ({ initialShowSpinner = true }) => {
   // Display spinner for a defined duration
   setTimeout(() => {
     setShowSpinner(false);
-  }, 2000); // Adjust the duration as needed
+  }, 2000); 
 
   useInitialization();
 
