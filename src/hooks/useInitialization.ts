@@ -14,7 +14,8 @@ const useInitialization = () => {
     const performInitialization = async () => {
       try {
         console.log("Requesting initiation nonce...");
-        // Step 1: Request initiation nonce from backend
+
+        // Request initiation nonce from backend
         const initiationNonce = await RequestToSendNonce();
 
         if (!initiationNonce) {
