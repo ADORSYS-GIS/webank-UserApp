@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { RequestToSendNonce } from "../services/keyManagement/requestService.ts";
-import { performProofOfWork } from "../services/proofOfWork"; // Import PoW function
+import { performProofOfWork } from "../services/proofOfWork";
+import { retrieveKeyPair } from "../services/keyManagement/storeKey.ts";
 
 const useInitialization = () => {
-  const [powResult, setPowResult] = useState<{ powHash: string; powNonce: number } | null>(null);
+  const [powResult, setPowResult] = useState<{
+    powHash: string;
+    powNonce: number;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -14,22 +18,24 @@ const useInitialization = () => {
         const initiationNonce = await RequestToSendNonce();
 
         if (!initiationNonce) {
-          throw new Error("Failed to receive initiation nonce from the server.");
+          throw new Error(
+            "Failed to receive initiation nonce from the server.",
+          );
         }
-
         console.log("Initiation nonce received:", initiationNonce);
-
-        // Step 2: Define your device's public key (replace with actual implementation)
-        const devicePub = "YOUR_DEVICE_PUBLIC_KEY";
-
+        const { publicKey } = await retrieveKeyPair(1);
         // Step 3: Perform Proof of Work
         console.log("Starting Proof of Work...");
-        const powDifficulty = 5; // Adjust difficulty as required
-        console.time()
-        const result = await performProofOfWork(initiationNonce, devicePub, powDifficulty);
+        const powDifficulty = 5;
+        console.time();
+        const result = await performProofOfWork(
+          initiationNonce,
+          publicKey,
+          powDifficulty,
+        );
 
         console.log("Proof of Work completed:", result);
-        console.timeEnd()
+        console.timeEnd();
         setPowResult(result);
       } catch (err) {
         console.error("Initialization failed:", err);
