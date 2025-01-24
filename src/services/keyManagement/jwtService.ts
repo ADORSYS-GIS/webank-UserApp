@@ -18,7 +18,7 @@ export async function generateJWT(
   const hashedPayload = hashPayload(concatenatedString);
   console.log(concatenatedString);
   console.log(hashedPayload);
-  
+
   // Create the JWT payload
   const jwtPayload = {
     hash: hashedPayload,
