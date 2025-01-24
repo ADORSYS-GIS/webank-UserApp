@@ -81,7 +81,7 @@ export const validateDeviceRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // ${envVariables.VITE_BACKEND_URL}/api/dev/verify`,
+      // ${envVariables.VITE_BACKEND_URL}/api/dev/validate`,
       "http://localhost:8080/api/dev/verify",
       requestBody,
       { headers },
