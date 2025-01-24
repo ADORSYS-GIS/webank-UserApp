@@ -6,13 +6,18 @@ function hashPayload(payload: string): string {
 }
 
 export async function generateJWT(
-  data: string,
   privateKeyJWK: jose.JWK,
   publicKeyJWK: jose.JWK,
+  ...data: Array<string>
 ): Promise<string> {
   // Hash the payload
-  const hashedPayload = hashPayload(data);
-
+  let concatenatedString = "";
+  data.forEach((element) => {
+    concatenatedString += element;
+  });
+  const hashedPayload = hashPayload(concatenatedString);
+  console.log(concatenatedString);
+  console.log(hashedPayload);
   // Create the JWT payload
   const jwtPayload = {
     hash: hashedPayload,

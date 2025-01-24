@@ -55,7 +55,7 @@ export const initiateRegistration = async (
       requestBody,
       { headers },
     );
-
+    console.log(jwtToken);
     return response.data;
   } catch (error) {
     console.error("Error sending OTP:", error);
