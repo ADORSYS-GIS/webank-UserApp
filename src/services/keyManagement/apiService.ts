@@ -63,6 +63,37 @@ export const initiateRegistration = async (
   }
 };
 
+export const validateDeviceRegistration = async (
+  initiationNonce: string,
+  powHash: string,
+  jwtToken: string,
+) => {
+  // Create the request object with both phone number and public key
+  const requestBody = {
+    initiationNonce,
+    powHash,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the post request to the backend
+    const response = await axios.post(
+      // ${envVariables.VITE_BACKEND_URL}/api/dev/verify`,
+      "http://localhost:8080/api/dev/verify",
+      requestBody,
+      { headers },
+    );
+    console.log(jwtToken);
+    return response.data;
+  } catch (error) {
+    console.error("failed to validate", error);
+    throw new Error("failed to validate device");
+  }
+};
+
 export const validateOTP = async (
   fullPhoneNumber: string,
   publicKey: string,

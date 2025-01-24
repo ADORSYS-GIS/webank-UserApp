@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
-import { RequestToSendNonce } from "../services/keyManagement/requestService.ts";
+import {
+  RequestToSendPowJWT,
+  RequestToSendNonce,
+} from "../services/keyManagement/requestService.ts";
 import { performProofOfWork } from "../services/proofOfWork";
 import { retrieveKeyPair } from "../services/keyManagement/storeKey.ts";
 
@@ -29,6 +32,7 @@ const useInitialization = () => {
         console.log("Starting Proof of Work...");
         const powDifficulty = 5;
         console.time();
+
         const result = await performProofOfWork(
           initiationNonce,
           publicKey,
@@ -38,6 +42,13 @@ const useInitialization = () => {
         console.log("Proof of Work completed:", result);
         console.timeEnd();
         setPowResult(result);
+
+        const status = await RequestToSendPowJWT(
+          initiationNonce,
+          result.powHash,
+        );
+
+        console.log(status);
       } catch (err) {
         console.error("Initialization failed:", err);
         setError((err as Error).message || "Unknown error occurred.");
