@@ -12,13 +12,11 @@ export async function performProofOfWork(
     devicePub: string,
     difficulty: number
 ): Promise<{ powHash: string; powNonce: number }> {
-    const target = "0".repeat(difficulty); // Define the difficulty target
+    const target = "0".repeat(difficulty);
     let powNonce = 0;
     let powHash = "";
 
     const start = Date.now();
-    console.log("Starting Proof of Work...");
-
     // Iterate until a hash matching the difficulty is found
     while (true) {
         // Combine inputs to generate a hash
@@ -31,7 +29,7 @@ export async function performProofOfWork(
             break;
         }
 
-        powNonce++; // Increment nonce for the next attempt
+        powNonce++;
 
         // Optional: Log progress every 1M attempts
         if (powNonce % 1_000_000 === 0) {
