@@ -66,12 +66,14 @@ export const initiateRegistration = async (
 export const validateDeviceRegistration = async (
   initiationNonce: string,
   powHash: string,
+  powNonce: string,
   jwtToken: string,
 ) => {
   // Create the request object with both phone number and public key
   const requestBody = {
     initiationNonce,
     powHash,
+    powNonce,
   };
   const headers = {
     "Content-Type": "application/json",
@@ -82,7 +84,7 @@ export const validateDeviceRegistration = async (
     // Send the post request to the backend
     const response = await axios.post(
       // ${envVariables.VITE_BACKEND_URL}/api/dev/validate`,
-      "http://localhost:8080/api/dev/verify",
+      "http://localhost:8080/api/dev/validate",
       requestBody,
       { headers },
     );

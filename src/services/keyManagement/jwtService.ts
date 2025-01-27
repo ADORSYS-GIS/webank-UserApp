@@ -2,7 +2,7 @@ import * as jose from "jose";
 import CryptoJS from "crypto-js";
 
 function hashPayload(payload: string): string {
-  return CryptoJS.SHA256(JSON.stringify(payload)).toString(CryptoJS.enc.Hex);
+  return CryptoJS.SHA256(payload).toString(CryptoJS.enc.Hex);
 }
 
 export async function generateJWT(
