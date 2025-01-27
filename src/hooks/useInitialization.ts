@@ -44,7 +44,7 @@ const useInitialization = () => {
         setPowResult(result);
 
         const powNonceString = result.powNonce.toString();
-        
+
         const status = await RequestToSendPowJWT(
           initiationNonce,
           result.powHash,
