@@ -123,7 +123,7 @@ export const validateOTP = async (
       requestBody,
       { headers },
     );
-    
+
     console.log(response);
 
     return response.data;
