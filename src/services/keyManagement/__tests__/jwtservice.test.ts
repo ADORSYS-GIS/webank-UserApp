@@ -6,9 +6,7 @@ describe("JWT Generation", () => {
   it("should generate a valid JWT with a hash of the payload and a valid signature", async () => {
     // Step 1: Define test data and calculate expected hash
     const data = "+237659143005";
-    const expectedHash = CryptoJS.SHA256(JSON.stringify(data)).toString(
-      CryptoJS.enc.Hex,
-    );
+    const expectedHash = CryptoJS.SHA256(data).toString(CryptoJS.enc.Hex);
 
     // Step 2: Generate an ES256 key pair
     const { privateKey, publicKey } = await jose.generateKeyPair("ES256", {

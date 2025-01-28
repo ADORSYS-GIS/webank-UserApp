@@ -1,4 +1,5 @@
 import CryptoJS from "crypto-js";
+import { canonicalize } from "json-canonicalize";
 
 /**
  * Perform Proof of Work (PoW) computation.
@@ -18,11 +19,21 @@ export async function performProofOfWork(
 
   const start = Date.now();
   // Iterate until a hash matching the difficulty is found
+  // const canonicalDevicePub = canonicalize(devicePub);
+  let canonicalInput;
+
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    // Combine inputs to generate a hash
-    const input = `${initiationNonce}:${devicePub}:${powNonce}`;
-    powHash = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
+    // Proiduce an input JSON out of initiationNonce, devicePub, and powNonce
+    const input = {
+      initiationNonce,
+      devicePub,
+      powNonce: powNonce.toString(),
+    };
+
+    // Canonicalize the input to generate a hash
+    canonicalInput = canonicalize(input);
+    powHash = CryptoJS.SHA256(canonicalInput).toString(CryptoJS.enc.Hex);
 
     // Check if hash meets the difficulty
     if (powHash.startsWith(target)) {
@@ -38,5 +49,7 @@ export async function performProofOfWork(
     }
   }
 
+  console.log(devicePub);
+  console.log(canonicalInput);
   return { powHash, powNonce };
 }

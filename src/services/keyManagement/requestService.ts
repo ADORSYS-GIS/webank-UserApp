@@ -48,6 +48,7 @@ export async function RequestToSendNonce(): Promise<string> {
 export const RequestToSendPowJWT = async (
   initiationNonce: string,
   powHash: string,
+  powNonce: string,
 ): Promise<string> => {
   try {
     const { publicKey, privateKey } = await KeyManagement();
@@ -57,8 +58,16 @@ export const RequestToSendPowJWT = async (
       publicKey,
       initiationNonce,
       powHash,
+      powNonce,
     );
-    return await validateDeviceRegistration(initiationNonce, powHash, jwtToken);
+    console.log(jwtToken);
+
+    return await validateDeviceRegistration(
+      initiationNonce,
+      powHash,
+      powNonce,
+      jwtToken,
+    );
   } catch (error) {
     console.error("Error constructing and sending PoW jwt:", error);
     throw new Error("Failed to construct and send PoW jwt");
