@@ -1,5 +1,5 @@
 import CryptoJS from "crypto-js";
-import { canonicalize } from 'json-canonicalize';
+import { canonicalize } from "json-canonicalize";
 
 /**
  * Perform Proof of Work (PoW) computation.
@@ -19,9 +19,10 @@ export async function performProofOfWork(
 
   const start = Date.now();
   // Iterate until a hash matching the difficulty is found
-  // eslint-disable-next-line no-constant-condition
   // const canonicalDevicePub = canonicalize(devicePub);
   let canonicalInput;
+
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     // Proiduce an input JSON out of initiationNonce, devicePub, and powNonce
     const input = {

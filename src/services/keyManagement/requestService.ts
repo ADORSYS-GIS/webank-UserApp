@@ -62,7 +62,12 @@ export const RequestToSendPowJWT = async (
     );
     console.log(jwtToken);
 
-    return await validateDeviceRegistration(initiationNonce, powHash, powNonce, jwtToken);
+    return await validateDeviceRegistration(
+      initiationNonce,
+      powHash,
+      powNonce,
+      jwtToken,
+    );
   } catch (error) {
     console.error("Error constructing and sending PoW jwt:", error);
     throw new Error("Failed to construct and send PoW jwt");
