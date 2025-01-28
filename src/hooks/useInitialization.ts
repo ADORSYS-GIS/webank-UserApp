@@ -7,10 +7,7 @@ import { performProofOfWork } from "../services/proofOfWork";
 import { retrieveKeyPair } from "../services/keyManagement/storeKey.ts";
 
 const useInitialization = () => {
-  const [powResult, setPowResult] = useState<{
-    powHash: string;
-    powNonce: number;
-  } | null>(null);
+  const [devCert, setDevCert] = useState<string  | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,7 +27,7 @@ const useInitialization = () => {
         const { publicKey } = await retrieveKeyPair(1);
         // Step 3: Perform Proof of Work
         console.log("Starting Proof of Work...");
-        const powDifficulty = 5;
+        const powDifficulty = 4;
         console.time();
 
         const result = await performProofOfWork(
@@ -41,17 +38,19 @@ const useInitialization = () => {
 
         console.log("Proof of Work completed:", result);
         console.timeEnd();
-        setPowResult(result);
+        // 
 
         const powNonceString = result.powNonce.toString();
-
-        const status = await RequestToSendPowJWT(
+        console.log("Pow Nonce:", powNonceString);
+        const devCert = await RequestToSendPowJWT(
           initiationNonce,
           result.powHash,
           powNonceString,
         );
 
-        console.log(status);
+        console.log(devCert);
+        setDevCert(devCert);
+        return devCert;
       } catch (err) {
         console.error("Initialization failed:", err);
         setError((err as Error).message || "Unknown error occurred.");
@@ -61,7 +60,7 @@ const useInitialization = () => {
     performInitialization();
   }, []);
 
-  return { powResult, error };
+  return { devCert, error };
 };
 
 export default useInitialization;

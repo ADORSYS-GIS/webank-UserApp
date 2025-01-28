@@ -21,8 +21,8 @@ export const sendOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
-      // 'http://localhost:8080/api/otp/send',
+      // `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
+      'http://localhost:8080/api/otp/send',
       requestBody,
       { headers },
     );
