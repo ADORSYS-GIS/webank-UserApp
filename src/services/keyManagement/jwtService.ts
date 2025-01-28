@@ -8,7 +8,7 @@ function hashPayload(payload: string): string {
 export async function generateJWT(
   privateKeyJWK: jose.JWK,
   publicKeyJWK: jose.JWK,
-  devJwt?: string | null, 
+  devJwt?: string | null,
   ...data: Array<string>
 ): Promise<string> {
   // Hash the payload

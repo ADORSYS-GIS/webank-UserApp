@@ -26,12 +26,20 @@ export async function KeyManagement() {
   return { publicKey, privateKey };
 }
 
-export async function RequestToSendOTP(phoneNumber: string, deviceCert: string | null): Promise<string> {
+export async function RequestToSendOTP(
+  phoneNumber: string,
+  deviceCert: string | null,
+): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(privateKey, publicKey, deviceCert, phoneNumber);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    deviceCert,
+    phoneNumber,
+  );
   console.log(jwtToken, "jwt token");
   console.log(deviceCert, "device cert");
 
@@ -43,7 +51,7 @@ export async function RequestToSendNonce(): Promise<string> {
   const timeStamp = date.toISOString();
   console.log(timeStamp);
   const { publicKey, privateKey } = await KeyManagement();
-  const jwtToken = await generateJWT(privateKey, publicKey,null, timeStamp);
+  const jwtToken = await generateJWT(privateKey, publicKey, null, timeStamp);
   return await initiateRegistration(timeStamp, jwtToken);
 }
 
@@ -86,7 +94,7 @@ export async function RequestToValidateOTP(
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(privateKey, publicKey,null, phoneNumber);
+  const jwtToken = await generateJWT(privateKey, publicKey, null, phoneNumber);
 
   return await validateOTP(phoneNumber, Key, otp, otpHash, jwtToken);
 }

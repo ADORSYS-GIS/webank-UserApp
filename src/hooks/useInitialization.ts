@@ -7,7 +7,7 @@ import { performProofOfWork } from "../services/proofOfWork";
 import { retrieveKeyPair } from "../services/keyManagement/storeKey.ts";
 
 const useInitialization = () => {
-  const [devCert, setDevCert] = useState<string  | null>(null);
+  const [devCert, setDevCert] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const useInitialization = () => {
 
         console.log("Proof of Work completed:", result);
         console.timeEnd();
-        // 
+        //
 
         const powNonceString = result.powNonce.toString();
         console.log("Pow Nonce:", powNonceString);
