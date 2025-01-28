@@ -50,8 +50,8 @@ export const initiateRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // `${envVariables.VITE_BACKEND_URL}/api/dev/init`,
-      "http://localhost:8080/api/dev/init",
+      `${envVariables.VITE_BACKEND_URL}/api/dev/init`,
+      // "http://localhost:8080/api/dev/init",
       requestBody,
       { headers },
     );
@@ -83,8 +83,8 @@ export const validateDeviceRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // ${envVariables.VITE_BACKEND_URL}/api/dev/validate`,
-      "http://localhost:8080/api/dev/validate",
+      `${envVariables.VITE_BACKEND_URL}/api/dev/validate`,
+      // "http://localhost:8080/api/dev/validate",
       requestBody,
       { headers },
     );

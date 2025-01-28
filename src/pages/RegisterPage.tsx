@@ -30,7 +30,7 @@ const Register = ({ initialShowSpinner = true }) => {
     setShowSpinner(false);
   }, 2000);
 
-  useInitialization();
+  const { devCert } = useInitialization();
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
@@ -66,7 +66,7 @@ const Register = ({ initialShowSpinner = true }) => {
 
     setIsLoading(true);
     try {
-      const otpHash = await RequestToSendOTP(fullPhoneNumber);
+      const otpHash = await RequestToSendOTP(fullPhoneNumber, devCert);
       toast.success("OTP sent!");
       navigate("/otp", { state: { otpHash, fullPhoneNumber } });
     } catch (error) {

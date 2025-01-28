@@ -8,6 +8,7 @@ function hashPayload(payload: string): string {
 export async function generateJWT(
   privateKeyJWK: jose.JWK,
   publicKeyJWK: jose.JWK,
+  devJwt?: string | null,
   ...data: Array<string>
 ): Promise<string> {
   // Hash the payload
@@ -28,13 +29,21 @@ export async function generateJWT(
     // Convert the private key JWK to a CryptoKey
     const privateKey = await jose.importJWK(privateKeyJWK, "ES256");
 
-    // Sign the JWT with the private key
+    // Prepare the JWT header
+    const header: jose.JWTHeaderParameters = {
+      typ: "JWT",
+      alg: "ES256",
+      jwk: publicKeyJWK,
+    };
+
+    // If devJwt is provided, add it to the header
+    if (devJwt) {
+      header["dev-jwt"] = devJwt;
+    }
+
+    // Sign the JWT with the private key and custom header
     const jwt = await new jose.SignJWT(jwtPayload)
-      .setProtectedHeader({
-        typ: "JWT",
-        alg: "ES256",
-        jwk: publicKeyJWK,
-      })
+      .setProtectedHeader(header)
       .sign(privateKey);
 
     return jwt;
