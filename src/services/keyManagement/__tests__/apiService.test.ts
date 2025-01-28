@@ -26,8 +26,8 @@ describe("sendOTP", () => {
     mock
       .onPost(`${envVariables.VITE_BACKEND_URL}/api/otp/send`)
       .reply(200, mockResponse);
-
     const response = await sendOTP(fullPhoneNumber, publicKey, jwtToken);
+
     expect(response).toBe(mockResponse);
   });
 
@@ -43,7 +43,23 @@ describe("sendOTP", () => {
     );
   });
 
-  it("should handle network error gracefully", async () => {
+  it("should throw an error when an invalid JWT token is provided", async () => {
+    const fullPhoneNumber = "1234567890";
+    const jwtToken = "invalid-token";
+    const publicKey = "valid-public-key";
+
+    mock.onPost(`${envVariables.VITE_BACKEND_URL}/api/otp/send`).reply(401);
+
+    await expect(sendOTP(fullPhoneNumber, publicKey, jwtToken)).rejects.toThrow(
+      "Failed to send OTP",
+    );
+  });
+
+  it("should handle empty phone number and JWT token", async () => {
+    await expect(sendOTP("", "", "")).rejects.toThrow("Failed to send OTP");
+  });
+
+  it("should handle network error", async () => {
     const fullPhoneNumber = "1234567890";
     const jwtToken = "valid-token";
     const publicKey = "valid-public-key";
