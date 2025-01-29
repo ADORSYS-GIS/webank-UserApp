@@ -26,8 +26,12 @@ const Otp = () => {
         devCert,
       );
 
-      if (response.split(" ")[0] === "Registration") {
+      if (response.startsWith("Certificate generated:")) {
         toast.success("Registration successful");
+
+        const token = response.split("generated: ")[1];
+
+        console.log(token);
         // Simulate an async action (e.g., sending OTP)
         await new Promise((resolve) => setTimeout(resolve, 2000));
         navigate("/dashboard");
