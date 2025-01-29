@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
-import { RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
+import { RequestToCreateBankAccount, RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
 
 const Otp = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  let phoneCert: string | null;
+  const otpHash = location.state?.otpHash;
+  const fullPhoneNumber = location.state?.fullPhoneNumber;
+  const devCert = location.state?.devCert;
   const handleverifyClick = async () => {
     try {
-      const otpHash = location.state?.otpHash;
-      const fullPhoneNumber = location.state?.fullPhoneNumber;
 
       if (!otpHash || !fullPhoneNumber) {
         alert("Required data is missing!");
@@ -26,18 +28,30 @@ const Otp = () => {
       if (response.startsWith("Certificate generated:")) {
         toast.success("Registration successful");
 
-        const token = response.split("generated: ")[1];
+        phoneCert = response.split("generated: ")[1];
 
-        console.log(token);
-        // Simulate an async action (e.g., sending OTP)
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        navigate("/dashboard");
+        console.log(phoneCert);
+
       } else {
         toast.error("Registration failed");
       }
     } catch (error) {
       toast.error("Invalid OTP");
     }
+
+    try {
+      const accountCreationResponse = await RequestToCreateBankAccount(
+        fullPhoneNumber,
+        devCert,
+        phoneCert,
+      )
+      console.log(accountCreationResponse);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error navigating to dashboard:", error);
+    }
+
   };
 
   // State variables to track minutes and seconds

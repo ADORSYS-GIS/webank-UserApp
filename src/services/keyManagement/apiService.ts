@@ -124,7 +124,7 @@ export const validateOTP = async (
       { headers },
     );
 
-    console.log(response);
+    console.log("response",response);
 
     return response.data;
   } catch (error) {
@@ -132,4 +132,37 @@ export const validateOTP = async (
     throw new Error("Incorrect OTP");
   }
 };
+
+export const createBankAccount = async (
+  fullPhoneNumber: string,
+  publicKey: string,
+  jwtToken: string,
+) => {
+  // Create the request object with both phone number and public key
+  const requestBody = {
+    phoneNumber: fullPhoneNumber,
+    publicKey: publicKey,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the post request to the backend
+    const response = await axios.post(
+      `${envVariables.VITE_BACKEND_URL}/api/registration`,
+      // "http://localhost:8080/api/registration",
+      requestBody,
+      { headers },
+    );
+
+    console.log("response",response);        
+    return response.data;
+  } catch (error) {
+    console.error("Error validating OTP:", error);
+    throw new Error("Incorrect OTP");
+  }
+};
+
 export const getAccountId = () => accountId;
