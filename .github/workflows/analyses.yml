@@ -118,6 +118,10 @@ jobs:
           path: node_modules
           key: ${{ github.sha }}
 
+      # Add env variables
+      - name: add env variables
+        run: export VITE_BACKEND_URL=https://backend.com
+      
       # Run unit tests
       - name: Unit tests
         run: npm run test:unit
