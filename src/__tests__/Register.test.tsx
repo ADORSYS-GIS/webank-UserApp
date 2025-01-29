@@ -3,12 +3,15 @@ import Register from "../pages/RegisterPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, beforeEach, vi, expect } from "vitest";
+import { toast } from "react-toastify";
 
 describe("Register component", () => {
   beforeEach(() => {
     vi.clearAllMocks(); // Clear mocks before each test
     window.alert = vi.fn();
-    vi.spyOn(window, "alert").mockImplementation(() => {});
+    // Mock the toast.success and toast.error methods to return a mock ID (string or number)
+    vi.spyOn(toast, "success").mockImplementation(() => "mock-toast-id");
+    vi.spyOn(toast, "error").mockImplementation(() => "mock-toast-id");
   });
 
   const renderWithRouter = (component: React.ReactNode) => {
@@ -16,7 +19,9 @@ describe("Register component", () => {
   };
 
   it("sends OTP on button click", async () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     // Simulate user entering a phone number
@@ -28,11 +33,13 @@ describe("Register component", () => {
     fireEvent.click(sendOTPButton);
 
     // Wait for the alert to be shown
-    await waitFor(() => expect(window.alert).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
   });
 
   it("displays error message on invalid phone number", async () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, {
@@ -42,14 +49,16 @@ describe("Register component", () => {
     fireEvent.click(sendOTPButton);
 
     await waitFor(() =>
-      expect(window.alert).toHaveBeenCalledWith(
+      expect(toast.error).toHaveBeenCalledWith(
         "Please enter a valid phone number.",
       ),
     );
   });
 
   it("allows only digits in phone number input", () => {
-    const { getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "123" } });
@@ -57,7 +66,9 @@ describe("Register component", () => {
   });
 
   it("allows empty string for clearing phone number input", () => {
-    const { getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "123" } });
@@ -66,7 +77,9 @@ describe("Register component", () => {
   });
 
   it("displays country dropdown on click", () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);
@@ -74,7 +87,9 @@ describe("Register component", () => {
   });
 
   it("filters country options on search", () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);
@@ -85,7 +100,9 @@ describe("Register component", () => {
   });
 
   it("selects country on click", () => {
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    const { getByText, getByPlaceholderText } = renderWithRouter(
+      <Register initialShowSpinner={false} />,
+    );
     const countryDropdownButton = getByText("+237");
 
     fireEvent.click(countryDropdownButton);

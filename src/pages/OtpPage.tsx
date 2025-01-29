@@ -1,12 +1,45 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
+import { toast, ToastContainer } from "react-toastify";
 
 const Otp = () => {
   const navigate = useNavigate();
-  const handleverifyClick = () => {
-    navigate("/dashboard");
+  const location = useLocation();
+  const handleverifyClick = async () => {
+    try {
+      const otpHash = location.state?.otpHash;
+      const fullPhoneNumber = location.state?.fullPhoneNumber;
+
+      if (!otpHash || !fullPhoneNumber) {
+        alert("Required data is missing!");
+        return;
+      }
+
+      const response = await RequestToValidateOTP(
+        fullPhoneNumber,
+        otp,
+        otpHash,
+      );
+
+      if (response.startsWith("Certificate generated:")) {
+        toast.success("Registration successful");
+
+        const token = response.split("generated: ")[1];
+
+        console.log(token);
+        // Simulate an async action (e.g., sending OTP)
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        navigate("/dashboard");
+      } else {
+        toast.error("Registration failed");
+      }
+    } catch (error) {
+      toast.error("Invalid OTP");
+    }
   };
+
   // State variables to track minutes and seconds
   const [otp, setOtp] = useState("");
   const onChange = (value: string) => setOtp(value);
@@ -88,6 +121,8 @@ const Otp = () => {
           </p>
         </div>
       </div>
+      {/* Toast container */}
+      <ToastContainer />
     </div>
   );
 };
