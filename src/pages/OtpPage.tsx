@@ -23,7 +23,7 @@ const Otp = () => {
         fullPhoneNumber,
         otp,
         otpHash,
-        devCert
+        devCert,
       );
 
       if (response.split(" ")[0] === "Registration") {

@@ -90,12 +90,16 @@ export async function RequestToValidateOTP(
   otp: string,
   otpHash: string,
   deviceCert: string | null,
-
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
   Key = JSON.stringify(publicKey);
-  const jwtToken = await generateJWT(privateKey, publicKey, deviceCert, phoneNumber);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    deviceCert,
+    phoneNumber,
+  );
 
   return await validateOTP(phoneNumber, Key, otp, otpHash, jwtToken);
 }
