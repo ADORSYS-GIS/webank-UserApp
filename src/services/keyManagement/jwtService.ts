@@ -38,7 +38,7 @@ export async function generateJWT(
 
     // If devJwt is provided, add it to the header
     if (devJwt) {
-      header["dev-jwt"] = devJwt;
+      header["devJwt"] = devJwt;
     }
 
     // Sign the JWT with the private key and custom header
