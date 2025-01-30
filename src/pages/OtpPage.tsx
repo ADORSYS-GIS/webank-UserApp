@@ -45,12 +45,15 @@ const Otp = () => {
         phoneCert,
       );
       console.log(accountCreationResponse);
-      if (accountCreationResponse.startsWith("Registration successful")) {
+      if (accountCreationResponse.startsWith("Bank account successfully created.")) {
         toast.success("Registration successful");
 
-        const accountId = accountCreationResponse.split("Account ID: ")[1];
+        const accountId = accountCreationResponse.split("\n")[2];
 
-        console.log(accountId);
+        const accountCert = accountCreationResponse.split("\n")[4];
+
+        console.log("AccountID received:", accountId);
+        console.log("AccountCert received:", accountCert);
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
