@@ -7,10 +7,12 @@ import { toast, ToastContainer } from "react-toastify";
 const Otp = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
   const handleverifyClick = async () => {
     try {
       const otpHash = location.state?.otpHash;
       const fullPhoneNumber = location.state?.fullPhoneNumber;
+      const devCert = location.state?.devCert;
 
       if (!otpHash || !fullPhoneNumber) {
         alert("Required data is missing!");
@@ -21,6 +23,7 @@ const Otp = () => {
         fullPhoneNumber,
         otp,
         otpHash,
+        devCert,
       );
 
       if (response.startsWith("Certificate generated:")) {
