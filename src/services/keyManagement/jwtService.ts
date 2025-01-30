@@ -43,7 +43,7 @@ export async function generateJWT(
     }
 
     if (phoneNumberJwt) {
-      header["phoneNumber-jwt"] = phoneNumberJwt;
+      header["phoneNumberJwt"] = phoneNumberJwt;
     }
 
     // Sign the JWT with the private key and custom header

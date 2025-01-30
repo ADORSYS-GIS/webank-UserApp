@@ -111,7 +111,7 @@ export async function RequestToCreateBankAccount(
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(privateKey, publicKey, deviceCert, phoneNumberCert);
+  const jwtToken = await generateJWT(privateKey, publicKey, deviceCert, phoneNumberCert, phoneNumber, Key);
 
   return await createBankAccount(phoneNumber, Key, jwtToken);
 }

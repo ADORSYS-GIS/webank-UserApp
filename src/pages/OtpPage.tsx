@@ -26,14 +26,13 @@ const Otp = () => {
       );
 
       if (response.startsWith("Certificate generated:")) {
-        toast.success("Registration successful");
 
         phoneCert = response.split("generated: ")[1];
 
         console.log(phoneCert);
 
       } else {
-        toast.error("Registration failed");
+        toast.error("Phone number Registration failed");
       }
     } catch (error) {
       toast.error("Invalid OTP");
@@ -46,8 +45,19 @@ const Otp = () => {
         phoneCert,
       )
       console.log(accountCreationResponse);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate("/dashboard");
+      if (accountCreationResponse.startsWith("Registration successful")) {
+        toast.success("Registration successful");
+
+        const accountId = accountCreationResponse.split("Account ID: ")[1];
+
+        console.log(accountId);
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        navigate("/dashboard", { state: { accountId } });
+      } else {
+        toast.error("Account registration failed");
+      }
     } catch (error) {
       console.error("Error navigating to dashboard:", error);
     }
