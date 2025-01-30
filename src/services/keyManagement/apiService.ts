@@ -21,7 +21,6 @@ export const sendOTP = async (
     // Send the post request to the backend
     const response = await axios.post(
       `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
-      // 'http://localhost:8080/api/otp/send',
       requestBody,
       { headers },
     );
@@ -50,7 +49,6 @@ export const initiateRegistration = async (
     // Send the post request to the backend
     const response = await axios.post(
       `${envVariables.VITE_BACKEND_URL}/api/dev/init`,
-      // "http://localhost:8080/api/dev/init",
       requestBody,
       { headers },
     );
@@ -83,7 +81,6 @@ export const validateDeviceRegistration = async (
     // Send the post request to the backend
     const response = await axios.post(
       `${envVariables.VITE_BACKEND_URL}/api/dev/validate`,
-      // "http://localhost:8080/api/dev/validate",
       requestBody,
       { headers },
     );
@@ -118,7 +115,6 @@ export const validateOTP = async (
     // Send the post request to the backend
     const response = await axios.post(
       `${envVariables.VITE_BACKEND_URL}/api/otp/validate`,
-      // "http://localhost:8080/api/otp/validate",
       requestBody,
       { headers },
     );
@@ -150,8 +146,7 @@ export const createBankAccount = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // `${envVariables.VITE_BACKEND_URL}/api/registration`,
-      "http://localhost:8080/api/registration",
+      `${envVariables.VITE_BACKEND_URL}/api/registration`,
       requestBody,
       { headers },
     );
