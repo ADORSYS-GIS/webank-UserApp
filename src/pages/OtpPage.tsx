@@ -45,7 +45,9 @@ const Otp = () => {
         phoneCert,
       );
       console.log(accountCreationResponse);
-      if (accountCreationResponse.startsWith("Bank account successfully created.")) {
+      if (
+        accountCreationResponse.startsWith("Bank account successfully created.")
+      ) {
         toast.success("Registration successful");
 
         const accountId = accountCreationResponse.split("\n")[2];
