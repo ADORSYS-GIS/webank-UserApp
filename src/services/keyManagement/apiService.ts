@@ -123,7 +123,7 @@ export const validateOTP = async (
       { headers },
     );
 
-    console.log("response",response);
+    console.log("response", response);
 
     return response.data;
   } catch (error) {
@@ -156,7 +156,7 @@ export const createBankAccount = async (
       { headers },
     );
 
-    console.log("response",response);        
+    console.log("response", response);
     return response.data;
   } catch (error) {
     console.error("Error validating OTP:", error);

@@ -53,7 +53,13 @@ export async function RequestToSendNonce(): Promise<string> {
   const timeStamp = date.toISOString();
   console.log(timeStamp);
   const { publicKey, privateKey } = await KeyManagement();
-  const jwtToken = await generateJWT(privateKey, publicKey, null, null, timeStamp);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    timeStamp,
+  );
   return await initiateRegistration(timeStamp, jwtToken);
 }
 
@@ -97,7 +103,13 @@ export async function RequestToValidateOTP(
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(privateKey, publicKey, null, null, phoneNumber);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    phoneNumber,
+  );
 
   return await validateOTP(phoneNumber, Key, otp, otpHash, jwtToken);
 }
@@ -111,7 +123,14 @@ export async function RequestToCreateBankAccount(
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(privateKey, publicKey, deviceCert, phoneNumberCert, phoneNumber, Key);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    deviceCert,
+    phoneNumberCert,
+    phoneNumber,
+    Key,
+  );
 
   return await createBankAccount(phoneNumber, Key, jwtToken);
 }

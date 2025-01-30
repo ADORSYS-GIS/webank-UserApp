@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
-import { RequestToCreateBankAccount, RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
+import {
+  RequestToCreateBankAccount,
+  RequestToValidateOTP,
+} from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
 
 const Otp = () => {
@@ -13,7 +16,6 @@ const Otp = () => {
   const devCert = location.state?.devCert;
   const handleverifyClick = async () => {
     try {
-
       if (!otpHash || !fullPhoneNumber) {
         alert("Required data is missing!");
         return;
@@ -26,11 +28,9 @@ const Otp = () => {
       );
 
       if (response.startsWith("Certificate generated:")) {
-
         phoneCert = response.split("generated: ")[1];
 
         console.log(phoneCert);
-
       } else {
         toast.error("Phone number Registration failed");
       }
@@ -43,7 +43,7 @@ const Otp = () => {
         fullPhoneNumber,
         devCert,
         phoneCert,
-      )
+      );
       console.log(accountCreationResponse);
       if (accountCreationResponse.startsWith("Registration successful")) {
         toast.success("Registration successful");
@@ -61,7 +61,6 @@ const Otp = () => {
     } catch (error) {
       console.error("Error navigating to dashboard:", error);
     }
-
   };
 
   // State variables to track minutes and seconds
