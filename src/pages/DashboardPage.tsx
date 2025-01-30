@@ -1,9 +1,10 @@
 import Logo from "../assets/Webank.png";
 import { FaAdjust } from "react-icons/fa";
-import { getAccountId } from "../services/keyManagement/apiService";
+import { useLocation } from "react-router-dom";
 
 function CurrentAccount() {
-  const accountId = getAccountId();
+  const location = useLocation();
+  const accountId = location.state?.accountId;
   return (
     <div className="container px-4 flex flex-col">
       <div className="flex flex-row justify-between items-center">

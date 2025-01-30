@@ -2,6 +2,7 @@ import { generateJWT } from "./jwtService";
 import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
 import {
+  createBankAccount,
   initiateRegistration,
   sendOTP,
   validateDeviceRegistration,
@@ -38,6 +39,7 @@ export async function RequestToSendOTP(
     privateKey,
     publicKey,
     deviceCert,
+    null,
     phoneNumber,
   );
   console.log(jwtToken, "jwt token");
@@ -51,7 +53,13 @@ export async function RequestToSendNonce(): Promise<string> {
   const timeStamp = date.toISOString();
   console.log(timeStamp);
   const { publicKey, privateKey } = await KeyManagement();
-  const jwtToken = await generateJWT(privateKey, publicKey, null, timeStamp);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    timeStamp,
+  );
   return await initiateRegistration(timeStamp, jwtToken);
 }
 
@@ -66,6 +74,7 @@ export const RequestToSendPowJWT = async (
     const jwtToken = await generateJWT(
       privateKey,
       publicKey,
+      null,
       null,
       initiationNonce,
       powHash,
@@ -94,6 +103,7 @@ export async function RequestToValidateOTP(
   const { publicKey, privateKey } = await KeyManagement();
 
   Key = JSON.stringify(publicKey);
+
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
@@ -102,6 +112,27 @@ export async function RequestToValidateOTP(
   );
 
   return await validateOTP(phoneNumber, Key, otp, otpHash, jwtToken);
+}
+
+export async function RequestToCreateBankAccount(
+  phoneNumber: string,
+  deviceCert?: string | null,
+  phoneNumberCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    deviceCert,
+    phoneNumberCert,
+    phoneNumber,
+    Key,
+  );
+
+  return await createBankAccount(phoneNumber, Key, jwtToken);
 }
 
 export const getKey = () => Key;
