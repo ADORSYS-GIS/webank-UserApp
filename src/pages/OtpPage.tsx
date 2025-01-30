@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
-import { RequestToCreateBankAccount, RequestToValidateOTP } from "../services/keyManagement/requestService.ts";
+import {
+  RequestToCreateBankAccount,
+  RequestToValidateOTP,
+} from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
 
 const Otp = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  let phoneCert: string | null;
   const otpHash = location.state?.otpHash;
   const fullPhoneNumber = location.state?.fullPhoneNumber;
   const devCert = location.state?.devCert;
+  let phoneCert: string;
   const handleverifyClick = async () => {
     try {
-
       if (!otpHash || !fullPhoneNumber) {
         alert("Required data is missing!");
         return;
@@ -23,17 +25,15 @@ const Otp = () => {
         fullPhoneNumber,
         otp,
         otpHash,
+        devCert,
       );
 
       if (response.startsWith("Certificate generated:")) {
-        toast.success("Registration successful");
-
         phoneCert = response.split("generated: ")[1];
 
         console.log(phoneCert);
-
       } else {
-        toast.error("Registration failed");
+        toast.error("Phone number Registration failed");
       }
     } catch (error) {
       toast.error("Invalid OTP");
@@ -44,14 +44,29 @@ const Otp = () => {
         fullPhoneNumber,
         devCert,
         phoneCert,
-      )
+      );
       console.log(accountCreationResponse);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate("/dashboard");
+      if (
+        accountCreationResponse.startsWith("Bank account successfully created.")
+      ) {
+        toast.success("Registration successful");
+
+        const accountId = accountCreationResponse.split("\n")[2];
+
+        const accountCert = accountCreationResponse.split("\n")[4];
+
+        console.log("AccountID received:", accountId);
+        console.log("AccountCert received:", accountCert);
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        navigate("/dashboard", { state: { accountId } });
+      } else {
+        toast.error("Account registration failed");
+      }
     } catch (error) {
       console.error("Error navigating to dashboard:", error);
     }
-
   };
 
   // State variables to track minutes and seconds
