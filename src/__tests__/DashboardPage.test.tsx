@@ -1,10 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import CurrentAccount from "../pages/DashboardPage";
+import { MemoryRouter } from "react-router-dom"; // Import MemoryRouter
 import "@testing-library/jest-dom";
 
 describe("YourComponent", () => {
   it("should handle text elements correctly", () => {
-    render(<CurrentAccount />);
+    render(
+      <MemoryRouter>
+        {" "}
+        {/* Wrap the component with MemoryRouter */}
+        <CurrentAccount />
+      </MemoryRouter>,
+    );
 
     // Find the text elements using their content (adjust the texts as needed)
     const textElement1 = screen.getByText("Current Account");
@@ -15,8 +22,5 @@ describe("YourComponent", () => {
     expect(textElement1).toBeInTheDocument();
     expect(textElement3).toBeInTheDocument();
     expect(textElement4).toBeInTheDocument();
-
-    // You can add more assertions or logic here to handle the text elements
-    // based on their existence or content
   });
 });
