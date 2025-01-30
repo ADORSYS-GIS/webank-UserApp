@@ -98,6 +98,7 @@ export async function RequestToValidateOTP(
   phoneNumber: string,
   otp: string,
   otpHash: string,
+  deviceCert: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -106,8 +107,7 @@ export async function RequestToValidateOTP(
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
-    null,
-    null,
+    deviceCert,
     phoneNumber,
   );
 

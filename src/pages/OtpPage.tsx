@@ -10,10 +10,10 @@ import { toast, ToastContainer } from "react-toastify";
 const Otp = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  let phoneCert: string | null;
   const otpHash = location.state?.otpHash;
   const fullPhoneNumber = location.state?.fullPhoneNumber;
   const devCert = location.state?.devCert;
+  let phoneCert: string;
   const handleverifyClick = async () => {
     try {
       if (!otpHash || !fullPhoneNumber) {
@@ -25,6 +25,7 @@ const Otp = () => {
         fullPhoneNumber,
         otp,
         otpHash,
+        devCert,
       );
 
       if (response.startsWith("Certificate generated:")) {
