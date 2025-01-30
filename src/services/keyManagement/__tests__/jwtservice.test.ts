@@ -19,7 +19,13 @@ describe("JWT Generation", () => {
     const publicKeyJWK = await jose.exportJWK(publicKey);
 
     // Step 3: Call  the generateJWT function
-    const jwt = await generateJWT(privateKeyJWK, publicKeyJWK, null, data);
+    const jwt = await generateJWT(
+      privateKeyJWK,
+      publicKeyJWK,
+      null,
+      null,
+      data,
+    );
 
     // Step 4: Verify the JWT signature and payload
     const { payload } = await jose.jwtVerify(
