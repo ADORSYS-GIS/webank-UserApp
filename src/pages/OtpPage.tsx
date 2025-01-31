@@ -40,19 +40,21 @@ const Otp = () => {
           );
           console.log(accountCreationResponse);
           if (
-            accountCreationResponse.startsWith("Bank account successfully created.")
+            accountCreationResponse.startsWith(
+              "Bank account successfully created.",
+            )
           ) {
             toast.success("Registration successful");
-    
+
             const accountId = accountCreationResponse.split("\n")[2];
-    
+
             const accountCert = accountCreationResponse.split("\n")[4];
-    
+
             console.log("AccountID received:", accountId);
             console.log("AccountCert received:", accountCert);
-    
+
             await new Promise((resolve) => setTimeout(resolve, 2000));
-    
+
             navigate("/dashboard", { state: { accountId } });
           } else {
             toast.error("Account registration failed");
@@ -66,8 +68,6 @@ const Otp = () => {
     } catch (error) {
       toast.error("Invalid OTP");
     }
-
-    
   };
 
   // State variables to track minutes and seconds
