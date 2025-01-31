@@ -94,7 +94,6 @@ export const validateDeviceRegistration = async (
 
 export const validateOTP = async (
   fullPhoneNumber: string,
-  publicKey: string,
   otp: string,
   otpHash: string,
   jwtToken: string,
@@ -102,7 +101,6 @@ export const validateOTP = async (
   // Create the request object with both phone number and public key
   const requestBody = {
     phoneNumber: fullPhoneNumber,
-    publicKey: publicKey,
     otpInput: otp,
     otpHash: otpHash,
   };
@@ -146,7 +144,8 @@ export const createBankAccount = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/registration`,
+      // `${envVariables.VITE_BACKEND_URL}/api/registration`,
+      "http://localhost:8081/api/registration",
       requestBody,
       { headers },
     );

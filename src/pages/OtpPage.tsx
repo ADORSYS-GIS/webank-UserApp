@@ -32,40 +32,41 @@ const Otp = () => {
         phoneCert = response.split("generated: ")[1];
 
         console.log(phoneCert);
+        try {
+          const accountCreationResponse = await RequestToCreateBankAccount(
+            fullPhoneNumber,
+            devCert,
+            phoneCert,
+          );
+          console.log(accountCreationResponse);
+          if (
+            accountCreationResponse.startsWith(
+              "Bank account successfully created.",
+            )
+          ) {
+            toast.success("Registration successful");
+
+            const accountId = accountCreationResponse.split("\n")[2];
+
+            const accountCert = accountCreationResponse.split("\n")[4];
+
+            console.log("AccountID received:", accountId);
+            console.log("AccountCert received:", accountCert);
+
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            navigate("/dashboard", { state: { accountId } });
+          } else {
+            toast.error("Account registration failed");
+          }
+        } catch (error) {
+          console.error("Error navigating to dashboard:", error);
+        }
       } else {
         toast.error("Phone number Registration failed");
       }
     } catch (error) {
       toast.error("Invalid OTP");
-    }
-
-    try {
-      const accountCreationResponse = await RequestToCreateBankAccount(
-        fullPhoneNumber,
-        devCert,
-        phoneCert,
-      );
-      console.log(accountCreationResponse);
-      if (
-        accountCreationResponse.startsWith("Bank account successfully created.")
-      ) {
-        toast.success("Registration successful");
-
-        const accountId = accountCreationResponse.split("\n")[2];
-
-        const accountCert = accountCreationResponse.split("\n")[4];
-
-        console.log("AccountID received:", accountId);
-        console.log("AccountCert received:", accountCert);
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        navigate("/dashboard", { state: { accountId } });
-      } else {
-        toast.error("Account registration failed");
-      }
-    } catch (error) {
-      console.error("Error navigating to dashboard:", error);
     }
   };
 
@@ -109,7 +110,7 @@ const Otp = () => {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen py-10">
       {/* Render the OTP input */}
-      <OtpInput value={otp} valueLength={4} onChange={onChange} />
+      <OtpInput value={otp} valueLength={5} onChange={onChange} />
 
       <div className="mx-auto mt-10 w-full max-w-xs lg:max-w-md">
         <button

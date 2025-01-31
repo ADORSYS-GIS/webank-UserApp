@@ -108,10 +108,13 @@ export async function RequestToValidateOTP(
     privateKey,
     publicKey,
     deviceCert,
+    null,
     phoneNumber,
+    otp,
+    otpHash,
   );
-
-  return await validateOTP(phoneNumber, Key, otp, otpHash, jwtToken);
+  console.log(otp);
+  return await validateOTP(phoneNumber, otp, otpHash, jwtToken);
 }
 
 export async function RequestToCreateBankAccount(
