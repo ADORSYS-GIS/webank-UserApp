@@ -3,7 +3,7 @@ import {
   RequestToSendPowJWT,
   RequestToSendNonce,
 } from "../services/keyManagement/requestService.ts";
-import { performProofOfWork } from "../services/proofOfWork";
+import { performProofOfWork } from "../services/computation/proofOfWork.ts";
 import { retrieveKeyPair } from "../services/keyManagement/storeKey.ts";
 
 const useInitialization = () => {

@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import CurrentAccount from "../pages/DashboardPage";
+import CurrentAccount from "../DashboardPage";
 import { MemoryRouter } from "react-router-dom"; // Import MemoryRouter
 import "@testing-library/jest-dom";
 

@@ -1,5 +1,5 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import Register from "../pages/RegisterPage";
+import Register from "../RegisterPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, beforeEach, vi, expect } from "vitest";

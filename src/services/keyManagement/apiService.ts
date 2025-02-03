@@ -2,36 +2,6 @@ import axios from "axios";
 import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
-export const sendOTP = async (
-  fullPhoneNumber: string,
-  jwtToken: string,
-  publicKey: string,
-) => {
-  // Create the request object with both phone number and public key
-  const requestBody = {
-    phoneNumber: fullPhoneNumber,
-    publicKey: publicKey,
-  };
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${jwtToken}`,
-  };
-
-  try {
-    // Send the post request to the backend
-    const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/otp/send`,
-      requestBody,
-      { headers },
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    throw new Error("Failed to send OTP");
-  }
-};
-
 export const initiateRegistration = async (
   timeStamp: string,
   jwtToken: string,
@@ -48,7 +18,7 @@ export const initiateRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/dev/init`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/dev/init`,
       requestBody,
       { headers },
     );
@@ -80,7 +50,7 @@ export const validateDeviceRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/dev/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/dev/validate`,
       requestBody,
       { headers },
     );
@@ -89,6 +59,36 @@ export const validateDeviceRegistration = async (
   } catch (error) {
     console.error("failed to validate", error);
     throw new Error("failed to validate device");
+  }
+};
+
+export const sendOTP = async (
+  fullPhoneNumber: string,
+  jwtToken: string,
+  publicKey: string,
+) => {
+  // Create the request object with both phone number and public key
+  const requestBody = {
+    phoneNumber: fullPhoneNumber,
+    publicKey: publicKey,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the post request to the backend
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/otp/send`,
+      requestBody,
+      { headers },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    throw new Error("Failed to send OTP");
   }
 };
 
@@ -112,7 +112,7 @@ export const validateOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_BACKEND_URL}/api/otp/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/otp/validate`,
       requestBody,
       { headers },
     );
@@ -144,8 +144,7 @@ export const createBankAccount = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      // `${envVariables.VITE_BACKEND_URL}/api/registration`,
-      "http://localhost:8081/api/registration",
+      `${envVariables.VITE_WEBANK_OBS_URL}/api/registration`,
       requestBody,
       { headers },
     );

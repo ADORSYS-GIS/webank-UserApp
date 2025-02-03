@@ -1,73 +1,131 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import axios from "axios";
-import MockAdapter from "axios-mock-adapter";
-import { sendOTP } from "../apiService.ts";
-import { getProjectEnvVariables } from "../../../shared/projectEnvVariables.ts";
+import {
+  initiateRegistration,
+  validateDeviceRegistration,
+  sendOTP,
+  validateOTP,
+  createBankAccount,
+} from "../apiService"; // Adjust this path
 
-const { envVariables } = getProjectEnvVariables();
+vi.mock("axios");
 
-describe("sendOTP", () => {
-  let mock: MockAdapter;
+const mockPost = vi.mocked(axios.post);
 
-  beforeEach(() => {
-    mock = new MockAdapter(axios);
+beforeEach(() => {
+  vi.clearAllMocks(); // Reset mocks before each test
+});
+
+describe("API Functions", () => {
+  const mockJwt = "mocked-jwt-token";
+
+  it("should call initiateRegistration API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { success: true } });
+
+    const result = await initiateRegistration("1234567890", mockJwt);
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/api/dev/init"),
+      { timeStamp: "1234567890" },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+        }),
+      },
+    );
+    expect(result).toEqual({ success: true });
   });
 
-  afterEach(() => {
-    mock.restore();
-  });
+  it("should handle initiateRegistration API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
 
-  it("should send OTP successfully and extract account ID", async () => {
-    const fullPhoneNumber = "1234567890";
-    const jwtToken = "valid-token";
-    const publicKey = "valid-public-key";
-
-    const mockResponse =
-      "Registration successful for phone number: 1234567890. Account ID: 2LDztRXNQVQlCfxY3nXDPw%";
-    mock
-      .onPost(`${envVariables.VITE_BACKEND_URL}/api/otp/send`)
-      .reply(200, mockResponse);
-    const response = await sendOTP(fullPhoneNumber, publicKey, jwtToken);
-
-    expect(response).toBe(mockResponse);
-  });
-
-  it("should throw an error when API responds with an error", async () => {
-    const fullPhoneNumber = "1234567890";
-    const jwtToken = "valid-token";
-    const publicKey = "valid-public-key";
-
-    mock.onPost(`${envVariables.VITE_BACKEND_URL}/api/otp/send`).reply(500);
-
-    await expect(sendOTP(fullPhoneNumber, publicKey, jwtToken)).rejects.toThrow(
+    await expect(initiateRegistration("1234567890", mockJwt)).rejects.toThrow(
       "Failed to send OTP",
     );
   });
 
-  it("should throw an error when an invalid JWT token is provided", async () => {
-    const fullPhoneNumber = "1234567890";
-    const jwtToken = "invalid-token";
-    const publicKey = "valid-public-key";
+  it("should call validateDeviceRegistration API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { status: "validated" } });
 
-    mock.onPost(`${envVariables.VITE_BACKEND_URL}/api/otp/send`).reply(401);
-
-    await expect(sendOTP(fullPhoneNumber, publicKey, jwtToken)).rejects.toThrow(
-      "Failed to send OTP",
+    const result = await validateDeviceRegistration(
+      "nonce123",
+      "hash123",
+      "1",
+      mockJwt,
     );
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/api/dev/validate"),
+      { initiationNonce: "nonce123", powHash: "hash123", powNonce: "1" },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+        }),
+      },
+    );
+    expect(result).toEqual({ status: "validated" });
   });
 
-  it("should handle empty phone number and JWT token", async () => {
-    await expect(sendOTP("", "", "")).rejects.toThrow("Failed to send OTP");
+  it("should call sendOTP API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { otpSent: true } });
+
+    const result = await sendOTP("+1234567890", mockJwt, "publicKeyXYZ");
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/api/otp/send"),
+      { phoneNumber: "+1234567890", publicKey: "publicKeyXYZ" },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+        }),
+      },
+    );
+    expect(result).toEqual({ otpSent: true });
   });
 
-  it("should handle network error", async () => {
-    const fullPhoneNumber = "1234567890";
-    const jwtToken = "valid-token";
-    const publicKey = "valid-public-key";
+  it("should call validateOTP API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { verified: true } });
 
-    mock.onPost(`${envVariables.VITE_BACKEND_URL}/api/otp/send`).networkError();
-
-    await expect(sendOTP(fullPhoneNumber, publicKey, jwtToken)).rejects.toThrow(
-      "Failed to send OTP",
+    const result = await validateOTP(
+      "+1234567890",
+      "123456",
+      "otpHashXYZ",
+      mockJwt,
     );
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/api/otp/validate"),
+      { phoneNumber: "+1234567890", otpInput: "123456", otpHash: "otpHashXYZ" },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+        }),
+      },
+    );
+    expect(result).toEqual({ verified: true });
+  });
+
+  it("should call createBankAccount API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { accountCreated: true } });
+
+    const result = await createBankAccount(
+      "+1234567890",
+      "publicKeyXYZ",
+      mockJwt,
+    );
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/api/registration"),
+      { phoneNumber: "+1234567890", publicKey: "publicKeyXYZ" },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+        }),
+      },
+    );
+    expect(result).toEqual({ accountCreated: true });
+  });
+
+  it("should handle createBankAccount API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(
+      createBankAccount("+1234567890", "publicKeyXYZ", mockJwt),
+    ).rejects.toThrow("Incorrect OTP");
   });
 });
