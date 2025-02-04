@@ -2,7 +2,7 @@ import { generateJWT } from "./jwtService";
 import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
 import {
-  createBankAccount,
+  createBankAccount, getAccountBalance,
   initiateRegistration,
   sendOTP,
   validateDeviceRegistration,
@@ -138,4 +138,19 @@ export async function RequestToCreateBankAccount(
   return await createBankAccount(phoneNumber, Key, jwtToken);
 }
 
+export async function RequestToGetBalance(
+    accountId: string,
+    accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      accountCert,
+  );
+  return await getAccountBalance(accountId, jwtToken);
+}
 export const getKey = () => Key;

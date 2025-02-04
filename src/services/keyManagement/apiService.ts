@@ -156,3 +156,31 @@ export const createBankAccount = async (
     throw new Error("Incorrect OTP");
   }
 };
+
+export const getAccountBalance = async (
+    accountId: string,
+    jwtToken: string,
+) => {
+  const requestBody = {
+    accountId: accountId,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the GET request to retrieve account balance
+    const response = await axios.get(
+        `${envVariables.VITE_WEBANK_OBS_URL}/obs/balance`,
+        {
+          headers,
+          params: requestBody,
+        },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving account balance:", error);
+    throw new Error("Failed to retrieve account balance");
+  }
+};
