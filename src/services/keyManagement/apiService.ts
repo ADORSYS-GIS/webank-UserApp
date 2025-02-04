@@ -158,8 +158,8 @@ export const createBankAccount = async (
 };
 
 export const getAccountBalance = async (
-    accountId: string,
-    jwtToken: string,
+  accountId: string,
+  jwtToken: string,
 ) => {
   const requestBody = {
     accountId: accountId,
@@ -172,11 +172,11 @@ export const getAccountBalance = async (
   try {
     // Send the GET request to retrieve account balance
     const response = await axios.get(
-        `${envVariables.VITE_WEBANK_OBS_URL}/obs/balance`,
-        {
-          headers,
-          params: requestBody,
-        },
+      `${envVariables.VITE_WEBANK_OBS_URL}/obs/balance`,
+      {
+        headers,
+        params: requestBody,
+      },
     );
     return response.data;
   } catch (error) {
