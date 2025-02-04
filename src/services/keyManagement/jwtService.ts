@@ -10,6 +10,7 @@ export async function generateJWT(
   publicKeyJWK: jose.JWK,
   devJwt?: string | null,
   phoneNumberJwt?: string | null,
+  accountJwt?: string | null,
   ...data: Array<string>
 ): Promise<string> {
   // Hash the payload
@@ -44,6 +45,10 @@ export async function generateJWT(
 
     if (phoneNumberJwt) {
       header["phoneNumberJwt"] = phoneNumberJwt;
+    }
+
+    if (accountJwt) {
+      header["accountJwt"] = accountJwt;
     }
 
     // Sign the JWT with the private key and custom header
