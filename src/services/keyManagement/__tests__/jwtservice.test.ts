@@ -24,7 +24,7 @@ describe("JWT Generation", () => {
       publicKeyJWK,
       null,
       null,
-        null,
+      null,
       data,
     );
 
