@@ -172,12 +172,13 @@ export const getAccountBalance = async (
   try {
     // Send the GET request to retrieve account balance
     const response = await axios.get(
-      `${envVariables.VITE_WEBANK_OBS_URL}/obs/balance`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/api/accounts/balance`,
       {
         headers,
         params: requestBody,
       },
     );
+
     return response.data;
   } catch (error) {
     console.error("Error retrieving account balance:", error);

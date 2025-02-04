@@ -59,6 +59,7 @@ export async function RequestToSendNonce(): Promise<string> {
     publicKey,
     null,
     null,
+    null,
     timeStamp,
   );
   return await initiateRegistration(timeStamp, jwtToken);
@@ -75,6 +76,7 @@ export const RequestToSendPowJWT = async (
     const jwtToken = await generateJWT(
       privateKey,
       publicKey,
+      null,
       null,
       null,
       initiationNonce,
@@ -110,6 +112,7 @@ export async function RequestToValidateOTP(
     publicKey,
     deviceCert,
     null,
+    null,
     phoneNumber,
     otp,
     otpHash,
@@ -132,6 +135,7 @@ export async function RequestToCreateBankAccount(
     publicKey,
     deviceCert,
     phoneNumberCert,
+    null,
     phoneNumber,
     Key,
   );
@@ -147,7 +151,16 @@ export async function RequestToGetBalance(
 
   Key = JSON.stringify(publicKey);
 
-  const jwtToken = await generateJWT(privateKey, publicKey, accountCert);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    accountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(accountId + "Account ID !!!");
   return await getAccountBalance(accountId, jwtToken);
 }
 export const getKey = () => Key;
