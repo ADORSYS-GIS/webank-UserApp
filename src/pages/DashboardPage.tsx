@@ -1,35 +1,177 @@
-import Logo from "../assets/Webank.png";
-import { FaAdjust } from "react-icons/fa";
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEye,
+  faEyeSlash,
+  faBell,
+  faCog,
+  faShoppingCart,
+  faMoneyBillWave,
+  faTaxi,
+  faVideo,
+} from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
+import Logo from "../assets/Webank.png";
+import { toast } from "react-toastify";
+import { RequestToGetBalance } from "../services/keyManagement/requestService.ts";
 
-function CurrentAccount() {
+const Dashboard: React.FC = () => {
+  const [balanceVisible, setBalanceVisible] = useState(false);
+  const viewBalance = async () => {
+    try {
+      console.log("accountId", accountId, "accountCert", accountCert);
+      const otpHash = await RequestToGetBalance(accountId, accountCert);
+      console.log("Balance fetched successfully:", otpHash);
+      setBalanceVisible(!balanceVisible);
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+      toast.error("Failed to retrieve balance. Please try again.");
+    }
+  };
+
+  const actions = [
+    {
+      icon: "https://cdn-icons-png.flaticon.com/512/1041/1041888.png",
+      label: "Top Up",
+    },
+    {
+      icon: "https://cdn-icons-png.flaticon.com/512/4475/4475436.png",
+      label: "Transfer",
+    },
+    {
+      icon: "https://cdn-icons-png.flaticon.com/512/736/736948.png",
+      label: "Withdraw",
+    },
+    {
+      icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
+      label: "Pay",
+    },
+  ];
+
+  const transactions = [
+    {
+      title: "Apple",
+      amount: "-$429.00",
+      date: "23 Feb, 2022",
+      icon: faShoppingCart,
+    },
+    {
+      title: "Fiverr",
+      amount: "+$5,379.63",
+      date: "23 Feb, 2022",
+      icon: faMoneyBillWave,
+    },
+    { title: "Uber", amount: "-$120.53", date: "23 Feb, 2022", icon: faTaxi },
+    {
+      title: "Netflix",
+      amount: "-$94.75",
+      date: "23 Feb, 2022",
+      icon: faVideo,
+    },
+  ];
   const location = useLocation();
   const accountId = location.state?.accountId;
+  const accountCert = location.state?.accountCert;
+
   return (
-    <div className="container px-4 flex flex-col">
-      <div className="flex flex-row justify-between items-center">
+    <div className="flex flex-col h-screen bg-gray-50 text-gray-800 p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
         <div className="logo">
           <img src={Logo} alt="Logo WeBank" className="w-20" />
+          <h1 className="text-xl font-semibold">Hi, Welcome</h1>
         </div>
-        <div className="theme-change">
-          <FaAdjust />
+        <div className="flex space-x-4">
+          <button className="p-2 rounded-full hover:bg-gray-200">
+            <FontAwesomeIcon icon={faBell} className="text-lg" />
+          </button>
+          <button className="p-2 rounded-full hover:bg-gray-200">
+            <img
+              src="https://www.flaticon.com/free-icon/profile_3135715"
+              alt="Profile"
+              className="rounded-full h-10 w-10"
+            />
+          </button>
+          <button className="p-2 rounded-full hover:bg-gray-200">
+            <FontAwesomeIcon icon={faCog} className="text-lg" />
+          </button>
         </div>
       </div>
-      <div className="text-container bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-70 w-100 px-6">
-        <h2 className="text-2xl font-bold text-black mb-6">Current Account</h2>
-        <p className="text-white">Account Number</p>
-        <p className="text-black">
-          {accountId ? `CM-${accountId}` : "Account not found"}
-        </p>
-        <p className="text-white">Available Balance</p>
-        <p className="text-black">1,000 XAF</p>
+
+      {/* Balance Card */}
+      <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg p-6 shadow-lg mb-6">
+        <h2 className="text-3xl font-bold text-white">Webank</h2>
+        <h3 className="text-sm mt-2 text-white">Current Balance</h3>
+        <div className="flex items-center mt-1">
+          <p className="text-4xl font-bold text-white">
+            {balanceVisible ? "$25,633.00" : "****"}
+          </p>
+          <button onClick={viewBalance} className="ml-2 text-white">
+            <FontAwesomeIcon icon={balanceVisible ? faEyeSlash : faEye} />
+          </button>
+        </div>
+        <div className=" justify-between items-center mt-4">
+          <h3 className="text-white">Available Balance</h3>
+
+          <p className="text-white">
+            {accountId ? `CM-${accountId}` : "Account not found"}
+          </p>
+          {/* <img src="./src/assets/Webank.png" alt="webank" className="h-10" /> */}
+        </div>
       </div>
-      <div className="h-5 w-5"></div>
-      <div className="history  bg-gradient-to-r from-[#6673A4] to-[#EAEBEEA0] rounded-lg h-80 w-100 px-6">
-        <h2 className="text-black font-bold ">History</h2>
+
+      {/* Action Buttons */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {actions.map((action, index) => (
+          <button
+            key={index}
+            className="flex flex-col items-center bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg shadow-md transition duration-300"
+          >
+            <img src={action.icon} alt={action.label} className="h-10 w-10" />
+            <span className="mt-2 text-sm">{action.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Transactions Section */}
+      <div className="bg-white rounded-lg shadow-md p-6 mt-6">
+        <h3 className="text-lg font-semibold">Last Transactions</h3>
+        <div className="mt-4 space-y-4">
+          {transactions.map((transaction, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between py-2 border-b border-gray-300"
+            >
+              <div className="flex items-center">
+                <div className="bg-blue-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
+                  <FontAwesomeIcon
+                    icon={transaction.icon}
+                    className="text-white"
+                  />
+                </div>
+                <div>
+                  <span className="text-gray-800">{transaction.title}</span>
+                  <span className="text-gray-500 text-sm block">
+                    {transaction.date}
+                  </span>
+                </div>
+              </div>
+              <span
+                className={`text-lg ${transaction.amount.startsWith("-") ? "text-red-500" : "text-green-500"}`}
+              >
+                {transaction.amount}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4">
+          <a href="#" className="text-blue-500 hover:underline">
+            See all
+          </a>
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default CurrentAccount;
+export default Dashboard;
