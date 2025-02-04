@@ -18,7 +18,7 @@ export const initiateRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/dev/init`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/dev/init`,
       requestBody,
       { headers },
     );
@@ -50,7 +50,7 @@ export const validateDeviceRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/dev/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/dev/validate`,
       requestBody,
       { headers },
     );
@@ -80,7 +80,7 @@ export const sendOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/otp/send`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/otp/send`,
       requestBody,
       { headers },
     );
@@ -112,7 +112,7 @@ export const validateOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/otp/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/otp/validate`,
       requestBody,
       { headers },
     );
