@@ -55,7 +55,7 @@ const Otp = () => {
 
             await new Promise((resolve) => setTimeout(resolve, 2000));
 
-            navigate("/dashboard", { state: { accountId } });
+            navigate("/dashboard", { state: { accountId, accountCert } });
           } else {
             toast.error("Account registration failed");
           }

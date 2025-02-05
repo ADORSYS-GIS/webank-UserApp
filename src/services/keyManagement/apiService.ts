@@ -187,8 +187,9 @@ export const getAccountBalance = async (
   accountId: string,
   jwtToken: string,
 ) => {
+  // Create the request object with both phone number and public key
   const requestBody = {
-    accountId: accountId,
+    accountID: accountId,
   };
   const headers = {
     "Content-Type": "application/json",
@@ -203,6 +204,7 @@ export const getAccountBalance = async (
       { headers },
     );
 
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error retrieving account balance:", error);
