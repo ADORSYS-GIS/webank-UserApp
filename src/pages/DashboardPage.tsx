@@ -19,6 +19,10 @@ const Dashboard: React.FC = () => {
   const [balanceVisible, setBalanceVisible] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
   const viewBalance = async () => {
+    if (balanceVisible) {
+      setBalanceVisible(false);
+      return;
+    }
     try {
       const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
       console.log("Balance fetched successfully:", fetchedBalance);
