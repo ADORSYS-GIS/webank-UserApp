@@ -163,7 +163,9 @@ export async function RequestToGetBalance(
   );
   console.log(jwtToken + "Account Cert!!!");
   console.log(accountId + "Account ID !!!");
-  return await getAccountBalance(accountId, jwtToken);
+  const balanceResponse = await getAccountBalance(accountId, jwtToken);
+  return balanceResponse?.balance || "null";
+
 }
 
 // Function to retrieve transaction history
