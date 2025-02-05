@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { Axios, AxiosResponse } from "axios";
 import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
@@ -154,5 +154,36 @@ export const createBankAccount = async (
   } catch (error) {
     console.error("Error validating OTP:", error);
     throw new Error("Incorrect OTP");
+  }
+};
+export const getTransactionHistory = async (
+  accountId: string,
+  jwtToken: string,
+
+) => {
+  
+  // Construct the URL for the API request
+  const url = `${envVariables.VITE_WEBANK_PRS_URL}/api/accunts/transactions`;
+  const requestBody = {
+    accountId: accountId,
+  }
+  // Set up the headers for the request, including the JWT token for authorization
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the POST request to the backend
+    const response  = await axios.post(url, {
+      requestBody,
+      headers: headers,
+    });
+
+    // Return the data from the response
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching transaction history:", error);
+    throw new Error("Failed to fetch transaction history");
   }
 };

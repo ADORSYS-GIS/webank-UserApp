@@ -7,6 +7,7 @@ import {
   sendOTP,
   validateDeviceRegistration,
   validateOTP,
+  getTransactionHistory,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -137,5 +138,24 @@ export async function RequestToCreateBankAccount(
 
   return await createBankAccount(phoneNumber, Key, jwtToken);
 }
+// Function to retrieve transaction history
+export async function RequestToGetTransactionHistory(
+  accountId: string,
+  accountCert?: string| null
 
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    accountId,
+  );
+  return await getTransactionHistory(accountId, jwtToken);
+}
 export const getKey = () => Key;
