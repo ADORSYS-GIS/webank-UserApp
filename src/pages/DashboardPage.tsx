@@ -116,15 +116,14 @@ const Dashboard: React.FC = () => {
           <p className="text-white">
             {accountId ? `CM-${accountId}` : "Account not found"}
           </p>
-          {/* <img src="./src/assets/Webank.png" alt="webank" className="h-10" /> */}
         </div>
       </div>
 
       {/* Action Buttons */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {actions.map((action, index) => (
+        {actions.map((action) => (
           <button
-            key={index}
+            key={action.label} //{/* Use label as unique key */}
             className="flex flex-col items-center bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg shadow-md transition duration-300"
           >
             <img src={action.icon} alt={action.label} className="h-10 w-10" />
@@ -137,9 +136,9 @@ const Dashboard: React.FC = () => {
       <div className="bg-white rounded-lg shadow-md p-6 mt-6">
         <h3 className="text-lg font-semibold">Last Transactions</h3>
         <div className="mt-4 space-y-4">
-          {transactions.map((transaction, index) => (
+          {transactions.map((transaction) => (
             <div
-              key={index}
+              key={transaction.title} //{/* Use title as unique key */}
               className="flex items-center justify-between py-2 border-b border-gray-300"
             >
               <div className="flex items-center">
@@ -165,9 +164,9 @@ const Dashboard: React.FC = () => {
           ))}
         </div>
         <div className="mt-4">
-          <a href="#" className="text-blue-500 hover:underline">
+          <button className="text-blue-500 hover:underline bg-transparent border-none p-0 cursor-pointer">
             See all
-          </a>
+          </button>
         </div>
       </div>
     </div>
