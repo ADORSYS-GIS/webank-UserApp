@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosResponse } from "axios";
+import axios from "axios";
 import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
@@ -142,7 +142,6 @@ export const createBankAccount = async (
   };
 
   try {
-    // Send the post request to the backend
     const response = await axios.post(
       `${envVariables.VITE_WEBANK_OBS_URL}/api/registration`,
       requestBody,
@@ -152,21 +151,19 @@ export const createBankAccount = async (
     console.log("response", response);
     return response.data;
   } catch (error) {
-    console.error("Error validating OTP:", error);
-    throw new Error("Incorrect OTP");
+    console.error("Error creating bank account:", error);
+    throw new Error("Incorrect OTPq");
   }
 };
 export const getTransactionHistory = async (
   accountId: string,
   jwtToken: string,
-
 ) => {
-  
   // Construct the URL for the API request
-  const url = `${envVariables.VITE_WEBANK_PRS_URL}/api/accunts/transactions`;
+  const url = `${envVariables.VITE_WEBANK_PRS_URL}/api/accounts/transactions`;
   const requestBody = {
     accountId: accountId,
-  }
+  };
   // Set up the headers for the request, including the JWT token for authorization
   const headers = {
     "Content-Type": "application/json",
@@ -175,11 +172,10 @@ export const getTransactionHistory = async (
 
   try {
     // Send the POST request to the backend
-    const response  = await axios.post(url, {
+    const response = await axios.post(url, {
       requestBody,
       headers: headers,
     });
-
     // Return the data from the response
     return response.data;
   } catch (error) {

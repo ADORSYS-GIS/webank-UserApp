@@ -141,8 +141,7 @@ export async function RequestToCreateBankAccount(
 // Function to retrieve transaction history
 export async function RequestToGetTransactionHistory(
   accountId: string,
-  accountCert?: string| null
-
+  accountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 

@@ -47,7 +47,7 @@ export async function generateJWT(
       header["phoneNumberJwt"] = phoneNumberJwt;
     }
     if (accountJwt) {
-      header["accountJwt"] =  accountJwt;
+      header["accountJwt"] = accountJwt;
     }
 
     // Sign the JWT with the private key and custom header
