@@ -163,6 +163,7 @@ export const getAccountBalance = async (
   // Create the request object with both phone number and public key
   const requestBody = {
     accountID: accountId,
+
   };
   const headers = {
     "Content-Type": "application/json",
