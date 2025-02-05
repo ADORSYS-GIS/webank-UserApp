@@ -169,11 +169,11 @@ export const getAccountBalance = async (
   };
 
   try {
-    // Send the GET request to retrieve account balance
+    // Send the POST request to retrieve account balance
     const response = await axios.post(
       `${envVariables.VITE_WEBANK_OBS_URL}/api/accounts/balance`,
-        requestBody,
-      {headers},
+      requestBody,
+      { headers },
     );
 
     return response.data;
