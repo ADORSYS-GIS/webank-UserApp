@@ -3,6 +3,7 @@ import storeKeyPair, { retrieveKeyPair } from "./storeKey";
 import checkKeyPairExists from "./checkKeyPairExists";
 import {
   createBankAccount,
+  getAccountBalance,
   initiateRegistration,
   sendOTP,
   validateDeviceRegistration,
@@ -41,6 +42,7 @@ export async function RequestToSendOTP(
     publicKey,
     deviceCert,
     null,
+    null,
     phoneNumber,
   );
   console.log(jwtToken, "jwt token");
@@ -59,6 +61,7 @@ export async function RequestToSendNonce(): Promise<string> {
     publicKey,
     null,
     null,
+    null,
     timeStamp,
   );
   return await initiateRegistration(timeStamp, jwtToken);
@@ -75,6 +78,7 @@ export const RequestToSendPowJWT = async (
     const jwtToken = await generateJWT(
       privateKey,
       publicKey,
+      null,
       null,
       null,
       initiationNonce,
@@ -110,6 +114,7 @@ export async function RequestToValidateOTP(
     publicKey,
     deviceCert,
     null,
+    null,
     phoneNumber,
     otp,
     otpHash,
@@ -132,12 +137,35 @@ export async function RequestToCreateBankAccount(
     publicKey,
     deviceCert,
     phoneNumberCert,
+    null,
     phoneNumber,
     Key,
   );
 
   return await createBankAccount(phoneNumber, Key, jwtToken);
 }
+
+export async function RequestToGetBalance(
+  accountId: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    accountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(accountId + "Account ID !!!");
+  return await getAccountBalance(accountId, jwtToken);
+}
+
 // Function to retrieve transaction history
 export async function RequestToGetTransactionHistory(
   accountId: string,
@@ -155,6 +183,8 @@ export async function RequestToGetTransactionHistory(
     accountCert,
     accountId,
   );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(accountId + "Account ID !!!");
   return await getTransactionHistory(accountId, jwtToken);
 }
 export const getKey = () => Key;
