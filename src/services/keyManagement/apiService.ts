@@ -142,7 +142,6 @@ export const createBankAccount = async (
   };
 
   try {
-    // Send the post request to the backend
     const response = await axios.post(
       `${envVariables.VITE_WEBANK_OBS_URL}/api/registration`,
       requestBody,
@@ -152,8 +151,36 @@ export const createBankAccount = async (
     console.log("response", response);
     return response.data;
   } catch (error) {
-    console.error("Error validating OTP:", error);
-    throw new Error("Incorrect OTP");
+    console.error("Error creating bank account:", error);
+    throw new Error("Incorrect OTPq");
+  }
+};
+export const getTransactionHistory = async (
+  accountId: string,
+  jwtToken: string,
+) => {
+  // Construct the URL for the API request
+  const url = `${envVariables.VITE_WEBANK_PRS_URL}/api/accounts/transactions`;
+  const requestBody = {
+    accountId: accountId,
+  };
+  // Set up the headers for the request, including the JWT token for authorization
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the POST request to the backend
+    const response = await axios.post(url, {
+      requestBody,
+      headers: headers,
+    });
+    // Return the data from the response
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching transaction history:", error);
+    throw new Error("Failed to fetch transaction history");
   }
 };
 export const getAccountBalance = async (
