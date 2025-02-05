@@ -46,6 +46,9 @@ export async function generateJWT(
     if (phoneNumberJwt) {
       header["phoneNumberJwt"] = phoneNumberJwt;
     }
+    if (accountJwt) {
+      header["accountJwt"] = accountJwt;
+    }
 
     if (accountJwt) {
       header["accountJwt"] = accountJwt;
