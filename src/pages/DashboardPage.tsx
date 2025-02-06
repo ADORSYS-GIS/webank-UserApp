@@ -6,18 +6,41 @@ import {
   faBell,
   faCog,
   faShoppingCart,
-  faMoneyBillWave,
-  faTaxi,
-  faVideo,
+  faSpinner,
+  IconName,
+  IconDefinition, // <-- added spinner icon
 } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 import Logo from "../assets/Webank.png";
 import { toast } from "react-toastify";
-import { RequestToGetBalance } from "../services/keyManagement/requestService.ts";
+import {
+  RequestToGetBalance,
+  RequestToGetTransactionHistory,
+} from "../services/keyManagement/requestService.ts";
 
 const Dashboard: React.FC = () => {
+  // Existing state for balance
   const [balanceVisible, setBalanceVisible] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
+  interface Transaction {
+    id: number;
+    icon: IconDefinition | IconName;
+    date: number;
+    amount: string;
+    title: string;
+  }
+  // New states for transactions
+  const [transactionsVisible, setTransactionsVisible] = useState(false);
+  const [transactionsData, setTransactionsData] = useState<Array<Transaction>>(
+    [],
+  );
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
+
+  const location = useLocation();
+  const accountId = location.state?.accountId;
+  const accountCert = location.state?.accountCert;
+
+  // Existing viewBalance function
   const viewBalance = async () => {
     if (balanceVisible) {
       setBalanceVisible(false);
@@ -34,49 +57,104 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const actions = [
-    {
-      icon: "https://cdn-icons-png.flaticon.com/512/1041/1041888.png",
-      label: "Top Up",
-    },
-    {
-      icon: "https://cdn-icons-png.flaticon.com/512/4475/4475436.png",
-      label: "Transfer",
-    },
-    {
-      icon: "https://cdn-icons-png.flaticon.com/512/736/736948.png",
-      label: "Withdraw",
-    },
-    {
-      icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
-      label: "Pay",
-    },
-  ];
+  // New function to fetch transaction history
+  const fetchTransactions = async () => {
+    if (!accountId || !accountCert) {
+      toast.error("Account information is missing.");
+      return;
+    }
+    try {
+      setLoadingTransactions(true);
+      // Call your service to get transaction history.
+      const transactionsString = await RequestToGetTransactionHistory(
+        accountId,
+        accountCert,
+      );
+      // Parse the JSON string into an array.
+      const transactions = JSON.parse(transactionsString);
+      setTransactionsData(transactions);
+      setTransactionsVisible(true);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      toast.error("Failed to load transactions.");
+    } finally {
+      setLoadingTransactions(false);
+    }
+  };
 
-  const transactions = [
-    {
-      title: "Apple",
-      amount: "-$429.00",
-      date: "23 Feb, 2022",
-      icon: faShoppingCart,
-    },
-    {
-      title: "Fiverr",
-      amount: "+$5,379.63",
-      date: "23 Feb, 2022",
-      icon: faMoneyBillWave,
-    },
-    { title: "Uber", amount: "-$120.53", date: "23 Feb, 2022", icon: faTaxi },
-    {
-      title: "Netflix",
-      amount: "-$94.75",
-      date: "23 Feb, 2022",
-      icon: faVideo,
-    },
-  ];
-  const location = useLocation();
-  const accountId = location.state?.accountId;
-  const accountCert = location.state?.accountCert;
+  // Component to display the transactions section
+
+  const TransactionsSection = () => (
+    <div className="bg-white rounded-lg shadow-md p-6 mt-6 transition-all duration-300">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Last Transactions</h3>
+        <button
+          onClick={
+            transactionsVisible
+              ? () => setTransactionsVisible(false)
+              : fetchTransactions
+          }
+          className="text-blue-500 hover:underline bg-transparent border-none p-0 cursor-pointer"
+          disabled={loadingTransactions}
+        >
+          {loadingTransactions ? (
+            <>
+              <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+              Loading...
+            </>
+          ) : transactionsVisible ? (
+            "Hide Transactions"
+          ) : (
+            "View Last Transactions"
+          )}
+        </button>
+      </div>
+      {transactionsVisible && (
+        <div className="mt-4 space-y-4">
+          {transactionsData.length > 0 ? (
+            transactionsData.map((transaction) => (
+              <div
+                key={transaction.id} // Ensure each transaction has a unique id.
+                className="flex items-center justify-between py-2 border-b border-gray-300"
+              >
+                <div className="flex items-center">
+                  <div className="bg-blue-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
+                    <FontAwesomeIcon
+                      icon={transaction.icon || faShoppingCart} // Fallback icon if needed.
+                      className="text-white"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-gray-800">{transaction.title}</span>
+                    <span className="text-gray-500 text-sm block">
+                      {new Date(transaction.date).toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </div>
+                <span
+                  className={`text-lg ${
+                    transaction.amount.startsWith("-")
+                      ? "text-red-500"
+                      : "text-green-500"
+                  }`}
+                >
+                  {transaction.amount}
+                </span>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center py-4">
+              No transactions found.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 text-gray-800 p-6">
@@ -115,9 +193,8 @@ const Dashboard: React.FC = () => {
             <FontAwesomeIcon icon={balanceVisible ? faEyeSlash : faEye} />
           </button>
         </div>
-        <div className=" justify-between items-center mt-4">
+        <div className="justify-between items-center mt-4">
           <h3 className="text-white">Available Balance</h3>
-
           <p className="text-white">
             {accountId ? `CM-${accountId}` : "Account not found"}
           </p>
@@ -126,9 +203,26 @@ const Dashboard: React.FC = () => {
 
       {/* Action Buttons */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {actions.map((action) => (
+        {[
+          {
+            icon: "https://cdn-icons-png.flaticon.com/512/1041/1041888.png",
+            label: "Top Up",
+          },
+          {
+            icon: "https://cdn-icons-png.flaticon.com/512/4475/4475436.png",
+            label: "Transfer",
+          },
+          {
+            icon: "https://cdn-icons-png.flaticon.com/512/736/736948.png",
+            label: "Withdraw",
+          },
+          {
+            icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
+            label: "Pay",
+          },
+        ].map((action) => (
           <button
-            key={action.label} //{/* Use label as unique key */}
+            key={action.label}
             className="flex flex-col items-center bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg shadow-md transition duration-300"
           >
             <img src={action.icon} alt={action.label} className="h-10 w-10" />
@@ -138,42 +232,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Transactions Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 mt-6">
-        <h3 className="text-lg font-semibold">Last Transactions</h3>
-        <div className="mt-4 space-y-4">
-          {transactions.map((transaction) => (
-            <div
-              key={transaction.title} //{/* Use title as unique key */}
-              className="flex items-center justify-between py-2 border-b border-gray-300"
-            >
-              <div className="flex items-center">
-                <div className="bg-blue-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
-                  <FontAwesomeIcon
-                    icon={transaction.icon}
-                    className="text-white"
-                  />
-                </div>
-                <div>
-                  <span className="text-gray-800">{transaction.title}</span>
-                  <span className="text-gray-500 text-sm block">
-                    {transaction.date}
-                  </span>
-                </div>
-              </div>
-              <span
-                className={`text-lg ${transaction.amount.startsWith("-") ? "text-red-500" : "text-green-500"}`}
-              >
-                {transaction.amount}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4">
-          <button className="text-blue-500 hover:underline bg-transparent border-none p-0 cursor-pointer">
-            See all
-          </button>
-        </div>
-      </div>
+      <TransactionsSection />
     </div>
   );
 };
