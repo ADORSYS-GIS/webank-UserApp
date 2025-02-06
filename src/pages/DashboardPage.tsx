@@ -17,12 +17,17 @@ import { RequestToGetBalance } from "../services/keyManagement/requestService.ts
 
 const Dashboard: React.FC = () => {
   const [balanceVisible, setBalanceVisible] = useState(false);
+  const [balance, setBalance] = useState<string | null>(null);
   const viewBalance = async () => {
+    if (balanceVisible) {
+      setBalanceVisible(false);
+      return;
+    }
     try {
-      console.log("accountId", accountId, "accountCert", accountCert);
-      const otpHash = await RequestToGetBalance(accountId, accountCert);
-      console.log("Balance fetched successfully:", otpHash);
-      setBalanceVisible(!balanceVisible);
+      const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
+      console.log("Balance fetched successfully:", fetchedBalance);
+      setBalance(fetchedBalance);
+      setBalanceVisible(true);
     } catch (error) {
       console.error("Error fetching balance:", error);
       toast.error("Failed to retrieve balance. Please try again.");
@@ -104,7 +109,7 @@ const Dashboard: React.FC = () => {
         <h3 className="text-sm mt-2 text-white">Current Balance</h3>
         <div className="flex items-center mt-1">
           <p className="text-4xl font-bold text-white">
-            {balanceVisible ? "$25,633.00" : "****"}
+            {balanceVisible ? `$${balance}` : "****"}
           </p>
           <button onClick={viewBalance} className="ml-2 text-white">
             <FontAwesomeIcon icon={balanceVisible ? faEyeSlash : faEye} />
