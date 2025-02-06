@@ -24,7 +24,7 @@ describe("API Functions", () => {
 
     const result = await initiateRegistration("1234567890", mockJwt);
     expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/api/prs/dev/init"),
+      expect.stringContaining("/dev/init"),
       { timeStamp: "1234567890" },
       {
         headers: expect.objectContaining({
@@ -53,7 +53,7 @@ describe("API Functions", () => {
       mockJwt,
     );
     expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/api/prs/dev/validate"),
+      expect.stringContaining("/dev/validate"),
       { initiationNonce: "nonce123", powHash: "hash123", powNonce: "1" },
       {
         headers: expect.objectContaining({
@@ -69,7 +69,7 @@ describe("API Functions", () => {
 
     const result = await sendOTP("+1234567890", mockJwt, "publicKeyXYZ");
     expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/api/prs/otp/send"),
+      expect.stringContaining("/otp/send"),
       { phoneNumber: "+1234567890", publicKey: "publicKeyXYZ" },
       {
         headers: expect.objectContaining({
@@ -90,7 +90,7 @@ describe("API Functions", () => {
       mockJwt,
     );
     expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/api/prs/otp/validate"),
+      expect.stringContaining("/otp/validate"),
       { phoneNumber: "+1234567890", otpInput: "123456", otpHash: "otpHashXYZ" },
       {
         headers: expect.objectContaining({
@@ -110,7 +110,7 @@ describe("API Functions", () => {
       mockJwt,
     );
     expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/api/registration"),
+      expect.stringContaining("/registration"),
       { phoneNumber: "+1234567890", publicKey: "publicKeyXYZ" },
       {
         headers: expect.objectContaining({
