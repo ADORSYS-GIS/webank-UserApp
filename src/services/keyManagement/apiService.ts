@@ -18,7 +18,7 @@ export const initiateRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/dev/init`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/dev/init`,
       requestBody,
       { headers },
     );
@@ -50,7 +50,7 @@ export const validateDeviceRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/dev/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/dev/validate`,
       requestBody,
       { headers },
     );
@@ -80,7 +80,7 @@ export const sendOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/otp/send`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/otp/send`,
       requestBody,
       { headers },
     );
@@ -112,7 +112,7 @@ export const validateOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/api/prs/otp/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/otp/validate`,
       requestBody,
       { headers },
     );
@@ -143,7 +143,7 @@ export const createBankAccount = async (
 
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_OBS_URL}/api/registration`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/registration`,
       requestBody,
       { headers },
     );
@@ -160,7 +160,7 @@ export const getTransactionHistory = async (
   jwtToken: string,
 ) => {
   // Construct the URL for the API request
-  const url = `${envVariables.VITE_WEBANK_PRS_URL}/api/accounts/transactions`;
+  const url = `${envVariables.VITE_WEBANK_PRS_URL}/accounts/transactions`;
   const requestBody = {
     accountId: accountId,
   };
@@ -187,8 +187,9 @@ export const getAccountBalance = async (
   accountId: string,
   jwtToken: string,
 ) => {
+  // Create the request object with both phone number and public key
   const requestBody = {
-    accountId: accountId,
+    accountID: accountId,
   };
   const headers = {
     "Content-Type": "application/json",
@@ -198,11 +199,12 @@ export const getAccountBalance = async (
   try {
     // Send the POST request to retrieve account balance
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_OBS_URL}/api/accounts/balance`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/balance`,
       requestBody,
       { headers },
     );
 
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error retrieving account balance:", error);
