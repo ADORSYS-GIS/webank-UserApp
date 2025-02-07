@@ -5,11 +5,13 @@ import {
   faEyeSlash,
   faBell,
   faCog,
-  faShoppingCart,
   faSpinner,
+  faPlusCircle,
+  faMinusCircle,
   IconName,
-  IconDefinition, // <-- added spinner icon
+  IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
+
 import { useLocation } from "react-router-dom";
 import Logo from "../assets/Webank.png";
 import { toast } from "react-toastify";
@@ -66,12 +68,31 @@ const Dashboard: React.FC = () => {
     try {
       setLoadingTransactions(true);
       // Call your service to get transaction history.
-      const transactionsString = await RequestToGetTransactionHistory(
+      const transactionsResponse = await RequestToGetTransactionHistory(
         accountId,
         accountCert,
       );
-      // Parse the JSON string into an array.
-      const transactions = JSON.parse(transactionsString);
+
+      // If the response is a string, clean it up before parsing.
+      let transactions;
+      if (typeof transactionsResponse === "string") {
+        // Trim leading/trailing whitespace.
+        const trimmedResponse = transactionsResponse.trim();
+        // Find the last occurrence of the closing bracket.
+        const endIndex = trimmedResponse.lastIndexOf("]");
+        if (endIndex !== -1) {
+          // Extract the valid JSON substring.
+          const validJson = trimmedResponse.substring(0, endIndex + 1);
+          transactions = JSON.parse(validJson);
+        } else {
+          // If no closing bracket is found, try to parse the trimmed response.
+          transactions = JSON.parse(trimmedResponse);
+        }
+      } else {
+        // If the response is already an object, use it directly.
+        transactions = transactionsResponse;
+      }
+
       setTransactionsData(transactions);
       setTransactionsVisible(true);
     } catch (error) {
@@ -114,13 +135,17 @@ const Dashboard: React.FC = () => {
           {transactionsData.length > 0 ? (
             transactionsData.map((transaction) => (
               <div
-                key={transaction.id} // Ensure each transaction has a unique id.
+                key={transaction.id}
                 className="flex items-center justify-between py-2 border-b border-gray-300"
               >
                 <div className="flex items-center">
                   <div className="bg-blue-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
                     <FontAwesomeIcon
-                      icon={transaction.icon || faShoppingCart} // Fallback icon if needed.
+                      icon={
+                        transaction.amount.startsWith("-")
+                          ? faMinusCircle
+                          : faPlusCircle
+                      } // Set icon dynamically based on the amount.
                       className="text-white"
                     />
                   </div>
@@ -187,7 +212,7 @@ const Dashboard: React.FC = () => {
         <h3 className="text-sm mt-2 text-white">Current Balance</h3>
         <div className="flex items-center mt-1">
           <p className="text-4xl font-bold text-white">
-            {balanceVisible ? `$${balance}` : "****"}
+            {balanceVisible ? `XAF ${balance}` : "****"}
           </p>
           <button onClick={viewBalance} className="ml-2 text-white">
             <FontAwesomeIcon icon={balanceVisible ? faEyeSlash : faEye} />
