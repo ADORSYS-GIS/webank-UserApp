@@ -8,7 +8,7 @@ import {
   createBankAccount,
   getAccountBalance,
   getTransactionHistory,
-} from "../apiService"; 
+} from "../apiService";
 
 vi.mock("axios");
 
@@ -68,9 +68,9 @@ describe("API Functions", () => {
   it("should handle validateDeviceRegistration API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
 
-    await expect(validateDeviceRegistration( "nonce123","hash123","1",mockJwt,)).rejects.toThrow(
-      "failed to validate device",
-    );
+    await expect(
+      validateDeviceRegistration("nonce123", "hash123", "1", mockJwt),
+    ).rejects.toThrow("failed to validate device");
   });
 
   it("should call sendOTP API correctly", async () => {
@@ -91,9 +91,9 @@ describe("API Functions", () => {
   it("should handle sendOTP API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
 
-    await expect(sendOTP( "+1234567890", mockJwt, "publicKeyXYZ")).rejects.toThrow(
-      "Failed to send OTP",
-    );
+    await expect(
+      sendOTP("+1234567890", mockJwt, "publicKeyXYZ"),
+    ).rejects.toThrow("Failed to send OTP");
   });
 
   it("should call validateOTP API correctly", async () => {
@@ -119,9 +119,9 @@ describe("API Functions", () => {
   it("should handle validateOTP API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
 
-    await expect(validateOTP( "+1234567890","123456", "otpHashXYZ", mockJwt)).rejects.toThrow(
-      "Incorrect OTP",
-    );
+    await expect(
+      validateOTP("+1234567890", "123456", "otpHashXYZ", mockJwt),
+    ).rejects.toThrow("Incorrect OTP");
   });
 
   it("should call createBankAccount API correctly", async () => {
@@ -151,12 +151,12 @@ describe("API Functions", () => {
       createBankAccount("+1234567890", "publicKeyXYZ", mockJwt),
     ).rejects.toThrow("Incorrect OTP");
   });
-  
+
   it("should call getTransactionHistory API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { transactions: [] } });
-  
+
     const result = await getTransactionHistory("mockAccountId", mockJwt);
-  
+
     expect(mockPost).toHaveBeenCalledWith(
       expect.stringContaining("/accounts/transactions"),
       { accountID: "mockAccountId" },
@@ -164,22 +164,24 @@ describe("API Functions", () => {
         headers: expect.objectContaining({
           Authorization: `Bearer ${mockJwt}`,
         }),
-      }
+      },
     );
     expect(result).toEqual({ transactions: [] });
   });
-  
+
   it("should handle getTransactionHistory API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
-  
-    await expect(getTransactionHistory("mockAccountId", mockJwt)).rejects.toThrow("Failed to fetch transaction history");
+
+    await expect(
+      getTransactionHistory("mockAccountId", mockJwt),
+    ).rejects.toThrow("Failed to fetch transaction history");
   });
-  
+
   it("should call getAccountBalance API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { balance: 1000 } });
-  
+
     const result = await getAccountBalance("mockAccountId", mockJwt);
-  
+
     expect(mockPost).toHaveBeenCalledWith(
       expect.stringContaining("/accounts/balance"),
       { accountID: "mockAccountId" },
@@ -187,15 +189,16 @@ describe("API Functions", () => {
         headers: expect.objectContaining({
           Authorization: `Bearer ${mockJwt}`,
         }),
-      }
+      },
     );
     expect(result).toEqual({ balance: 1000 });
   });
-  
+
   it("should handle getAccountBalance API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
-  
-    await expect(getAccountBalance("mockAccountId", mockJwt)).rejects.toThrow("Failed to retrieve account balance");
+
+    await expect(getAccountBalance("mockAccountId", mockJwt)).rejects.toThrow(
+      "Failed to retrieve account balance",
+    );
   });
-  
 });
