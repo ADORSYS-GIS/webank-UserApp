@@ -28,6 +28,21 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
   setTransactionsVisible,
   loadingTransactions,
 }) => {
+  // Determine the button text based on loading state and visibility
+  let buttonText: string | JSX.Element;
+  if (loadingTransactions) {
+    buttonText = (
+      <>
+        <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+        Loading...
+      </>
+    );
+  } else if (transactionsVisible) {
+    buttonText = "Hide Transactions";
+  } else {
+    buttonText = "View Last Transactions";
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-6 transition-all duration-300">
       <div className="flex justify-between items-center">
@@ -41,16 +56,7 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
           className="text-blue-500 hover:underline bg-transparent border-none p-0 cursor-pointer"
           disabled={loadingTransactions}
         >
-          {loadingTransactions ? (
-            <>
-              <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
-              Loading...
-            </>
-          ) : transactionsVisible ? (
-            "Hide Transactions"
-          ) : (
-            "View Last Transactions"
-          )}
+          {buttonText}
         </button>
       </div>
       {transactionsVisible && (
