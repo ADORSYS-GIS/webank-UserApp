@@ -1,10 +1,13 @@
-import { vi } from "vitest"; // Ensure this import is present
+import { vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import Dashboard from "../DashboardPage"; // Adjust path as needed
-import { RequestToGetBalance } from "../../services/keyManagement/requestService.ts";
+import {
+  RequestToGetBalance,
+  RequestToGetTransactionHistory,
+} from "../../services/keyManagement/requestService.ts";
 import { toast } from "react-toastify";
-import { MemoryRouter } from "react-router-dom"; // Ensure MemoryRouter is imported
-import "@testing-library/jest-dom"; // Import the custom matchers
+import { MemoryRouter } from "react-router-dom";
+import "@testing-library/jest-dom";
 
 // Mock necessary external modules
 vi.mock("react-router-dom", () => ({
@@ -23,9 +26,10 @@ vi.mock("react-toastify", () => ({
   },
 }));
 
-// Mock RequestToGetBalance as a mock function
+// Mock RequestToGetBalance and RequestToGetTransactionHistory
 vi.mock("../../services/keyManagement/requestService.ts", () => ({
   RequestToGetBalance: vi.fn(),
+  RequestToGetTransactionHistory: vi.fn(),
 }));
 
 describe("Dashboard", () => {
@@ -66,18 +70,45 @@ describe("Dashboard", () => {
     expect(toast.error).toHaveBeenCalledTimes(0); // Expecting 0 times
   });
 
-  it("renders transaction items correctly", () => {
+  it("renders transaction items correctly", async () => {
+    // Mock transaction data
+    const mockTransactions = [
+      {
+        id: 1,
+        title: "Apple",
+        date: "2023-10-01",
+        amount: "-$429.00",
+        icon: "shopping-cart",
+      },
+      {
+        id: 2,
+        title: "Fiverr",
+        date: "2023-10-02",
+        amount: "+$5,379.63",
+        icon: "shopping-cart",
+      },
+    ];
+
+    // Mock RequestToGetTransactionHistory to resolve with mock data
+    (RequestToGetTransactionHistory as jest.Mock).mockResolvedValueOnce(
+      JSON.stringify(mockTransactions),
+    );
+
     render(
       <MemoryRouter>
         <Dashboard />
       </MemoryRouter>,
     );
 
-    // Check for transaction entries
-    expect(screen.getByText("Apple")).toBeInTheDocument();
-    expect(screen.getByText("Fiverr")).toBeInTheDocument();
-    expect(screen.getByText("Uber")).toBeInTheDocument();
-    expect(screen.getByText("Netflix")).toBeInTheDocument();
+    // Click the "View Last Transactions" button to fetch and display transactions
+    const viewTransactionsButton = screen.getByText("View Last Transactions");
+    viewTransactionsButton.click();
+
+    // Wait for the transactions to be rendered
+    await waitFor(() => {
+      expect(screen.getByText("Apple")).toBeInTheDocument();
+      expect(screen.getByText("Fiverr")).toBeInTheDocument();
+    });
 
     // Check amounts have the correct colors
     expect(screen.getByText("-$429.00")).toHaveClass("text-red-500");
