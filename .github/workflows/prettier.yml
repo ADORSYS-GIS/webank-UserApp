@@ -1,20 +1,20 @@
-name: prettier analyses
+name: Prettier
 
-on:
-  workflow_run:
-    workflows: [main-workflow]
-    types:
-      - completed
+on: [push, pull_request]
 
 jobs:
-  prettier:
+  unit_tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Cached node modules
-        uses: actions/cache@v2
+      - uses: actions/checkout@v4
+      - name: Restore node_modules cache
+        uses: actions/cache@v3
+        id: node-cache
         with:
           path: node_modules
           key: ${{ github.sha }}
+      - name: Install Dependencies
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: npm ci
       - name: Prettier
         run: npm run prettier:check
