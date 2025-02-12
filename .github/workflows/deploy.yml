@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 env:
   REGISTRY: ghcr.io
@@ -15,6 +18,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,13 +28,11 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.WEBANK_USERAPP_TOKEN }}
+          password: ${{ secrets.WEBANK_ONLINE_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
-          build-args: |
-            VITE_BACKEND_URL=/api
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

@@ -1,7 +1,11 @@
-type ProjectEnvVariablesType = Pick<ImportMetaEnv, "VITE_BACKEND_URL">;
+type ProjectEnvVariablesType = Pick<
+  ImportMetaEnv,
+  "VITE_WEBANK_OBS_URL" | "VITE_WEBANK_PRS_URL"
+>;
 
 const projectEnvVariables: ProjectEnvVariablesType = {
-  VITE_BACKEND_URL: "${VITE_BACKEND_URL}",
+  VITE_WEBANK_OBS_URL: "${VITE_WEBANK_OBS_URL}",
+  VITE_WEBANK_PRS_URL: "${VITE_WEBANK_PRS_URL}",
 };
 
 interface ProjectEnvVariables {
@@ -11,9 +15,16 @@ interface ProjectEnvVariables {
 export const getProjectEnvVariables = (): ProjectEnvVariables => {
   return {
     envVariables: {
-      VITE_BACKEND_URL: !projectEnvVariables.VITE_BACKEND_URL.includes("VITE_")
-        ? projectEnvVariables.VITE_BACKEND_URL
-        : import.meta.env.VITE_BACKEND_URL,
+      VITE_WEBANK_OBS_URL: !projectEnvVariables.VITE_WEBANK_OBS_URL.includes(
+        "VITE_WEBANK_",
+      )
+        ? projectEnvVariables.VITE_WEBANK_OBS_URL
+        : import.meta.env.VITE_WEBANK_OBS_URL,
+      VITE_WEBANK_PRS_URL: !projectEnvVariables.VITE_WEBANK_PRS_URL.includes(
+        "VITE_WEBANK_",
+      )
+        ? projectEnvVariables.VITE_WEBANK_PRS_URL
+        : import.meta.env.VITE_WEBANK_PRS_URL,
     },
   };
 };

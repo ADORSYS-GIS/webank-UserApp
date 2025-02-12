@@ -3,6 +3,7 @@ services:
     build:
       context: ./
     ports:
-      - "2456:80"
+      - "5173:80"
     environment:
-      VITE_BACKEND_URL: 'http://localhost:8555'
+      VITE_WEBANK_OBS_URL: 'http://localhost:8081'
+      VITE_WEBANK_PRS_URL: 'http://localhost:8080'

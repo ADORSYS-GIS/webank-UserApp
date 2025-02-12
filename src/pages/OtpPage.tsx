@@ -1,12 +1,75 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  RequestToCreateBankAccount,
+  RequestToValidateOTP,
+} from "../services/keyManagement/requestService.ts";
+import { toast, ToastContainer } from "react-toastify";
 
 const Otp = () => {
   const navigate = useNavigate();
-  const handleverifyClick = () => {
-    navigate("/dashboard");
+  const location = useLocation();
+  const otpHash = location.state?.otpHash;
+  const fullPhoneNumber = location.state?.fullPhoneNumber;
+  const devCert = location.state?.devCert;
+  let phoneCert: string;
+  const handleverifyClick = async () => {
+    try {
+      if (!otpHash || !fullPhoneNumber) {
+        alert("Required data is missing!");
+        return;
+      }
+
+      const response = await RequestToValidateOTP(
+        fullPhoneNumber,
+        otp,
+        otpHash,
+        devCert,
+      );
+
+      if (response.startsWith("Certificate generated:")) {
+        phoneCert = response.split("generated: ")[1];
+
+        console.log(phoneCert);
+        try {
+          const accountCreationResponse = await RequestToCreateBankAccount(
+            fullPhoneNumber,
+            devCert,
+            phoneCert,
+          );
+          console.log(accountCreationResponse);
+          if (
+            accountCreationResponse.startsWith(
+              "Bank account successfully created.",
+            )
+          ) {
+            toast.success("Registration successful");
+
+            const accountId = accountCreationResponse.split("\n")[2];
+
+            const accountCert = accountCreationResponse.split("\n")[4];
+
+            console.log("AccountID received:", accountId);
+            console.log("AccountCert received:", accountCert);
+
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            navigate("/dashboard", { state: { accountId, accountCert } });
+          } else {
+            toast.error("Account registration failed");
+          }
+        } catch (error) {
+          console.error("Error navigating to dashboard:", error);
+        }
+      } else {
+        toast.error("Phone number Registration failed");
+      }
+    } catch (error) {
+      toast.error("Invalid OTP");
+    }
   };
+
   // State variables to track minutes and seconds
   const [otp, setOtp] = useState("");
   const onChange = (value: string) => setOtp(value);
@@ -47,7 +110,7 @@ const Otp = () => {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen py-10">
       {/* Render the OTP input */}
-      <OtpInput value={otp} valueLength={4} onChange={onChange} />
+      <OtpInput value={otp} valueLength={5} onChange={onChange} />
 
       <div className="mx-auto mt-10 w-full max-w-xs lg:max-w-md">
         <button
@@ -88,6 +151,8 @@ const Otp = () => {
           </p>
         </div>
       </div>
+      {/* Toast container */}
+      <ToastContainer />
     </div>
   );
 };

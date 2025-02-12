@@ -3,8 +3,10 @@ import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
-import { sendOtpWithKeyManagement } from "../services/keyManagement/registerService.ts";
+import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import useInitialization from "../hooks/useInitialization.ts";
 
 type CountryOption = {
   value: string;
@@ -12,35 +14,37 @@ type CountryOption = {
   flag: string;
 };
 
-const Register = () => {
+const Register = ({ initialShowSpinner = true }) => {
   const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
   );
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<boolean>(false); // State to control dropdown visibility
-  const [searchTerm, setSearchTerm] = useState<string>(""); // State to handle search input
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner); // Start with spinner active
 
-  // Filter the country options based on the search term
-  const filteredCountries = countryOptions.filter((country) =>
-    country.label.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  // Display spinner for a defined duration
+  setTimeout(() => {
+    setShowSpinner(false);
+  }, 2000);
+
+  const { devCert } = useInitialization();
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
-    setIsOpen(false); // Close the dropdown when a country is selected
+    setIsOpen(false);
   };
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen); // Toggle dropdown visibility
+    setIsOpen(!isOpen);
   };
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handlePhoneNumberChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const value = event.target.value;
-
-    // Use the imported regex constant for validation
     if (PHONE_NUMBER_REGEX.test(value)) {
       setPhoneNumber(value);
     }
@@ -48,36 +52,48 @@ const Register = () => {
 
   const handleSendOTP = async () => {
     if (!phoneNumber.trim()) {
-      alert("Please enter a phone number."); // Notify user if phone number is empty
+      toast.error("Please enter a phone number.");
       return;
     }
 
     const fullPhoneNumber = selectedCountry?.value + phoneNumber;
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
 
-    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
-      alert("Please enter a valid phone number.");
+    if (!phoneNumberObj?.isValid()) {
+      toast.error("Please enter a valid phone number.");
       return;
     }
 
-    setIsLoading(true); // Set loading state
+    setIsLoading(true);
     try {
-      await sendOtpWithKeyManagement(phoneNumber);
-      await sendOTP(fullPhoneNumber);
-      alert("OTP sent!");
-      navigate("/otp");
+      const otpHash = await RequestToSendOTP(fullPhoneNumber, devCert);
+      toast.success("OTP sent!");
+      navigate("/otp", { state: { otpHash, fullPhoneNumber, devCert } });
     } catch (error) {
       console.error("Error sending OTP:", error);
-      alert("Failed to send OTP. Please try again.");
+      toast.error("Failed to send OTP. Please try again.");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
-
-  // Function to handle the actual OTP sending logic (implement as needed)
-  const sendOTP = async (phoneNumber: string) => {
-    console.log("OTP sent to:", phoneNumber);
-  };
+  if (showSpinner) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-700 text-center px-4">
+          Please wait while we initiate the bank account process. <br />
+          This might take some time...
+        </h1>
+        <div className="relative flex items-center justify-center">
+          <div className="animate-spin rounded-full h-40 w-40 border-t-4 border-b-4 border-purple-500"></div>
+          <img
+            src="https://www.svgrepo.com/show/509001/avatar-thinking-9.svg"
+            alt="Thinking Avatar"
+            className="absolute rounded-full h-28 w-28"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">
@@ -107,7 +123,7 @@ const Register = () => {
             <div
               className="flex items-center justify-between cursor-pointer border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={toggleDropdown}
-              style={{ height: "48px" }} // Ensure height matches input
+              style={{ height: "48px" }}
             >
               <div className="flex items-center">
                 <img
@@ -127,9 +143,9 @@ const Register = () => {
                   placeholder="Search Country"
                   className="w-full p-2 border-b focus:outline-none"
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                {filteredCountries.map((option) => (
+                {countryOptions.map((option) => (
                   <div
                     key={option.value}
                     className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
@@ -141,16 +157,13 @@ const Register = () => {
                     </span>
                   </div>
                 ))}
-                {filteredCountries.length === 0 && (
-                  <div className="p-2 text-gray-500">No results found</div>
-                )}
               </div>
             )}
           </div>
 
           <input
             type="tel"
-            pattern="[0-9]*" // Regex pattern to allow only numbers
+            pattern="[0-9]*"
             placeholder="Phone number"
             value={phoneNumber}
             onChange={handlePhoneNumberChange}
@@ -165,11 +178,12 @@ const Register = () => {
           type="button"
           onClick={handleSendOTP}
           className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
-          disabled={isLoading} // Disable button while loading
+          disabled={isLoading}
         >
-          {isLoading ? "Sending..." : "Send OTP"} {/* Show loading text */}
+          {isLoading ? "Sending..." : "Send OTP"}
         </button>
       </div>
+      <ToastContainer />
     </div>
   );
 };
