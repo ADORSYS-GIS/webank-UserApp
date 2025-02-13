@@ -17,7 +17,6 @@ const App: React.FC = () => {
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/qrcode" element={<QRGenerator />} />
-
       </Routes>
     </HashRouter>
   );
