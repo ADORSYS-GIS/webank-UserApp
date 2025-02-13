@@ -160,9 +160,8 @@ export const getTransactionHistory = async (
   jwtToken: string,
 ) => {
   // Construct the URL for the API request
-  const url = `${envVariables.VITE_WEBANK_PRS_URL}/accounts/transactions`;
   const requestBody = {
-    accountId: accountId,
+    accountID: accountId,
   };
   // Set up the headers for the request, including the JWT token for authorization
   const headers = {
@@ -172,10 +171,11 @@ export const getTransactionHistory = async (
 
   try {
     // Send the POST request to the backend
-    const response = await axios.post(url, {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/transactions`,
       requestBody,
-      headers: headers,
-    });
+      { headers },
+    );
     // Return the data from the response
     return response.data;
   } catch (error) {
