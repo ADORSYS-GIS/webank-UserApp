@@ -6,6 +6,7 @@ import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
+import QRGenerator from "./pages/Qrcode";
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,8 @@ const App: React.FC = () => {
         <Route path="/" element={<Register />} />
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/qrcode" element={<QRGenerator />} />
+
       </Routes>
     </HashRouter>
   );
