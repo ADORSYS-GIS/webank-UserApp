@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import QRGenerator from "../Qrcode"; // Update the import path
+import QRGenerator from "../Qrcode";
 import { QRCodeCanvas } from "qrcode.react";
 
 // Mock QRCodeCanvas component
