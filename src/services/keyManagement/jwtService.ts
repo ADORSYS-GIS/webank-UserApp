@@ -11,7 +11,7 @@ export async function generateJWT(
   devJwt?: string | null,
   phoneNumberJwt?: string | null,
   accountJwt?: string | null,
-  ...data: Array<string>
+  ...data: Array<string | number>
 ): Promise<string> {
   // Hash the payload
   let concatenatedString = "";
@@ -46,10 +46,6 @@ export async function generateJWT(
     if (phoneNumberJwt) {
       header["phoneNumberJwt"] = phoneNumberJwt;
     }
-    if (accountJwt) {
-      header["accountJwt"] = accountJwt;
-    }
-
     if (accountJwt) {
       header["accountJwt"] = accountJwt;
     }
