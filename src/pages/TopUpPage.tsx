@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {calculateTransactionFee} from "../services/computation/transactionFeeCalculator";
+import { calculateTransactionFee } from "../services/computation/transactionFeeCalculator";
 
 const TopUpPage: React.FC = () => {
   const [amount, setAmount] = useState<number | string>("");
   const navigate = useNavigate();
 
-  
   const handleCancel = () => {
     navigate(-1); // Go back to the previous page
   };
