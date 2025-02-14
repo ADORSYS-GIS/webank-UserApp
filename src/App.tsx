@@ -6,7 +6,7 @@ import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
-import AgentPage from "./pages/Agentpage";
+import AgentPage from "./pages/AgentPage";
 
 const App: React.FC = () => {
   return (
@@ -17,7 +17,6 @@ const App: React.FC = () => {
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/agent" element={<AgentPage />} />
-
       </Routes>
     </HashRouter>
   );
