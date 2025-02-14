@@ -7,6 +7,8 @@ import Header from "./components/Header";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import QRScannerPage from "./pages/QRScannerPage";
+import AgentPage from "./pages/AgentPage";
+import QRGenerator from "./pages/Qrcode";
 
 const App: React.FC = () => {
   return (
@@ -17,6 +19,9 @@ const App: React.FC = () => {
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/qr-scanner" element={<QRScannerPage />} />
+        <Route path="/agent" element={<AgentPage />} />
+        <Route path="/qrcode" element={<QRGenerator />} />
+        <Route path="/top-up" element={<TopUpPage />} />
       </Routes>
     </HashRouter>
   );

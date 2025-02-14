@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { calculateTransactionFee } from "../services/computation/transactionFeeCalculator";
 
 const TopUpPage: React.FC = () => {
   const [amount, setAmount] = useState<number | string>("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const AccountID = location.state?.accountId;
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
@@ -28,7 +30,7 @@ const TopUpPage: React.FC = () => {
     }
 
     // Navigate to the QR code page with the amount
-    navigate(`/qr-code?amount=${numericAmount}`);
+    navigate("/qrcode", { state: { totalAmount, AccountID } });
   };
 
   return (
