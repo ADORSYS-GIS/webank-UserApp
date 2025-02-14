@@ -33,6 +33,13 @@ const Dashboard: React.FC = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
+  // Keyboard handler for the overlay
+  const handleOverlayKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      toggleSidebar();
+    }
+  };
+
   // View balance function
   const viewBalance = async () => {
     if (balanceVisible) {
@@ -57,8 +64,8 @@ const Dashboard: React.FC = () => {
     try {
       setLoadingTransactions(true);
       const transactionsResponse = await RequestToGetTransactionHistory(
-        accountId,
-        accountCert,
+          accountId,
+          accountCert
       );
 
       let transactions;
@@ -85,45 +92,49 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="relative flex h-screen overflow-hidden">
-      {/* Sidebar overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black opacity-50"
-          onClick={toggleSidebar}
-        />
-      )}
+      <div className="relative flex h-screen overflow-hidden">
+        {/* Sidebar overlay */}
+        {isSidebarOpen && (
+            <div
+                role="button"
+                tabIndex={0}
+                onClick={toggleSidebar}
+                onKeyDown={handleOverlayKeyDown}
+                className="fixed inset-0 z-30 bg-black opacity-50"
+                aria-label="Close sidebar overlay"
+            />
+        )}
 
-      {/* Sidebar panel */}
-      <div
-        className={`fixed z-40 inset-y-0 left-0 transform transition-transform duration-300 
+        {/* Sidebar panel */}
+        <div
+            className={`fixed z-40 inset-y-0 left-0 transform transition-transform duration-300 
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static md:inset-auto md:transform-none`}
-      >
-        <Sidebar />
-      </div>
+        >
+          <Sidebar />
+        </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        <Header onHamburgerClick={toggleSidebar} />
-        <main className="flex-1 p-6 bg-gray-50 text-gray-800 overflow-auto">
-          <BalanceCard
-            balanceVisible={balanceVisible}
-            balance={balance}
-            viewBalance={viewBalance}
-            accountId={accountId}
-          />
-          <ActionButtons />
-          <TransactionsSection
-            transactionsData={transactionsData}
-            transactionsVisible={transactionsVisible}
-            setTransactionsVisible={setTransactionsVisible}
-            fetchTransactions={fetchTransactions}
-            loadingTransactions={loadingTransactions}
-          />
-        </main>
+        {/* Main content */}
+        <div className="flex-1 flex flex-col">
+          <Header onHamburgerClick={toggleSidebar} />
+          <main className="flex-1 p-6 bg-gray-50 text-gray-800 overflow-auto">
+            <BalanceCard
+                balanceVisible={balanceVisible}
+                balance={balance}
+                viewBalance={viewBalance}
+                accountId={accountId}
+            />
+            <ActionButtons />
+            <TransactionsSection
+                transactionsData={transactionsData}
+                transactionsVisible={transactionsVisible}
+                setTransactionsVisible={setTransactionsVisible}
+                fetchTransactions={fetchTransactions}
+                loadingTransactions={loadingTransactions}
+            />
+          </main>
+        </div>
       </div>
-    </div>
   );
 };
 
