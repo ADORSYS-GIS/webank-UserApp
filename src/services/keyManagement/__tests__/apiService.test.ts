@@ -6,8 +6,9 @@ import {
   sendOTP,
   validateOTP,
   createBankAccount,
-  TopupAccount,
-} from "../apiService"; // Adjust this path
+  getAccountBalance,
+  getTransactionHistory,
+} from "../apiService";
 
 vi.mock("axios");
 
@@ -64,6 +65,13 @@ describe("API Functions", () => {
     );
     expect(result).toEqual({ status: "validated" });
   });
+  it("should handle validateDeviceRegistration API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(
+      validateDeviceRegistration("nonce123", "hash123", "1", mockJwt),
+    ).rejects.toThrow("failed to validate device");
+  });
 
   it("should call sendOTP API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { otpSent: true } });
@@ -79,6 +87,13 @@ describe("API Functions", () => {
       },
     );
     expect(result).toEqual({ otpSent: true });
+  });
+  it("should handle sendOTP API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(
+      sendOTP("+1234567890", mockJwt, "publicKeyXYZ"),
+    ).rejects.toThrow("Failed to send OTP");
   });
 
   it("should call validateOTP API correctly", async () => {
@@ -100,6 +115,13 @@ describe("API Functions", () => {
       },
     );
     expect(result).toEqual({ verified: true });
+  });
+  it("should handle validateOTP API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(
+      validateOTP("+1234567890", "123456", "otpHashXYZ", mockJwt),
+    ).rejects.toThrow("Incorrect OTP");
   });
 
   it("should call createBankAccount API correctly", async () => {
@@ -129,36 +151,54 @@ describe("API Functions", () => {
       createBankAccount("+1234567890", "publicKeyXYZ", mockJwt),
     ).rejects.toThrow("Incorrect OTP");
   });
-  it("should call topupAccount API correctly", async () => {
-    mockPost.mockResolvedValueOnce({ data: { topupSuccess: true } });
 
-    const result = await TopupAccount(
-      "account123",
-      500,
-      "otherAccount456",
-      mockJwt,
-    );
+  it("should call getTransactionHistory API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { transactions: [] } });
+
+    const result = await getTransactionHistory("mockAccountId", mockJwt);
+
     expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/accounts/payout"),
-      {
-        accountID: "account123",
-        amount: 500,
-        otherAccountID: "otherAccount456",
-      },
+      expect.stringContaining("/accounts/transactions"),
+      { accountID: "mockAccountId" },
       {
         headers: expect.objectContaining({
           Authorization: `Bearer ${mockJwt}`,
         }),
       },
     );
-    expect(result).toEqual({ topupSuccess: true });
+    expect(result).toEqual({ transactions: [] });
   });
 
-  it("should handle topupAccount API failure", async () => {
+  it("should handle getTransactionHistory API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
 
     await expect(
-      TopupAccount("account123", 500, "otherAccount456", mockJwt),
-    ).rejects.toThrow("Failed to top up account");
+      getTransactionHistory("mockAccountId", mockJwt),
+    ).rejects.toThrow("Failed to fetch transaction history");
+  });
+
+  it("should call getAccountBalance API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { balance: 1000 } });
+
+    const result = await getAccountBalance("mockAccountId", mockJwt);
+
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/accounts/balance"),
+      { accountID: "mockAccountId" },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+        }),
+      },
+    );
+    expect(result).toEqual({ balance: 1000 });
+  });
+
+  it("should handle getAccountBalance API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(getAccountBalance("mockAccountId", mockJwt)).rejects.toThrow(
+      "Failed to retrieve account balance",
+    );
   });
 });
