@@ -221,7 +221,7 @@ export const TopupAccount = async (
   const requestBody = {
     accountID: accountId,
     amount: amount,
-    otherAccountID: otherAccountId,
+    otheraccountID: otherAccountId,
   };
   const headers = {
     "Content-Type": "application/json",

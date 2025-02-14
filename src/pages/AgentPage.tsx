@@ -1,9 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQrcode, faMoneyCheckAlt } from "@fortawesome/free-solid-svg-icons";
 
 const AgentPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { accountId, accountCert } = location.state || {};
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -17,7 +20,7 @@ const AgentPage: React.FC = () => {
             <FontAwesomeIcon icon={faQrcode} className="text-5xl mb-3" />
             <button
               className="text-xl font-semibold bg-white text-purple-600 px-4 py-2 rounded-lg mt-3 shadow-md hover:bg-gray-200 transition"
-              onClick={() => navigate("/qr-scan")}
+              onClick={() => navigate("/qr-scan", { state: { otherAccountId: accountId, accountCert } })}
             >
               Cash-In
             </button>

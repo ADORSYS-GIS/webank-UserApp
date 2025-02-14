@@ -50,10 +50,6 @@ export async function generateJWT(
       header["accountJwt"] = accountJwt;
     }
 
-    if (accountJwt) {
-      header["accountJwt"] = accountJwt;
-    }
-
     // Sign the JWT with the private key and custom header
     const jwt = await new jose.SignJWT(jwtPayload)
       .setProtectedHeader(header)
