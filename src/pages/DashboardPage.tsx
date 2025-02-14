@@ -19,6 +19,7 @@ const Dashboard: React.FC = () => {
   // Other states
   const [balanceVisible, setBalanceVisible] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [transactionsData, setTransactionsData] = useState<any[]>([]);
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
