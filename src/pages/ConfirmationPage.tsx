@@ -8,14 +8,18 @@ const TransactionReview: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Transaction Review</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">
+          Transaction Review
+        </h2>
         <div className="mb-6">
           <p className="text-gray-600">Account ID:</p>
-          <p className="text-lg font-semibold">{accountId || "N/A"}</p>
+          <p className="text-lg font-semibold">
+            {accountId || "34sfzrgfkaliflids-rfnsrlfdrm"}
+          </p>
         </div>
         <div className="mb-6">
           <p className="text-gray-600">Amount:</p>
-          <p className="text-lg font-semibold">{amount || "N/A"}</p>
+          <p className="text-lg font-semibold">{amount || "5000,000"}</p>
         </div>
         <div className="flex justify-between mt-8">
           {/* Cancel Button */}
