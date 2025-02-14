@@ -33,13 +33,6 @@ const Dashboard: React.FC = () => {
     setIsSidebarOpen((prev) => !prev);
   };
 
-  // Keyboard handler for the overlay
-  const handleOverlayKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      toggleSidebar();
-    }
-  };
-
   // View balance function
   const viewBalance = async () => {
     if (balanceVisible) {
@@ -93,14 +86,12 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="relative flex h-screen overflow-hidden">
-      {/* Sidebar overlay */}
+      {/* Sidebar overlay using a native button for accessibility */}
       {isSidebarOpen && (
-        <div
-          role="button"
-          tabIndex={0}
+        <button
+          type="button"
           onClick={toggleSidebar}
-          onKeyDown={handleOverlayKeyDown}
-          className="fixed inset-0 z-30 bg-black opacity-50"
+          className="fixed inset-0 z-30 bg-black opacity-50 focus:outline-none"
           aria-label="Close sidebar overlay"
         />
       )}
