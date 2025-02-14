@@ -7,6 +7,7 @@ import TopUpPage from "./pages/TopUpPage"; // Importe la nouvelle page TopUpPage
 import Header from "./components/Header";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
+import AgentPage from "./pages/AgentPage";
 import QRGenerator from "./pages/Qrcode";
 
 const App: React.FC = () => {
@@ -17,6 +18,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Register />} />
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/agent" element={<AgentPage />} />
         <Route path="/qrcode" element={<QRGenerator />} />
         <Route path="/top-up" element={<TopUpPage />} />
       </Routes>

@@ -1,14 +1,10 @@
-// src/components/SideBar.tsx
-import { Link, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserTie,
-  faHome,
-  // Additional icons if needed
-} from "@fortawesome/free-solid-svg-icons";
+import { faUserTie, faHome } from "@fortawesome/free-solid-svg-icons";
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div className="w-64 h-full bg-gradient-to-b from-purple-500 to-blue-600 p-4 shadow-lg">
@@ -18,9 +14,9 @@ const Sidebar: React.FC = () => {
       <nav>
         <ul className="space-y-2">
           <li>
-            <Link
-              to="/dashboard"
-              className={`flex items-center p-3 rounded-lg ${
+            <button
+              onClick={() => navigate("/dashboard")}
+              className={`flex items-center w-full text-left p-3 rounded-lg ${
                 location.pathname === "/dashboard"
                   ? "bg-blue-700"
                   : "hover:bg-blue-700"
@@ -28,12 +24,12 @@ const Sidebar: React.FC = () => {
             >
               <FontAwesomeIcon icon={faHome} className="mr-3" />
               Dashboard
-            </Link>
+            </button>
           </li>
           <li>
-            <Link
-              to="/agent"
-              className={`flex items-center p-3 rounded-lg ${
+            <button
+              onClick={() => navigate("/agent")}
+              className={`flex items-center w-full text-left p-3 rounded-lg ${
                 location.pathname === "/agent"
                   ? "bg-blue-700"
                   : "hover:bg-blue-700"
@@ -41,7 +37,7 @@ const Sidebar: React.FC = () => {
             >
               <FontAwesomeIcon icon={faUserTie} className="mr-3" />
               Agent Services
-            </Link>
+            </button>
           </li>
         </ul>
       </nav>
