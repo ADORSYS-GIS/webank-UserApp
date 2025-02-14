@@ -6,6 +6,9 @@ const TopUpPage: React.FC = () => {
   const [amount, setAmount] = useState<number | string>("");
   const navigate = useNavigate();
 
+  // Calculate the total amount (top-up amount + transaction fee)
+  const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
+
   const handleCancel = () => {
     navigate(-1); // Go back to the previous page
   };
@@ -49,6 +52,10 @@ const TopUpPage: React.FC = () => {
         />
         <p className="mt-4 text-sm text-gray-600">
           Transaction Fee: {calculateTransactionFee(Number(amount))} XAF
+        </p>
+        {/* Display Total Amount */}
+        <p className="mt-2 text-sm text-gray-600">
+          Total Amount: {totalAmount} XAF
         </p>
         <div className="flex justify-between mt-6">
           <button
