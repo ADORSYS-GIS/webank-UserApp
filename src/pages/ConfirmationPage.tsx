@@ -42,7 +42,7 @@ const TransactionReview: React.FC = () => {
           {/* Confirm Button */}
           <button
             className="px-6 py-3 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 shadow-md"
-            onClick={() => console.log("Transaction confirmed")}
+            onClick={() => navigate("/success")}
           >
             Confirm
           </button>
