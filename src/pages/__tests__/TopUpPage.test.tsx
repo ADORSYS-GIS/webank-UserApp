@@ -1,17 +1,20 @@
 import { vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router-dom";
-import TopUpPage from "../TopUpPage"; // Adjust the path according to your project structure
+import TopUpPage from "../TopUpPage";
 import "@testing-library/jest-dom";
 
 // Mock useNavigate
-vi.mock("react-router-dom", () => ({
-  ...require("react-router-dom"),
-  useNavigate: vi.fn(),
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+  };
+});
 
 // Mock the global alert function
-global.alert = vi.fn();
+vi.stubGlobal("alert", vi.fn());
 
 describe("TopUpPage", () => {
   beforeEach(() => {
@@ -25,19 +28,13 @@ describe("TopUpPage", () => {
       </MemoryRouter>,
     );
 
-    // Check that the title is displayed
     expect(screen.getByText("Top-up")).toBeInTheDocument();
-
-    // Check that the input field is displayed
-    const inputField = screen.getByPlaceholderText("Enter amount");
-    expect(inputField).toBeInTheDocument();
-
-    // Check that the buttons are displayed
+    expect(screen.getByPlaceholderText("Enter amount")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
     expect(screen.getByText("Continue")).toBeInTheDocument();
   });
 
-  it("displays transaction fee correctly based on the amount", () => {
+  it("displays transaction fee and total amount correctly based on the amount", async () => {
     render(
       <MemoryRouter>
         <TopUpPage />
@@ -47,16 +44,25 @@ describe("TopUpPage", () => {
     const inputField = screen.getByPlaceholderText("Enter amount");
 
     // Case 1: Amount <= 5000 XAF
-    fireEvent.change(inputField, { target: { value: "3000" } });
-    expect(screen.getByText("Transaction Fee: 0 XAF")).toBeInTheDocument();
+    fireEvent.input(inputField, { target: { value: "3000" } });
+    await waitFor(() => {
+      expect(screen.getByText("Transaction Fee: 0 XAF")).toBeInTheDocument();
+      expect(screen.getByText("Total Amount: 3000 XAF")).toBeInTheDocument();
+    });
 
     // Case 2: Amount between 5001 XAF and 500000 XAF
-    fireEvent.change(inputField, { target: { value: "10000" } });
-    expect(screen.getByText("Transaction Fee: 1000 XAF")).toBeInTheDocument();
+    fireEvent.input(inputField, { target: { value: "10000" } });
+    await waitFor(() => {
+      expect(screen.getByText("Transaction Fee: 1000 XAF")).toBeInTheDocument();
+      expect(screen.getByText("Total Amount: 11000 XAF")).toBeInTheDocument();
+    });
 
     // Case 3: Amount > 500000 XAF
-    fireEvent.change(inputField, { target: { value: "600000" } });
-    expect(screen.getByText("Transaction Fee: 1000 XAF")).toBeInTheDocument();
+    fireEvent.input(inputField, { target: { value: "600000" } });
+    await waitFor(() => {
+      expect(screen.getByText("Transaction Fee: 1000 XAF")).toBeInTheDocument();
+      expect(screen.getByText("Total Amount: 601000 XAF")).toBeInTheDocument();
+    });
   });
 
   it("shows an error message for invalid amounts", async () => {
@@ -69,20 +75,16 @@ describe("TopUpPage", () => {
     const inputField = screen.getByPlaceholderText("Enter amount");
     const continueButton = screen.getByText("Continue");
 
-    // Case 1: Amount <= 0
-    fireEvent.change(inputField, { target: { value: "0" } });
+    fireEvent.input(inputField, { target: { value: "0" } });
     fireEvent.click(continueButton);
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith(
-        "Please enter a valid top-up amount.",
-      );
+      expect(alert).toHaveBeenCalledWith("Please enter a valid top-up amount.");
     });
 
-    // Case 2: Amount > 500000 XAF
-    fireEvent.change(inputField, { target: { value: "600000" } });
+    fireEvent.input(inputField, { target: { value: "600000" } });
     fireEvent.click(continueButton);
     await waitFor(() => {
-      expect(global.alert).toHaveBeenCalledWith(
+      expect(alert).toHaveBeenCalledWith(
         "The maximum amount for a single transfer is 500,000 XAF.",
       );
     });
@@ -101,11 +103,9 @@ describe("TopUpPage", () => {
     const inputField = screen.getByPlaceholderText("Enter amount");
     const continueButton = screen.getByText("Continue");
 
-    // Enter a valid amount
-    fireEvent.change(inputField, { target: { value: "10000" } });
+    fireEvent.input(inputField, { target: { value: "10000" } });
     fireEvent.click(continueButton);
 
-    // Verify that navigation is triggered
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith("/qr-code?amount=10000");
     });
