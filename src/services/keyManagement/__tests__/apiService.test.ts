@@ -6,6 +6,7 @@ import {
   sendOTP,
   validateOTP,
   createBankAccount,
+  TopupAccount,
 } from "../apiService"; // Adjust this path
 
 vi.mock("axios");
@@ -127,5 +128,37 @@ describe("API Functions", () => {
     await expect(
       createBankAccount("+1234567890", "publicKeyXYZ", mockJwt),
     ).rejects.toThrow("Incorrect OTP");
+  });
+  it("should call topupAccount API correctly", async () => {
+    mockPost.mockResolvedValueOnce({ data: { topupSuccess: true } });
+
+    const result = await TopupAccount(
+      "account123",
+      500,
+      "otherAccount456",
+      mockJwt,
+    );
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/accounts/payout"),
+      {
+        accountID: "account123",
+        amount: 500,
+        otherAccountID: "otherAccount456",
+      },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+        }),
+      },
+    );
+    expect(result).toEqual({ topupSuccess: true });
+  });
+
+  it("should handle topupAccount API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(
+      TopupAccount("account123", 500, "otherAccount456", mockJwt),
+    ).rejects.toThrow("Failed to top up account");
   });
 });

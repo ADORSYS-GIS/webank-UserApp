@@ -11,7 +11,7 @@ export async function generateJWT(
   devJwt?: string | null,
   phoneNumberJwt?: string | null,
   accountJwt?: string | null,
-  ...data: Array<string>
+  ...data: Array<string | number>
 ): Promise<string> {
   // Hash the payload
   let concatenatedString = "";
