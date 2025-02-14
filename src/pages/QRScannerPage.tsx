@@ -21,14 +21,14 @@ const QRScannerPage: React.FC = () => {
           (decodedText) => {
             try {
               const data = JSON.parse(decodedText);
-              if (data.amount && data.accountId) {
+              if (data.accountID1 && data.amount) {
                 setAmount(data.amount);
-                setAccountId(data.accountId);
+                setAccountId(data.accountID1);
                 setError(null);
                 qrScanner.stop();
 
                 navigate("/confirmation", {
-                  state: { amount: data.amount, accountId: data.accountId },
+                  state: { amount: data.amount, accountId: data.accountID1 },
                 });
               } else {
                 throw new Error("Invalid QR Code format");
