@@ -6,6 +6,7 @@ import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
+import ConfirmationPage from "./pages/ConfirmationPage";
 
 const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Register />} />
         <Route path="/otp" element={<OtpPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/confirmation" element={<ConfirmationPage />} />
       </Routes>
     </HashRouter>
   );
