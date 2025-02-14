@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
         viewBalance={viewBalance}
         accountId={accountId}
       />
-      <ActionButtons />
+      <ActionButtons accountId={accountId} />
       <TransactionsSection
         transactionsData={transactionsData}
         transactionsVisible={transactionsVisible}

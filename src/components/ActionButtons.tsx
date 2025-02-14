@@ -1,12 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const ActionButtons: React.FC = () => {
+interface ActionButtonsProps {
+  accountId: string | undefined; // Ensure it's correctly typed
+}
+
+const ActionButtons: React.FC<ActionButtonsProps> = ({ accountId }) => {
   const navigate = useNavigate();
 
   // Function to handle the "Top Up" button click
   const handleTopUpClick = () => {
-    navigate("/top-up"); // Navigate to the top-up page
+    navigate("/top-up", { state: { accountId } });
+    console.log("Top Up button clicked", accountId);
   };
 
   return (
@@ -15,7 +20,7 @@ const ActionButtons: React.FC = () => {
         {
           icon: "https://cdn-icons-png.flaticon.com/512/1041/1041888.png",
           label: "Top Up",
-          onClick: handleTopUpClick, // Assign the click handler for "Top Up"
+          onClick: handleTopUpClick,
         },
         {
           icon: "https://cdn-icons-png.flaticon.com/512/4475/4475436.png",
@@ -34,13 +39,11 @@ const ActionButtons: React.FC = () => {
         },
       ].map((action) => (
         <button
-          key={action.label} // Unique key for each button
+          key={action.label}
           className="flex flex-col items-center bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg shadow-md transition duration-300"
-          onClick={action.onClick} // Assign the click handler for each button
+          onClick={action.onClick}
         >
-          {/* Display the icon */}
           <img src={action.icon} alt={action.label} className="h-10 w-10" />
-          {/* Display the label */}
           <span className="mt-2 text-sm">{action.label}</span>
         </button>
       ))}
