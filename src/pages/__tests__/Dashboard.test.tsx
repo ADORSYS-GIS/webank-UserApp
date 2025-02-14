@@ -9,10 +9,16 @@ import { toast } from "react-toastify";
 import { MemoryRouter } from "react-router-dom";
 import "@testing-library/jest-dom";
 
+// Mock FontAwesome
+vi.mock("@fortawesome/react-fontawesome", () => ({
+  FontAwesomeIcon: () => null,
+}));
+
 // Mock necessary external modules
 vi.mock("react-router-dom", () => ({
   ...require("react-router-dom"),
   useLocation: () => ({
+    pathname: "/dashboard",
     state: {
       accountId: "12345",
       accountCert: "cert123",
