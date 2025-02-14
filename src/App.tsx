@@ -10,6 +10,7 @@ import QRScannerPage from "./pages/QRScannerPage";
 import AgentPage from "./pages/AgentPage";
 import QRGenerator from "./pages/Qrcode";
 import TopUpPage from "./pages/TopUpPage";
+import ConfirmationPage from "./pages/ConfirmationPage";
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         <Route path="/agent" element={<AgentPage />} />
         <Route path="/qrcode" element={<QRGenerator />} />
         <Route path="/top-up" element={<TopUpPage />} />
+        <Route path="/confirmation" element={<ConfirmationPage />} />
       </Routes>
     </HashRouter>
   );
