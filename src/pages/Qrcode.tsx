@@ -1,15 +1,16 @@
 import React from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import { useLocation } from "react-router-dom";
 
 const QRGenerator: React.FC = () => {
-  // Predefined account ID and amount
-  const predefinedAccountId = "12345ABC";
-  const predefinedAmount = "100";
+  const location = useLocation();
+  const totalamount = location.state?.totalAmount;
+  const AccountId = location.state?.AccountID;
 
   // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
-    accountId: predefinedAccountId,
-    amount: predefinedAmount,
+    accountID1: AccountId,
+    amount: totalamount,
   });
 
   return (
