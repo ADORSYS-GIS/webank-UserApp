@@ -1,5 +1,5 @@
 // Sidebar.test.tsx
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 
 import "@testing-library/jest-dom/vitest";
@@ -20,4 +20,18 @@ describe("Sidebar", () => {
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Agent Services")).toBeInTheDocument();
   });
+});
+
+it("navigates to the correct page when a link is clicked", () => {
+  render(
+    <BrowserRouter>
+      <Sidebar />
+    </BrowserRouter>,
+  );
+
+  // Click on the 'Agent Services' link
+  fireEvent.click(screen.getByText("Agent Services"));
+
+  // Check if the URL has changed to '/agent'
+  expect(window.location.pathname).toBe("/agent");
 });
