@@ -13,14 +13,18 @@ const TransactionReview: React.FC = () => {
         </h2>
 
         <div className="mb-6 bg-gray-100 p-5 rounded-lg shadow-inner">
-          <p className="text-gray-500 text-sm uppercase tracking-wider">Account ID</p>
+          <p className="text-gray-500 text-sm uppercase tracking-wider">
+            Account ID
+          </p>
           <p className="text-xl font-semibold text-gray-800 break-all">
             {accountId || "34sfzrgfkaliflids-rfnsrlfdrm"}
           </p>
         </div>
 
         <div className="mb-6 bg-gray-100 p-5 rounded-lg shadow-inner">
-          <p className="text-gray-500 text-sm uppercase tracking-wider">Amount</p>
+          <p className="text-gray-500 text-sm uppercase tracking-wider">
+            Amount
+          </p>
           <p className="text-xl font-semibold text-gray-800">
             {amount ? `${amount} XAF` : "5,000,000 XAF"}
           </p>
@@ -34,7 +38,7 @@ const TransactionReview: React.FC = () => {
           >
             Cancel
           </button>
-          
+
           {/* Confirm Button */}
           <button
             className="px-6 py-3 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 shadow-md"
