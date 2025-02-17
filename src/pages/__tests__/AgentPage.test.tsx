@@ -60,7 +60,9 @@ describe("AgentPage", () => {
     );
 
     fireEvent.click(screen.getByText("Cash-In"));
-    expect(navigate).toHaveBeenCalledWith("/qr-scan");
+    expect(navigate).toHaveBeenCalledWith("/qr-scan", {
+      state: { otherAccountId: undefined, accountCert: undefined },
+    });
   });
 
   // Update once the Pay-out functionally is implemented

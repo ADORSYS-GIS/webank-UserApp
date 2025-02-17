@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const QRScannerPage: React.FC = () => {
   const [amount, setAmount] = useState<string | null>(null);
@@ -8,6 +8,9 @@ const QRScannerPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { otherAccountId, accountCert } = location.state || {};
+  console.log(otherAccountId, accountCert);
 
   useEffect(() => {
     const startScanner = async () => {
@@ -28,7 +31,12 @@ const QRScannerPage: React.FC = () => {
                 qrScanner.stop();
 
                 navigate("/confirmation", {
-                  state: { amount: data.amount, accountId: data.accountID1 },
+                  state: {
+                    amount: data.amount,
+                    accountId: data.accountID1,
+                    otherAccountId,
+                    accountCert,
+                  },
                 });
               } else {
                 throw new Error("Invalid QR Code format");
@@ -55,7 +63,7 @@ const QRScannerPage: React.FC = () => {
           .catch((err) => console.error("Error stopping scanner:", err));
       }
     };
-  }, [navigate]);
+  }, [accountCert, navigate, otherAccountId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 relative">

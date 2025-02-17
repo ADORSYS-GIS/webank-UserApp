@@ -9,7 +9,7 @@ describe("Sidebar", () => {
   it("renders the sidebar with navigation links", () => {
     render(
       <BrowserRouter>
-        <Sidebar />
+        <Sidebar accountId="" accountCert="" />
       </BrowserRouter>,
     );
 
@@ -25,7 +25,7 @@ describe("Sidebar", () => {
 it("navigates to the correct page when a link is clicked", () => {
   render(
     <BrowserRouter>
-      <Sidebar />
+      <Sidebar accountId="" accountCert="" />
     </BrowserRouter>,
   );
 

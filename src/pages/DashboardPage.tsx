@@ -102,7 +102,7 @@ const Dashboard: React.FC = () => {
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static md:inset-auto md:transform-none`}
       >
-        <Sidebar />
+        <Sidebar accountCert={accountCert} accountId={accountId} />
       </div>
 
       {/* Main content */}

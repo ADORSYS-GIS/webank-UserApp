@@ -1,9 +1,32 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { RequestToTopup } from "../services/keyManagement/requestService";
+import { toast, ToastContainer } from "react-toastify";
 
-const TransactionReview: React.FC = () => {
+const ConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { accountId, amount } = location.state || {};
+  const { accountId, amount, otherAccountId, accountCert } =
+    location.state || {};
+  console.log(accountId, amount, otherAccountId, accountCert);
+
+  const handleTopUp = async () => {
+    try {
+      const response = await RequestToTopup(
+        accountId,
+        amount,
+        otherAccountId,
+        accountCert,
+      );
+      if (response.endsWith("Success")) {
+        toast.success("Account successfully topped up.");
+        navigate("/success");
+      } else {
+        toast.error("Phone number Registration failed");
+      }
+    } catch (error) {
+      toast.error("Invalid OTP");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100 px-4">
@@ -42,14 +65,15 @@ const TransactionReview: React.FC = () => {
           {/* Confirm Button */}
           <button
             className="px-6 py-3 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 shadow-md"
-            onClick={() => navigate("/success")}
+            onClick={handleTopUp}
           >
             Confirm
           </button>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
 
-export default TransactionReview;
+export default ConfirmationPage;

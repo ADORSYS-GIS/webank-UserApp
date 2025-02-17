@@ -211,3 +211,35 @@ export const getAccountBalance = async (
     throw new Error("Failed to retrieve account balance");
   }
 };
+export const TopupAccount = async (
+  accountId: string,
+  amount: number,
+  otherAccountId: string,
+  jwtToken: string,
+) => {
+  // Create the request object
+  const requestBody = {
+    accountID: accountId,
+    amount: amount,
+    otherAccountID: otherAccountId,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the POST request to retrieve account balance
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/payout`,
+      requestBody,
+      { headers },
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error toping up account ", error);
+    throw new Error("Failed to top up account");
+  }
+};
