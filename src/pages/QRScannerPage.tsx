@@ -38,7 +38,7 @@ const QRScannerPage: React.FC = () => {
         setError("Failed to read QR code. Please try again.");
       }
     },
-    [navigate],
+    [accountCert, navigate, otherAccountId],
   );
 
   useEffect(() => {
