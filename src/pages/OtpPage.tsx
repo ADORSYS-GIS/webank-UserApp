@@ -6,6 +6,7 @@ import {
   RequestToValidateOTP,
 } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
+import NotificationHandler from "../services/notifications/notificationHandler.ts";
 
 const Otp = () => {
   const navigate = useNavigate();
@@ -52,6 +53,22 @@ const Otp = () => {
 
             console.log("AccountID received:", accountId);
             console.log("AccountCert received:", accountCert);
+
+            console.log("registering push notifications...");
+            NotificationHandler(accountId);
+
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            // After NotificationHandler(accountId) and a short delay
+            await fetch("http://localhost:8081/api/notifications/send", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: accountId,
+                title: "Webank",
+                body: "Your first firebase notification"
+              }),
+            });
 
             await new Promise((resolve) => setTimeout(resolve, 2000));
 

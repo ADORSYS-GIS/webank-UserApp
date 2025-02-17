@@ -1,29 +1,36 @@
 /// <reference lib="webworker" />
-import {
-  cleanupOutdatedCaches,
-  createHandlerBoundToURL,
-  precacheAndRoute,
-} from "workbox-precaching";
+import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
+import { initializeApp } from "firebase/app";
+import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
+import firebaseConfig from "./services/notifications/firebaseConfig";
 
 declare let self: ServiceWorkerGlobalScope;
 
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
+
+// Handle background push notifications
+onBackgroundMessage(messaging, (payload) => {
+  console.log("Received background notification:", payload);
+
+  const { title = "Notification", body = "You have a new message", icon = "/android-chrome-192x192.png" } = payload.notification || {};
+
+  self.registration.showNotification(title, {
+    body,
+    icon,
+    badge: "/android-chrome-192x192.png",
+  });
 });
 
-// self.__WB_MANIFEST is the default injection point
-precacheAndRoute(self.__WB_MANIFEST);
+// Listen for 'message' events (for service worker updates)
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
+});
 
-// clean old assets
+// Default precaching and offline support
+precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
-/** @type {RegExp[] | undefined} */
-let allowlist;
-// in dev mode, we disable precaching to avoid caching issues
-if (import.meta.env.DEV) allowlist = [/^\/$/];
-
-// to allow work offline
-registerRoute(
-  new NavigationRoute(createHandlerBoundToURL("index.html"), { allowlist }),
-);
+registerRoute(new NavigationRoute(createHandlerBoundToURL("index.html"), { allowlist: import.meta.env.DEV ? [/^\/$/] : undefined }));
