@@ -2,11 +2,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserTie, faHome } from "@fortawesome/free-solid-svg-icons";
 
-
 interface SideBarProps {
-  accountId: string | undefined; 
+  accountId: string | undefined;
   accountCert: string | undefined; // Ensure it's correctly typed
-
 }
 
 const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
@@ -35,7 +33,9 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
           </li>
           <li>
             <button
-              onClick={() => navigate("/agent", { state: { accountId, accountCert } })}
+              onClick={() =>
+                navigate("/agent", { state: { accountId, accountCert } })
+              }
               className={`flex items-center w-full text-left p-3 rounded-lg ${
                 location.pathname === "/agent"
                   ? "bg-blue-700"

@@ -205,7 +205,6 @@ describe("API Functions", () => {
 
   it("should call topupAccount API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { topupSuccess: true } });
-
     const result = await TopupAccount(
       "account123",
       500,
@@ -235,5 +234,4 @@ describe("API Functions", () => {
       TopupAccount("account123", 500, "otherAccount456", mockJwt),
     ).rejects.toThrow("Failed to top up account");
   });
-
 });

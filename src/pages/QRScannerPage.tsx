@@ -12,7 +12,6 @@ const QRScannerPage: React.FC = () => {
   const { otherAccountId, accountCert } = location.state || {};
   console.log(otherAccountId, accountCert);
 
-
   useEffect(() => {
     const startScanner = async () => {
       try {
@@ -32,7 +31,12 @@ const QRScannerPage: React.FC = () => {
                 qrScanner.stop();
 
                 navigate("/confirmation", {
-                  state: { amount: data.amount, accountId: data.accountID1, otherAccountId, accountCert },
+                  state: {
+                    amount: data.amount,
+                    accountId: data.accountID1,
+                    otherAccountId,
+                    accountCert,
+                  },
                 });
               } else {
                 throw new Error("Invalid QR Code format");
@@ -59,7 +63,7 @@ const QRScannerPage: React.FC = () => {
           .catch((err) => console.error("Error stopping scanner:", err));
       }
     };
-  }, [navigate]);
+  }, [accountCert, navigate, otherAccountId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 relative">
