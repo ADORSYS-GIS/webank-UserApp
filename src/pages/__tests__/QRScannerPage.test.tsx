@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import QRScannerPage from "../QRScannerPage"; // Adjust path as needed
-import { useNavigate } from "react-router-dom";
+import { MemoryRouter, useNavigate } from "react-router-dom";
 import "@testing-library/jest-dom";
 // Mock the necessary external modules
 vi.mock("react-router-dom", () => ({
@@ -28,7 +28,11 @@ describe("QRScannerPage", () => {
   });
 
   it("renders the QR scanner page", () => {
-    render(<QRScannerPage />);
+    render(
+      <MemoryRouter>
+        <QRScannerPage />
+      </MemoryRouter>,
+    );
 
     // Check if elements related to the page are rendered
     expect(screen.getByText("Scan Client QR Code")).toBeInTheDocument();
@@ -36,7 +40,11 @@ describe("QRScannerPage", () => {
   });
 
   it("navigates to the dashboard when cancel button is clicked", () => {
-    render(<QRScannerPage />);
+    render(
+      <MemoryRouter>
+        <QRScannerPage />
+      </MemoryRouter>,
+    );
 
     // Simulate clicking the cancel button
     fireEvent.click(screen.getByText("Cancel"));

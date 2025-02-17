@@ -9,6 +9,7 @@ import {
   validateDeviceRegistration,
   validateOTP,
   getTransactionHistory,
+  TopupAccount,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -186,5 +187,31 @@ export async function RequestToGetTransactionHistory(
   console.log(jwtToken + "Account Cert!!!");
   console.log(accountId + "Account ID !!!");
   return await getTransactionHistory(accountId, jwtToken);
+}
+
+// Function to top up an account
+export async function RequestToTopup(
+  accountId: string,
+  amount: number,
+  otherAccountId: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    accountId,
+    amount,
+    otherAccountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(accountId + "Account ID !!!");
+  return await TopupAccount(accountId, amount, otherAccountId, jwtToken);
 }
 export const getKey = () => Key;
