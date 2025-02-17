@@ -99,7 +99,7 @@ const QRScannerPage: React.FC = () => {
 
         {/* Upload QR Code Image */}
         <label className="block w-full text-center bg-blue-400 text-white font-medium py-2 rounded-lg cursor-pointer hover:bg-blue-700">
-          Upload QR Code Image{' '}
+          Upload QR Code Image{" "}
           <input
             type="file"
             accept="image/*"

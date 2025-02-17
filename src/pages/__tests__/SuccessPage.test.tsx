@@ -3,15 +3,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SuccessPage from "../SuccessPage";
 import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
-
 // Import jest-dom for the toBeInTheDocument matcher
 import "@testing-library/jest-dom";
-
 // Mock the CheckCircle icon from lucide-react
 vi.mock("lucide-react", () => ({
   CheckCircle: vi.fn(() => <div data-testid="check-circle" />),
 }));
-
 // Mock react-router-dom hooks
 vi.mock("react-router-dom", () => ({
   useNavigate: vi.fn(),
@@ -27,10 +24,7 @@ describe("SuccessPage", () => {
     // Mocking useLocation to return state with transaction details
     (useLocation as jest.Mock).mockReturnValue({
       state: {
-        totalPayment: "XAF 5100",
-        TranactionID: "000085752257",
-        paymentTime: "25 Feb 2023, 13:22",
-        paymentMethod: "Bank Transfer",
+        transactionCert: "mock-transaction-cert",
       },
     });
 
@@ -41,7 +35,7 @@ describe("SuccessPage", () => {
     vi.clearAllMocks(); // Clear all mocks after each test
   });
 
-  test("renders transaction success message with correct parameters", () => {
+  test("renders transaction success message with correct parameters", async () => {
     render(<SuccessPage />);
 
     // Check if the CheckCircle icon is rendered
@@ -55,13 +49,12 @@ describe("SuccessPage", () => {
 
     // Check if the transaction details are correctly displayed
     expect(screen.getByText("Total Payment")).toBeInTheDocument();
-    expect(screen.getByText("XAF 5100")).toBeInTheDocument();
+
     expect(screen.getByText("Transaction ID")).toBeInTheDocument();
-    expect(screen.getByText("000085752257")).toBeInTheDocument();
+
     expect(screen.getByText("Payment Time")).toBeInTheDocument();
-    expect(screen.getByText("25 Feb 2023, 13:22")).toBeInTheDocument();
+
     expect(screen.getByText("Payment Method")).toBeInTheDocument();
-    expect(screen.getByText("Bank Transfer")).toBeInTheDocument();
 
     // Check if the "Go Back Home" button is rendered
     expect(

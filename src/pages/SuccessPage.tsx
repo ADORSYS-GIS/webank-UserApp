@@ -1,13 +1,42 @@
 import { CheckCircle } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 import { useLocation, useNavigate } from "react-router-dom";
+
+// Define the type of the decoded JWT payload
+interface TransactionDetails {
+  amount: number;
+  TranactionID: string;
+  paymentTime: number;
+  paymentMethod: string;
+}
 
 export default function SuccessPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { transactionCert } = location.state || {};
 
-  // Destructure transaction details from location.state
-  const { totalPayment, TranactionID, paymentTime, paymentMethod } =
-    location.state || {};
+  // Define transaction details object with proper types
+  let transactionDetails: TransactionDetails = {
+    amount: 0,
+    TranactionID: "N/A",
+    paymentTime: 0,
+    paymentMethod: "N/A",
+  };
+
+  if (transactionCert) {
+    try {
+      const decoded = jwtDecode<TransactionDetails>(transactionCert); // Decode the JWT and infer the type
+      transactionDetails = decoded; // Set the decoded transaction details
+    } catch (error) {
+      console.error("Failed to decode JWT:", error);
+    }
+  }
+
+  const { amount, TranactionID, paymentTime, paymentMethod } =
+    transactionDetails;
+
+  // Format payment time to a readable string
+  const formattedPaymentTime = new Date(paymentTime).toLocaleString();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white p-8">
@@ -27,30 +56,24 @@ export default function SuccessPage() {
           <div className="space-y-4 text-left">
             <div className="flex justify-between">
               <span className="text-gray-600">Total Payment</span>
-              <span className="font-bold text-gray-900 text-xl">
-                {totalPayment || "XAF 5100"}
-              </span>
+              <span className="font-bold text-gray-900 text-xl">{amount}</span>
             </div>
 
             <div className="flex justify-between">
               <span className="text-gray-600">Transaction ID</span>
-              <span className="font-bold text-gray-900">
-                {TranactionID || "000085752257"}
-              </span>
+              <span className="font-bold text-gray-900">{TranactionID}</span>
             </div>
 
             <div className="flex justify-between">
               <span className="text-gray-600">Payment Time</span>
               <span className="font-bold text-gray-900">
-                {paymentTime || "25 Feb 2023, 13:22"}
+                {formattedPaymentTime}
               </span>
             </div>
 
             <div className="flex justify-between">
               <span className="text-gray-600">Payment Method</span>
-              <span className="font-bold text-gray-900">
-                {paymentMethod || "Bank Transfer"}
-              </span>
+              <span className="font-bold text-gray-900">{paymentMethod}</span>
             </div>
           </div>
 
