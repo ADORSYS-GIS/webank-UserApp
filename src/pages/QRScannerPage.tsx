@@ -10,28 +10,36 @@ const QRScannerPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { otherAccountId, accountCert } = location.state || {};
-  console.log( "id is " +otherAccountId, "cert is" + accountCert)
+  console.log("id is " + otherAccountId, "cert is" + accountCert);
 
   // Memoize handleDecodedText using useCallback to prevent unnecessary re-renders
-  const handleDecodedText = useCallback((decodedText: string) => {
-    try {
-      const data = JSON.parse(decodedText);
-      if (data.accountID1 && data.amount) {
-        setAmount(data.amount);
-        setAccountId(data.accountID1);
-        setError(null);
-        scannerRef.current?.stop();
+  const handleDecodedText = useCallback(
+    (decodedText: string) => {
+      try {
+        const data = JSON.parse(decodedText);
+        if (data.accountID1 && data.amount) {
+          setAmount(data.amount);
+          setAccountId(data.accountID1);
+          setError(null);
+          scannerRef.current?.stop();
 
-        navigate("/confirmation", {
-          state: { amount: data.amount, accountId: data.accountID1 , otherAccountId, accountCert },
-        });
-      } else {
-        throw new Error("Invalid QR Code format");
+          navigate("/confirmation", {
+            state: {
+              amount: data.amount,
+              accountId: data.accountID1,
+              otherAccountId,
+              accountCert,
+            },
+          });
+        } else {
+          throw new Error("Invalid QR Code format");
+        }
+      } catch (err) {
+        setError("Failed to read QR code. Please try again.");
       }
-    } catch (err) {
-      setError("Failed to read QR code. Please try again.");
-    }
-  }, [navigate]);
+    },
+    [navigate],
+  );
 
   useEffect(() => {
     const startScanner = async () => {
@@ -43,10 +51,10 @@ const QRScannerPage: React.FC = () => {
           { facingMode: "environment" },
           { fps: 10, qrbox: { width: 250, height: 250 } },
           (decodedText) => handleDecodedText(decodedText),
-        
+
           (errorMessage) => {
             console.log("Scanning error:", errorMessage);
-          }
+          },
         );
       } catch (err) {
         setError("Unable to access camera. Please allow camera permissions.");
@@ -62,13 +70,11 @@ const QRScannerPage: React.FC = () => {
           .catch((err) => console.error("Error stopping scanner:", err));
       }
     };
-  }, [handleDecodedText]); 
-              
-       
+  }, [handleDecodedText]);
 
   // Function to scan a QR code from an uploaded image
   const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
