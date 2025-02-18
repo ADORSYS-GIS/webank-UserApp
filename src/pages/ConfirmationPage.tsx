@@ -17,9 +17,11 @@ const ConfirmationPage: React.FC = () => {
         otherAccountId,
         accountCert,
       );
-      if (response.endsWith("Success")) {
+      if (response?.includes("Success")) {
+        // Extract the transaction certificate from the response
+        const transactionCert = response.replace(" Success", ""); // Remove " Success" suffix
         toast.success("Account successfully topped up.");
-        navigate("/success");
+        navigate("/success", { state: { transactionCert } });
       } else {
         toast.error("Your balance is insufficient!");
       }
