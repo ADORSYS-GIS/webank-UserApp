@@ -17,14 +17,17 @@ const ConfirmationPage: React.FC = () => {
         otherAccountId,
         accountCert,
       );
-      if (response.endsWith("Success")) {
+      if (response?.includes("Success")) {
+        // Extract the transaction certificate from the response
+        const transactionCert = response.replace(" Success", ""); // Remove " Success" suffix
         toast.success("Account successfully topped up.");
-        navigate("/success");
+        navigate("/success", { state: { transactionCert } });
       } else {
-        toast.error("Phone number Registration failed");
+        toast.error("Transaction failed");
       }
     } catch (error) {
-      toast.error("Invalid OTP");
+      toast.error("An error occurred while processing the transaction");
+      console.error(error);
     }
   };
 
