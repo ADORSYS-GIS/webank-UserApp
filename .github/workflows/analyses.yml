@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out the code from the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       # Install project dependencies using npm ci for clean install
       - name: Install Dependencies
@@ -21,7 +21,7 @@ jobs:
       
       # Cache node_modules for future jobs to speed up workflow
       - name: Cache node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ github.sha }}
@@ -31,11 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out the code from the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ github.sha }}
@@ -51,11 +51,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out the code from the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ github.sha }}
@@ -70,11 +70,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out the code from the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ github.sha }}
@@ -89,11 +89,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out the code from the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ github.sha }}
@@ -109,11 +109,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out the code from the repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ github.sha }}
