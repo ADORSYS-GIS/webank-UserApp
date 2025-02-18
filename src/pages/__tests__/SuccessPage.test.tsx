@@ -2,6 +2,7 @@ import { vi, describe, beforeEach, afterEach, test, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SuccessPage from "../SuccessPage";
+import { jwtDecode } from "jwt-decode";
 import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
 // Import jest-dom for the toBeInTheDocument matcher
 import "@testing-library/jest-dom";
@@ -13,6 +14,10 @@ vi.mock("lucide-react", () => ({
 vi.mock("react-router-dom", () => ({
   useNavigate: vi.fn(),
   useLocation: vi.fn(),
+}));
+
+vi.mock("jwt-decode", () => ({
+  jwtDecode: vi.fn(),
 }));
 
 describe("SuccessPage", () => {
@@ -30,6 +35,15 @@ describe("SuccessPage", () => {
 
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
+
+
+  // Mock jwtDecode to return a decoded JWT payload
+  (jwtDecode as jest.Mock).mockReturnValue({
+    amount: 100,
+    TranactionID: "123456789",
+    paymentTime: Date.now(),
+    paymentMethod: "Bank Deposit",
+  })
 
   afterEach(() => {
     vi.clearAllMocks(); // Clear all mocks after each test
@@ -50,11 +64,21 @@ describe("SuccessPage", () => {
     // Check if the transaction details are correctly displayed
     expect(screen.getByText("Total Payment")).toBeInTheDocument();
 
+    expect(screen.getByText("100")).toBeInTheDocument();
+
     expect(screen.getByText("Transaction ID")).toBeInTheDocument();
+
+    expect(screen.getByText("123456789")).toBeInTheDocument();
 
     expect(screen.getByText("Payment Time")).toBeInTheDocument();
 
+    const currentTime = new Date().toLocaleString();
+
+    expect(screen.getByText(currentTime)).toBeInTheDocument();
+    
     expect(screen.getByText("Payment Method")).toBeInTheDocument();
+
+    expect(screen.getByText("Bank Deposit")).toBeInTheDocument();
 
     // Check if the "Go Back Home" button is rendered
     expect(
