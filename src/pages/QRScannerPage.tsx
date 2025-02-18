@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -10,7 +10,36 @@ const QRScannerPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { otherAccountId, accountCert } = location.state || {};
-  console.log(otherAccountId, accountCert);
+  console.log("id is " + otherAccountId, "cert is" + accountCert);
+
+  // Memoize handleDecodedText using useCallback to prevent unnecessary re-renders
+  const handleDecodedText = useCallback(
+    (decodedText: string) => {
+      try {
+        const data = JSON.parse(decodedText);
+        if (data.accountID1 && data.amount) {
+          setAmount(data.amount);
+          setAccountId(data.accountID1);
+          setError(null);
+          scannerRef.current?.stop();
+
+          navigate("/confirmation", {
+            state: {
+              amount: data.amount,
+              accountId: data.accountID1,
+              otherAccountId,
+              accountCert,
+            },
+          });
+        } else {
+          throw new Error("Invalid QR Code format");
+        }
+      } catch (err) {
+        setError("Failed to read QR code. Please try again.");
+      }
+    },
+    [accountCert, navigate, otherAccountId],
+  );
 
   useEffect(() => {
     const startScanner = async () => {
@@ -21,30 +50,8 @@ const QRScannerPage: React.FC = () => {
         await qrScanner.start(
           { facingMode: "environment" },
           { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => {
-            try {
-              const data = JSON.parse(decodedText);
-              if (data.accountID1 && data.amount) {
-                setAmount(data.amount);
-                setAccountId(data.accountID1);
-                setError(null);
-                qrScanner.stop();
+          (decodedText) => handleDecodedText(decodedText),
 
-                navigate("/confirmation", {
-                  state: {
-                    amount: data.amount,
-                    accountId: data.accountID1,
-                    otherAccountId,
-                    accountCert,
-                  },
-                });
-              } else {
-                throw new Error("Invalid QR Code format");
-              }
-            } catch (err) {
-              setError("Failed to read QR code. Please try again.");
-            }
-          },
           (errorMessage) => {
             console.log("Scanning error:", errorMessage);
           },
@@ -63,7 +70,23 @@ const QRScannerPage: React.FC = () => {
           .catch((err) => console.error("Error stopping scanner:", err));
       }
     };
-  }, [accountCert, navigate, otherAccountId]);
+  }, [handleDecodedText]);
+
+  // Function to scan a QR code from an uploaded image
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      try {
+        const qrScanner = new Html5Qrcode("qr-reader");
+        const result = await qrScanner.scanFile(file, false);
+        handleDecodedText(result);
+      } catch (err) {
+        setError("Failed to read QR code from image. Please try again.");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 relative">
@@ -73,23 +96,35 @@ const QRScannerPage: React.FC = () => {
         </h2>
         {/* QR Scanner Container */}
         <div id="qr-reader" className="mb-6 w-full max-w-sm mx-auto"></div>
+
+        {/* Upload QR Code Image */}
+        <label className="block w-full text-center bg-blue-400 text-white font-medium py-2 rounded-lg cursor-pointer hover:bg-blue-700">
+          Upload QR Code Image{" "}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+        </label>
+
         {/* Cancel Button inside the scan frame (only visible before scan success) */}
         {!amount && (
           <button
             onClick={() => navigate("/dashboard")}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700"
+            className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 mt-4"
           >
             Cancel
           </button>
         )}
+
         {/* Error Message */}
-        {error && <p className="text-red-600 font-medium mb-4">{error}</p>}{" "}
-        {/* Display error message */}
+        {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
+
         {/* Debug: Display accountId for internal use */}
         {accountId && (
           <p className="text-gray-600 mt-4">Account ID: {accountId}</p>
-        )}{" "}
-        {/* Display accountId for debugging */}
+        )}
       </div>
     </div>
   );
