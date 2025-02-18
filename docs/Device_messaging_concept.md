@@ -1,25 +1,28 @@
-# 1. Device Messaging Concept
+# Device Messaging Concept
 
-Here we shall talk about the messaging concept for our Webank application ecosystem. We will first delve into a more general overview of messaging between components and the paradigms through which it is possible, and then we will look at the particular paradigm and messaging architecture we deem fit for Webank.
+## 1. Table of Contents
 
-## 2. Table of Contents
-
-1. [Device Messaging Concept](#1-device-messaging-concept)
-2. [Overview](#3-overview)
-3. [Comparison of Messaging Paradigms](#4-comparison-of-messaging-paradigms)
+1. [Table Of Contents](#1-table-of-contents)
+2. [Intro](#2-intro)
+3. [Overview](#3-overview)
+4. [Comparison of Messaging Paradigms](#4-comparison-of-messaging-paradigms)
    1. [Pull Paradigm](#41-pull-paradigm)
    2. [Push Paradigm](#42-push-paradigm)
    3. [Poll Paradigm](#43-poll-paradigm)
-4. [Key Differences Between Pull, Push, and Poll Paradigms](#5-key-differences-between-pull-push-and-poll-paradigms)
-5. [Webank Messaging Architecture](#6-webank-messaging-architecture)
+5. [Key Differences Between Pull, Push, and Poll Paradigms](#5-key-differences-between-pull-push-and-poll-paradigms)
+6. [Webank Messaging Architecture](#6-webank-messaging-architecture)
    1. [Proposed Paradigm: Pull](#61-proposed-paradigm-pull)
    2. [Rationale for Pull Paradigm](#62-rationale-for-pull-paradigm)
    3. [Implementation Considerations](#63-implementation-considerations)
-6. [Messaging Architecture](#7-messaging-architecture)
+7. [Messaging Architecture](#7-messaging-architecture)
    1. [Defining the deviceId and the message holder](#71-defining-the-deviceid-and-the-message-holder)
    2. [Proposed flow of messages](#72-proposed-flow-of-messages)
 
 ---
+
+## 2. Intro
+
+Here we shall talk about the messaging concept for our Webank application ecosystem. We will first delve into a more general overview of messaging between components and the paradigms through which it is possible, and then we will look at the particular paradigm and messaging architecture we deem fit for Webank.
 
 ## 3. Overview
 
@@ -99,7 +102,7 @@ Imagine checking for updates on your favorite website by manually refreshing the
 
 ### 6.1 Proposed Paradigm: Pull
 
-#### Rationale for Pull Paradigm
+#### 6.2 Rationale for Pull Paradigm
 
 Given the need for devices to explicitly request messages and the importance of controlling when the device receives updates, the **pull** paradigm is the most suitable approach for our product. The pull model offers several benefits:
 
@@ -107,7 +110,7 @@ Given the need for devices to explicitly request messages and the importance of 
 - **Efficiency**: The server will only send data when requested, reducing unnecessary server-side computations and bandwidth usage.
 - **Scalability**: Pull allows the system to scale better by enabling devices to independently request messages instead of pushing updates to many devices simultaneously.
 
-#### 6.2 Implementation Considerations
+#### 6.3 Implementation Considerations
 
 1. **Message Storage**:  
    Messages should be stored in a database, linked to the `deviceId` of the associated device, to ensure that only relevant messages are returned. A well-structured database schema will help optimize the retrieval of messages for specific devices.
@@ -139,7 +142,7 @@ Given the need for devices to explicitly request messages and the importance of 
 
 2. The **`OBS`** also exposes an end point where it will deliver these messages to whichever requester comes with the necessary credentials to request them (possibly **`accountId`** or maybe even the **`devicePublicKey`** itself).
 
-3. At every key event of our choosing that the account associated with this public key performs at the frontend (un/successfully registering his phone number, un/successfully completing his account registration, and un/successfully carrying out a transaction), we store messages for this account and we progrma the client to fetch these messages with appropritely authenticated requests
+3. At every key event of our choosing that the account associated with this public key performs at the frontend (un/successfully registering his phone number, un/successfully completing his account registration, and un/successfully carrying out a transaction), we store messages for this account and we program the client to fetch these messages with appropritely authenticated requests
 
 4. To get these messages the account(client) sends a request to the server to fetch new messages, including the **`devicePublicKey`** or **`accountId`** and the **`timestamp`** of the last message it received.
 
