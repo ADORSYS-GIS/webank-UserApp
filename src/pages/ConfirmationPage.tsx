@@ -21,10 +21,10 @@ const ConfirmationPage: React.FC = () => {
         toast.success("Account successfully topped up.");
         navigate("/success");
       } else {
-        toast.error("Phone number Registration failed");
+        toast.error("Your balance is insufficient!");
       }
     } catch (error) {
-      toast.error("Invalid OTP");
+      toast.error("Invalid balance");
     }
   };
 
