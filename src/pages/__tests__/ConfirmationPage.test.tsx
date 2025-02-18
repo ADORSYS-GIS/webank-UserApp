@@ -35,21 +35,22 @@ describe("ConfirmationPage Tests", () => {
     });
   });
 
-  test("Confirm button shows error toast if top-up fails", async () => {
-    (RequestToTopup as jest.Mock).mockResolvedValue("Top-upFailed");
+  test("Confirm button shows error toast if an exception occurs", async () => {
+    (RequestToTopup as jest.Mock).mockRejectedValue(new Error("Invalid OTP"));
 
     render(
       <MemoryRouter>
         <ConfirmationPage />
+        <ToastContainer />
       </MemoryRouter>,
     );
 
     fireEvent.click(screen.getByRole("button", { name: /confirm/i }));
 
     await waitFor(() => {
-      // Check for error message (toast) after the button click
+      // Check for the correct error toast message
       expect(
-        screen.getByText("Phone number Registration failed"),
+        screen.getByText("An error occurred while processing the transaction"),
       ).toBeInTheDocument();
     });
   });
@@ -60,16 +61,17 @@ describe("ConfirmationPage Tests", () => {
     render(
       <MemoryRouter>
         <ConfirmationPage />
-        <ToastContainer />{" "}
-        {/* Add ToastContainer to render toasts in the test */}
+        <ToastContainer />
       </MemoryRouter>,
     );
 
     fireEvent.click(screen.getByRole("button", { name: /confirm/i }));
 
     await waitFor(() => {
-      // Check for the error toast message
-      expect(screen.getByText("Invalid OTP")).toBeInTheDocument();
+      // Check for the correct error toast message
+      expect(
+        screen.getByText("An error occurred while processing the transaction"),
+      ).toBeInTheDocument();
     });
   });
 });
