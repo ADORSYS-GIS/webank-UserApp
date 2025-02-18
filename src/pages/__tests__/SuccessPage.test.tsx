@@ -36,14 +36,13 @@ describe("SuccessPage", () => {
     (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
   });
 
-
   // Mock jwtDecode to return a decoded JWT payload
   (jwtDecode as jest.Mock).mockReturnValue({
     amount: 100,
     TranactionID: "123456789",
     paymentTime: Date.now(),
     paymentMethod: "Bank Deposit",
-  })
+  });
 
   afterEach(() => {
     vi.clearAllMocks(); // Clear all mocks after each test
@@ -75,7 +74,7 @@ describe("SuccessPage", () => {
     const currentTime = new Date().toLocaleString();
 
     expect(screen.getByText(currentTime)).toBeInTheDocument();
-    
+
     expect(screen.getByText("Payment Method")).toBeInTheDocument();
 
     expect(screen.getByText("Bank Deposit")).toBeInTheDocument();
