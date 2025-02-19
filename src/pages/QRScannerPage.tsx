@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const QRScannerPage: React.FC = () => {
@@ -10,9 +10,20 @@ const QRScannerPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { otherAccountId, accountCert } = location.state || {};
-  console.log("id is " + otherAccountId, "cert is" + accountCert);
 
-  // Memoize handleDecodedText using useCallback to prevent unnecessary re-renders
+  console.log("id is " + otherAccountId, "cert is " + accountCert);
+
+  const stopScanner = () => {
+    if (
+      scannerRef.current &&
+      scannerRef.current.getState() !== Html5QrcodeScannerState.NOT_STARTED
+    ) {
+      scannerRef.current
+        .stop()
+        .catch((err) => console.error("Error stopping scanner:", err));
+    }
+  };
+
   const handleDecodedText = useCallback(
     (decodedText: string) => {
       try {
@@ -21,7 +32,8 @@ const QRScannerPage: React.FC = () => {
           setAmount(data.amount);
           setAccountId(data.accountID1);
           setError(null);
-          scannerRef.current?.stop();
+
+          stopScanner();
 
           navigate("/confirmation", {
             state: {
@@ -43,42 +55,37 @@ const QRScannerPage: React.FC = () => {
 
   useEffect(() => {
     const startScanner = async () => {
-      try {
-        const qrScanner = new Html5Qrcode("qr-reader");
-        scannerRef.current = qrScanner;
+      if (!scannerRef.current) {
+        try {
+          const qrScanner = new Html5Qrcode("qr-reader");
+          scannerRef.current = qrScanner;
 
-        await qrScanner.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => handleDecodedText(decodedText),
-
-          (errorMessage) => {
-            console.log("Scanning error:", errorMessage);
-          },
-        );
-      } catch (err) {
-        setError("Unable to access camera. Please allow camera permissions.");
+          await qrScanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            (decodedText) => handleDecodedText(decodedText),
+            (errorMessage) => console.log("Scanning error:", errorMessage),
+          );
+        } catch (err) {
+          setError("Unable to access camera. Please allow camera permissions.");
+        }
       }
     };
 
     startScanner();
 
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current
-          .stop()
-          .catch((err) => console.error("Error stopping scanner:", err));
-      }
+      stopScanner();
     };
   }, [handleDecodedText]);
 
-  // Function to scan a QR code from an uploaded image
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       try {
+        stopScanner();
         const qrScanner = new Html5Qrcode("qr-reader");
         const result = await qrScanner.scanFile(file, false);
         handleDecodedText(result);
@@ -94,10 +101,9 @@ const QRScannerPage: React.FC = () => {
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
           Scan Client QR Code
         </h2>
-        {/* QR Scanner Container */}
+
         <div id="qr-reader" className="mb-6 w-full max-w-sm mx-auto"></div>
 
-        {/* Upload QR Code Image */}
         <label className="block w-full text-center bg-blue-400 text-white font-medium py-2 rounded-lg cursor-pointer hover:bg-blue-700">
           Upload QR Code Image{" "}
           <input
@@ -108,7 +114,6 @@ const QRScannerPage: React.FC = () => {
           />
         </label>
 
-        {/* Cancel Button inside the scan frame (only visible before scan success) */}
         {!amount && (
           <button
             onClick={() => navigate("/dashboard")}
@@ -118,10 +123,8 @@ const QRScannerPage: React.FC = () => {
           </button>
         )}
 
-        {/* Error Message */}
         {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
 
-        {/* Debug: Display accountId for internal use */}
         {accountId && (
           <p className="text-gray-600 mt-4">Account ID: {accountId}</p>
         )}
