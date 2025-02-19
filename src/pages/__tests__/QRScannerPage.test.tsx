@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import QRScannerPage from "../QRScannerPage"; 
+import QRScannerPage from "../QRScannerPage";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import "@testing-library/jest-dom";
 
@@ -15,7 +15,7 @@ vi.mock("html5-qrcode", () => ({
   Html5Qrcode: vi.fn().mockImplementation(() => ({
     start: vi.fn().mockResolvedValueOnce("start"),
     stop: vi.fn().mockResolvedValueOnce("stop"),
-    getState: vi.fn().mockReturnValue("NOT_STARTED"), 
+    getState: vi.fn().mockReturnValue("NOT_STARTED"),
   })),
   Html5QrcodeScannerState: {
     NOT_STARTED: "NOT_STARTED",
