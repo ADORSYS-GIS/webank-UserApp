@@ -21,7 +21,7 @@ const ConfirmationPage: React.FC = () => {
         // Extract the transaction certificate from the response
         const transactionCert = response.replace(" Success", ""); // Remove " Success" suffix
         toast.success("Account successfully topped up.");
-        navigate("/success", { state: { transactionCert } });
+        navigate("/success", { state: { transactionCert, accountId: agentAccountId, accountCert: agentAccountCert } });
       } else {
         toast.error("Transaction failed");
       }
