@@ -1,8 +1,9 @@
 import { vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-import QRScannerPage from "../QRScannerPage"; // Adjust path as needed
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import QRScannerPage from "../QRScannerPage";
 import { MemoryRouter, useNavigate } from "react-router-dom";
 import "@testing-library/jest-dom";
+
 // Mock the necessary external modules
 vi.mock("react-router-dom", () => ({
   ...require("react-router-dom"),
@@ -14,17 +15,24 @@ vi.mock("html5-qrcode", () => ({
   Html5Qrcode: vi.fn().mockImplementation(() => ({
     start: vi.fn().mockResolvedValueOnce("start"),
     stop: vi.fn().mockResolvedValueOnce("stop"),
+    getState: vi.fn().mockReturnValue("NOT_STARTED"),
   })),
+  Html5QrcodeScannerState: {
+    NOT_STARTED: "NOT_STARTED",
+    STARTED: "STARTED",
+  },
 }));
 
 describe("QRScannerPage", () => {
-  // Declare mockNavigate here, so it's in the same scope as the tests
   const mockNavigate = vi.fn();
 
   beforeEach(() => {
-    // Clear previous mocks and reset navigate function
     vi.clearAllMocks();
-    vi.mocked(useNavigate).mockReturnValue(mockNavigate); // This makes sure the mockNavigate is returned by useNavigate
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
+  });
+
+  afterEach(() => {
+    cleanup(); // Ensure proper cleanup after each test
   });
 
   it("renders the QR scanner page", () => {
@@ -39,7 +47,7 @@ describe("QRScannerPage", () => {
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 
-  it("navigates to the dashboard when cancel button is clicked", () => {
+  it("navigates to the dashboard when cancel button is clicked", async () => {
     render(
       <MemoryRouter>
         <QRScannerPage />
