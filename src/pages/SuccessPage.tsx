@@ -13,7 +13,7 @@ interface TransactionDetails {
 export default function SuccessPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { transactionCert } = location.state || {};
+  const { transactionCert, accountId, accountCert } = location.state || {};
 
   // Define transaction details object with proper types
   let transactionDetails: TransactionDetails = {
@@ -80,7 +80,9 @@ export default function SuccessPage() {
           {/* Return Button */}
           <button
             className="mt-8 w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 rounded-3xl text-2xl shadow-lg transform transition-transform hover:scale-105"
-            onClick={() => navigate("/dashboard")}
+            onClick={() =>
+              navigate("/dashboard", { state: { accountId, accountCert } })
+            }
           >
             Go Back Home
           </button>

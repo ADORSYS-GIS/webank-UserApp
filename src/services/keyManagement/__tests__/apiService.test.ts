@@ -214,9 +214,9 @@ describe("API Functions", () => {
     expect(mockPost).toHaveBeenCalledWith(
       expect.stringContaining("/accounts/payout"),
       {
-        accountID: "account123",
+        recipientAccountId: "account123",
         amount: 500,
-        otherAccountID: "otherAccount456",
+        senderAccountId: "otherAccount456",
       },
       {
         headers: expect.objectContaining({

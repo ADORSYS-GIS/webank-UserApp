@@ -20,7 +20,9 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
         <ul className="space-y-2">
           <li>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() =>
+                navigate("/dashboard", { state: { accountId, accountCert } })
+              }
               className={`flex items-center w-full text-left p-3 rounded-lg ${
                 location.pathname === "/dashboard"
                   ? "bg-blue-700"
@@ -34,7 +36,12 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
           <li>
             <button
               onClick={() =>
-                navigate("/agent", { state: { accountId, accountCert } })
+                navigate("/agent", {
+                  state: {
+                    agentAccountId: accountId,
+                    agentAccountCert: accountCert,
+                  },
+                })
               }
               className={`flex items-center w-full text-left p-3 rounded-lg ${
                 location.pathname === "/agent"
