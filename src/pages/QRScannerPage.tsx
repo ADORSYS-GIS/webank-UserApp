@@ -116,7 +116,10 @@ const QRScannerPage: React.FC = () => {
           <button
             onClick={() =>
               navigate("/dashboard", {
-                state: { accountId: agentAccountId, accountCert: agentAccountCert },
+                state: {
+                  accountId: agentAccountId,
+                  accountCert: agentAccountCert,
+                },
               })
             }
             className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 mt-4"
@@ -126,7 +129,6 @@ const QRScannerPage: React.FC = () => {
         )}
 
         {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
-
       </div>
     </div>
   );
