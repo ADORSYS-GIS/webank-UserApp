@@ -18,7 +18,7 @@ describe("QRGenerator Component", () => {
   const mockTotalAmount = "100";
   const mockAccountID = "12345ABC";
   const expectedQrValue = JSON.stringify({
-    accountID1: mockAccountID, // Update based on new component key
+    accountId: mockAccountID, // Update based on new component key
     amount: mockTotalAmount,
   });
 
@@ -27,7 +27,7 @@ describe("QRGenerator Component", () => {
 
     // Mock useLocation to return predefined state values
     (useLocation as jest.Mock).mockReturnValue({
-      state: { totalAmount: mockTotalAmount, AccountID: mockAccountID },
+      state: { totalAmount: mockTotalAmount, accountId: mockAccountID },
     });
   });
 
