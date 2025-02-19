@@ -191,10 +191,10 @@ export async function RequestToGetTransactionHistory(
 
 // Function to top up an account
 export async function RequestToTopup(
-  accountId: string,
+  clientAccountId: string,
   amount: number,
-  otherAccountId: string,
-  accountCert?: string | null,
+  agentAccountId: string,
+  agentAccountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -205,13 +205,13 @@ export async function RequestToTopup(
     publicKey,
     null,
     null,
-    accountCert,
-    accountId,
+    agentAccountCert,
+    clientAccountId,
     amount,
-    otherAccountId,
+    agentAccountId,
   );
   console.log(jwtToken + "Account Cert!!!");
-  console.log(accountId + "Account ID !!!");
-  return await TopupAccount(accountId, amount, otherAccountId, jwtToken);
+  console.log(clientAccountId + "Account ID !!!");
+  return await TopupAccount(clientAccountId, amount, agentAccountId, jwtToken);
 }
 export const getKey = () => Key;

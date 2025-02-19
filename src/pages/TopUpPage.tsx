@@ -6,13 +6,16 @@ const TopUpPage: React.FC = () => {
   const [amount, setAmount] = useState<number | string>("");
   const navigate = useNavigate();
   const location = useLocation();
-  const AccountID = location.state?.accountId;
+  const clientAccountId = location.state?.clientAccountId;
+  const clientAccountCert = location.state?.clientAccountCert;
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
 
   const handleCancel = () => {
-    navigate(-1); // Go back to the previous page
+    navigate("/dashboard", {
+      state: { accountId: clientAccountId, accountCert: clientAccountCert },
+    }); // Go back to the previous page
   };
 
   const handleContinue = () => {
@@ -30,7 +33,7 @@ const TopUpPage: React.FC = () => {
     }
 
     // Navigate to the QR code page with the amount
-    navigate("/qrcode", { state: { totalAmount, AccountID } });
+    navigate("/qrcode", { state: { totalAmount, accountId: clientAccountId } });
   };
 
   return (

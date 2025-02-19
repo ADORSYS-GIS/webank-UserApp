@@ -212,22 +212,22 @@ export const getAccountBalance = async (
   }
 };
 export const TopupAccount = async (
-  accountId: string,
+  clientAccountId: string,
   amount: number,
-  otherAccountId: string,
+  agentAccountId: string,
   jwtToken: string,
 ) => {
   // Create the request object
   const requestBody = {
-    accountID: accountId,
+    recipientAccountId: clientAccountId,
+    senderAccountId: agentAccountId,
     amount: amount,
-    otherAccountID: otherAccountId,
   };
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
-
+  console.log(requestBody);
   try {
     // Send the POST request to retrieve account balance
     const response = await axios.post(

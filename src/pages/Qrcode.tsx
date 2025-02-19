@@ -5,11 +5,11 @@ import { useLocation } from "react-router-dom";
 const QRGenerator: React.FC = () => {
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
-  const AccountId = location.state?.AccountID;
+  const accountId = location.state?.accountId;
 
   // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
-    accountID1: AccountId,
+    accountId: accountId,
     amount: totalamount,
   });
 
