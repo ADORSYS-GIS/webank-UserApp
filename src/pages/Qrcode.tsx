@@ -46,7 +46,7 @@ const QRGenerator: React.FC = () => {
             onClick={downloadQRCode}
             className="px-6 py-3 text-lg font-medium text-white bg-green-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-green-700 hover:scale-105 focus:outline-none"
           >
-            ⬇ Download QR Code
+             Download QR Code
           </button>
 
           <button
