@@ -28,8 +28,8 @@ const ConfirmationPage: React.FC = () => {
             accountCert: agentAccountCert,
           },
         });
-      } else {
-        toast.error("Transaction failed");
+      } else if (response?.includes("Insufficient")) {
+        toast.error("Insufficient funds. Please add funds to your account.");
       }
     } catch (error) {
       toast.error("An error occurred while processing the transaction");
