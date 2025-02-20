@@ -6,7 +6,7 @@ import {
   RequestToValidateOTP,
 } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
-import { setRegistered } from "../services/keyManagement/authStorage.ts";
+
 
 const Otp = () => {
   const navigate = useNavigate();
@@ -56,7 +56,6 @@ const Otp = () => {
             console.log("AccountCert received:", accountCert);
 
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            setRegistered();
 
             navigate("/dashboard", { state: { accountId, accountCert } });
           } else {
