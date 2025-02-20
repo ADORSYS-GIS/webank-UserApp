@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { calculateTransactionFee } from "../services/computation/transactionFeeCalculator";
+import useDisableScroll from "../hooks/useDisableScroll";
 
 const TopUpPage: React.FC = () => {
+  useDisableScroll();
   const [amount, setAmount] = useState<number | string>("");
   const navigate = useNavigate();
   const location = useLocation();

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
+import useDisableScroll from "../hooks/useDisableScroll";
 
 const QRScannerPage: React.FC = () => {
+  useDisableScroll();
   const [amount, setAmount] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
