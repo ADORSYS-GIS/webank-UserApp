@@ -135,12 +135,12 @@ Given the need for devices to explicitly request messages and the importance of 
 
 1. The perfect data to act as our `deviceId` in Webank is the **`devicePublicKey`** which is generated at a very early stage in the registration process. It fits this bill perfectly because it is unique to a particular device.
 
-2. The module that is best suited for message handling is the **`OBS`**, the **`Webank Online Banking Service`**. It fits this bill awesomely because it is the central backend module, so to speak, as requests destined for most modules have to pass through it first, and it is the one in direct contact with the frontend outside of the initial registration process.
+2. The module that would be best suited for message handling has to be a separate module solely dedicated to this task. We shall it the **`webank messaging`** 
 
 #### 7.2 Proposed flow of messages
-1. At the end of every device registration, when a user device's public key is successfully registered in our backend, the **`OBS`** stores an initial message for the account associated with this particular public key that says something generic like "Thank you for registering." This is the table where it will be storing messages pertaining to the account associated to this particular public key henceforth.
+1. At the end of device registration, when a user device's public key is successfully registered in our backend, the **`PRS`** will forward an initial message for the account associated with this particular public key to the **`webank messaging`**, something generic like "Thank you for registering" The **`webank messaging`** will then have a table where it will be storing messages pertaining to the account associated to this particular public key henceforth.
 
-2. The **`OBS`** also exposes an end point where it will deliver these messages to whichever requester comes with the necessary credentials to request them (possibly **`accountId`** or maybe even the **`devicePublicKey`** itself).
+2. The **`webank messaging`** also exposes an end point where it will deliver these messages to whichever requester comes with the necessary credentials to request them (possibly **`accountId`** or maybe even the **`devicePublicKey`** itself).
 
 3. At every key event of our choosing that the account associated with this public key performs at the frontend (un/successfully registering his phone number, un/successfully completing his account registration, and un/successfully carrying out a transaction), we store messages for this account and we program the client to fetch these messages with appropritely authenticated requests
 
