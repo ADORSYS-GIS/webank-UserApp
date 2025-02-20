@@ -23,7 +23,7 @@ const ConfirmationPage: React.FC = () => {
         toast.success("Account successfully topped up.");
         navigate("/success", { state: { transactionCert } });
       } else {
-        toast.error("Transaction failed");
+        toast.error("Insufficient balance.");
       }
     } catch (error) {
       toast.error("An error occurred while processing the transaction");
