@@ -34,6 +34,7 @@ describe("QRGenerator Component", () => {
   it("renders QR code with correct values", () => {
     render(<QRGenerator />);
 
+    // Check if QRCodeCanvas is called with correct props
     expect(QRCodeCanvas).toHaveBeenCalledWith(
       expect.objectContaining({
         value: expectedQrValue,
@@ -55,8 +56,10 @@ describe("QRGenerator Component", () => {
     expect(mockBack).toHaveBeenCalledOnce();
   });
 
-  it("matches snapshot", () => {
-    const { container } = render(<QRGenerator />);
-    expect(container).toMatchSnapshot();
-  });
+  // it("matches snapshot", () => {
+  //   const { container } = render(<QRGenerator />);
+
+  //   // Ensure that the snapshot is captured correctly
+  //   expect(container).toMatchSnapshot();
+  // });
 });

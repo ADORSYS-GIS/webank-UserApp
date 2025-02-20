@@ -1,8 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQrcode, faMoneyCheckAlt } from "@fortawesome/free-solid-svg-icons";
+import useDisableScroll from "../hooks/useDisableScroll";
 
 const AgentPage: React.FC = () => {
+  useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
   const { agentAccountId, agentAccountCert } = location.state || {};

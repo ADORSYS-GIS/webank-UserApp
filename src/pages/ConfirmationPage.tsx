@@ -1,8 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { RequestToTopup } from "../services/keyManagement/requestService";
 import { toast, ToastContainer } from "react-toastify";
+import useDisableScroll from "../hooks/useDisableScroll";
 
 const ConfirmationPage: React.FC = () => {
+  useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
   const { clientAccountId, amount, agentAccountId, agentAccountCert } =
