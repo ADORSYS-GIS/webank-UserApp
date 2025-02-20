@@ -5,6 +5,8 @@ import {
   RequestToCreateBankAccount,
   RequestToValidateOTP,
 } from "../services/keyManagement/requestService.ts";
+import { registerUser } from "../redux/authSlice"; 
+import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 
 const Otp = () => {
@@ -13,6 +15,7 @@ const Otp = () => {
   const otpHash = location.state?.otpHash;
   const fullPhoneNumber = location.state?.fullPhoneNumber;
   const devCert = location.state?.devCert;
+  const dispatch = useDispatch(); 
   let phoneCert: string;
   const handleverifyClick = async () => {
     try {
@@ -38,7 +41,7 @@ const Otp = () => {
             devCert,
             phoneCert,
           );
-          console.log(accountCreationResponse);
+          toast.info(accountCreationResponse);
           if (
             accountCreationResponse.startsWith(
               "Bank account successfully created.",
@@ -54,6 +57,9 @@ const Otp = () => {
             console.log("AccountCert received:", accountCert);
 
             await new Promise((resolve) => setTimeout(resolve, 2000));
+            // Dispatch accountId to Redux
+            dispatch(registerUser(accountId));
+
 
             navigate("/dashboard", { state: { accountId, accountCert } });
           } else {
