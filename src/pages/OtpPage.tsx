@@ -7,7 +7,6 @@ import {
 } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
 
-
 const Otp = () => {
   const navigate = useNavigate();
   const location = useLocation();
