@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
@@ -12,42 +12,43 @@ const QRScannerPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { agentAccountId, agentAccountCert } = location.state || {};
+
   console.log("id is " + agentAccountId, "cert is" + agentAccountCert);
 
-  const stopScanner = () => {
-    if (
-      scannerRef.current &&
-      scannerRef.current.getState() !== Html5QrcodeScannerState.NOT_STARTED
-    ) {
-      scannerRef.current
-        .stop()
-        .catch((err) => console.error("Error stopping scanner:", err));
+  // Stop the scanner safely
+  const stopScanner = async () => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+        scannerRef.current = null; // Reset the reference
+      } catch (err) {
+        console.error("Error stopping scanner:", err);
+      }
     }
   };
 
+  // Handle decoded QR Code
   const handleDecodedText = useCallback(
     (decodedText: string) => {
       try {
         const data = JSON.parse(decodedText);
         if (data.accountId && data.amount) {
           setAmount(data.amount);
-          const clientAccountId = data.accountId;
           setError(null);
+          stopScanner(); // Stop scanner after successful scan
 
-          if (clientAccountId == agentAccountId) {
+          if (data.accountId === agentAccountId) {
             toast.error("Self-transfer not allowed");
           } else {
             navigate("/confirmation", {
               state: {
                 amount: data.amount,
-                clientAccountId,
+                clientAccountId: data.accountId,
                 agentAccountId,
                 agentAccountCert,
               },
             });
           }
-
-          stopScanner();
         } else {
           throw new Error("Invalid QR Code format");
         }
@@ -62,10 +63,8 @@ const QRScannerPage: React.FC = () => {
     const startScanner = async () => {
       if (!scannerRef.current) {
         try {
-          const qrScanner = new Html5Qrcode("qr-reader");
-          scannerRef.current = qrScanner;
-
-          await qrScanner.start(
+          scannerRef.current = new Html5Qrcode("qr-reader");
+          await scannerRef.current.start(
             { facingMode: "environment" },
             { fps: 10, qrbox: { width: 250, height: 250 } },
             (decodedText) => handleDecodedText(decodedText),
@@ -84,14 +83,23 @@ const QRScannerPage: React.FC = () => {
     };
   }, [handleDecodedText]);
 
+  // Handle file upload for QR code scanning
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       try {
-        stopScanner();
+        await stopScanner(); // Ensure scanner is stopped before file scanning
         const qrScanner = new Html5Qrcode("qr-reader");
+
+        // Ensure the image is a valid type
+        const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+        if (!allowedTypes.includes(file.type)) {
+          setError("Unsupported file type. Please upload a PNG or JPEG image.");
+          return;
+        }
+
         const result = await qrScanner.scanFile(file, false);
         handleDecodedText(result);
       } catch (err) {
