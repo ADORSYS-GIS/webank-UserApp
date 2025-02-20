@@ -6,8 +6,10 @@ import {
   RequestToValidateOTP,
 } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
+import useDisableScroll from "../hooks/useDisableScroll.ts";
 
 const Otp = () => {
+  useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
   const otpHash = location.state?.otpHash;
