@@ -58,6 +58,8 @@ describe("QRScannerPage", () => {
     fireEvent.click(screen.getByText("Cancel"));
 
     // Ensure navigation to the dashboard
-    expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+    expect(mockNavigate).toHaveBeenCalledWith("/dashboard", {
+      state: { agentAccountId: undefined, agentAccountCert: undefined },
+    });
   });
 });

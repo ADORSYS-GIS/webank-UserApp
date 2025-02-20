@@ -5,23 +5,29 @@ import { toast, ToastContainer } from "react-toastify";
 const ConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { accountId, amount, otherAccountId, accountCert } =
+  const { clientAccountId, amount, agentAccountId, agentAccountCert } =
     location.state || {};
-  console.log(accountId, amount, otherAccountId, accountCert);
+  console.log(clientAccountId, amount, agentAccountId, agentAccountCert);
 
   const handleTopUp = async () => {
     try {
       const response = await RequestToTopup(
-        accountId,
+        clientAccountId,
         amount,
-        otherAccountId,
-        accountCert,
+        agentAccountId,
+        agentAccountCert,
       );
       if (response?.includes("Success")) {
         // Extract the transaction certificate from the response
         const transactionCert = response.replace(" Success", ""); // Remove " Success" suffix
         toast.success("Account successfully topped up.");
-        navigate("/success", { state: { transactionCert } });
+        navigate("/success", {
+          state: {
+            transactionCert,
+            accountId: agentAccountId,
+            accountCert: agentAccountCert,
+          },
+        });
       } else {
         toast.error("Insufficient balance.");
       }
@@ -43,7 +49,7 @@ const ConfirmationPage: React.FC = () => {
             Account ID
           </p>
           <p className="text-xl font-semibold text-gray-800 break-all">
-            {accountId || "34sfzrgfkaliflids-rfnsrlfdrm"}
+            {clientAccountId || "34sfzrgfkaliflids-rfnsrlfdrm"}
           </p>
         </div>
 
@@ -60,7 +66,14 @@ const ConfirmationPage: React.FC = () => {
           {/* Cancel Button */}
           <button
             className="px-6 py-3 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-all focus:outline-none focus:ring-4 focus:ring-red-300 shadow-md"
-            onClick={() => navigate("/dashboard")}
+            onClick={() =>
+              navigate("/dashboard", {
+                state: {
+                  accountId: agentAccountId,
+                  accountCert: agentAccountCert,
+                },
+              })
+            }
           >
             Cancel
           </button>

@@ -4,14 +4,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const QRScannerPage: React.FC = () => {
   const [amount, setAmount] = useState<string | null>(null);
-  const [accountId, setAccountId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { otherAccountId, accountCert } = location.state || {};
-
-  console.log("id is " + otherAccountId, "cert is " + accountCert);
+  const { agentAccountId, agentAccountCert } = location.state || {};
+  console.log("id is " + agentAccountId, "cert is" + agentAccountCert);
 
   const stopScanner = () => {
     if (
@@ -28,9 +26,9 @@ const QRScannerPage: React.FC = () => {
     (decodedText: string) => {
       try {
         const data = JSON.parse(decodedText);
-        if (data.accountID1 && data.amount) {
+        if (data.accountId && data.amount) {
           setAmount(data.amount);
-          setAccountId(data.accountID1);
+          const clientAccountId = data.accountId;
           setError(null);
 
           stopScanner();
@@ -38,9 +36,9 @@ const QRScannerPage: React.FC = () => {
           navigate("/confirmation", {
             state: {
               amount: data.amount,
-              accountId: data.accountID1,
-              otherAccountId,
-              accountCert,
+              clientAccountId,
+              agentAccountId,
+              agentAccountCert,
             },
           });
         } else {
@@ -50,7 +48,7 @@ const QRScannerPage: React.FC = () => {
         setError("Failed to read QR code. Please try again.");
       }
     },
-    [accountCert, navigate, otherAccountId],
+    [navigate, agentAccountId, agentAccountCert],
   );
 
   useEffect(() => {
@@ -116,7 +114,14 @@ const QRScannerPage: React.FC = () => {
 
         {!amount && (
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() =>
+              navigate("/dashboard", {
+                state: {
+                  accountId: agentAccountId,
+                  accountCert: agentAccountCert,
+                },
+              })
+            }
             className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 mt-4"
           >
             Cancel
@@ -124,10 +129,6 @@ const QRScannerPage: React.FC = () => {
         )}
 
         {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
-
-        {accountId && (
-          <p className="text-gray-600 mt-4">Account ID: {accountId}</p>
-        )}
       </div>
     </div>
   );

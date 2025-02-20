@@ -3,14 +3,20 @@ import { useNavigate } from "react-router-dom";
 
 interface ActionButtonsProps {
   accountId: string | undefined; // Ensure it's correctly typed
+  accountCert: string | undefined;
 }
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ accountId }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({
+  accountId,
+  accountCert,
+}) => {
   const navigate = useNavigate();
 
   // Function to handle the "Top Up" button click
   const handleTopUpClick = () => {
-    navigate("/top-up", { state: { accountId } });
+    navigate("/top-up", {
+      state: { clientAccountId: accountId, clientAccountCert: accountCert },
+    });
     console.log("Top Up button clicked", accountId);
   };
 
