@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode, Html5QrcodeScannerState } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
 
 const QRScannerPage: React.FC = () => {
@@ -33,16 +34,20 @@ const QRScannerPage: React.FC = () => {
           const clientAccountId = data.accountId;
           setError(null);
 
-          stopScanner();
+          if (clientAccountId == agentAccountId) {
+            toast.error("Self-transfer not allowed");
+          } else {
+            navigate("/confirmation", {
+              state: {
+                amount: data.amount,
+                clientAccountId,
+                agentAccountId,
+                agentAccountCert,
+              },
+            });
+          }
 
-          navigate("/confirmation", {
-            state: {
-              amount: data.amount,
-              clientAccountId,
-              agentAccountId,
-              agentAccountCert,
-            },
-          });
+          stopScanner();
         } else {
           throw new Error("Invalid QR Code format");
         }
@@ -132,6 +137,7 @@ const QRScannerPage: React.FC = () => {
 
         {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
       </div>
+      <ToastContainer />
     </div>
   );
 };
