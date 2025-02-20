@@ -1,13 +1,12 @@
 import React, { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLocation } from "react-router-dom";
-import html2canvas from "html2canvas";
 
 const QRGenerator: React.FC = () => {
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
   const accountId = location.state?.accountId;
-  const qrContainerRef = useRef<HTMLDivElement>(null);
+  const qrRef = useRef<HTMLCanvasElement>(null);
 
   // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
@@ -15,18 +14,17 @@ const QRGenerator: React.FC = () => {
     amount: totalamount,
   });
 
-  // Function to download QR code with frame
+  // Function to download QR code
   const downloadQRCode = () => {
-    if (qrContainerRef.current) {
-      html2canvas(qrContainerRef.current).then((canvas) => {
-        const url = canvas.toDataURL("image/png"); // Convert to image URL
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "qrcode-framed.png"; // Set download filename
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      });
+    const canvas = qrRef.current;
+    if (canvas) {
+      const url = canvas.toDataURL("image/png"); // Convert canvas to image URL
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "qrcode.png"; // Set download file name
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
   };
 
@@ -37,13 +35,9 @@ const QRGenerator: React.FC = () => {
           Top-Up QR Code
         </h2>
 
-        {/* QR Code with Frame */}
-        <div
-          ref={qrContainerRef}
-          className="flex flex-col items-center bg-white p-6 rounded-lg shadow-lg border-4 border-gray-300"
-        >
-          <p className="text-lg font-semibold text-gray-700 mb-3">Scan Me</p>
-          <QRCodeCanvas value={qrValue} size={250} />
+        {/* QR Code Display */}
+        <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg mb-8">
+          <QRCodeCanvas value={qrValue} size={250} ref={qrRef} />
         </div>
 
         {/* Buttons */}

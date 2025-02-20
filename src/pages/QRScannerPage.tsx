@@ -54,7 +54,7 @@ const QRScannerPage: React.FC = () => {
         setError("Failed to read QR code. Please try again.");
       }
     },
-    [navigate, agentAccountId, agentAccountCert]
+    [navigate, agentAccountId, agentAccountCert],
   );
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const QRScannerPage: React.FC = () => {
             { facingMode: "environment" },
             { fps: 10, qrbox: { width: 250, height: 250 } },
             (decodedText) => handleDecodedText(decodedText),
-            (errorMessage) => console.log("Scanning error:", errorMessage)
+            (errorMessage) => console.log("Scanning error:", errorMessage),
           );
         } catch (err) {
           setError("Unable to access camera. Please allow camera permissions.");
@@ -82,7 +82,9 @@ const QRScannerPage: React.FC = () => {
   }, [handleDecodedText]);
 
   // Handle file upload for QR code scanning
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       try {
@@ -107,13 +109,20 @@ const QRScannerPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 relative">
       <div className="bg-white rounded-2xl shadow-xl p-12 w-full max-w-md text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Scan Client QR Code</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">
+          Scan Client QR Code
+        </h2>
 
         <div id="qr-reader" className="mb-6 w-full max-w-sm mx-auto"></div>
 
         <label className="block w-full text-center bg-blue-400 text-white font-medium py-2 rounded-lg cursor-pointer hover:bg-blue-700">
           Upload QR Code Image
-          <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileUpload}
+            className="hidden"
+          />
         </label>
 
         {!amount && (
