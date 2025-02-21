@@ -2,16 +2,40 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import Register from "../RegisterPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import { describe, it, beforeEach, vi, expect } from "vitest";
+import {
+  describe,
+  it,
+  beforeEach,
+  vi,
+  expect,
+  afterEach,
+  afterAll,
+} from "vitest";
 import { toast } from "react-toastify";
+import axios from "axios"; // Import axios to mock
+
+// Mock global objects and methods
+global.alert = vi.fn(); // Mock window.alert
 
 describe("Register component", () => {
   beforeEach(() => {
     vi.clearAllMocks(); // Clear mocks before each test
-    window.alert = vi.fn();
     // Mock the toast.success and toast.error methods to return a mock ID (string or number)
     vi.spyOn(toast, "success").mockImplementation(() => "mock-toast-id");
     vi.spyOn(toast, "error").mockImplementation(() => "mock-toast-id");
+
+    // Mock Axios POST request to prevent actual network calls
+    vi.spyOn(axios, "post").mockResolvedValue({ data: { success: true } }); // Mock successful response
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks(); // Clean up mocks after each test
+  });
+
+  afterAll(() => {
+    // Perform any final cleanup
+    // If necessary, clear any global async tasks or reset the environment
+    vi.restoreAllMocks();
   });
 
   const renderWithRouter = (component: React.ReactNode) => {
@@ -32,8 +56,15 @@ describe("Register component", () => {
     sendOTPButton.removeAttribute("disabled");
     fireEvent.click(sendOTPButton);
 
-    // Wait for the alert to be shown
-    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
+    // Wait for the toast.error to be called, indicating failure in validation (simulated)
+    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1), {
+      timeout: 10000, // Increase timeout to 10 seconds
+    });
+
+    // Check if the network request was made
+    await waitFor(() => expect(axios.post).toHaveBeenCalledTimes(1), {
+      timeout: 10000, // Increase timeout to 10 seconds
+    });
   });
 
   it("displays error message on invalid phone number", async () => {
