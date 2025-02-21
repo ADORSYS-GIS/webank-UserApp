@@ -71,8 +71,13 @@ const Register = ({ initialShowSpinner = true }) => {
     setIsLoading(true);
     try {
       const otpHash = await RequestToSendOTP(fullPhoneNumber, devCert);
-      toast.success("OTP sent!");
-      navigate("/otp", { state: { otpHash, fullPhoneNumber, devCert } });
+
+      if (otpHash.includes("exists")) {
+        toast.error("Phone number already registered.");
+      } else {
+        toast.success("OTP sent!");
+        navigate("/otp", { state: { otpHash, fullPhoneNumber, devCert } });
+      }
     } catch (error) {
       console.error("Error sending OTP:", error);
       toast.error("Failed to send OTP. Please try again.");
