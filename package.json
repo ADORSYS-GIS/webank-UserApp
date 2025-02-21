@@ -25,6 +25,7 @@
     "axios": "^1.7.7",
     "axios-mock-adapter": "^2.1.0",
     "crypto-js": "^4.2.0",
+    "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.2.7",
     "jose": "^5.9.6",
     "json-canonicalize": "^1.0.6",

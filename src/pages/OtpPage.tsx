@@ -6,8 +6,10 @@ import {
   RequestToValidateOTP,
 } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
+import useDisableScroll from "../hooks/useDisableScroll.ts";
 
 const Otp = () => {
+  useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
   const otpHash = location.state?.otpHash;
@@ -38,7 +40,8 @@ const Otp = () => {
             devCert,
             phoneCert,
           );
-          console.log(accountCreationResponse);
+
+          toast.info(accountCreationResponse);
           if (
             accountCreationResponse.startsWith(
               "Bank account successfully created.",

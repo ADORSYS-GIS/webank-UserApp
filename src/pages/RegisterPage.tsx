@@ -7,6 +7,7 @@ import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import useInitialization from "../hooks/useInitialization.ts";
+import useDisableScroll from "../hooks/useDisableScroll.ts";
 
 type CountryOption = {
   value: string;
@@ -15,6 +16,7 @@ type CountryOption = {
 };
 
 const Register = ({ initialShowSpinner = true }) => {
+  useDisableScroll();
   const navigate = useNavigate();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
