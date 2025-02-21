@@ -2,7 +2,15 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import Register from "../RegisterPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import { describe, it, beforeEach, vi, expect, afterEach, afterAll } from "vitest";
+import {
+  describe,
+  it,
+  beforeEach,
+  vi,
+  expect,
+  afterEach,
+  afterAll,
+} from "vitest";
 import { toast } from "react-toastify";
 import axios from "axios"; // Import axios to mock
 
