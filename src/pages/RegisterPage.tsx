@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import WebankLogo from "../assets/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
@@ -25,10 +25,12 @@ const Register = ({ initialShowSpinner = true }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner); // Start with spinner active
 
-  // Display spinner for a defined duration
-  setTimeout(() => {
-    setShowSpinner(false);
-  }, 2000);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSpinner(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const { devCert } = useInitialization();
 
