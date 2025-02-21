@@ -55,11 +55,4 @@ describe("QRGenerator Component", () => {
 
     expect(mockBack).toHaveBeenCalledOnce();
   });
-
-  // it("matches snapshot", () => {
-  //   const { container } = render(<QRGenerator />);
-
-  //   // Ensure that the snapshot is captured correctly
-  //   expect(container).toMatchSnapshot();
-  // });
 });
