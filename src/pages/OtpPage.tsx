@@ -41,7 +41,7 @@ const Otp = () => {
             phoneCert,
           );
 
-          toast.info(accountCreationResponse);
+          console.log(accountCreationResponse);
           if (
             accountCreationResponse.startsWith(
               "Bank account successfully created.",
