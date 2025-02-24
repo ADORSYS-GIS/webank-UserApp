@@ -20,6 +20,13 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
     console.log("Top Up button clicked", accountId);
   };
 
+  const handlePayoutClick = () => {
+    navigate("/qr-scan", {
+      state: { clientAccountId: accountId, clientAccountCert: accountCert },
+    });
+    console.log("Top Up button clicked", accountId);
+  };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {[
@@ -36,7 +43,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         {
           icon: "https://cdn-icons-png.flaticon.com/512/736/736948.png",
           label: "Withdraw",
-          onClick: () => {}, // Placeholder for other actions
+          onClick: handlePayoutClick, // Placeholder for other actions
         },
         {
           icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
