@@ -67,7 +67,7 @@ const Otp = () => {
             // Dispatch action to save accountId to the Redux state
             dispatch(setAccountId(accountId));
             dispatch(setAccountCert(accountCert)); // This sets the accountId in the global state
-             // This sets the accountId in the global state
+            // This sets the accountId in the global state
 
             await new Promise((resolve) => setTimeout(resolve, 2000));
 

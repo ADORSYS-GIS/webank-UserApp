@@ -36,7 +36,8 @@ const accountSlice = createSlice({
 });
 
 // Export actions
-export const { setAccountId, setAccountCert, clearAccountId } = accountSlice.actions;
+export const { setAccountId, setAccountCert, clearAccountId } =
+  accountSlice.actions;
 
 // Export the reducer
 export default accountSlice.reducer;

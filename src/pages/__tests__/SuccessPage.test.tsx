@@ -94,11 +94,6 @@ describe("SuccessPage", () => {
     await user.click(button);
 
     // Verify navigation to the dashboard
-    expect(mockNavigate).toHaveBeenCalledWith("/dashboard", {
-      state: {
-        accountId: undefined,
-        accountCert: undefined,
-      },
-    });
+    expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
   });
 });

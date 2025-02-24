@@ -25,9 +25,9 @@ const Dashboard: React.FC = () => {
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
   const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector( (state: RootState) => state.account.accountCert
-  )
-  
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
 
   // const accountCert = location.state?.accountCert;
 
@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
       return;
     }
     try {
-      const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
+      const fetchedBalance = await RequestToGetBalance(accountId!, accountCert);
       setBalance(fetchedBalance);
       setBalanceVisible(true);
     } catch (error) {
@@ -105,7 +105,7 @@ const Dashboard: React.FC = () => {
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static md:inset-auto md:transform-none`}
       >
-        <Sidebar accountCert={accountCert} accountId={accountId} />
+        <Sidebar accountCert={accountCert!} accountId={accountId!} />
       </div>
 
       {/* Main content */}
@@ -116,9 +116,9 @@ const Dashboard: React.FC = () => {
             balanceVisible={balanceVisible}
             balance={balance}
             viewBalance={viewBalance}
-            accountId={accountId}
+            accountId={accountId!}
           />
-          <ActionButtons accountId={accountId} accountCert={accountCert} />
+          <ActionButtons accountId={accountId!} accountCert={accountCert!} />
           <TransactionsSection
             transactionsData={transactionsData}
             transactionsVisible={transactionsVisible}

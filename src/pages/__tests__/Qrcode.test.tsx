@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import QRGenerator from "../Qrcode";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // Mock QRCodeCanvas component
 vi.mock("qrcode.react", () => ({
@@ -12,6 +13,11 @@ vi.mock("qrcode.react", () => ({
 // Mock useLocation hook from react-router-dom
 vi.mock("react-router-dom", () => ({
   useLocation: vi.fn(),
+}));
+
+// Mock useSelector to return a predefined accountId
+vi.mock("react-redux", () => ({
+  useSelector: vi.fn(),
 }));
 
 describe("QRGenerator Component", () => {
@@ -27,8 +33,11 @@ describe("QRGenerator Component", () => {
 
     // Mock useLocation to return predefined state values
     (useLocation as jest.Mock).mockReturnValue({
-      state: { totalAmount: mockTotalAmount, accountId: mockAccountID },
+      state: { totalAmount: mockTotalAmount },
     });
+
+    // Mock useSelector to return predefined accountId
+    (useSelector as unknown as jest.Mock).mockReturnValue(mockAccountID);
   });
 
   it("renders QR code with correct values", () => {

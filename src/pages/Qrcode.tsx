@@ -2,12 +2,14 @@ import React, { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLocation } from "react-router-dom";
 import useDisableScroll from "../hooks/useDisableScroll";
+import { useSelector } from "react-redux";
+import { RootState } from "../Store";
 
 const QRGenerator: React.FC = () => {
   useDisableScroll();
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
-  const accountId = location.state?.accountId;
+  const accountId = useSelector((state: RootState) => state.account.accountId);
   const qrRef = useRef<HTMLCanvasElement>(null);
 
   // Generate QR Code content with predefined values

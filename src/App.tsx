@@ -22,9 +22,17 @@ const App: React.FC = () => {
     <HashRouter>
       <Header />
       <Routes>
-        <Route path="/" element={accountId ? <Navigate to="/dashboard" replace /> : <Register />} />
+        <Route
+          path="/"
+          element={
+            accountId ? <Navigate to="/dashboard" replace /> : <Register />
+          }
+        />
         <Route path="/otp" element={<OtpPage />} />
-        <Route path="/dashboard" element={accountId ? <DashboardPage /> : <Navigate to="/" replace />} />
+        <Route
+          path="/dashboard"
+          element={accountId ? <DashboardPage /> : <Navigate to="/" replace />}
+        />
         <Route path="/qr-scan" element={<QRScannerPage />} />
         <Route path="/agent" element={<AgentPage />} />
         <Route path="/qrcode" element={<QRGenerator />} />

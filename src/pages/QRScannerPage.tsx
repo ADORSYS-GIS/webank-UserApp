@@ -3,6 +3,8 @@ import { Html5Qrcode } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
+import { useSelector } from "react-redux";
+import { RootState } from "../Store";
 
 const QRScannerPage: React.FC = () => {
   useDisableScroll();
@@ -11,7 +13,10 @@ const QRScannerPage: React.FC = () => {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { agentAccountId, agentAccountCert } = location.state || {};
+  const { agentAccountId } = location.state || {};
+  const agentAccountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
 
   console.log("id is " + agentAccountId, "cert is" + agentAccountCert);
 
@@ -129,14 +134,7 @@ const QRScannerPage: React.FC = () => {
 
         {!amount && (
           <button
-            onClick={() =>
-              navigate("/dashboard", {
-                state: {
-                  accountId: agentAccountId,
-                  accountCert: agentAccountCert,
-                },
-              })
-            }
+            onClick={() => navigate("/dashboard")}
             className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 mt-4"
           >
             Cancel

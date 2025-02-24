@@ -5,7 +5,7 @@ import { combineReducers } from "redux";
 import accountReducer from "./slices/accountSlice"; // Import your reducers
 
 // Combine multiple reducers if needed
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   account: accountReducer,
 });
 
