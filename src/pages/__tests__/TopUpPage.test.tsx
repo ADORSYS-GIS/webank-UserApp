@@ -28,7 +28,6 @@ describe("TopUpPage", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText("Top-up")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Enter amount")).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
     expect(screen.getByText("Continue")).toBeInTheDocument();

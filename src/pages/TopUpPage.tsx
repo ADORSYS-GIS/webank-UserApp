@@ -9,6 +9,7 @@ const TopUpPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const clientAccountId = location.state?.clientAccountId;
+  const show = location.state?.show;
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
@@ -40,13 +41,13 @@ const TopUpPage: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Top-up</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">{show}</h1>
         {/* Text with blue to purple gradient */}
         <label
           htmlFor="amount"
           className="block text-sm font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 mb-2"
         >
-          Enter Top-up Amount
+          Enter {show} Amount
         </label>
         <input
           type="number"

@@ -15,7 +15,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   // Function to handle the "Top Up" button click
   const handleTopUpClick = () => {
     navigate("/top-up", {
-      state: { clientAccountId: accountId, clientAccountCert: accountCert },
+      state: {
+        show: "Top up",
+        clientAccountId: accountId,
+        clientAccountCert: accountCert,
+      },
     });
     console.log("Top Up button clicked", accountId);
   };
