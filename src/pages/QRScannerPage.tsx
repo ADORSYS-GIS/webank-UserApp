@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
@@ -12,12 +12,12 @@ const QRScannerPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const { agentAccountId } = location.state || {};
+  const agentAccountId = useSelector(
+    (state: RootState) => state.account.accountId,
+  );
   const agentAccountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-
   console.log("id is " + agentAccountId, "cert is" + agentAccountCert);
 
   // Stop the scanner safely

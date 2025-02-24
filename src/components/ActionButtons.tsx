@@ -28,7 +28,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
     navigate("/qr-scan", {
       state: { clientAccountId: accountId, clientAccountCert: accountCert },
     });
-    console.log("Top Up button clicked", accountId);
+    console.log("withdrawal", accountId);
   };
 
   return (
