@@ -43,7 +43,11 @@ const Dashboard: React.FC = () => {
       return;
     }
     try {
-      const fetchedBalance = await RequestToGetBalance(accountId!, accountCert);
+      if (!accountId || !accountCert) {
+        toast.error("Account information is missing.");
+        return;
+      }
+      const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
       setBalance(fetchedBalance);
       setBalanceVisible(true);
     } catch (error) {
