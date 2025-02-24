@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
-import { RootState } from "../Store";
+import { RootState } from "../store/Store";
 
 const QRScannerPage: React.FC = () => {
   useDisableScroll();

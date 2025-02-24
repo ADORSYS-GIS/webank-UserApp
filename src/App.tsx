@@ -1,6 +1,6 @@
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "./Store";
+import { RootState } from "./store/Store";
 import Register from "./pages/RegisterPage";
 import OtpPage from "./pages/OtpPage";
 import DashboardPage from "./pages/DashboardPage";

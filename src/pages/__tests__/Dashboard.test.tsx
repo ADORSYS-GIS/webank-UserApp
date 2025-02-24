@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
-import { rootReducer } from "../../Store";
+import { rootReducer } from "../../store/Store.ts";
 import "@testing-library/jest-dom";
 
 // Mock FontAwesome

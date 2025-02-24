@@ -3,7 +3,7 @@ import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import QRScannerPage from "../QRScannerPage";
 import { MemoryRouter, useNavigate, useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "../../Store"; // Import your Redux store
+import { store } from "../../store/Store"; // Import your Redux store
 import "@testing-library/jest-dom";
 
 // Mock necessary external modules

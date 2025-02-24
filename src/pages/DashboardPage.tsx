@@ -11,7 +11,7 @@ import TransactionsSection from "../components/TransactionsSection";
 import ActionButtons from "../components/ActionButtons";
 import Sidebar from "../components/SideBar";
 import { useSelector } from "react-redux";
-import { RootState } from "../Store";
+import { RootState } from "../store/Store";
 
 const Dashboard: React.FC = () => {
   // Sidebar toggle state

@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Uses local storage
 import { combineReducers } from "redux";
-import accountReducer from "./slices/accountSlice"; // Import your reducers
+import accountReducer from "../slices/accountSlice"; // Import your reducers
 
 // Combine multiple reducers if needed
 export const rootReducer = combineReducers({
