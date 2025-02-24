@@ -1,13 +1,16 @@
 import { vi } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import QRScannerPage from "../QRScannerPage";
-import { MemoryRouter, useNavigate } from "react-router-dom";
+import { MemoryRouter, useNavigate, useLocation } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "../../store/Store"; // Import your Redux store
 import "@testing-library/jest-dom";
 
-// Mock the necessary external modules
+// Mock necessary external modules
 vi.mock("react-router-dom", () => ({
   ...require("react-router-dom"),
   useNavigate: vi.fn(),
+  useLocation: vi.fn(),
 }));
 
 // Mock the Html5Qrcode module with named exports
@@ -29,6 +32,15 @@ describe("QRScannerPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
+
+    // Mock useLocation to provide location state
+    vi.mocked(useLocation).mockReturnValue({
+      state: { agentAccountId: "test-agent-id" },
+      key: "",
+      pathname: "",
+      search: "",
+      hash: "",
+    });
   });
 
   afterEach(() => {
@@ -37,9 +49,11 @@ describe("QRScannerPage", () => {
 
   it("renders the QR scanner page", () => {
     render(
-      <MemoryRouter>
-        <QRScannerPage />
-      </MemoryRouter>,
+      <Provider store={store}>
+        <MemoryRouter>
+          <QRScannerPage />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Check if elements related to the page are rendered
@@ -49,17 +63,17 @@ describe("QRScannerPage", () => {
 
   it("navigates to the dashboard when cancel button is clicked", async () => {
     render(
-      <MemoryRouter>
-        <QRScannerPage />
-      </MemoryRouter>,
+      <Provider store={store}>
+        <MemoryRouter>
+          <QRScannerPage />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Simulate clicking the cancel button
     fireEvent.click(screen.getByText("Cancel"));
 
-    // Ensure navigation to the dashboard
-    expect(mockNavigate).toHaveBeenCalledWith("/dashboard", {
-      state: { agentAccountId: undefined, agentAccountCert: undefined },
-    });
+    // Ensure navigation to the dashboard with proper state
+    expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
   });
 });

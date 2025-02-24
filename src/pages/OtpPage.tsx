@@ -7,6 +7,8 @@ import {
 } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
+import { useDispatch } from "react-redux"; // Import useDispatch from redux
+import { setAccountId, setAccountCert } from "../slices/accountSlice"; // Import the setAccountId action
 
 const Otp = () => {
   useDisableScroll();
@@ -16,6 +18,9 @@ const Otp = () => {
   const fullPhoneNumber = location.state?.fullPhoneNumber;
   const devCert = location.state?.devCert;
   let phoneCert: string;
+
+  const dispatch = useDispatch(); // Initialize the dispatch hook
+
   const handleverifyClick = async () => {
     try {
       if (!otpHash || !fullPhoneNumber) {
@@ -41,7 +46,7 @@ const Otp = () => {
             phoneCert,
           );
 
-          toast.info(accountCreationResponse);
+          console.log(accountCreationResponse);
           if (
             accountCreationResponse.startsWith(
               "Bank account successfully created.",
@@ -50,14 +55,23 @@ const Otp = () => {
             toast.success("Registration successful");
 
             const accountId = accountCreationResponse.split("\n")[2];
-
             const accountCert = accountCreationResponse.split("\n")[4];
 
             console.log("AccountID received:", accountId);
             console.log("AccountCert received:", accountCert);
 
+            // Save to localStorage
+            localStorage.setItem("accountId", accountId);
+            localStorage.setItem("accountCert", accountCert);
+
+            // Dispatch action to save accountId to the Redux state
+            dispatch(setAccountId(accountId));
+            dispatch(setAccountCert(accountCert)); // This sets the accountId in the global state
+            // This sets the accountId in the global state
+
             await new Promise((resolve) => setTimeout(resolve, 2000));
 
+            // Navigate to dashboard page
             navigate("/dashboard", { state: { accountId, accountCert } });
           } else {
             toast.error("Account registration failed");

@@ -2,8 +2,8 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSpinner,
-  faPlusCircle,
-  faMinusCircle,
+  faMoneyBillWave,
+  faHandHoldingDollar,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Transaction {
@@ -72,8 +72,8 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
                     <FontAwesomeIcon
                       icon={
                         transaction.amount.startsWith("-")
-                          ? faMinusCircle
-                          : faPlusCircle
+                          ? faMoneyBillWave
+                          : faHandHoldingDollar
                       }
                       className="text-white"
                     />

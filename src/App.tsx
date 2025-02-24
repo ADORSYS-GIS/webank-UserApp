@@ -1,5 +1,6 @@
-// src/App.tsx
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "./store/Store";
 import Register from "./pages/RegisterPage";
 import OtpPage from "./pages/OtpPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -14,19 +15,31 @@ import SuccessPage from "./pages/SuccessPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 
 const App: React.FC = () => {
+  // Check if the user is already registered from the Redux store
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+
   return (
     <HashRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            accountId ? <Navigate to="/dashboard" replace /> : <Register />
+          }
+        />
         <Route path="/otp" element={<OtpPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route
+          path="/dashboard"
+          element={accountId ? <DashboardPage /> : <Navigate to="/" replace />}
+        />
         <Route path="/qr-scan" element={<QRScannerPage />} />
         <Route path="/agent" element={<AgentPage />} />
         <Route path="/qrcode" element={<QRGenerator />} />
         <Route path="/top-up" element={<TopUpPage />} />
         <Route path="/confirmation" element={<ConfirmationPage />} />
         <Route path="/success" element={<SuccessPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </HashRouter>
   );

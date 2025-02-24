@@ -1,6 +1,5 @@
 // src/pages/Dashboard.tsx
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   RequestToGetBalance,
@@ -11,6 +10,8 @@ import BalanceCard from "../components/BalanceCard";
 import TransactionsSection from "../components/TransactionsSection";
 import ActionButtons from "../components/ActionButtons";
 import Sidebar from "../components/SideBar";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/Store";
 
 const Dashboard: React.FC = () => {
   // Sidebar toggle state
@@ -23,10 +24,12 @@ const Dashboard: React.FC = () => {
   const [transactionsData, setTransactionsData] = useState<any[]>([]);
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
 
-  const location = useLocation();
-  const accountId = location.state?.accountId;
-  const accountCert = location.state?.accountCert;
+  // const accountCert = location.state?.accountCert;
 
   // Toggle sidebar
   const toggleSidebar = () => {
@@ -40,6 +43,10 @@ const Dashboard: React.FC = () => {
       return;
     }
     try {
+      if (!accountId || !accountCert) {
+        toast.error("Account information is missing.");
+        return;
+      }
       const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
       setBalance(fetchedBalance);
       setBalanceVisible(true);
@@ -102,7 +109,7 @@ const Dashboard: React.FC = () => {
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static md:inset-auto md:transform-none`}
       >
-        <Sidebar accountCert={accountCert} accountId={accountId} />
+        <Sidebar accountCert={accountCert!} accountId={accountId!} />
       </div>
 
       {/* Main content */}
@@ -113,9 +120,9 @@ const Dashboard: React.FC = () => {
             balanceVisible={balanceVisible}
             balance={balance}
             viewBalance={viewBalance}
-            accountId={accountId}
+            accountId={accountId!}
           />
-          <ActionButtons accountId={accountId} accountCert={accountCert} />
+          <ActionButtons accountId={accountId!} accountCert={accountCert!} />
           <TransactionsSection
             transactionsData={transactionsData}
             transactionsVisible={transactionsVisible}

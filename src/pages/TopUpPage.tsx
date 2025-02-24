@@ -9,14 +9,13 @@ const TopUpPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const clientAccountId = location.state?.clientAccountId;
-  const clientAccountCert = location.state?.clientAccountCert;
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
 
   const handleCancel = () => {
     navigate("/dashboard", {
-      state: { accountId: clientAccountId, accountCert: clientAccountCert },
+      state: { accountId: clientAccountId },
     }); // Go back to the previous page
   };
 

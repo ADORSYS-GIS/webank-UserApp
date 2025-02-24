@@ -1,12 +1,15 @@
 import { vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import Dashboard from "../DashboardPage.tsx"; // Adjust path as needed
+import Dashboard from "../DashboardPage.tsx";
 import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
 } from "../../services/keyManagement/requestService.ts";
 import { toast } from "react-toastify";
 import { MemoryRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import { rootReducer } from "../../store/Store.ts";
 import "@testing-library/jest-dom";
 
 // Mock FontAwesome
@@ -38,6 +41,14 @@ vi.mock("../../services/keyManagement/requestService.ts", () => ({
   RequestToGetTransactionHistory: vi.fn(),
 }));
 
+// Create a mock store with initial state
+const mockStore = createStore(rootReducer, {
+  account: {
+    accountId: "12345", // Mock accountId
+    accountCert: "cert123", // Mock accountCert
+  },
+});
+
 describe("Dashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -45,9 +56,11 @@ describe("Dashboard", () => {
 
   it("renders the logo and header", () => {
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
+      <Provider store={mockStore}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Check logo and welcome message
@@ -62,9 +75,11 @@ describe("Dashboard", () => {
     (RequestToGetBalance as jest.Mock).mockRejectedValueOnce(mockError);
 
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
+      <Provider store={mockStore}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Ensure the RequestToGetBalance was called 0 times as per the original logic
@@ -101,9 +116,11 @@ describe("Dashboard", () => {
     );
 
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
+      <Provider store={mockStore}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Click the "View Last Transactions" button to fetch and display transactions
@@ -123,9 +140,11 @@ describe("Dashboard", () => {
 
   it("shows the correct account ID or error message", () => {
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
+      <Provider store={mockStore}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </Provider>,
     );
 
     const accountIdText = screen.getByText("CM-12345");
