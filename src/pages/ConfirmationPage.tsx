@@ -12,6 +12,15 @@ const ConfirmationPage: React.FC = () => {
   console.log(clientAccountId, amount, agentAccountId, agentAccountCert);
 
   const handleTopUp = async () => {
+    // Check if the client is offline
+    if (!navigator.onLine) {
+      // If offline, redirect to the /amount page
+      toast.error("You are offline. Redirecting to the amount page...");
+      console.log("you are offline");
+      navigate("/top-up");
+      return;
+    }
+
     try {
       const response = await RequestToTopup(
         clientAccountId,
