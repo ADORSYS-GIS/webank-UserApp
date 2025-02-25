@@ -7,7 +7,7 @@ function hashPayload(payload: string): string {
 
 export async function generateJWT(
   privateKeyJWK: jose.JWK,
-  publicKeyJWK: jose.JWK,
+  publicKeyJWK?: jose.JWK | null,
   devJwt?: string | null,
   phoneNumberJwt?: string | null,
   accountJwt?: string | null,
@@ -35,7 +35,7 @@ export async function generateJWT(
     const header: jose.JWTHeaderParameters = {
       typ: "JWT",
       alg: "ES256",
-      jwk: publicKeyJWK,
+      jwk: publicKeyJWK || undefined,
     };
 
     // If devJwt is provided, add it to the header
