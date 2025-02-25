@@ -39,13 +39,15 @@ const AgentPage: React.FC = () => {
             <FontAwesomeIcon icon={faMoneyCheckAlt} className="text-5xl mb-3" />
             <button
               className="text-xl font-semibold bg-white text-blue-600 px-4 py-2 rounded-lg mt-3 shadow-md hover:bg-gray-200 transition"
-              onClick={() => alert("Pay-Out feature coming soon!")}
+              onClick={() =>
+                navigate("/top-up", {
+                  state: { show: "Pay out", agentAccountId, agentAccountCert },
+                })
+              }
             >
               Pay-out
             </button>
-            <p className="text-sm opacity-90 mt-2">
-              Payout cash to customers (Coming soon)
-            </p>
+            <p className="text-sm opacity-90 mt-2">Payout cash to customers</p>
           </div>
         </div>
       </div>

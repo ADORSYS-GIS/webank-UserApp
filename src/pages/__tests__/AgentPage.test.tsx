@@ -44,9 +44,7 @@ describe("AgentPage", () => {
     );
 
     expect(screen.getByText("Pay-out")).toBeInTheDocument();
-    expect(
-      screen.getByText("Payout cash to customers (Coming soon)"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Payout cash to customers")).toBeInTheDocument();
   });
 
   test("Cash-In button navigates to /qr-scan", () => {
@@ -63,19 +61,5 @@ describe("AgentPage", () => {
     expect(navigate).toHaveBeenCalledWith("/qr-scan", {
       state: { otherAccountId: undefined, accountCert: undefined },
     });
-  });
-
-  // Update once the Pay-out functionally is implemented
-  test("Pay-out button triggers alert", () => {
-    window.alert = vi.fn();
-
-    render(
-      <MemoryRouter>
-        <AgentPage />
-      </MemoryRouter>,
-    );
-
-    fireEvent.click(screen.getByText("Pay-out"));
-    expect(window.alert).toHaveBeenCalledWith("Pay-Out feature coming soon!");
   });
 });
