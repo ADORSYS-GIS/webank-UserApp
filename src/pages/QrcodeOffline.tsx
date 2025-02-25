@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
 import { signTransaction } from "../services/keyManagement/signTransaction";
 
-const QRGeneratorOffline: React.FC =  () => {
+const QRGeneratorOffline: React.FC = () => {
   useDisableScroll();
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
@@ -22,7 +22,7 @@ const QRGeneratorOffline: React.FC =  () => {
         if (accountId && totalamount !== undefined) {
           const signature = await signTransaction(accountId, totalamount);
           setSignatureValue(signature); // Store the signature in state
-          console.log("Generated Signature:", signature);  
+          console.log("Generated Signature:", signature);
         }
       } catch (error) {
         console.error("Error generating signature:", error);
@@ -31,15 +31,12 @@ const QRGeneratorOffline: React.FC =  () => {
     generateSignature();
   }, [accountId, totalamount]);
 
-
   // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
     accountId: accountId,
     amount: totalamount,
-    signature: signatureValue
+    signature: signatureValue,
   });
-
-
 
   // Function to download QR code
   const downloadQRCode = () => {
