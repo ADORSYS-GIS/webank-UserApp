@@ -16,6 +16,7 @@ const QRGenerator: React.FC = () => {
   const qrValue = JSON.stringify({
     accountId: accountId,
     amount: totalamount,
+    timeGenenerated: Date.now()
   });
 
   // Function to download QR code
