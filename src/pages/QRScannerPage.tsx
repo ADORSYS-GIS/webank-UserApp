@@ -45,12 +45,10 @@ const QRScannerPage: React.FC = () => {
           if (data.accountId === agentAccountId) {
             toast.error("Self-transfer not allowed");
             window.location.reload();
-          } 
-          else if (data.timeGenenerated < Date.now() - 60000) {
+          } else if (data.timeGenenerated < Date.now() - 60000) {
             toast.error("QR Code expired. Please try again.");
             window.location.reload();
-          } 
-          else {
+          } else {
             navigate("/confirmation", {
               state: {
                 amount: data.amount,
