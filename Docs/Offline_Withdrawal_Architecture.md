@@ -2,30 +2,25 @@
 
 ## Overview
 
-This document outlines the architecture and flow for the **Offline Withdrawal Functionality** involving the **Client**, **Agent**, **Online Banking Serviice (OBS)**,  and the **Webank BankAccount(DAS)**. The architecture facilitates secure transaction verification using digital signatures, ensuring both client and agent authenticity via the use of **Account Certificates** (accountCert).
+This document outlines the architecture and flow for the **Offline Withdrawal Functionality** involving the **Client**, **Agent**, **Online Banking Serviice (OBS)**,  and the **Deposit Account Service(DAS)**. The architecture facilitates secure transaction verification using digital signatures, ensuring both client and agent authenticity via the use of **Account Certificates** (accountCert).
 
 
 ## Components
 
 ### 1. **Client (Offline)**
-   - The client initiates the process by entering the withdrawal amount and generating a QR code containing:
+   - The client initiates the process by entering the withdrawal amount and generating a signed data structure containing:
      - Client's Account ID
      - Withdrawal Amount
      - Client's Account Certificate 
-  - This  data structure is then used to generate the QR code containing:
-    -  The signed data structure with the Account ID, Amount, and Certificate.
+  - This  data structure is then used to generate the QR code that is to be scan by the agent
 
 ### 2. **Agent**
    - The agent scans the client's QR code to extract:
-     - Account ID
-     - Withdrawal Amount
-     - Client's Account Certificate
+     - The Signed Data Strcuture
    - Sends a request to the OBS system, including:
      - Agent's Account ID
      - Agent Account Certificate 
-     - Client's Account ID
-     - Withdrawal Amount
-     - Signed Data Structure(JWT)
+     - Signed Data Strcuture(JWT) from the client
 
 ### 3. **Online Banking System (OBS)**
    - Verifies the JWT and Agent Account Certificate:
@@ -33,13 +28,14 @@ This document outlines the architecture and flow for the **Offline Withdrawal Fu
      - Verifies the Agent Account Certificate's validity and signature.
    - Extracts and verifies the Client's Account Certificate:
      - Ensures the integrity and authenticity of the signed data structure.
-   - If the verification succeeds, the request is forwarded to the Digital Account System (DAS).
+   - If the verification succeeds, the request is forwarded to the Deposit Account Service (DAS).
 
-### 4. **Digital Account System (DAS)**
+### 4. **Deposit Account Service (DAS)**
    - Verifies the Client's Account Certificate and Account ID:
      - Checks the authenticity and validity of the Client's Account Certificate.
-     - Extracts and hashes the Client's Account ID from the signed data structure and certificate.
-   - Compares the hashed Account ID:
+     - Extracts and hash Client's Account ID from the signed data structure and certificate.
+     - Extract the Account ID hash from the certificate
+   - Compares the hashed Account ID from the certificate and the hash Account ID from the request body ( use same hashing mechanism):
      - If they match, the withdrawal transaction is executed.
      - If they don’t match, the transaction is rejected.
 
@@ -61,7 +57,7 @@ This document outlines the architecture and flow for the **Offline Withdrawal Fu
 
 ## Conclusion
 
-- The Offline Withdrawal functionality ensures a secure and reliable transaction process by incorporating digital certificates and JWTs for authentication and verification. The architecture leverages multiple systems—Client, Agent, **Online Banking System (OBS)**, and **Digital Account System (DAS)**—to authenticate both the client and agent, verify transaction integrity, and process withdrawals securely. The flow is designed to prevent fraud and unauthorized access by validating the signed data structures at each step, ensuring the transaction is legitimate and executed only when all conditions are met.
+- The Offline Withdrawal functionality ensures a secure and reliable transaction process by incorporating digital certificates and JWTs for authentication and verification. The architecture leverages multiple systems—Client, Agent, **Online Banking System (OBS)**, and **Deposit Account Service (DAS)**—to authenticate both the client and agent, verify transaction integrity, and process withdrawals securely. The flow is designed to prevent fraud and unauthorized access by validating the signed data structures at each step, ensuring the transaction is legitimate and executed only when all conditions are met.
 
 This architecture is scalable, allowing for future integration with other transaction types and systems, enhancing the security and extensibility of the platform.
 
