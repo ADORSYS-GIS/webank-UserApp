@@ -1,21 +1,55 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLocation } from "react-router-dom";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
+import { signTransaction } from "../services/keyManagement/signTransaction";
 
 const QRGenerator: React.FC = () => {
   useDisableScroll();
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountJwt = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
+  // State to store the generated signature
+  const [signatureValue, setSignatureValue] = useState<string | null>(null);
+
+  // Generate the signature when the component mounts
+  useEffect(() => {
+    const generateSignature = async () => {
+      try {
+        if (accountId && totalamount && accountJwt) {
+          const signature = await signTransaction(
+            accountId,
+            totalamount,
+            accountJwt,
+          );
+          setSignatureValue(signature); // Store the signature in state
+          console.log("Generated Signature:", signature);
+        } else {
+          console.warn("Missing data, cannot generate signature.");
+        }
+      } catch (error) {
+        console.error("Error generating signature:", error);
+      }
+    };
+    generateSignature();
+  }, [accountId, totalamount, accountJwt]);
+
   const qrRef = useRef<HTMLCanvasElement>(null);
+
+  // Determine if the user is online or offline
+  const isOnline = navigator.onLine;
 
   // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
     accountId: accountId,
     amount: totalamount,
+    // Add signature only if offline
+    ...(signatureValue && !isOnline ? { signature: signatureValue } : {}),
   });
 
   // Function to download QR code
