@@ -43,8 +43,8 @@ This document outlines the architecture and flow for the **Offline Withdrawal Fu
 
 | Step                          | Action                                                                                                                                         | Systems Involved   |
 |-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
-| **1. Client Initiates Withdrawal** | Client enters withdrawal amount and generates QR code containing Account ID, Amount, and Account Certificate.                                      | Client              |
-| **2. Agent Scans QR Code**       | Agent scans QR code to extract Account ID, Amount, and Client's Account Certificate.                                                             | Agent               |
+| **1. Client Initiates Withdrawal** | Client enters withdrawal amount and generates QR code containing the Signed Data structure                                      | Client              |
+| **2. Agent Scans QR Code**       | Agent scans QR code to extract the Signed Data Structure                                                         | Agent               |
 | **3. Agent Sends Request**       | Agent sends request to OBS, including Agent Account ID , Client AccountID , Amount,  Agent's Account Certificate, and signed data structure.                   | Agent, OBS          |
 | **4. OBS Verifies JWT and Certificates** | OBS verifies the JWT, checks the integrity of the Agent's Account Certificate, and validates the Client's Account Certificate.                      | OBS                 |
 | **5. Request Forwarded to DAS**  | If verification is successful, OBS forwards the request along with signed data to DAS.                                                            | OBS, DAS            |
