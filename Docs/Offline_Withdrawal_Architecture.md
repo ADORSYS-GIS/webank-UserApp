@@ -77,30 +77,29 @@ Below is the sequence diagram illustrating the flow of the offline withdrawal fu
 sequenceDiagram
     participant C as Client (Offline)
     participant A as Agent
-    participant OBS as OBS (Online Banking System)
-    participant DAS as DAS (Digital Account System)
+    participant OBS as OBS (Online Banking Service)
+    participant DAS as DAS (Deposite Account Service)
 
     %% Client Step: Generating QR Code
     C->>C: Enter Withdrawal Amount
-    C->>C: Generate QR Code with (Account ID, Amount, Account Cert)
+    C->>C: Generate QR Code with (Signed Data Structure)
     Note over C: QR Code Contains:
-    Note over C: - Client Account ID
-    Note over C: - Withdrawal Amount
-    Note over C: - Client's Account Cert (Signed Data Structure)
+    Note over C: - Signed Data Structure {
+    Note over C: Client Account ID
+    Note over C: Withdrawal Amount
+    Note over C: Client's Account Cert }
 
     %% Agent Step: Scanning the QR Code
     A->>C: Scan QR Code
     Note over A: Extracts:
-    Note over A: - Account ID
-    Note over A: - Withdrawal Amount
-    Note over A: - Account Cert (Client's Account Cert)
+    Note over A: - Signed Data Structure
 
     %% Agent Sends Request to OBS
     A->>OBS: Send Request to OBS
     Note over A: Request Contains:
     Note over A: - Agent Account ID
     Note over A: - JWT with Agent Account Cert in Header
-    Note over A: - Signed Data Structure (Client's Account Cert) in Header
+    Note over A: - Signed Data Structure
 
     %% OBS: Verifying JWT and Agent Account Cert
     OBS->>OBS: Verify JWT (Request Authentication)
@@ -117,8 +116,7 @@ sequenceDiagram
         OBS->>OBS: Forward Request to DAS
         OBS->>DAS: Forward Request with:
         OBS->>DAS: - Signed Data Structure (Client's Account Cert)
-        OBS->>DAS: - Agent Account ID
-        Note over OBS: Forwards Signed Data Structure and Agent Account ID to DAS
+        Note over OBS: Forwards Signed Data Structure to DAS
     else JWT or Agent Cert Verification Fail
         OBS->>A: Reject Request (Invalid JWT or Agent Cert)
         Note over OBS: Invalid JWT or Agent Cert - Reject the request
@@ -131,7 +129,7 @@ sequenceDiagram
 
     %% DAS: Hashing Client Account ID and Verifying Hash Match
     DAS->>DAS: Hash Client Account ID (Extracted from Signed Data Structure)
-    DAS->>DAS: Hash Client Account ID (Extracted from Client Account Cert)
+    DAS->>DAS: Hashed of Client Account ID (Extracted from Client Account Cert)
     DAS->>DAS: Compare Hashed Client Account ID (Extracted vs. Hashed from Cert)
 
     alt Hashes Match
