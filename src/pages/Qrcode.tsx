@@ -1,10 +1,9 @@
 import React, { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
-
 
 const QRGenerator: React.FC = () => {
   useDisableScroll();
@@ -56,8 +55,8 @@ const QRGenerator: React.FC = () => {
           </button>
 
           <button
-              onClick={() => navigate("/qr-scan")}
-              className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none"
+            onClick={() => navigate("/qr-scan")}
+            className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none"
           >
             Scan Instead!
           </button>

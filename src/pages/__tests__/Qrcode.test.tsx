@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import QRGenerator from "../Qrcode";
 import { QRCodeCanvas } from "qrcode.react";
-import { useLocation } from "react-router-dom";
+import { useLocation} from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // Mock QRCodeCanvas component
@@ -13,6 +13,7 @@ vi.mock("qrcode.react", () => ({
 // Mock useLocation hook from react-router-dom
 vi.mock("react-router-dom", () => ({
   useLocation: vi.fn(),
+  useNavigate: vi.fn(),
 }));
 
 // Mock useSelector to return a predefined accountId
