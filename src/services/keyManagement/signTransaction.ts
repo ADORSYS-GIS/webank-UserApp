@@ -39,17 +39,17 @@ export async function signTransaction(
   }
 
   /**
- * Generates a cryptographically secure nonce.
- * Works in both browser and Node.js environments.
- *
- * @param length - The number of bytes to generate.
- * @returns A hexadecimal string representation of the random bytes.
- */
-function generateSecureNonce(length: number): string {
+   * Generates a cryptographically secure nonce.
+   * Works in both browser and Node.js environments.
+   *
+   * @param length - The number of bytes to generate.
+   * @returns A hexadecimal string representation of the random bytes.
+   */
+  function generateSecureNonce(length: number): string {
     const array = new Uint8Array(length); // Use 8 bytes (64 bits) by default
     window.crypto.getRandomValues(array); // Fill the array with random values
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(""); // Convert to hex string
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+      "",
+    ); // Convert to hex string
   }
 }
-
-
