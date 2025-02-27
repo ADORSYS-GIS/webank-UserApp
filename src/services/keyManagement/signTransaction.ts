@@ -14,7 +14,7 @@ export async function signTransaction(
     const expirationTime = Math.floor(Date.now() / 1000) + 5 * 60;
 
     // Generate a random nonce
-    const nonce = Math.random().toString(36).substring(2, 10);
+    const nonce = generateSecureNonce(8);
 
     // Prepare the payload data with hashing logic
     const payloadData = {
@@ -37,4 +37,19 @@ export async function signTransaction(
     console.error("Error signing transaction:", error);
     throw new Error("Failed to sign transaction");
   }
+
+  /**
+ * Generates a cryptographically secure nonce.
+ * Works in both browser and Node.js environments.
+ *
+ * @param length - The number of bytes to generate.
+ * @returns A hexadecimal string representation of the random bytes.
+ */
+function generateSecureNonce(length: number): string {
+    const array = new Uint8Array(length); // Use 8 bytes (64 bits) by default
+    window.crypto.getRandomValues(array); // Fill the array with random values
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(""); // Convert to hex string
+  }
 }
+
+
