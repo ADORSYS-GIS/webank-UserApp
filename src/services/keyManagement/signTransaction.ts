@@ -8,7 +8,7 @@ export async function signTransaction(
 ): Promise<string> {
   try {
     // Fetch private key from KeyManagement
-    const { privateKey } = await KeyManagement();
+    const {publicKey , privateKey } = await KeyManagement();
 
     // Generate expiration time 5 minutes from now
     const expirationTime = Math.floor(Date.now() / 1000) + 5 * 60;
@@ -27,7 +27,7 @@ export async function signTransaction(
     // Generate the JWT
     const jwt = await generateSignedSignatureJWT(
       privateKey,
-      null,
+      publicKey,
       accountJwt,
       payloadData,
     );
