@@ -41,7 +41,8 @@ const QRScannerPage: React.FC = () => {
           setAmount(data.amount);
           setError(null);
           stopScanner(); // Stop scanner after successful scan
-
+          const isOfflineTransaction = ("signature" in data);
+          const signature = data.signature
           if (data.accountId === agentAccountId) {
             toast.error("Self-transfer not allowed");
             window.location.reload();
@@ -55,6 +56,7 @@ const QRScannerPage: React.FC = () => {
                 clientAccountId: data.accountId,
                 agentAccountId,
                 agentAccountCert,
+                ...(isOfflineTransaction ? { transactionJwt: signature} : {}),
               },
             });
           }

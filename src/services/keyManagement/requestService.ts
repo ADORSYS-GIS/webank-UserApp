@@ -9,7 +9,7 @@ import {
   validateDeviceRegistration,
   validateOTP,
   getTransactionHistory,
-  TopupAccount,
+  TopupAccount, WithdrawOffline,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -213,5 +213,35 @@ export async function RequestToTopup(
   console.log(jwtToken + "Account Cert!!!");
   console.log(clientAccountId + "Account ID !!!");
   return await TopupAccount(clientAccountId, amount, agentAccountId, jwtToken);
+}
+
+// Request to Withdraw Offline.
+export async function RequestToWithdrawOffline(
+    clientAccountId: string,
+    amount: number,
+    agentAccountId: string,
+    agentAccountCert?: string | null,
+    transactionJwt?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      agentAccountCert,
+      transactionJwt,
+      clientAccountId,
+      amount,
+      agentAccountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(clientAccountId + "Account ID !!!");
+  console.log(agentAccountId + "AgentAccount ID !!!");
+  console.log(transactionJwt + "Signed Transaction");
+  return await WithdrawOffline(clientAccountId, amount, agentAccountId, jwtToken);
 }
 export const getKey = () => Key;

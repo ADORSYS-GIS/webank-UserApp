@@ -243,3 +243,39 @@ export const TopupAccount = async (
     throw new Error("Failed to top up account");
   }
 };
+
+export const WithdrawOffline = async (
+    clientAccountId: string,
+    amount: number,
+    agentAccountId: string,
+    jwtToken: string,
+) => {
+  // Create the request object
+  const requestBody = {
+    recipientAccountId: agentAccountId,
+    senderAccountId: clientAccountId,
+    amount: amount,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+  console.log(requestBody);
+  try {
+    // Send the POST request to retrieve account balance
+    const response = await axios.post(
+        `${envVariables.VITE_WEBANK_OBS_URL}/accounts/payout`,
+        requestBody,
+        { headers },
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error withdrawing offline ", error);
+    throw new Error("Failed to withdraw offline");
+  }
+
+};
+
+
