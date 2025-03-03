@@ -49,7 +49,7 @@ const QRGenerator: React.FC = () => {
   const qrValue = JSON.stringify({
     accountId: accountId,
     amount: totalamount,
-    // Add signature only if offline
+    timeGenerated: Date.now(),
     ...(signatureValue && !isOnline ? { signature: signatureValue } : {}),
   });
 

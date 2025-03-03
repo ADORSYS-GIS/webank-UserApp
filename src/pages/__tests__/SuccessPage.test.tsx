@@ -4,9 +4,8 @@ import userEvent from "@testing-library/user-event";
 import SuccessPage from "../SuccessPage";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
-// Import jest-dom for the toBeInTheDocument matcher
 import "@testing-library/jest-dom";
-// Mock the CheckCircle icon from lucide-react
+
 vi.mock("lucide-react", () => ({
   CheckCircle: vi.fn(() => <div data-testid="check-circle" />),
 }));

@@ -24,27 +24,28 @@ vi.mock("react-redux", () => ({
 describe("QRGenerator Component", () => {
   const mockTotalAmount = "100";
   const mockAccountID = "12345ABC";
+  const mockTimeGenerated = Date.now() - 60000;
   const expectedQrValue = JSON.stringify({
-    accountId: mockAccountID, // Update based on new component key
+    accountId: mockAccountID,
     amount: mockTotalAmount,
+    timeGenerated: mockTimeGenerated,
   });
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Mock useLocation to return predefined state values
     (useLocation as jest.Mock).mockReturnValue({
       state: { totalAmount: mockTotalAmount },
     });
 
-    // Mock useSelector to return predefined accountId
+    vi.spyOn(Date, "now").mockReturnValue(mockTimeGenerated);
+
     (useSelector as unknown as jest.Mock).mockReturnValue(mockAccountID);
   });
 
   it("renders QR code with correct values", () => {
     render(<QRGenerator />);
 
-    // Check if QRCodeCanvas is called with correct props
     expect(QRCodeCanvas).toHaveBeenCalledWith(
       expect.objectContaining({
         value: expectedQrValue,
