@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
@@ -8,6 +8,7 @@ import { signTransaction } from "../services/keyManagement/signTransaction";
 
 const QRGenerator: React.FC = () => {
   useDisableScroll();
+  const navigate = useNavigate();
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -85,6 +86,13 @@ const QRGenerator: React.FC = () => {
             className="px-6 py-3 text-lg font-medium text-white bg-green-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-green-700 hover:scale-105 focus:outline-none"
           >
             Download QR Code
+          </button>
+
+          <button
+            onClick={() => navigate("/qr-scan")}
+            className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none"
+          >
+            Scan Instead!
           </button>
 
           <button
