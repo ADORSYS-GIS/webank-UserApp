@@ -13,6 +13,7 @@ vi.mock("qrcode.react", () => ({
 // Mock useLocation hook from react-router-dom
 vi.mock("react-router-dom", () => ({
   useLocation: vi.fn(),
+  useNavigate: vi.fn(),
 }));
 
 // Mock useSelector to return a predefined accountId
