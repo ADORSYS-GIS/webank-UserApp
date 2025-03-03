@@ -1,5 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import {RequestToTopup, RequestToWithdrawOffline} from "../services/keyManagement/requestService";
+import {
+  RequestToTopup,
+  RequestToWithdrawOffline,
+} from "../services/keyManagement/requestService";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
 
@@ -7,8 +10,13 @@ const ConfirmationPage: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
-  const { clientAccountId, amount, agentAccountId, agentAccountCert, transactionJwt } =
-    location.state || {};
+  const {
+    clientAccountId,
+    amount,
+    agentAccountId,
+    agentAccountCert,
+    transactionJwt,
+  } = location.state || {};
   console.log(clientAccountId, amount, agentAccountId, agentAccountCert);
 
   const handleTopUp = async () => {
@@ -51,11 +59,11 @@ const ConfirmationPage: React.FC = () => {
   const handleOfflineWithdrawal = async () => {
     try {
       const response = await RequestToWithdrawOffline(
-          clientAccountId,
-          amount,
-          agentAccountId,
-          agentAccountCert,
-          transactionJwt
+        clientAccountId,
+        amount,
+        agentAccountId,
+        agentAccountCert,
+        transactionJwt,
       );
       if (response?.includes("Success")) {
         // Extract the transaction certificate from the response
@@ -69,7 +77,9 @@ const ConfirmationPage: React.FC = () => {
           },
         });
       } else if (response?.includes("Insufficient")) {
-        toast.error("Insufficient funds. Please ask the client to add funds to his account.");
+        toast.error(
+          "Insufficient funds. Please ask the client to add funds to his account.",
+        );
       }
     } catch (error) {
       toast.error("An error occurred while processing the transaction");
@@ -122,8 +132,8 @@ const ConfirmationPage: React.FC = () => {
           <button
             className="px-6 py-3 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 shadow-md"
             onClick={
-            // if transactionJwt is null, call handleTopUp
-            transactionJwt ? handleOfflineWithdrawal : handleTopUp
+              // if transactionJwt is null, call handleTopUp
+              transactionJwt ? handleOfflineWithdrawal : handleTopUp
             }
           >
             Confirm

@@ -9,7 +9,8 @@ import {
   validateDeviceRegistration,
   validateOTP,
   getTransactionHistory,
-  TopupAccount, WithdrawOffline,
+  TopupAccount,
+  WithdrawOffline,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -44,6 +45,7 @@ export async function RequestToSendOTP(
     deviceCert,
     null,
     null,
+    null,
     phoneNumber,
   );
   console.log(jwtToken, "jwt token");
@@ -63,6 +65,7 @@ export async function RequestToSendNonce(): Promise<string> {
     null,
     null,
     null,
+    null,
     timeStamp,
   );
   return await initiateRegistration(timeStamp, jwtToken);
@@ -79,6 +82,7 @@ export const RequestToSendPowJWT = async (
     const jwtToken = await generateJWT(
       privateKey,
       publicKey,
+      null,
       null,
       null,
       null,
@@ -116,6 +120,7 @@ export async function RequestToValidateOTP(
     deviceCert,
     null,
     null,
+    null,
     phoneNumber,
     otp,
     otpHash,
@@ -139,6 +144,7 @@ export async function RequestToCreateBankAccount(
     deviceCert,
     phoneNumberCert,
     null,
+    null,
     phoneNumber,
     Key,
   );
@@ -160,6 +166,7 @@ export async function RequestToGetBalance(
     null,
     null,
     accountCert,
+    null,
     accountId,
   );
   console.log(jwtToken + "Account Cert!!!");
@@ -182,6 +189,7 @@ export async function RequestToGetTransactionHistory(
     null,
     null,
     accountCert,
+    null,
     accountId,
   );
   console.log(jwtToken + "Account Cert!!!");
@@ -206,6 +214,7 @@ export async function RequestToTopup(
     null,
     null,
     agentAccountCert,
+    null,
     clientAccountId,
     amount,
     agentAccountId,
@@ -217,31 +226,36 @@ export async function RequestToTopup(
 
 // Request to Withdraw Offline.
 export async function RequestToWithdrawOffline(
-    clientAccountId: string,
-    amount: number,
-    agentAccountId: string,
-    agentAccountCert?: string | null,
-    transactionJwt?: string | null,
+  clientAccountId: string,
+  amount: number,
+  agentAccountId: string,
+  agentAccountCert?: string | null,
+  transactionJwt?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
   Key = JSON.stringify(publicKey);
 
   const jwtToken = await generateJWT(
-      privateKey,
-      publicKey,
-      null,
-      null,
-      agentAccountCert,
-      transactionJwt,
-      clientAccountId,
-      amount,
-      agentAccountId,
+    privateKey,
+    publicKey,
+    null,
+    null,
+    agentAccountCert,
+    transactionJwt,
+    clientAccountId,
+    amount,
+    agentAccountId,
   );
   console.log(jwtToken + "Account Cert!!!");
   console.log(clientAccountId + "Account ID !!!");
   console.log(agentAccountId + "AgentAccount ID !!!");
   console.log(transactionJwt + "Signed Transaction");
-  return await WithdrawOffline(clientAccountId, amount, agentAccountId, jwtToken);
+  return await WithdrawOffline(
+    clientAccountId,
+    amount,
+    agentAccountId,
+    jwtToken,
+  );
 }
 export const getKey = () => Key;

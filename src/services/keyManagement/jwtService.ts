@@ -43,7 +43,6 @@ export async function generateJWT(
     if (devJwt) {
       header["devJwt"] = devJwt;
     }
-
     if (phoneNumberJwt) {
       header["phoneNumberJwt"] = phoneNumberJwt;
     }

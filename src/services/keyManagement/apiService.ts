@@ -245,10 +245,10 @@ export const TopupAccount = async (
 };
 
 export const WithdrawOffline = async (
-    clientAccountId: string,
-    amount: number,
-    agentAccountId: string,
-    jwtToken: string,
+  clientAccountId: string,
+  amount: number,
+  agentAccountId: string,
+  jwtToken: string,
 ) => {
   // Create the request object
   const requestBody = {
@@ -264,9 +264,9 @@ export const WithdrawOffline = async (
   try {
     // Send the POST request to retrieve account balance
     const response = await axios.post(
-        `${envVariables.VITE_WEBANK_OBS_URL}/accounts/payout`,
-        requestBody,
-        { headers },
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/payout`,
+      requestBody,
+      { headers },
     );
 
     console.log(response.data);
@@ -275,7 +275,4 @@ export const WithdrawOffline = async (
     console.error("Error withdrawing offline ", error);
     throw new Error("Failed to withdraw offline");
   }
-
 };
-
-
