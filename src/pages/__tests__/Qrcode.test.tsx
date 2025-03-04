@@ -49,7 +49,7 @@ describe("QRGenerator Component", () => {
     expect(QRCodeCanvas).toHaveBeenCalledWith(
       expect.objectContaining({
         value: expectedQrValue,
-        size: 250,
+        size: 350,
       }),
       expect.anything(),
     );

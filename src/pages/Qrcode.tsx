@@ -76,7 +76,7 @@ const QRGenerator: React.FC = () => {
 
         {/* QR Code Display */}
         <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg mb-8">
-          <QRCodeCanvas value={qrValue} size={250} ref={qrRef} />
+          <QRCodeCanvas value={qrValue} size={350} ref={qrRef} />
         </div>
 
         {/* Buttons */}

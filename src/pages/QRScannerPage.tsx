@@ -12,20 +12,22 @@ const QRScannerPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
+
   const agentAccountId = useSelector(
     (state: RootState) => state.account.accountId,
   );
   const agentAccountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  console.log("id is " + agentAccountId, "cert is" + agentAccountCert);
+
+  console.log("Agent ID:", agentAccountId, "Cert:", agentAccountCert);
 
   // Stop the scanner safely
   const stopScanner = async () => {
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
-        scannerRef.current = null; // Reset the reference
+        scannerRef.current = null; // Reset scanner reference
       } catch (err) {
         console.error("Error stopping scanner:", err);
       }
@@ -37,34 +39,43 @@ const QRScannerPage: React.FC = () => {
     (decodedText: string) => {
       try {
         const data = JSON.parse(decodedText);
-        if (data.accountId && data.amount) {
-          setAmount(data.amount);
+        if (data.accountId && data.amount && data.timeGenerated) {
+          setAmount(data.amount.toString());
           setError(null);
           stopScanner(); // Stop scanner after successful scan
+
+          // Validate QR code time (expires after 60 seconds)
+          const isExpired = Date.now() - data.timeGenerated > 60000;
+          if (isExpired) {
+            toast.error("QR Code expired. Please try again.");
+            return window.location.reload();
+          }
+
+          // Prevent self-transfers
+          if (data.accountId === agentAccountId) {
+            toast.error("Self-transfer not allowed.");
+            return window.location.reload();
+          }
+
+          // Check if it's an offline transaction
           const isOfflineTransaction = "signature" in data;
           const signature = data.signature;
-          if (data.accountId === agentAccountId) {
-            toast.error("Self-transfer not allowed");
-            window.location.reload();
-          } else if (data.timeGenenerated < Date.now() - 60000) {
-            toast.error("QR Code expired. Please try again.");
-            window.location.reload();
-          } else {
-            navigate("/confirmation", {
-              state: {
-                amount: data.amount,
-                clientAccountId: data.accountId,
-                agentAccountId,
-                agentAccountCert,
-                ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
-              },
-            });
-          }
+
+          navigate("/confirmation", {
+            state: {
+              amount: data.amount,
+              clientAccountId: data.accountId,
+              agentAccountId,
+              agentAccountCert,
+              ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
+            },
+          });
         } else {
-          throw new Error("Invalid QR Code format");
+          throw new Error("Invalid QR Code format.");
         }
       } catch (err) {
         setError("Failed to read QR code. Please try again.");
+        toast.error("Invalid QR code. Try again.");
       }
     },
     [navigate, agentAccountId, agentAccountCert],
@@ -72,17 +83,23 @@ const QRScannerPage: React.FC = () => {
 
   useEffect(() => {
     const startScanner = async () => {
+      await stopScanner(); // Ensure previous scanner is stopped
+
       if (!scannerRef.current) {
         try {
           scannerRef.current = new Html5Qrcode("qr-reader");
+
           await scannerRef.current.start(
             { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            (decodedText) => handleDecodedText(decodedText),
+            { fps: 10, qrbox: { width: 350, height: 350 } },
+            (decodedText) => {
+              setTimeout(() => handleDecodedText(decodedText), 2000);
+            },
             (errorMessage) => console.log("Scanning error:", errorMessage),
           );
         } catch (err) {
           setError("Unable to access camera. Please allow camera permissions.");
+          toast.error("Camera access denied. Enable permissions.");
         }
       }
     };
@@ -100,21 +117,24 @@ const QRScannerPage: React.FC = () => {
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      try {
-        await stopScanner(); // Ensure scanner is stopped before file scanning
-        const qrScanner = new Html5Qrcode("qr-reader");
 
-        // Ensure the image is a valid type
-        const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-        if (!allowedTypes.includes(file.type)) {
-          setError("Unsupported file type. Please upload a PNG or JPEG image.");
-          return;
-        }
+      // Validate file type
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        setError("Unsupported file type. Please upload a PNG or JPEG image.");
+        toast.error("Invalid file format. Use PNG or JPG.");
+        return;
+      }
+
+      try {
+        await stopScanner(); // Stop the scanner before scanning the image
+        const qrScanner = new Html5Qrcode("qr-reader");
 
         const result = await qrScanner.scanFile(file, false);
         handleDecodedText(result);
       } catch (err) {
         setError("Failed to read QR code from image. Please try again.");
+        toast.error("QR code scanning failed. Try another image.");
       }
     }
   };
@@ -147,7 +167,7 @@ const QRScannerPage: React.FC = () => {
           </button>
         )}
 
-        {error && <p className="text-red-600 font-medium mb-4">{error}</p>}
+        {error && <p className="text-red-600 font-medium mt-4">{error}</p>}
       </div>
       <ToastContainer />
     </div>
