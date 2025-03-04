@@ -81,9 +81,12 @@ const QRScannerPage: React.FC = () => {
     [navigate, agentAccountId, agentAccountCert],
   );
 
-  const handleScanDecodedText = useCallback((decodedText: string) => {
-    setTimeout(() => handleDecodedText(decodedText), 2000);
-  }, [handleDecodedText]);
+  const handleScanDecodedText = useCallback(
+    (decodedText: string) => {
+      setTimeout(() => handleDecodedText(decodedText), 2000);
+    },
+    [handleDecodedText],
+  );
 
   const handleScanError = useCallback((errorMessage: string) => {
     console.log("Scanning error:", errorMessage);
@@ -92,11 +95,11 @@ const QRScannerPage: React.FC = () => {
   useEffect(() => {
     const startScanner = async () => {
       await stopScanner(); // Ensure previous scanner is stopped
-  
+
       if (!scannerRef.current) {
         try {
           scannerRef.current = new Html5Qrcode("qr-reader");
-  
+
           await scannerRef.current.start(
             { facingMode: "environment" },
             { fps: 10, qrbox: { width: 350, height: 350 } },
@@ -109,14 +112,13 @@ const QRScannerPage: React.FC = () => {
         }
       }
     };
-  
+
     startScanner();
-  
+
     return () => {
       stopScanner();
     };
   }, [handleScanDecodedText, handleScanError]); // Add handleScanDecodedText as a dependency
-  
 
   // Handle file upload for QR code scanning
   const handleFileUpload = async (
