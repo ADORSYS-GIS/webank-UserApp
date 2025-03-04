@@ -17,7 +17,7 @@ const QRGenerator: React.FC = () => {
     (state: RootState) => state.account.accountCert,
   );
   const [signatureValue, setSignatureValue] = useState<string | null>(null);
-  
+
   // Check if the user came from the confirmation page
   const fromConfirmation = previousPage === "/confirmation";
 
@@ -46,7 +46,9 @@ const QRGenerator: React.FC = () => {
     accountId: accountId,
     amount: totalamount,
     timeGenerated: Date.now(),
-    ...(fromConfirmation && signatureValue ? { signature: signatureValue } : {}),
+    ...(fromConfirmation && signatureValue
+      ? { signature: signatureValue }
+      : {}),
   });
 
   const downloadQRCode = () => {
