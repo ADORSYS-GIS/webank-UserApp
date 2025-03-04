@@ -81,29 +81,35 @@ const QRScannerPage: React.FC = () => {
     [navigate, agentAccountId, agentAccountCert],
   );
 
-  useEffect(() => {
-    const startScanner = async () => {
-      await stopScanner(); // Ensure previous scanner is stopped
+  const startScanner = async () => {
+    await stopScanner(); // Ensure previous scanner is stopped
 
-      if (!scannerRef.current) {
-        try {
-          scannerRef.current = new Html5Qrcode("qr-reader");
+    if (!scannerRef.current) {
+      try {
+        scannerRef.current = new Html5Qrcode("qr-reader");
 
-          await scannerRef.current.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 350, height: 350 } },
-            (decodedText) => {
-              setTimeout(() => handleDecodedText(decodedText), 2000);
-            },
-            (errorMessage) => console.log("Scanning error:", errorMessage),
-          );
-        } catch (err) {
-          setError("Unable to access camera. Please allow camera permissions.");
-          toast.error("Camera access denied. Enable permissions.");
-        }
+        await scannerRef.current.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 350, height: 350 } },
+          handleScanDecodedText,
+          handleScanError,
+        );
+      } catch (err) {
+        setError("Unable to access camera. Please allow camera permissions.");
+        toast.error("Camera access denied. Enable permissions.");
       }
-    };
+    }
+  };
 
+  const handleScanDecodedText = (decodedText: string) => {
+    setTimeout(() => handleDecodedText(decodedText), 2000);
+  };
+
+  const handleScanError = (errorMessage: string) => {
+    console.log("Scanning error:", errorMessage);
+  };
+
+  useEffect(() => {
     startScanner();
 
     return () => {
@@ -138,7 +144,6 @@ const QRScannerPage: React.FC = () => {
       }
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 relative">
       <div className="bg-white rounded-2xl shadow-xl p-12 w-full max-w-md text-center">
