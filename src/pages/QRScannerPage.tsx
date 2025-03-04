@@ -81,26 +81,6 @@ const QRScannerPage: React.FC = () => {
     [navigate, agentAccountId, agentAccountCert],
   );
 
-  const startScanner = async () => {
-    await stopScanner(); // Ensure previous scanner is stopped
-
-    if (!scannerRef.current) {
-      try {
-        scannerRef.current = new Html5Qrcode("qr-reader");
-
-        await scannerRef.current.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 350, height: 350 } },
-          handleScanDecodedText,
-          handleScanError,
-        );
-      } catch (err) {
-        setError("Unable to access camera. Please allow camera permissions.");
-        toast.error("Camera access denied. Enable permissions.");
-      }
-    }
-  };
-
   const handleScanDecodedText = (decodedText: string) => {
     setTimeout(() => handleDecodedText(decodedText), 2000);
   };
@@ -110,12 +90,32 @@ const QRScannerPage: React.FC = () => {
   };
 
   useEffect(() => {
+    const startScanner = async () => {
+      await stopScanner(); // Ensure previous scanner is stopped
+
+      if (!scannerRef.current) {
+        try {
+          scannerRef.current = new Html5Qrcode("qr-reader");
+
+          await scannerRef.current.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 350, height: 350 } },
+            handleScanDecodedText,
+            handleScanError,
+          );
+        } catch (err) {
+          setError("Unable to access camera. Please allow camera permissions.");
+          toast.error("Camera access denied. Enable permissions.");
+        }
+      }
+    };
+
     startScanner();
 
     return () => {
       stopScanner();
     };
-  }, [handleDecodedText]);
+  }, [handleDecodedText, handleScanDecodedText]);
 
   // Handle file upload for QR code scanning
   const handleFileUpload = async (
