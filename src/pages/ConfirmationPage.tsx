@@ -23,7 +23,7 @@ const ConfirmationPage: React.FC = () => {
     // Check if the client is offline
     if (!navigator.onLine) {
       // If offline, redirect to the /amount page
-      toast.error("You are offline. Redirecting to the amount page...");
+      toast.error("You are offline. Redirecting you for offline withdrawal...");
       console.log("you are offline");
       navigate("/top-up");
       return;
