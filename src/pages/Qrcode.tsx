@@ -19,7 +19,7 @@ const QRGenerator: React.FC = () => {
   const [signatureValue, setSignatureValue] = useState<string | null>(null);
 
   // Check if the user came from the confirmation page
-  const fromConfirmation = previousPage === "/confirmation";
+  const fromConfirmation = previousPage === "/top-up";
 
   useEffect(() => {
     const generateSignature = async () => {
