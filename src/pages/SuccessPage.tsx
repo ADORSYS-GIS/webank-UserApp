@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 // Define the type of the decoded JWT payload
 interface TransactionDetails {
   amount: number;
-  TranactionID: string;
+  TransactionID: string;
   paymentTime: number;
   paymentMethod: string;
 }
@@ -18,7 +18,7 @@ export default function SuccessPage() {
   // Define transaction details object with proper types
   let transactionDetails: TransactionDetails = {
     amount: 0,
-    TranactionID: "N/A",
+    TransactionID: "N/A",
     paymentTime: 0,
     paymentMethod: "N/A",
   };
@@ -32,7 +32,7 @@ export default function SuccessPage() {
     }
   }
 
-  const { amount, TranactionID, paymentTime, paymentMethod } =
+  const { amount, TransactionID, paymentTime, paymentMethod } =
     transactionDetails;
 
   // Format payment time to a readable string
@@ -61,7 +61,7 @@ export default function SuccessPage() {
 
             <div className="flex justify-between">
               <span className="text-gray-600">Transaction ID</span>
-              <span className="font-bold text-gray-900">{TranactionID}</span>
+              <span className="font-bold text-gray-900">{TransactionID}</span>
             </div>
 
             <div className="flex justify-between">
