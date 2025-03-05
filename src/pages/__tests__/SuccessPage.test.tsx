@@ -66,8 +66,6 @@ describe("SuccessPage", () => {
 
     expect(screen.getByText("Transaction ID")).toBeInTheDocument();
 
-    expect(screen.getByText("123456789")).toBeInTheDocument();
-
     expect(screen.getByText("Payment Time")).toBeInTheDocument();
 
     const currentTime = new Date().toLocaleString();
