@@ -11,56 +11,53 @@ const QRGenerator: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
+  const previousPage = location.state?.from;
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const accountJwt = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  // State to store the generated signature
   const [signatureValue, setSignatureValue] = useState<string | null>(null);
 
-  // Generate the signature when the component mounts
+  // Check if the user came from the confirmation page
+  const fromConfirmation = previousPage === "/top-up";
+
   useEffect(() => {
     const generateSignature = async () => {
       try {
-        if (accountId && totalamount && accountJwt) {
+        if (accountId && totalamount && accountJwt && fromConfirmation) {
           const signature = await signTransaction(
             accountId,
             totalamount,
             accountJwt,
           );
-          setSignatureValue(signature); // Store the signature in state
+          setSignatureValue(signature);
           console.log("Generated Signature:", signature);
-        } else {
-          console.warn("Missing data, cannot generate signature.");
         }
       } catch (error) {
         console.error("Error generating signature:", error);
       }
     };
     generateSignature();
-  }, [accountId, totalamount, accountJwt]);
+  }, [accountId, totalamount, accountJwt, fromConfirmation]);
 
   const qrRef = useRef<HTMLCanvasElement>(null);
 
-  // Determine if the user is online or offline
-  const isOnline = navigator.onLine;
-
-  // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
     accountId: accountId,
     amount: totalamount,
     timeGenerated: Date.now(),
-    ...(signatureValue && !isOnline ? { signature: signatureValue } : {}),
+    ...(fromConfirmation && signatureValue
+      ? { signature: signatureValue }
+      : {}),
   });
 
-  // Function to download QR code
   const downloadQRCode = () => {
     const canvas = qrRef.current;
     if (canvas) {
-      const url = canvas.toDataURL("image/png"); // Convert canvas to image URL
+      const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = url;
-      a.download = "qrcode.png"; // Set download file name
+      a.download = "qrcode.png";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -73,13 +70,9 @@ const QRGenerator: React.FC = () => {
         <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-10">
           Top-Up QR Code
         </h2>
-
-        {/* QR Code Display */}
         <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg mb-8">
           <QRCodeCanvas value={qrValue} size={350} ref={qrRef} />
         </div>
-
-        {/* Buttons */}
         <div className="mt-6 flex flex-col items-center gap-4">
           <button
             onClick={downloadQRCode}
@@ -87,14 +80,14 @@ const QRGenerator: React.FC = () => {
           >
             Download QR Code
           </button>
-
-          <button
-            onClick={() => navigate("/qr-scan")}
-            className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none"
-          >
-            Scan Instead!
-          </button>
-
+          {!fromConfirmation && (
+            <button
+              onClick={() => navigate("/qr-scan")}
+              className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none"
+            >
+              Scan Instead!
+            </button>
+          )}
           <button
             onClick={() => window.history.back()}
             className="px-6 py-3 text-lg font-medium text-white bg-blue-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-blue-700 hover:scale-105 focus:outline-none"
