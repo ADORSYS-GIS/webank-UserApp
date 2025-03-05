@@ -264,7 +264,7 @@ export const WithdrawOffline = async (
   try {
     // Send the POST request to retrieve account balance
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/payout`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/withdraw`,
       requestBody,
       { headers },
     );
