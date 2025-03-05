@@ -47,7 +47,7 @@ const QRScannerPage: React.FC = () => {
           stopScanner(); // Stop scanner after successful scan
 
           // Validate QR code time (expires after 60 seconds)
-          const isExpired = Date.now() - data.timeGenerated > 5*60000;
+          const isExpired = Date.now() - data.timeGenerated > 5 * 60000;
           if (isExpired) {
             toast.error("QR Code expired. Please try again.");
             return window.location.reload();
