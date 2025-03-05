@@ -10,6 +10,8 @@ const TopUpPage: React.FC = () => {
   const location = useLocation();
   const clientAccountId = location.state?.clientAccountId;
   const show = location.state?.show;
+  const isClientOffline = location.state?.isClientOffline;
+  const isClientOnline = location.state?.isClientOnline;
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
@@ -35,7 +37,14 @@ const TopUpPage: React.FC = () => {
     }
 
     // Navigate to the QR code page with the amount
-    navigate("/qrcode", { state: { totalAmount, accountId: clientAccountId } });
+    navigate("/qrcode", {
+      state: {
+        totalAmount,
+        accountId: clientAccountId,
+        isClientOffline,
+        isClientOnline,
+      },
+    });
   };
 
   return (

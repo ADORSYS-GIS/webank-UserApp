@@ -35,7 +35,7 @@ describe("QRScannerPage", () => {
 
     // Mock useLocation to provide location state
     vi.mocked(useLocation).mockReturnValue({
-      state: { agentAccountId: "test-agent-id" },
+      state: { isClientOffline: true, agentAccountId: "test-agent-id" }, // Mock `isClientOffline` to true
       key: "",
       pathname: "",
       search: "",
@@ -57,7 +57,7 @@ describe("QRScannerPage", () => {
     );
 
     // Check if elements related to the page are rendered
-    expect(screen.getByText("Scan Client QR Code")).toBeInTheDocument();
+    expect(screen.getByText("Scan Client QR Code")).toBeInTheDocument(); // Ensure "Scan Client QR Code" is rendered
     expect(screen.getByText("Cancel")).toBeInTheDocument();
   });
 

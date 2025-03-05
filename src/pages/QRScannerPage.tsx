@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
@@ -12,6 +12,8 @@ const QRScannerPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isClientOffline = location.state?.isClientOffline;
 
   const agentAccountId = useSelector(
     (state: RootState) => state.account.accountId,
@@ -151,7 +153,7 @@ const QRScannerPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 relative">
       <div className="bg-white rounded-2xl shadow-xl p-12 w-full max-w-md text-center">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">
-          Scan Client QR Code
+          {isClientOffline ? "Scan Client QR Code" : "Scan Agent QR Code"}
         </h2>
 
         <div id="qr-reader" className="mb-6 w-full max-w-sm mx-auto"></div>

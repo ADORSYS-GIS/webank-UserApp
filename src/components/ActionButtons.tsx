@@ -19,6 +19,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         show: "Top up",
         clientAccountId: accountId,
         clientAccountCert: accountCert,
+        isClientOnline: true,
       },
     });
     console.log("Top Up button clicked", accountId);

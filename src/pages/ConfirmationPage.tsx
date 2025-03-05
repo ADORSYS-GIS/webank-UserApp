@@ -26,7 +26,13 @@ const ConfirmationPage: React.FC = () => {
       toast.info("Opps You are offline. Redirecting to the amount page...");
       console.log("you are offline");
       setTimeout(() => {
-        navigate("/top-up");
+        navigate("/top-up", {
+          state: {
+            clientAccountId,
+            amount,
+            isClientOffline: true, // Indicating that the client is offline
+          },
+        });
       }, 4000);
       return;
     } else {

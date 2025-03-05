@@ -15,6 +15,9 @@ const QRGenerator: React.FC = () => {
   const accountJwt = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+  const isClientOffline = location.state?.isClientOffline;
+  const isClientOnline = location.state?.isClientOnline;
+
   // State to store the generated signature
   const [signatureValue, setSignatureValue] = useState<string | null>(null);
 
@@ -42,15 +45,12 @@ const QRGenerator: React.FC = () => {
 
   const qrRef = useRef<HTMLCanvasElement>(null);
 
-  // Determine if the user is online or offline
-  const isOnline = navigator.onLine;
-
   // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
     accountId: accountId,
     amount: totalamount,
     timeGenerated: Date.now(),
-    ...(signatureValue && !isOnline ? { signature: signatureValue } : {}),
+    ...(signatureValue && isClientOffline ? { signature: signatureValue } : {}),
   });
 
   // Function to download QR code
@@ -71,7 +71,7 @@ const QRGenerator: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-blue-100 to-indigo-50 flex items-center justify-center p-6">
       <div className="bg-white rounded-2xl shadow-xl p-12 w-full max-w-md">
         <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-10">
-          Top-Up QR Code
+          {isClientOnline ? "Top-Up QR Code" : "Withdraw QR Code"}
         </h2>
 
         {/* QR Code Display */}
@@ -88,12 +88,18 @@ const QRGenerator: React.FC = () => {
             Download QR Code
           </button>
 
-          <button
-            onClick={() => navigate("/qr-scan")}
-            className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none"
-          >
-            Scan Instead!
-          </button>
+          {/* Show "Scan Instead!" button if the client is offline */}
+          {isClientOffline ||
+            (!isClientOnline && (
+              <button
+                onClick={() =>
+                  navigate("/qr-scan", { state: { isClientOffline } })
+                }
+                className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none mt-4"
+              >
+                Scan Instead!
+              </button>
+            ))}
 
           <button
             onClick={() => window.history.back()}
