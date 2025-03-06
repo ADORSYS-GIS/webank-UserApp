@@ -22,7 +22,7 @@ const ConfirmationPage: React.FC = () => {
 
   const handleTopUp = async () => {
     // Check if the client is offline
-    if (!navigator.onLine && !(show == "Transfer") && !(show == "Top up")) {
+    if (!navigator.onLine && show != "Transfer" && show != "Top up") {
       // If offline, redirect to the /amount page
       toast.info("Opps You are offline. Redirecting to the amount page...");
       console.log("you are offline");
@@ -35,7 +35,6 @@ const ConfirmationPage: React.FC = () => {
           },
         });
       }, 4000);
-      return;
     } else if (!navigator.onLine && show == "Transfer") {
       console.log("Cannot transfer offline");
       toast.error("Cannot transfer offline. Redirecting you to dashboard");
