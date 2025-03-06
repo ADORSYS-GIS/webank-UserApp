@@ -8,12 +8,15 @@ import {
   faQrcode,
 } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/Webank.png";
+import { useNavigate } from "react-router-dom";
 
 interface Header1Props {
   onHamburgerClick: () => void;
 }
 
 const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
+  const navigate = useNavigate();
+
   return (
     // 1) Removed flex-wrap from the header
     <header className="flex items-center justify-between p-4 bg-white shadow mb-6">
@@ -39,7 +42,7 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
         {/* Text button on medium and larger screens */}
         <button
           className="hidden md:inline-flex bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded focus:outline-none"
-          onClick={() => alert("Show QR Code modal here!")}
+          onClick={() => navigate("/account-qr")}
           aria-label="My QR Code (desktop)"
         >
           My QR code
@@ -48,7 +51,7 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
         {/* Icon button on small screens */}
         <button
           className="inline-flex md:hidden p-2 rounded-full hover:bg-gray-200"
-          onClick={() => alert("Show QR Code modal here!")}
+          onClick={() => navigate("/account-qr")}
           aria-label="My QR Code (mobile)"
         >
           <FontAwesomeIcon icon={faQrcode} className="text-lg" />
