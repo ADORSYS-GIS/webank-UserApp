@@ -24,19 +24,29 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
         {/* Logo and greeting */}
         <div className="flex items-center">
           <img src={Logo} alt="Logo WeBank" className="w-20" />
-          <h1 className="text-xl font-semibold ml-2">Hi, Welcome</h1>
         </div>
       </div>
 
-      {/* Right side: QR code icon + notification + settings */}
+      {/* Right side: (conditional) QR code + notification + settings */}
       <div className="flex items-center space-x-4">
+        {/* Text button on medium and larger screens */}
         <button
-          className="p-2 rounded-full hover:bg-gray-200"
-          aria-label="My QR Code"
+          className="hidden md:inline-flex bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded focus:outline-none"
           onClick={() => alert("Show QR Code modal here!")}
+          aria-label="My QR Code (desktop)"
+        >
+          My QR code
+        </button>
+
+        {/* Icon button on small screens */}
+        <button
+          className="inline-flex md:hidden p-2 rounded-full hover:bg-gray-200"
+          onClick={() => alert("Show QR Code modal here!")}
+          aria-label="My QR Code (mobile)"
         >
           <FontAwesomeIcon icon={faQrcode} className="text-lg" />
         </button>
+
         <button
           className="p-2 rounded-full hover:bg-gray-200"
           aria-label="Notifications"
