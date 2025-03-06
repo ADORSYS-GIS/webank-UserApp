@@ -49,7 +49,16 @@ describe("QRGenerator Component", () => {
     expect(QRCodeCanvas).toHaveBeenCalledWith(
       expect.objectContaining({
         value: expectedQrValue,
-        size: 350,
+        level: "L",
+        size: 250,
+      }),
+      expect.anything(),
+    );
+    expect(QRCodeCanvas).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: expectedQrValue,
+        level: "L",
+        size: 250,
       }),
       expect.anything(),
     );
@@ -61,7 +70,7 @@ describe("QRGenerator Component", () => {
 
     render(<QRGenerator />);
 
-    const backButton = screen.getByRole("button", { name: /back to entry/i });
+    const backButton = screen.getByRole("button", { name: /back/i });
     fireEvent.click(backButton);
 
     expect(mockBack).toHaveBeenCalledOnce();

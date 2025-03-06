@@ -16,13 +16,12 @@ const ConfirmationPage: React.FC = () => {
     agentAccountId,
     agentAccountCert,
     transactionJwt,
-    show,
   } = location.state || {};
   console.log(clientAccountId, amount, agentAccountId, agentAccountCert);
 
   const handleTopUp = async () => {
     // Check if the client is offline
-    if (!navigator.onLine && show != "Transfer" && show != "Top up") {
+    if (!navigator.onLine) {
       // If offline, redirect to the /amount page
       toast.info("Opps You are offline. Redirecting to the amount page...");
       console.log("you are offline");
@@ -31,56 +30,39 @@ const ConfirmationPage: React.FC = () => {
           state: {
             clientAccountId,
             amount,
-            isClientOffline: true,
+            isClientOffline: true, // Indicating that the client is offline
           },
         });
       }, 4000);
-    } else if (!navigator.onLine && show == "Transfer") {
-      console.log("Cannot transfer offline");
-      toast.error("Cannot transfer offline. Redirecting you to dashboard");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 4000);
-    } else if (!navigator.onLine && show == "Top up") {
-      console.log("Cannot top up offline");
-      toast.error("Cannot top up offline. Redirecting you to dashboard");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 4000);
-    } else if (!navigator.onLine && show == "Payment") {
-      console.log("Cannot do payment offline");
-      toast.error("Cannot do payment offline. Redirecting you to dashboard");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 4000);
+      return;
     } else {
       console.log("you are online");
+    }
 
-      try {
-        const response = await RequestToTopup(
-          clientAccountId,
-          amount,
-          agentAccountId,
-          agentAccountCert,
-        );
-        if (response?.includes("Success")) {
-          // Extract the transaction certificate from the response
-          const transactionCert = response.replace(" Success", ""); // Remove " Success" suffix
-          toast.success("Account successfully topped up.");
-          navigate("/success", {
-            state: {
-              transactionCert,
-              accountId: agentAccountId,
-              accountCert: agentAccountCert,
-            },
-          });
-        } else if (response?.includes("Insufficient")) {
-          toast.error("Insufficient funds. Please add funds to your account.");
-        }
-      } catch (error) {
-        toast.error("An error occurred while processing the transaction");
-        console.error(error);
+    try {
+      const response = await RequestToTopup(
+        clientAccountId,
+        amount,
+        agentAccountId,
+        agentAccountCert,
+      );
+      if (response?.includes("Success")) {
+        // Extract the transaction certificate from the response
+        const transactionCert = response.replace(" Success", "");
+        toast.success("Account successfully topped up.");
+        navigate("/success", {
+          state: {
+            transactionCert,
+            accountId: agentAccountId,
+            accountCert: agentAccountCert,
+          },
+        });
+      } else if (response?.includes("Insufficient")) {
+        toast.error("Insufficient funds. Please add funds to your account.");
       }
+    } catch (error) {
+      toast.error("An error occurred while processing the transaction");
+      console.error(error);
     }
   };
 
