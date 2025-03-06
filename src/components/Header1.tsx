@@ -10,9 +10,11 @@ interface Header1Props {
 
 const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
   return (
-    <header className="flex flex-wrap items-center justify-between p-4 bg-white shadow mb-6">
-      {/* Left side: hamburger (on small screens) + logo + greeting */}
-      <div className="flex items-center w-full mb-4 md:mb-0 md:w-auto">
+    // 1) Removed flex-wrap from the header
+    <header className="flex items-center justify-between p-4 bg-white shadow mb-6">
+      {/* Left side: hamburger (on small screens) + logo */}
+      {/* 2) Removed w-full and mb-4 so this stays on the same row */}
+      <div className="flex items-center md:w-auto">
         {/* Hamburger icon for small screens */}
         <button
           onClick={onHamburgerClick}
@@ -21,7 +23,7 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
         >
           <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
-        {/* Logo and greeting */}
+        {/* Logo */}
         <div className="flex items-center">
           <img src={Logo} alt="Logo WeBank" className="w-20" />
         </div>
