@@ -59,7 +59,11 @@ describe("AgentPage", () => {
 
     fireEvent.click(screen.getByText("Cash-In"));
     expect(navigate).toHaveBeenCalledWith("/qr-scan", {
-      state: { otherAccountId: undefined, accountCert: undefined },
+      state: {
+        otherAccountId: undefined,
+        accountCert: undefined,
+        show: "Top up",
+      },
     });
   });
 });

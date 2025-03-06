@@ -23,7 +23,7 @@ const AgentPage: React.FC = () => {
               className="text-xl font-semibold bg-white text-purple-600 px-4 py-2 rounded-lg mt-3 shadow-md hover:bg-gray-200 transition"
               onClick={() =>
                 navigate("/qr-scan", {
-                  state: { agentAccountId, agentAccountCert },
+                  state: { agentAccountId, agentAccountCert, show: "Top up" },
                 })
               }
             >

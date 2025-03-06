@@ -14,6 +14,7 @@ const QRScannerPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isClientOffline = location.state?.isClientOffline;
+  const show = location.state?.show;
 
   const agentAccountId = useSelector(
     (state: RootState) => state.account.accountId,
@@ -47,7 +48,7 @@ const QRScannerPage: React.FC = () => {
           stopScanner(); // Stop scanner after successful scan
 
           // Validate QR code time (expires after 60 seconds)
-          const isExpired = Date.now() - data.timeGenerated > 5 * 60000;
+          const isExpired = Date.now() - data.timeGenerated > 15 * 60000;
           if (isExpired) {
             toast.error("QR Code expired. Please try again.");
             return window.location.reload();
@@ -70,6 +71,23 @@ const QRScannerPage: React.FC = () => {
               agentAccountId,
               agentAccountCert,
               ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
+              show,
+            },
+          });
+        } else if (show == "Transfer" || show == "Payment") {
+          setError(null);
+          stopScanner();
+          // Prevent self-transfers
+          if (data.accountId === agentAccountId) {
+            toast.error("Self-transfer not allowed.");
+            return window.location.reload();
+          }
+          navigate("/top-up", {
+            state: {
+              clientAccountId: data.accountId,
+              agentAccountId,
+              agentAccountCert,
+              show,
             },
           });
         } else {
@@ -80,12 +98,12 @@ const QRScannerPage: React.FC = () => {
         toast.error("Invalid QR code. Try again.");
       }
     },
-    [navigate, agentAccountId, agentAccountCert],
+    [agentAccountId, navigate, agentAccountCert, show],
   );
 
   const handleScanDecodedText = useCallback(
     (decodedText: string) => {
-      setTimeout(() => handleDecodedText(decodedText), 10000);
+      setTimeout(() => handleDecodedText(decodedText), 16000);
     },
     [handleDecodedText],
   );

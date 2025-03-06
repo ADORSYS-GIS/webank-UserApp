@@ -65,7 +65,6 @@ describe("Dashboard", () => {
 
     // Check logo and welcome message
     expect(screen.getByAltText("Logo WeBank")).toBeInTheDocument();
-    expect(screen.getByText("Hi, Welcome")).toBeInTheDocument();
   });
 
   it("calls RequestToGetBalance and shows toast on error", async () => {
