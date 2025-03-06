@@ -1,7 +1,12 @@
 // src/components/Header1.tsx
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faCog, faBars, faQrcode } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBell,
+  faCog,
+  faBars,
+  faQrcode,
+} from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/Webank.png";
 
 interface Header1Props {
