@@ -17,11 +17,11 @@ const QRGenerator: React.FC = () => {
   );
   const isClientOffline = location.state?.isClientOffline;
   const isClientOnline = location.state?.isClientOnline;
+  const show = location.state?.show;
 
-  // State to store the generated signature
   const [signatureValue, setSignatureValue] = useState<string | null>(null);
+  const qrRef = useRef<HTMLCanvasElement>(null);
 
-  // Generate the signature when the component mounts
   useEffect(() => {
     const generateSignature = async () => {
       try {
@@ -31,7 +31,7 @@ const QRGenerator: React.FC = () => {
             totalamount,
             accountJwt,
           );
-          setSignatureValue(signature); // Store the signature in state
+          setSignatureValue(signature);
           console.log("Generated Signature:", signature);
         } else {
           console.warn("Missing data, cannot generate signature.");
@@ -43,9 +43,6 @@ const QRGenerator: React.FC = () => {
     generateSignature();
   }, [accountId, totalamount, accountJwt]);
 
-  const qrRef = useRef<HTMLCanvasElement>(null);
-
-  // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
     accountId: accountId,
     amount: totalamount,
@@ -53,59 +50,80 @@ const QRGenerator: React.FC = () => {
     ...(signatureValue && isClientOffline ? { signature: signatureValue } : {}),
   });
 
-  // Function to download QR code
+  // Function to download QR code with size 350
   const downloadQRCode = () => {
-    const canvas = qrRef.current;
-    if (canvas) {
-      const url = canvas.toDataURL("image/png"); // Convert canvas to image URL
+    const originalCanvas = qrRef.current;
+    if (!originalCanvas) {
+      console.error("QR code canvas not found.");
+      return;
+    }
+
+    // Create an off-screen canvas with 350x350 size
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      console.error("Failed to create canvas context.");
+      return;
+    }
+
+    canvas.width = 350;
+    canvas.height = 350;
+
+    // Draw the original QR code onto the new canvas, scaling it up
+    const img = new Image();
+    img.src = originalCanvas.toDataURL("image/png");
+    img.onload = () => {
+      context.drawImage(img, 0, 0, 350, 350);
+
+      // Convert to PNG and trigger download
+      const url = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = url;
-      a.download = "qrcode.png"; // Set download file name
+      a.download = "qrcode.png";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-    }
+    };
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-50 via-blue-100 to-indigo-50 flex items-center justify-center p-6">
-      <div className="bg-white rounded-2xl shadow-xl p-12 w-full max-w-md">
-        <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-10">
+    <div className="h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50">
+      <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full max-w-md md:max-w-lg flex flex-col items-center gap-6 mt-[-50px] md:mt-[-10px]">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
           {isClientOnline ? "Top-Up QR Code" : "Withdraw QR Code"}
         </h2>
 
-        {/* QR Code Display */}
-        <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg mb-8">
-          <QRCodeCanvas value={qrValue} size={350} ref={qrRef} />
+        <div className="p-4 bg-white rounded-xl shadow-md border border-gray-200 flex items-center justify-center w-[270px] h-[270px]">
+          <div className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-300 flex items-center justify-center w-[250px] h-[250px]">
+            <QRCodeCanvas value={qrValue} size={250} ref={qrRef} level="L" />
+          </div>
         </div>
 
-        {/* Buttons */}
-        <div className="mt-6 flex flex-col items-center gap-4">
+        <div className="w-full flex flex-col md:flex-col items-center gap-3">
           <button
             onClick={downloadQRCode}
-            className="px-6 py-3 text-lg font-medium text-white bg-green-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-green-700 hover:scale-105 focus:outline-none"
+            className="w-full px-6 py-3 text-white bg-emerald-600 rounded-lg shadow-md transition hover:bg-emerald-700 active:scale-95"
           >
-            Download QR Code
+            Download QR
           </button>
 
-          {/* Show "Scan Instead!" button if the client is offline */}
-          {isClientOffline ||
-            (!isClientOnline && (
-              <button
-                onClick={() =>
-                  navigate("/qr-scan", { state: { isClientOffline } })
-                }
-                className="px-6 py-3 text-lg font-medium text-white bg-orange-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-orange-700 hover:scale-105 focus:outline-none mt-4"
-              >
-                Scan Instead!
-              </button>
-            ))}
+          {show == "Pay out" && (
+            <button
+              onClick={() =>
+                navigate("/qr-scan", { state: { isClientOffline } })
+              }
+              className="w-full px-6 py-3 text-white bg-amber-600 rounded-lg shadow-md transition hover:bg-amber-700 active:scale-95"
+            >
+              Scan Instead
+            </button>
+          )}
 
           <button
             onClick={() => window.history.back()}
-            className="px-6 py-3 text-lg font-medium text-white bg-blue-600 rounded-lg shadow-lg transform transition duration-300 hover:bg-blue-700 hover:scale-105 focus:outline-none"
+            className="w-full px-6 py-3 text-white bg-blue-600 rounded-lg shadow-md transition hover:bg-blue-700 active:scale-95"
           >
-            ← Back to Entry
+            ← Back
           </button>
         </div>
       </div>

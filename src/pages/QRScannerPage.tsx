@@ -122,7 +122,12 @@ const QRScannerPage: React.FC = () => {
 
           await scannerRef.current.start(
             { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 350, height: 350 } },
+            {
+              fps: 40,
+              qrbox: { width: 280, height: 280 },
+              aspectRatio: 1.0,
+              disableFlip: true,
+            },
             handleScanDecodedText,
             handleScanError,
           );
@@ -168,16 +173,28 @@ const QRScannerPage: React.FC = () => {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6 relative">
-      <div className="bg-white rounded-2xl shadow-xl p-12 w-full max-w-md text-center">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">
+    <div className="min-h-screen flex items-center justify-center  bg-white p-4 relative">
+      <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center space-y-6">
+        <h2 className="text-2xl font-bold text-gray-800">
           {isClientOffline ? "Scan Client QR Code" : "Scan Agent QR Code"}
         </h2>
 
-        <div id="qr-reader" className="mb-6 w-full max-w-sm mx-auto"></div>
+        {/* Scanner Container with Frame */}
+        <div className="relative mx-auto w-full aspect-square">
+          <div id="qr-reader" className="w-full h-full overflow-hidden " />
 
-        <label className="block w-full text-center bg-blue-400 text-white font-medium py-2 rounded-lg cursor-pointer hover:bg-blue-700">
-          Upload QR Code Image{" "}
+          {/* Scanning Frame Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            {/* Alignment Text */}
+            <span className="absolute bottom-4 text-white/90 text-sm font-medium backdrop-blur-sm px-2 py-1 rounded">
+              Align QR code within frame
+            </span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <label className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
+          Upload QR Image{" "}
           <input
             type="file"
             accept="image/*"
@@ -189,17 +206,16 @@ const QRScannerPage: React.FC = () => {
         {!amount && (
           <button
             onClick={() => navigate("/dashboard")}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 mt-4"
+            className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
           >
             Cancel
           </button>
         )}
 
-        {error && <p className="text-red-600 font-medium mt-4">{error}</p>}
+        {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
       <ToastContainer />
     </div>
   );
 };
-
 export default QRScannerPage;

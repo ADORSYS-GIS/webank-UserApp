@@ -60,6 +60,16 @@ const TopUpPage: React.FC = () => {
         },
       });
     }
+    // Navigate to the QR code page with the amount
+    navigate("/qrcode", {
+      state: {
+        totalAmount,
+        accountId: clientAccountId,
+        isClientOffline,
+        isClientOnline,
+        show,
+      },
+    });
   };
 
   return (

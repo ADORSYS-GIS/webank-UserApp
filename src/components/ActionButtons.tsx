@@ -75,7 +75,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         {
           icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
           label: "Pay",
-          onClick: handlePayClick, // Placeholder for other actions
+          onClick: handlePayClick,
         },
       ].map((action) => (
         <button
