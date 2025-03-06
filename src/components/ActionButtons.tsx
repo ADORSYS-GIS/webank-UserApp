@@ -25,11 +25,33 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
     console.log("Top Up button clicked", accountId);
   };
 
-  const handlePayoutClick = () => {
+  const handleWithdrawClick = () => {
     navigate("/qr-scan", {
       state: { clientAccountId: accountId, clientAccountCert: accountCert },
     });
     console.log("withdrawal", accountId);
+  };
+
+  const handleTransferClick = () => {
+    navigate("/qr-scan", {
+      state: {
+        clientAccountId: accountId,
+        clientAccountCert: accountCert,
+        show: "Transfer",
+      },
+    });
+    console.log("withdrawal", accountId);
+  };
+
+  const handlePayClick = () => {
+    navigate("/qr-scan", {
+      state: {
+        clientAccountId: accountId,
+        clientAccountCert: accountCert,
+        show: "Payment",
+      },
+    });
+    console.log("Payment", accountId);
   };
 
   return (
@@ -43,17 +65,17 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         {
           icon: "https://cdn-icons-png.flaticon.com/512/4475/4475436.png",
           label: "Transfer",
-          onClick: () => {}, // Placeholder for other actions
+          onClick: handleTransferClick, // Placeholder for other actions
         },
         {
           icon: "https://cdn-icons-png.flaticon.com/512/736/736948.png",
           label: "Withdraw",
-          onClick: handlePayoutClick, // Placeholder for other actions
+          onClick: handleWithdrawClick, // Placeholder for other actions
         },
         {
           icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
           label: "Pay",
-          onClick: () => {}, // Placeholder for other actions
+          onClick: handlePayClick, // Placeholder for other actions
         },
       ].map((action) => (
         <button

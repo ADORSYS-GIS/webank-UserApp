@@ -12,6 +12,8 @@ const TopUpPage: React.FC = () => {
   const show = location.state?.show;
   const isClientOffline = location.state?.isClientOffline;
   const isClientOnline = location.state?.isClientOnline;
+  const agentAccountCert = location.state?.agentAccountCert;
+  const agentAccountId = location.state?.agentAccountId;
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
@@ -36,15 +38,28 @@ const TopUpPage: React.FC = () => {
       return;
     }
 
-    // Navigate to the QR code page with the amount
-    navigate("/qrcode", {
-      state: {
-        totalAmount,
-        accountId: clientAccountId,
-        isClientOffline,
-        isClientOnline,
-      },
-    });
+    // check if agent account id and agent account cert are not null
+    if (show == "Transfer" || show == "Payment") {
+      navigate("/confirmation", {
+        state: {
+          amount: totalAmount,
+          clientAccountId,
+          agentAccountId,
+          agentAccountCert,
+          show,
+        },
+      });
+    } else {
+      // Navigate to the QR code page with the amount
+      navigate("/qrcode", {
+        state: {
+          totalAmount,
+          accountId: clientAccountId,
+          isClientOffline,
+          isClientOnline,
+        },
+      });
+    }
   };
 
   return (
