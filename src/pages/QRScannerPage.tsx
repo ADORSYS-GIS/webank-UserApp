@@ -8,7 +8,7 @@ import { RootState } from "../store/Store";
 
 const QRScannerPage: React.FC = () => {
   useDisableScroll();
-  const [, setAmount] = useState<string | null>(null);
+  const [amount, setAmount] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
@@ -193,11 +193,8 @@ const QRScannerPage: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <label
-          className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white 
-                         py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors"
-        >
-          Upload QR Image
+        <label className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
+          Upload QR Image{" "}
           <input
             type="file"
             accept="image/*"
@@ -206,13 +203,14 @@ const QRScannerPage: React.FC = () => {
           />
         </label>
 
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="w-full max-w-[280px] mx-auto bg-red-600 text-white 
-                    py-3 rounded-lg hover:bg-red-700 transition-colors"
-        >
-          Cancel
-        </button>
+        {!amount && (
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Cancel
+          </button>
+        )}
 
         {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
