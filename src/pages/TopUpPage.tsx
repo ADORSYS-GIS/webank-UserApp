@@ -25,9 +25,12 @@ const TopUpPage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    const numericAmount = Number(amount);
+    if (!clientAccountId || !show) {
+      alert("Invalid navigation state. Please try again.");
+      return;
+    }
 
-    // Validate the amount
+    const numericAmount = Number(amount);
     if (numericAmount <= 0) {
       alert("Please enter a valid top-up amount.");
       return;
@@ -38,8 +41,7 @@ const TopUpPage: React.FC = () => {
       return;
     }
 
-    // check if agent account id and agent account cert are not null
-    if (show == "Transfer" || show == "Payment") {
+    if (show === "Transfer" || show === "Payment") {
       navigate("/confirmation", {
         state: {
           amount: totalAmount,
@@ -50,7 +52,6 @@ const TopUpPage: React.FC = () => {
         },
       });
     } else {
-      // Navigate to the QR code page with the amount
       navigate("/qrcode", {
         state: {
           totalAmount,
