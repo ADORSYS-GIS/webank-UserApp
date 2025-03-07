@@ -30,14 +30,14 @@ const QRScannerPage: React.FC = () => {
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
-        scannerRef.current = null; // Reset scanner reference
+        scannerRef.current = null;
       } catch (err) {
         console.error("Error stopping scanner:", err);
       }
     }
   };
 
-  // Handle decoded QR Code
+  // Process the decoded QR code immediately
   const handleDecodedText = useCallback(
     (decodedText: string) => {
       try {
@@ -45,9 +45,9 @@ const QRScannerPage: React.FC = () => {
         if (data.accountId && data.amount && data.timeGenerated) {
           setAmount(data.amount.toString());
           setError(null);
-          stopScanner(); // Stop scanner after successful scan
+          stopScanner();
 
-          // Validate QR code time (expires after 60 seconds)
+          // Validate QR code time (expires after 15 minutes)
           const isExpired = Date.now() - data.timeGenerated > 15 * 60000;
           if (isExpired) {
             toast.error("QR Code expired. Please try again.");
@@ -60,7 +60,6 @@ const QRScannerPage: React.FC = () => {
             return window.location.reload();
           }
 
-          // Check if it's an offline transaction
           const isOfflineTransaction = "signature" in data;
           const signature = data.signature;
 
@@ -74,10 +73,9 @@ const QRScannerPage: React.FC = () => {
               show,
             },
           });
-        } else if (show == "Transfer" || show == "Payment") {
+        } else if (show === "Transfer" || show === "Payment") {
           setError(null);
           stopScanner();
-          // Prevent self-transfers
           if (data.accountId === agentAccountId) {
             toast.error("Self-transfer not allowed.");
             return window.location.reload();
@@ -101,9 +99,10 @@ const QRScannerPage: React.FC = () => {
     [agentAccountId, navigate, agentAccountCert, show],
   );
 
+  // Process decoded text immediately without delay
   const handleScanDecodedText = useCallback(
     (decodedText: string) => {
-      setTimeout(() => handleDecodedText(decodedText), 16000);
+      handleDecodedText(decodedText);
     },
     [handleDecodedText],
   );
@@ -114,17 +113,15 @@ const QRScannerPage: React.FC = () => {
 
   useEffect(() => {
     const startScanner = async () => {
-      await stopScanner(); // Ensure previous scanner is stopped
-
+      await stopScanner();
       if (!scannerRef.current) {
         try {
           scannerRef.current = new Html5Qrcode("qr-reader");
-
           await scannerRef.current.start(
             { facingMode: "environment" },
             {
-              fps: 40,
-              qrbox: { width: 280, height: 280 },
+              fps: 30,
+              qrbox: { width: 400, height: 400 },
               aspectRatio: 1.0,
               disableFlip: true,
             },
@@ -143,7 +140,7 @@ const QRScannerPage: React.FC = () => {
     return () => {
       stopScanner();
     };
-  }, [handleScanDecodedText, handleScanError]); // Add handleScanDecodedText as a dependency
+  }, [handleScanDecodedText, handleScanError]);
 
   // Handle file upload for QR code scanning
   const handleFileUpload = async (
@@ -151,19 +148,15 @@ const QRScannerPage: React.FC = () => {
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-
-      // Validate file type
       const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
       if (!allowedTypes.includes(file.type)) {
         setError("Unsupported file type. Please upload a PNG or JPEG image.");
         toast.error("Invalid file format. Use PNG or JPG.");
         return;
       }
-
       try {
-        await stopScanner(); // Stop the scanner before scanning the image
+        await stopScanner();
         const qrScanner = new Html5Qrcode("qr-reader");
-
         const result = await qrScanner.scanFile(file, false);
         handleDecodedText(result);
       } catch (err) {
@@ -172,8 +165,9 @@ const QRScannerPage: React.FC = () => {
       }
     }
   };
+
   return (
-    <div className="min-h-screen flex items-center justify-center  bg-white p-4 relative">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative">
       <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center space-y-6">
         <h2 className="text-2xl font-bold text-gray-800">
           {isClientOffline ? "Scan Client QR Code" : "Scan Agent QR Code"}
@@ -181,11 +175,8 @@ const QRScannerPage: React.FC = () => {
 
         {/* Scanner Container with Frame */}
         <div className="relative mx-auto w-full aspect-square">
-          <div id="qr-reader" className="w-full h-full overflow-hidden " />
-
-          {/* Scanning Frame Overlay */}
+          <div id="qr-reader" className="w-full h-full overflow-hidden" />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            {/* Alignment Text */}
             <span className="absolute bottom-4 text-white/90 text-sm font-medium backdrop-blur-sm px-2 py-1 rounded">
               Align QR code within frame
             </span>
@@ -218,4 +209,5 @@ const QRScannerPage: React.FC = () => {
     </div>
   );
 };
+
 export default QRScannerPage;
