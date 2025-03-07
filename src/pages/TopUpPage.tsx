@@ -57,19 +57,10 @@ const TopUpPage: React.FC = () => {
           accountId: clientAccountId,
           isClientOffline,
           isClientOnline,
+          show,
         },
       });
     }
-    // Navigate to the QR code page with the amount
-    navigate("/qrcode", {
-      state: {
-        totalAmount,
-        accountId: clientAccountId,
-        isClientOffline,
-        isClientOnline,
-        show,
-      },
-    });
   };
 
   return (

@@ -106,7 +106,7 @@ describe("TopUpPage", () => {
     fireEvent.click(continueButton);
 
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledTimes(2);
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
   });
 });
