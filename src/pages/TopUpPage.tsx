@@ -102,7 +102,7 @@ const TopUpPage: React.FC = () => {
             {/* Added padding bottom */}
             <button
               onClick={handleCancel}
-              className="px-6 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-all focus:outline-none focus:ring-4 focus:ring-red-300 shadow-md"
+              className="px-6 py-2 bg-red-500 rounded-lg text-white font-semibold hover:bg-red-600 transition duration-300 flex-1"
             >
               Cancel
             </button>
