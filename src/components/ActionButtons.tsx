@@ -65,12 +65,12 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         {
           icon: "https://cdn-icons-png.flaticon.com/512/4475/4475436.png",
           label: "Transfer",
-          onClick: handleTransferClick, // Placeholder for other actions
+          onClick: handleTransferClick,
         },
         {
           icon: "https://cdn-icons-png.flaticon.com/512/736/736948.png",
           label: "Withdraw",
-          onClick: handleWithdrawClick, // Placeholder for other actions
+          onClick: handleWithdrawClick, 
         },
         {
           icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
