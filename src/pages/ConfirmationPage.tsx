@@ -19,14 +19,26 @@ const ConfirmationPage: React.FC = () => {
   }
 
   // Destructure the state values
-  const { clientAccountId, amount, agentAccountId, agentAccountCert, transactionJwt, show } = location.state;
+  const {
+    clientAccountId,
+    amount,
+    agentAccountId,
+    agentAccountCert,
+    transactionJwt,
+    show,
+  } = location.state;
 
   // Debug log for troubleshooting
   console.log("ConfirmationPage state:", location.state);
 
   const handleTopUp = async () => {
     // Offline handling based on show type
-    if (!navigator.onLine && show !== "Transfer" && show !== "Payment" && show !== "Top up") {
+    if (
+      !navigator.onLine &&
+      show !== "Transfer" &&
+      show !== "Payment" &&
+      show !== "Top up"
+    ) {
       toast.info("Oops, you are offline. Redirecting to the amount page...");
       setTimeout(() => {
         navigate("/top-up", {
@@ -58,7 +70,12 @@ const ConfirmationPage: React.FC = () => {
       return;
     } else {
       try {
-        const response = await RequestToTopup(clientAccountId, amount, agentAccountId, agentAccountCert);
+        const response = await RequestToTopup(
+          clientAccountId,
+          amount,
+          agentAccountId,
+          agentAccountCert,
+        );
         if (response?.includes("Success")) {
           const transactionCert = response.replace(" Success", "");
           toast.success("Account successfully topped up.");
@@ -99,7 +116,9 @@ const ConfirmationPage: React.FC = () => {
           },
         });
       } else if (response?.includes("Insufficient")) {
-        toast.error("Insufficient funds. Please ask the client to add funds to his account.");
+        toast.error(
+          "Insufficient funds. Please ask the client to add funds to his account.",
+        );
       }
     } catch (error) {
       toast.error("An error occurred while processing the transaction");
@@ -137,7 +156,10 @@ const ConfirmationPage: React.FC = () => {
             className="px-6 py-3 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-all focus:outline-none focus:ring-4 focus:ring-red-300 shadow-md"
             onClick={() =>
               navigate("/dashboard", {
-                state: { accountId: agentAccountId, accountCert: agentAccountCert },
+                state: {
+                  accountId: agentAccountId,
+                  accountCert: agentAccountCert,
+                },
               })
             }
           >

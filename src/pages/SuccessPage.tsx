@@ -30,7 +30,8 @@ export default function SuccessPage() {
     }
   }
 
-  const { amount, TransactionID, paymentTime, paymentMethod } = transactionDetails;
+  const { amount, TransactionID, paymentTime, paymentMethod } =
+    transactionDetails;
   const formattedPaymentTime = new Date(paymentTime).toLocaleString();
 
   return (
@@ -38,13 +39,13 @@ export default function SuccessPage() {
       <div className="bg-white p-2 rounded-xl shadow-lg max-w-md w-full transition-all duration-300 hover:shadow-xl">
         <div className="flex flex-col items-center">
           <CheckCircle className="text-emerald-600 w-20 h-20 mb-6 animate-scale-in" />
-          
+
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             Payment Successful
           </h1>
-          
-          <p className="text-gray-600 text-center mb-8">success
-            Your transaction has been processed successfully
+
+          <p className="text-gray-600 text-center mb-8">
+            success Your transaction has been processed successfully
           </p>
 
           <div className="w-full bg-gray-50 rounded-lg p-6 mb-8">
@@ -84,4 +85,3 @@ export default function SuccessPage() {
     </div>
   );
 }
-

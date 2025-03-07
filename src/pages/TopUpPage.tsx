@@ -29,18 +29,18 @@ const TopUpPage: React.FC = () => {
       alert("Invalid navigation state. Please try again.");
       return;
     }
-  
+
     const numericAmount = Number(amount);
     if (numericAmount <= 0) {
       alert("Please enter a valid top-up amount.");
       return;
     }
-  
+
     if (numericAmount > 500000) {
       alert("The maximum amount for a single transfer is 500,000 XAF.");
       return;
     }
-  
+
     if (show === "Transfer" || show === "Payment") {
       navigate("/confirmation", {
         state: {
@@ -63,7 +63,6 @@ const TopUpPage: React.FC = () => {
       });
     }
   };
-  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
