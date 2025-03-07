@@ -49,25 +49,21 @@ const ConfirmationPage: React.FC = () => {
           },
         });
       }, 4000);
-      return;
     } else if (!navigator.onLine && show === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
-      return;
     } else if (!navigator.onLine && show === "Top up") {
       toast.error("Cannot top up offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
-      return;
     } else if (!navigator.onLine && show === "Payment") {
       toast.error("Cannot do payment offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
-      return;
     } else {
       try {
         const response = await RequestToTopup(
