@@ -25,21 +25,23 @@ const TopUpPage: React.FC = () => {
   };
 
   const handleContinue = () => {
+    if (!clientAccountId || !show) {
+      alert("Invalid navigation state. Please try again.");
+      return;
+    }
+  
     const numericAmount = Number(amount);
-
-    // Validate the amount
     if (numericAmount <= 0) {
       alert("Please enter a valid top-up amount.");
       return;
     }
-
+  
     if (numericAmount > 500000) {
       alert("The maximum amount for a single transfer is 500,000 XAF.");
       return;
     }
-
-    // check if agent account id and agent account cert are not null
-    if (show == "Transfer" || show == "Payment") {
+  
+    if (show === "Transfer" || show === "Payment") {
       navigate("/confirmation", {
         state: {
           amount: totalAmount,
@@ -50,7 +52,6 @@ const TopUpPage: React.FC = () => {
         },
       });
     } else {
-      // Navigate to the QR code page with the amount
       navigate("/qrcode", {
         state: {
           totalAmount,
@@ -62,6 +63,7 @@ const TopUpPage: React.FC = () => {
       });
     }
   };
+  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

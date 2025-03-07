@@ -10,27 +10,24 @@ const ConfirmationPage: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    clientAccountId,
-    amount,
-    agentAccountId,
-    agentAccountCert,
-    transactionJwt,
-    show,
-  } = location.state || {};
-  console.log(clientAccountId, amount, agentAccountId, agentAccountCert);
+
+  // Check if state exists; if not, redirect to top-up page
+  if (!location.state) {
+    console.error("No state provided. Redirecting to top-up page.");
+    navigate("/top-up");
+    return null;
+  }
+
+  // Destructure the state values
+  const { clientAccountId, amount, agentAccountId, agentAccountCert, transactionJwt, show } = location.state;
+
+  // Debug log for troubleshooting
+  console.log("ConfirmationPage state:", location.state);
 
   const handleTopUp = async () => {
-    // Check if the client is offline
-    if (
-      !navigator.onLine &&
-      show != "Transfer" &&
-      show != "Payment" &&
-      show != "Top up"
-    ) {
-      // If offline, redirect to the /amount page
-      toast.info("Opps You are offline. Redirecting to the amount page...");
-      console.log("you are offline");
+    // Offline handling based on show type
+    if (!navigator.onLine && show !== "Transfer" && show !== "Payment" && show !== "Top up") {
+      toast.info("Oops, you are offline. Redirecting to the amount page...");
       setTimeout(() => {
         navigate("/top-up", {
           state: {
@@ -40,37 +37,30 @@ const ConfirmationPage: React.FC = () => {
           },
         });
       }, 4000);
-    } else if (!navigator.onLine && show == "Transfer") {
-      console.log("Cannot transfer offline");
-      toast.error("Cannot transfer offline. Redirecting you to dashboard");
+      return;
+    } else if (!navigator.onLine && show === "Transfer") {
+      toast.error("Cannot transfer offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
-    } else if (!navigator.onLine && show == "Top up") {
-      console.log("Cannot top up offline");
-      toast.error("Cannot top up offline. Redirecting you to dashboard");
+      return;
+    } else if (!navigator.onLine && show === "Top up") {
+      toast.error("Cannot top up offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
-    } else if (!navigator.onLine && show == "Payment") {
-      console.log("Cannot do payment offline");
-      toast.error("Cannot do payment offline. Redirecting you to dashboard");
+      return;
+    } else if (!navigator.onLine && show === "Payment") {
+      toast.error("Cannot do payment offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
+      return;
     } else {
-      console.log("you are online");
-
       try {
-        const response = await RequestToTopup(
-          clientAccountId,
-          amount,
-          agentAccountId,
-          agentAccountCert,
-        );
+        const response = await RequestToTopup(clientAccountId, amount, agentAccountId, agentAccountCert);
         if (response?.includes("Success")) {
-          // Extract the transaction certificate from the response
-          const transactionCert = response.replace(" Success", ""); // Remove " Success" suffix
+          const transactionCert = response.replace(" Success", "");
           toast.success("Account successfully topped up.");
           navigate("/success", {
             state: {
@@ -99,8 +89,7 @@ const ConfirmationPage: React.FC = () => {
         transactionJwt,
       );
       if (response?.includes("Success")) {
-        // Extract the transaction certificate from the response
-        const transactionCert = response.replace(" Success", ""); // Remove " Success" suffix
+        const transactionCert = response.replace(" Success", "");
         toast.success("Account successfully topped up.");
         navigate("/success", {
           state: {
@@ -110,9 +99,7 @@ const ConfirmationPage: React.FC = () => {
           },
         });
       } else if (response?.includes("Insufficient")) {
-        toast.error(
-          "Insufficient funds. Please ask the client to add funds to his account.",
-        );
+        toast.error("Insufficient funds. Please ask the client to add funds to his account.");
       }
     } catch (error) {
       toast.error("An error occurred while processing the transaction");
@@ -132,7 +119,7 @@ const ConfirmationPage: React.FC = () => {
             Account ID
           </p>
           <p className="text-xl font-semibold text-gray-800 break-all">
-            {clientAccountId || "34sfzrgfkaliflids-rfnsrlfdrm"}
+            {clientAccountId || "Default Account ID"}
           </p>
         </div>
 
@@ -141,33 +128,25 @@ const ConfirmationPage: React.FC = () => {
             Amount
           </p>
           <p className="text-xl font-semibold text-gray-800">
-            {amount ? `${amount} XAF` : "5,000,000 XAF"}
+            {amount ? `${amount} XAF` : "Default Amount"}
           </p>
         </div>
 
         <div className="flex justify-between items-center mt-10">
-          {/* Cancel Button */}
           <button
             className="px-6 py-3 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-all focus:outline-none focus:ring-4 focus:ring-red-300 shadow-md"
             onClick={() =>
               navigate("/dashboard", {
-                state: {
-                  accountId: agentAccountId,
-                  accountCert: agentAccountCert,
-                },
+                state: { accountId: agentAccountId, accountCert: agentAccountCert },
               })
             }
           >
             Cancel
           </button>
 
-          {/* Confirm Button */}
           <button
             className="px-6 py-3 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 shadow-md"
-            onClick={
-              // if transactionJwt is null, call handleTopUp
-              transactionJwt ? handleOfflineWithdrawal : handleTopUp
-            }
+            onClick={transactionJwt ? handleOfflineWithdrawal : handleTopUp}
           >
             Confirm
           </button>
