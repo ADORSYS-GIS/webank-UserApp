@@ -3,11 +3,14 @@ import { DBSchema } from "idb";
 
 interface MyDatabase extends DBSchema {
   keys: {
-    key: number; // Represents a unique identifier for the key record
+    key: number;
     value: {
-      pub: JsonWebKey; // Public Key in JWK format
-      priv: JsonWebKey;
-      kid: number; // Private Key in JWK format
+      pub: JsonWebKey;
+      priv: {
+        jwe: string;
+        salt: number[];
+      };
+      kid: number;
     };
   };
 }
