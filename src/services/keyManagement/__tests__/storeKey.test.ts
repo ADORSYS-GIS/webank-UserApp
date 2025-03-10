@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest"; // Import necessary functions from Vitest
 import storage from "../storageSetup"; // Import the initialized storage
 import { storeKeyPair, retrieveKeyPair } from "../storeKey"; // Adjust the import to the correct module path
+import { decryptPrivateKey } from "../encrypt";
 
 describe("Key Pair Storage Tests", () => {
   it("should store and retrieve a key pair correctly", async () => {
@@ -21,7 +22,8 @@ describe("Key Pair Storage Tests", () => {
     // Step 4: Retrieve the key pair using the key ID
     const retrievedKeys = await retrieveKeyPair(1); // Use the ID from the stored record
     expect(retrievedKeys.publicKey).toEqual(publicKey); // Check if the retrieved public key matches
-    expect(retrievedKeys.privateKey).toEqual(privateKey); // Check if the retrieved private key matches
+    const decryptedStoredPriv = await decryptPrivateKey(privateKey);
+    expect(retrievedKeys.privateKey).toEqual(decryptedStoredPriv); // Check if the retrieved private key matches
   });
 
   it("should return null for a non-existent key ID", async () => {
