@@ -14,6 +14,10 @@ import TopUpPage from "./pages/TopUpPage";
 import SuccessPage from "./pages/SuccessPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import AccountQR from "./pages/AccountQr";
+import FrontId from "./pages/FrontId";
+import BackId from "./pages/BackId";
+import SelfieId from "./pages/SelfieId";
+
 
 const App: React.FC = () => {
   // Check if the user is already registered from the Redux store
@@ -23,6 +27,10 @@ const App: React.FC = () => {
     <HashRouter>
       <Header />
       <Routes>
+
+        <Route path="front-id" element={<FrontId/>}></Route>
+        <Route path="back-id" element={<BackId/>}></Route>
+        <Route path="selfie-id" element={<SelfieId/>}></Route>
         <Route
           path="/"
           element={
