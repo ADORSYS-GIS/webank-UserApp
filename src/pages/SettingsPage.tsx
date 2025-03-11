@@ -1,11 +1,9 @@
 import React from "react";
 import {
   FaLifeRing,
-  FaUsers,
-  FaLock,
+  FaMapMarkerAlt,
   FaEnvelope,
   FaIdCard,
-  FaWallet,
   FaEdit,
   FaChevronRight,
 } from "react-icons/fa";
@@ -84,16 +82,6 @@ const SettingsPage: React.FC = () => {
             description="Chat with our team"
           />
           <MenuItem
-            Icon={FaUsers}
-            title="Next of kin"
-            description="Who is seated at your right hand?"
-          />
-          <MenuItem
-            Icon={FaLock}
-            title="Security PIN"
-            description="Four digits security pin"
-          />
-          <MenuItem
             Icon={FaEnvelope}
             title="Email verification"
             description="Email not added"
@@ -104,9 +92,9 @@ const SettingsPage: React.FC = () => {
             description="Show proof of ID"
           />
           <MenuItem
-            Icon={FaWallet}
-            title="Add a wallet"
-            description="Add a wallet, get paid!"
+            Icon={FaMapMarkerAlt}
+            title="Add your residence"
+            description="Help us locate you"
           />
           <MenuItem
             Icon={FaEdit}
