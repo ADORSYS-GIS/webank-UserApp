@@ -14,7 +14,7 @@ import TopUpPage from "./pages/TopUpPage";
 import SuccessPage from "./pages/SuccessPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import AccountQR from "./pages/AccountQr";
-import SettingsPage from "./pages/SettingsPage";
+import SettingsPage from "./kyc/pages/SettingsPage";
 
 const App: React.FC = () => {
   // Check if the user is already registered from the Redux store
