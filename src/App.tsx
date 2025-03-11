@@ -20,6 +20,7 @@ import EmailCode from "./kyc/pages/emailCode";
 import FrontId from "./kyc/pages/FrontId";
 import BackId from "./kyc/pages/BackId";
 import SelfieId from "./kyc/pages/SelfieId";
+import IdentityVerificationPage from "./kyc/pages/IdentityVerificationPage";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -54,6 +55,7 @@ const App: React.FC = () => {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/inputEmail" element={<EmailVerification />} />
         <Route path="/emailCode" element={<EmailCode />} />
+        <Route path="/kyc" element={<IdentityVerificationPage />} />
       </Routes>
     </HashRouter>
   );
