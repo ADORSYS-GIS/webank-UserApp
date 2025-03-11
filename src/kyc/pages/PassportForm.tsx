@@ -1,11 +1,11 @@
 // PassportForm.tsx
 import React, { useState } from "react";
-import { 
-  FormContainer, 
-  SelectWithPopup, 
-  TextInput, 
-  DateInput 
-} from "../pages/FormComponents.tsx";
+import {
+  FormContainer,
+  SelectWithPopup,
+  TextInput,
+  DateInput,
+} from "../components/FormComponents.tsx";
 
 const PassportForm: React.FC = () => {
   const [showPassportType, setShowPassportType] = useState(false);
@@ -13,10 +13,22 @@ const PassportForm: React.FC = () => {
   const [showRegion, setShowRegion] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState("");
 
-  const passportTypes = ["Ordinary Passport", "Diplomatic Passport", "Service Passport"];
+  const passportTypes = [
+    "Ordinary Passport",
+    "Diplomatic Passport",
+    "Service Passport",
+  ];
   const regions = [
-    "Adamawa", "Centre", "East", "Far North", "Littoral", 
-    "North", "North West", "West", "South", "South West"
+    "Adamawa",
+    "Centre",
+    "East",
+    "Far North",
+    "Littoral",
+    "North",
+    "North West",
+    "West",
+    "South",
+    "South West",
   ];
 
   return (
@@ -33,31 +45,28 @@ const PassportForm: React.FC = () => {
       />
 
       {/* Full Name */}
-      <TextInput 
-        label="Full Name" 
-        id="fullName" 
-        placeholder="Enter your full name" 
+      <TextInput
+        label="Full Name"
+        id="fullName"
+        placeholder="Enter your full name"
       />
 
       {/* Profession */}
-      <TextInput 
-        label="Profession" 
-        id="profession" 
-        placeholder="Enter your profession" 
+      <TextInput
+        label="Profession"
+        id="profession"
+        placeholder="Enter your profession"
       />
 
       {/* Passport Number */}
-      <TextInput 
-        label="Passport Number" 
-        id="passportNumber" 
-        placeholder="Enter your passport number" 
+      <TextInput
+        label="Passport Number"
+        id="passportNumber"
+        placeholder="Enter your passport number"
       />
 
       {/* Date of Birth */}
-      <DateInput 
-        label="Date of Birth" 
-        id="dob" 
-      />
+      <DateInput label="Date of Birth" id="dob" />
 
       {/* Current Region */}
       <SelectWithPopup
@@ -71,10 +80,7 @@ const PassportForm: React.FC = () => {
       />
 
       {/* Expiration Date */}
-      <DateInput 
-        label="Expiration Date" 
-        id="expiry" 
-      />
+      <DateInput label="Expiration Date" id="expiry" />
 
       {/* Submit Button */}
       <button

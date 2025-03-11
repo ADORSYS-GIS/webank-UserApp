@@ -17,8 +17,12 @@ interface MenuItemProps {
   onClick: () => void;
 }
 
-
-const MenuItem: React.FC<MenuItemProps> = ({ title, description, Icon, onClick }) => {
+const MenuItem: React.FC<MenuItemProps> = ({
+  title,
+  description,
+  Icon,
+  onClick,
+}) => {
   return (
     <div
       onClick={onClick}
@@ -49,20 +53,26 @@ const SettingsPage: React.FC = () => {
     console.log(`Clicked on: ${option}`);
     alert(`Navigating to: ${option}`); // Replace with actual navigation logic
   };
-    
+
   const navigate = useNavigate();
 
   return (
     <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen py-6 px-4">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800">Settings</h1>
-        <p className="mt-2 text-center text-green-600">All your account settings here</p>
+        <h1 className="text-4xl font-extrabold text-center text-gray-800">
+          Settings
+        </h1>
+        <p className="mt-2 text-center text-green-600">
+          All your account settings here
+        </p>
 
         {/* Profile Card */}
         <div className="mt-6 mb-8 bg-gradient-to-br from-white to-green-50 rounded-xl shadow-lg p-6">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 
-                            rounded-full flex items-center justify-center text-2xl text-white font-bold">
+            <div
+              className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 
+                            rounded-full flex items-center justify-center text-2xl text-white font-bold"
+            >
               U
             </div>
             <div>

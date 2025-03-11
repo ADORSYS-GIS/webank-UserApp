@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const InputEmail: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
   const handleProceed = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(email)) {
-      navigate('/emailCode');
+      navigate("/emailCode");
     } else {
-      alert('Please enter a valid email address.');
+      alert("Please enter a valid email address.");
     }
   };
 

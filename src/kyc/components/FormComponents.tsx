@@ -18,7 +18,7 @@ export const SelectWithPopup: React.FC<SelectWithPopupProps> = ({
   onSelect,
   placeholder,
   showPopup,
-  setShowPopup
+  setShowPopup,
 }) => (
   <div className="relative">
     <label className="block text-gray-600 text-sm mb-2">{label}</label>
@@ -105,7 +105,11 @@ interface TextInputProps {
   placeholder: string;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ label, id, placeholder }) => (
+export const TextInput: React.FC<TextInputProps> = ({
+  label,
+  id,
+  placeholder,
+}) => (
   <div>
     <label className="block text-gray-600 text-sm mb-2" htmlFor={id}>
       {label}
@@ -126,7 +130,10 @@ interface FormContainerProps {
   title: string;
 }
 
-export const FormContainer: React.FC<FormContainerProps> = ({ children, title }) => (
+export const FormContainer: React.FC<FormContainerProps> = ({
+  children,
+  title,
+}) => (
   <div className="max-w-lg mx-auto p-4 md:p-6 bg-white rounded-3xl shadow-xl">
     <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
       {title}

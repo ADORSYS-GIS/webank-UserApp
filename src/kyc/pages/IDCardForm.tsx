@@ -1,11 +1,11 @@
 // IDCardForm.tsx
 import React, { useState } from "react";
-import { 
-  FormContainer, 
-  SelectWithPopup, 
-  TextInput, 
-  DateInput 
-} from "../pages/FormComponents.tsx";
+import {
+  FormContainer,
+  SelectWithPopup,
+  TextInput,
+  DateInput,
+} from "../components/FormComponents.tsx";
 
 const IDCardForm: React.FC = () => {
   const [showIDType, setShowIDType] = useState(false);
@@ -15,12 +15,20 @@ const IDCardForm: React.FC = () => {
 
   const idTypes = ["Original ID", "Receipt ID"];
   const regions = [
-    "Adamawa", "Centre", "East", "Far North", "Littoral", 
-    "North", "North West", "West", "South", "South West"
+    "Adamawa",
+    "Centre",
+    "East",
+    "Far North",
+    "Littoral",
+    "North",
+    "North West",
+    "West",
+    "South",
+    "South West",
   ];
 
   // IDCardForm.tsx
-return (
+  return (
     <FormContainer title="ID Card Information">
       {/* Add actual form components here */}
       <SelectWithPopup
@@ -32,20 +40,20 @@ return (
         showPopup={showIDType}
         setShowPopup={setShowIDType}
       />
-      <TextInput 
-        label="Full Name" 
-        id="fullName" 
-        placeholder="Enter your full name" 
+      <TextInput
+        label="Full Name"
+        id="fullName"
+        placeholder="Enter your full name"
       />
-      <TextInput 
-        label="Profession" 
-        id="profession" 
-        placeholder="Enter your profession" 
+      <TextInput
+        label="Profession"
+        id="profession"
+        placeholder="Enter your profession"
       />
-      <TextInput 
-        label="ID Card Number" 
-        id="idNumber" 
-        placeholder="Enter your ID card number" 
+      <TextInput
+        label="ID Card Number"
+        id="idNumber"
+        placeholder="Enter your ID card number"
       />
       <DateInput label="Date Of Birth" id="dob" />
       <SelectWithPopup

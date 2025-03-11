@@ -31,23 +31,25 @@ export default function IdentityVerification() {
       title: "Personal Info",
       description: "Enter your address and ID details and upload",
       icon: <FaUserEdit className="w-6 h-6 text-emerald-700" />,
-      onClick: () => navigate("/kyc/personal-info") 
+      onClick: () => navigate("/kyc/personal-info"),
     },
     {
       id: 2,
       title: "Upload your Front ID",
-      description: "Take a clear photo of the front of your government-issued ID",
+      description:
+        "Take a clear photo of the front of your government-issued ID",
       icon: <FaIdCard className="w-6 h-6 text-emerald-700" />,
-      onClick: () => setShowFrontIdPopup(true) 
+      onClick: () => setShowFrontIdPopup(true),
     },
     {
       id: 3,
       title: "Upload your Back ID",
-      description: "Take a clear photo of the back of your government-issued ID",
+      description:
+        "Take a clear photo of the back of your government-issued ID",
       icon: (
         <FaIdCard className="w-6 h-6 text-emerald-700 transform rotate-180" />
       ),
-      onClick: () => setShowBackIdPopup(true) 
+      onClick: () => setShowBackIdPopup(true),
     },
     {
       id: 4,
@@ -55,7 +57,7 @@ export default function IdentityVerification() {
       description:
         "Take a clear photo of you holding your government-issued ID",
       icon: <FaCameraRetro className="w-6 h-6 text-emerald-700" />,
-      onClick: () => setShowSelfieIdPopup(true)
+      onClick: () => setShowSelfieIdPopup(true),
     },
     {
       id: 5,
@@ -142,12 +144,13 @@ export default function IdentityVerification() {
           <FiChevronRight className="w-5 h-5" />
         </button>
       </div>
-      {showFrontIdPopup && <FrontId onClose={() => setShowFrontIdPopup(false)} />}
+      {showFrontIdPopup && (
+        <FrontId onClose={() => setShowFrontIdPopup(false)} />
+      )}
       {showBackIdPopup && <BackId onClose={() => setShowBackIdPopup(false)} />}
       {showSelfieIdPopup && (
         <SelfieId onClose={() => setShowSelfieIdPopup(false)} />
       )}
-
     </div>
   );
 }

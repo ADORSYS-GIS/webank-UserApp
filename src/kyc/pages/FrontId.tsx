@@ -1,13 +1,14 @@
 import React, { useState, useRef } from "react";
 
-interface FrontIdProps { onClose: () => void; }
+interface FrontIdProps {
+  onClose: () => void;
+}
 
 const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
   const [showCamera, setShowCamera] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
 
   // 📸 Start Camera
   const startCamera = async () => {
@@ -82,7 +83,6 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white shadow-xl rounded-2xl p-6 w-11/12 max-w-md">
-        
         {/* 🔹 Header with Back & Close Buttons */}
         <div className="flex items-center justify-between mb-4">
           <button
@@ -132,7 +132,8 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
         {!showCamera && !capturedImage ? (
           <>
             <p className="text-gray-600 text-center mb-4">
-              Follow these steps to complete your identity verification securely.
+              Follow these steps to complete your identity verification
+              securely.
             </p>
 
             {/* ID Card Sample Image */}
@@ -146,7 +147,8 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
 
             <h3 className="text-lg font-medium text-center mb-2">Front ID</h3>
             <p className="text-gray-600 text-center mb-4">
-              Please take a clear picture of the front of your ID card or upload from your device.
+              Please take a clear picture of the front of your ID card or upload
+              from your device.
             </p>
 
             {/* ✅ Action Buttons */}
@@ -157,9 +159,7 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
               Open Camera
             </button>
 
-            <label
-              className="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition duration-200 cursor-pointer block text-center"
-            >
+            <label className="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition duration-200 cursor-pointer block text-center">
               Upload from Device
               <input
                 type="file"
@@ -172,7 +172,11 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
         ) : showCamera ? (
           <>
             {/* 📸 Live Camera Feed */}
-            <video ref={videoRef} autoPlay className="w-full rounded-lg"></video>
+            <video
+              ref={videoRef}
+              autoPlay
+              className="w-full rounded-lg"
+            ></video>
             <canvas ref={canvasRef} className="hidden"></canvas>
 
             <button
@@ -186,7 +190,11 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
           capturedImage && (
             <>
               {/* 🖼 Display Captured/Uploaded Image */}
-              <img src={capturedImage} alt="Captured ID" className="w-full rounded-lg mb-4" />
+              <img
+                src={capturedImage}
+                alt="Captured ID"
+                className="w-full rounded-lg mb-4"
+              />
 
               {/* 🔄 Retake & Submit Buttons */}
               <button
@@ -196,9 +204,7 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
                 Retake
               </button>
 
-              <button
-                className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200"
-              >
+              <button className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200">
                 Submit
               </button>
             </>

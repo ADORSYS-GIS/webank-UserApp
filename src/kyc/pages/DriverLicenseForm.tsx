@@ -1,49 +1,54 @@
 // DriverLicenseForm.tsx
 import React, { useState } from "react";
-import { 
-  FormContainer, 
-  SelectWithPopup, 
-  TextInput, 
-  DateInput 
-} from "../pages/FormComponents.tsx";
+import {
+  FormContainer,
+  SelectWithPopup,
+  TextInput,
+  DateInput,
+} from "../components/FormComponents.tsx";
 
 const DriverLicenseForm: React.FC = () => {
   const [showRegion, setShowRegion] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState("");
 
   const regions = [
-    "Adamawa", "Centre", "East", "Far North", "Littoral", 
-    "North", "North West", "West", "South", "South West"
+    "Adamawa",
+    "Centre",
+    "East",
+    "Far North",
+    "Littoral",
+    "North",
+    "North West",
+    "West",
+    "South",
+    "South West",
   ];
 
   return (
     <FormContainer title="Driver License Information">
       {/* Full Name */}
-      <TextInput 
-        label="Full Name" 
-        id="fullName" 
-        placeholder="Enter your full name" 
+      <TextInput
+        label="Full Name"
+        id="fullName"
+        placeholder="Enter your full name"
       />
 
       {/* Profession */}
-      <TextInput 
-        label="Profession" 
-        id="profession" 
-        placeholder="Enter your profession" 
+      <TextInput
+        label="Profession"
+        id="profession"
+        placeholder="Enter your profession"
       />
 
       {/* License Number */}
-      <TextInput 
-        label="Driver License Number" 
-        id="licenseNumber" 
-        placeholder="Enter your license number" 
+      <TextInput
+        label="Driver License Number"
+        id="licenseNumber"
+        placeholder="Enter your license number"
       />
 
       {/* Date of Birth */}
-      <DateInput 
-        label="Date of Birth" 
-        id="dob" 
-      />
+      <DateInput label="Date of Birth" id="dob" />
 
       {/* Current Region */}
       <SelectWithPopup
@@ -57,10 +62,7 @@ const DriverLicenseForm: React.FC = () => {
       />
 
       {/* Expiration Date */}
-      <DateInput 
-        label="Expiration Date" 
-        id="expiry" 
-      />
+      <DateInput label="Expiration Date" id="expiry" />
 
       {/* Submit Button */}
       <button
