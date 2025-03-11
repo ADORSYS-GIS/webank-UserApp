@@ -6,7 +6,7 @@ const InputEmail: React.FC = () => {
   const navigate = useNavigate();
 
   const handleProceed = () => {
-    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(email)) {
       navigate('/emailCode');
     } else {

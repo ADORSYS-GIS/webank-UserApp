@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 
-const BackId: React.FC = () => {
+interface BackIdProps { onClose: () => void; }
+
+const BackId: React.FC<BackIdProps> = ({ onClose }) => {
   const [showCamera, setShowCamera] = useState(false); // Controls camera visibility
   const [capturedImage, setCapturedImage] = useState<string | null>(null); // Stores captured/uploaded image
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -63,6 +65,7 @@ const BackId: React.FC = () => {
   // ❌ Close Popup
   const closePopup = () => {
     resetCapture(); // Reset everything
+    onClose();
     // You can add additional logic to close the modal if needed
   };
 

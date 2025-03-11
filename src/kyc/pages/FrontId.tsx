@@ -1,10 +1,13 @@
 import React, { useState, useRef } from "react";
 
-const FrontId: React.FC = () => {
-  const [showCamera, setShowCamera] = useState(false); // Controls camera visibility
-  const [capturedImage, setCapturedImage] = useState<string | null>(null); // Stores captured/uploaded image
+interface FrontIdProps { onClose: () => void; }
+
+const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
+  const [showCamera, setShowCamera] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
 
   // 📸 Start Camera
   const startCamera = async () => {
@@ -62,7 +65,8 @@ const FrontId: React.FC = () => {
 
   // ❌ Close Popup
   const closePopup = () => {
-    resetCapture(); // Reset everything
+    resetCapture();
+    onClose(); // Reset everything
     // You can add additional logic to close the modal if needed
   };
 

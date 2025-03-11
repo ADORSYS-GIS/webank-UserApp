@@ -1,6 +1,9 @@
 import React, { useState, useRef } from "react";
 
-const SelfieId: React.FC = () => {
+interface SelfieProps { onClose: () => void; }
+
+const SelfieId: React.FC<SelfieProps> = ({ onClose }) => {
+
   const [showCamera, setShowCamera] = useState(false); // Controls camera visibility
   const [capturedImage, setCapturedImage] = useState<string | null>(null); // Stores captured/uploaded image
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -63,6 +66,7 @@ const SelfieId: React.FC = () => {
   // ❌ Close Popup
   const closePopup = () => {
     resetCapture(); // Reset everything
+    onClose();
     // You can add additional logic to close the modal if needed
   };
 
@@ -135,7 +139,7 @@ const SelfieId: React.FC = () => {
             <div className="flex justify-center mb-4">
               <img
                 className="w-full h-auto rounded-lg"
-                src="./public/selfie-id.png"
+                src="/selfie-id.png"
                 alt="Example of a Selfie ID card"
               />
             </div>

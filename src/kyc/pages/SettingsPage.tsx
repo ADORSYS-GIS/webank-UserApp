@@ -7,18 +7,21 @@ import {
   FaEdit,
   FaChevronRight,
 } from "react-icons/fa";
-
 import { IconType } from "react-icons";
+import { useNavigate } from "react-router-dom";
 
 interface MenuItemProps {
   title: string;
   description: string;
   Icon: IconType;
+  onClick: () => void;
 }
 
-const MenuItem: React.FC<MenuItemProps> = ({ title, description, Icon }) => {
+
+const MenuItem: React.FC<MenuItemProps> = ({ title, description, Icon, onClick }) => {
   return (
     <div
+      onClick={onClick}
       className="flex justify-between items-center p-4 transition-transform 
                  hover:bg-green-50 hover:scale-[1.01] cursor-pointer"
     >
@@ -42,28 +45,24 @@ const MenuItem: React.FC<MenuItemProps> = ({ title, description, Icon }) => {
 };
 
 const SettingsPage: React.FC = () => {
+  const handleMenuClick = (option: string) => {
+    console.log(`Clicked on: ${option}`);
+    alert(`Navigating to: ${option}`); // Replace with actual navigation logic
+  };
+    
+  const navigate = useNavigate();
+
   return (
-    // Subtle background gradient
     <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen py-6 px-4">
       <div className="max-w-xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800">
-          Settings
-        </h1>
-        <p className="mt-2 text-center text-green-600">
-          All your account settings here
-        </p>
+        <h1 className="text-4xl font-extrabold text-center text-gray-800">Settings</h1>
+        <p className="mt-2 text-center text-green-600">All your account settings here</p>
 
         {/* Profile Card */}
-        <div
-          className="mt-6 mb-8 bg-gradient-to-br from-white to-green-50 
-                     rounded-xl shadow-lg p-6"
-        >
+        <div className="mt-6 mb-8 bg-gradient-to-br from-white to-green-50 rounded-xl shadow-lg p-6">
           <div className="flex items-center space-x-4">
-            {/* User Avatar */}
-            <div
-              className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 
-                         rounded-full flex items-center justify-center text-2xl text-white font-bold"
-            >
+            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 
+                            rounded-full flex items-center justify-center text-2xl text-white font-bold">
               U
             </div>
             <div>
@@ -80,26 +79,31 @@ const SettingsPage: React.FC = () => {
             Icon={FaLifeRing}
             title="Help & Support"
             description="Chat with our team"
+            onClick={() => handleMenuClick("Help & Support")}
           />
           <MenuItem
             Icon={FaEnvelope}
             title="Email verification"
             description="Email not added"
+            onClick={() => navigate("/inputEmail")}
           />
           <MenuItem
             Icon={FaIdCard}
             title="Verify my ID (KYC)"
             description="Show proof of ID"
+            onClick={() => navigate("/kyc")}
           />
           <MenuItem
             Icon={FaMapMarkerAlt}
             title="Add your residence"
             description="Help us locate you"
+            onClick={() => handleMenuClick("Add your residence")}
           />
           <MenuItem
             Icon={FaEdit}
             title="Modify your handle"
             description="Change your profile handle"
+            onClick={() => handleMenuClick("Modify your handle")}
           />
         </div>
       </div>
