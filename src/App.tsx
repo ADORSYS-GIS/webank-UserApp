@@ -14,6 +14,8 @@ import TopUpPage from "./pages/TopUpPage";
 import SuccessPage from "./pages/SuccessPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import AccountQR from "./pages/AccountQr";
+import EmailVerification from "./pages/emailVerification";
+import EmailCode from "./pages/emailCode";
 
 const App: React.FC = () => {
   // Check if the user is already registered from the Redux store
@@ -42,6 +44,8 @@ const App: React.FC = () => {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/account-qr" element={<AccountQR />} />
+        <Route path="/inputEmail" element={<EmailVerification />} />
+        <Route path="/emailCode" element={<EmailCode />} />
       </Routes>
     </HashRouter>
   );
