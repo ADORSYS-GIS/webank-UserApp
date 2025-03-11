@@ -28,6 +28,7 @@
     "axios-mock-adapter": "^2.1.0",
     "base64-url": "^2.3.3",
     "crypto-js": "^4.2.0",
+    "framer-motion": "^12.4.13",
     "heroicons-react": "^1.4.1",
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.2.7",
