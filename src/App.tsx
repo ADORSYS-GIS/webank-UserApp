@@ -15,9 +15,10 @@ import SuccessPage from "./pages/SuccessPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import AccountQR from "./pages/AccountQr";
 import SettingsPage from "./kyc/pages/SettingsPage";
+import EmailVerification from "./kyc/pages/emailVerification";
+import EmailCode from "./kyc/pages/emailCode";
 
 const App: React.FC = () => {
-  // Check if the user is already registered from the Redux store
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   return (
@@ -44,6 +45,8 @@ const App: React.FC = () => {
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/account-qr" element={<AccountQR />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/inputEmail" element={<EmailVerification />} />
+        <Route path="/emailCode" element={<EmailCode />} />
       </Routes>
     </HashRouter>
   );
