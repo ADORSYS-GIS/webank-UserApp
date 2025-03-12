@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import FrontId from "./FrontId";
 import SelfieId from "./SelfieId";
 import BackId from "./BackId";
+import TaxpayerId from "./TaxpayerId";
+import VerificationModal from "../components/VerificationModal";
 
 interface VerificationStep {
   id: number;
@@ -25,6 +27,9 @@ export default function IdentityVerification() {
   const [showFrontIdPopup, setShowFrontIdPopup] = useState(false);
   const [showBackIdPopup, setShowBackIdPopup] = useState(false);
   const [showSelfieIdPopup, setShowSelfieIdPopup] = useState(false);
+  const [showTaxpayerIdPopup, setShowTaxpayerIdPopup] = useState(false);
+  const [showVerificationModalPopup, setShowVerificationModalPopup] =
+    useState(false);
 
   const steps: VerificationStep[] = [
     {
@@ -32,7 +37,7 @@ export default function IdentityVerification() {
       title: "Personal Info",
       description: "Enter your address and ID details and upload",
       icon: <FaUserEdit className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => navigate("/kyc/personal-info"),
+      onClick: () => setShowVerificationModalPopup(true),
     },
     {
       id: 2,
@@ -65,7 +70,7 @@ export default function IdentityVerification() {
       title: "Tax Identifier Document",
       description: "Upload your government-issued tax identification document.",
       icon: <FaFileInvoice className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => navigate("/tax-document"),
+      onClick: () => setShowTaxpayerIdPopup(true),
     },
   ];
 
@@ -146,6 +151,14 @@ export default function IdentityVerification() {
       {showBackIdPopup && <BackId onClose={() => setShowBackIdPopup(false)} />}
       {showSelfieIdPopup && (
         <SelfieId onClose={() => setShowSelfieIdPopup(false)} />
+      )}
+      {showTaxpayerIdPopup && (
+        <TaxpayerId onClose={() => setShowTaxpayerIdPopup(false)} />
+      )}
+      {showVerificationModalPopup && (
+        <VerificationModal
+          onClose={() => setShowVerificationModalPopup(false)}
+        />
       )}
     </div>
   );

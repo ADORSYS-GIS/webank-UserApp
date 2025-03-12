@@ -18,7 +18,6 @@ import SettingsPage from "./kyc/pages/SettingsPage";
 import EmailVerification from "./kyc/pages/emailVerification";
 import EmailCode from "./kyc/pages/emailCode";
 import IdentityVerificationPage from "./kyc/pages/IdentityVerificationPage";
-import VerificationModal from "./kyc/components/VerificationModal";
 import IDCardForm from "./kyc/pages/IDCardForm";
 import DriverLicenseForm from "./kyc/pages/DriverLicenseForm";
 import PassportForm from "./kyc/pages/PassportForm";
@@ -53,7 +52,6 @@ const App: React.FC = () => {
         <Route path="/inputEmail" element={<EmailVerification />} />
         <Route path="/emailCode" element={<EmailCode />} />
         <Route path="/kyc" element={<IdentityVerificationPage />} />
-        <Route path="/kyc/personal-info" element={<VerificationModal />} />
         <Route path="/verification/id-card" element={<IDCardForm />} />
         <Route path="/verification/passport" element={<PassportForm />} />
         <Route

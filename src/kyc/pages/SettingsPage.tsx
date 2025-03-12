@@ -84,7 +84,6 @@ const SettingsPage: React.FC = () => {
             </div>
           </div>
         </div>
-
         <div className="bg-white rounded-xl shadow-md divide-y divide-gray-200">
           <MenuItem
             Icon={FaLifeRing}

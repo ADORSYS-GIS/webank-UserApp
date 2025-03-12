@@ -3,7 +3,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-const VerificationModal = () => {
+interface VerificationModalProps {
+  onClose: () => void;
+}
+
+const VerificationModal: React.FC<VerificationModalProps> = () => {
   const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
 
