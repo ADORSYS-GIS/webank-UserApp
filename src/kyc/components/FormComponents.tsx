@@ -138,9 +138,14 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     className="max-w-lg mx-auto p-4 md:p-6 bg-white rounded-3xl shadow-xl"
     style={{ fontFamily: "Poppins, sans-serif" }}
   >
-    <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+    <h2
+      id="form-title"
+      className="text-2xl font-bold mb-6 text-center text-gray-800"
+    >
       {title}
     </h2>
-    <form className="space-y-5">{children}</form>
+    <form className="space-y-5" aria-labelledby="form-title">
+      {children}
+    </form>
   </div>
 );
