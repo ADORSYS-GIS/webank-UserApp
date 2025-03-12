@@ -67,8 +67,8 @@ const DriverLicenseForm: React.FC = () => {
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full bg-green-500 text-white py-4 rounded-3xl 
-                   font-semibold hover:bg-green-600 transition 
+        className="w-full bg-[#20B2AA] text-white py-4 rounded-3xl 
+                   font-semibold transition 
                    duration-300 ease-in-out shadow-lg mt-2"
       >
         Submit

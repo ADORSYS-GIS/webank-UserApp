@@ -1,3 +1,4 @@
+// SettingsPage.tsx (second file)
 import React from "react";
 import {
   FaLifeRing,
@@ -27,11 +28,11 @@ const MenuItem: React.FC<MenuItemProps> = ({
     <div
       onClick={onClick}
       className="flex justify-between items-center p-4 transition-transform 
-                 hover:bg-green-50 hover:scale-[1.01] cursor-pointer"
+                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer"
     >
       <div className="flex items-center space-x-3">
         <div
-          className="w-10 h-10 bg-gradient-to-br from-green-300 to-green-400 
+          className="w-10 h-10 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] 
                         rounded-full flex items-center justify-center text-white"
         >
           <Icon size={16} />
@@ -51,26 +52,27 @@ const MenuItem: React.FC<MenuItemProps> = ({
 const SettingsPage: React.FC = () => {
   const handleMenuClick = (option: string) => {
     console.log(`Clicked on: ${option}`);
-    alert(`Navigating to: ${option}`); // Replace with actual navigation logic
   };
 
   const navigate = useNavigate();
 
   return (
-    <div className="bg-gradient-to-b from-white to-gray-50 min-h-screen py-6 px-4">
+    <div
+      className="bg-gradient-to-b from-white to-gray-50 min-h-screen py-6 px-4"
+      style={{ fontFamily: "Poppins, sans-serif" }}
+    >
       <div className="max-w-xl mx-auto">
         <h1 className="text-4xl font-extrabold text-center text-gray-800">
           Settings
         </h1>
-        <p className="mt-2 text-center text-green-600">
+        <p className="mt-2 text-center text-[#20B2AA]">
           All your account settings here
         </p>
 
-        {/* Profile Card */}
-        <div className="mt-6 mb-8 bg-gradient-to-br from-white to-green-50 rounded-xl shadow-lg p-6">
+        <div className="mt-6 mb-8 bg-gradient-to-br from-white to-[#20B2AA]/10 rounded-xl shadow-lg p-6">
           <div className="flex items-center space-x-4">
             <div
-              className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-500 
+              className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] 
                             rounded-full flex items-center justify-center text-2xl text-white font-bold"
             >
               U
@@ -83,7 +85,6 @@ const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Settings List */}
         <div className="bg-white rounded-xl shadow-md divide-y divide-gray-200">
           <MenuItem
             Icon={FaLifeRing}

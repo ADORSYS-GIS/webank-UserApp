@@ -1,3 +1,4 @@
+// EmailCode.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +18,6 @@ const EmailCode: React.FC = () => {
   const handleVerify = () => {
     const enteredCode = otp.join("");
     if (enteredCode === "123456") {
-      // Replace with backend response check
       setShowSuccess(true);
     } else {
       alert("Invalid OTP. Please try again.");
@@ -25,7 +25,10 @@ const EmailCode: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen bg-white overflow-hidden relative">
+    <div
+      className="flex items-center justify-center h-screen w-screen bg-white overflow-hidden relative"
+      style={{ fontFamily: "Poppins, sans-serif" }}
+    >
       <div className="w-full max-w-md p-6 bg-gray-100 shadow-lg rounded-2xl text-center">
         <div className="flex items-center mb-6">
           <i
@@ -42,7 +45,7 @@ const EmailCode: React.FC = () => {
             <input
               key={index}
               type="text"
-              className="w-12 h-12 border border-gray-300 rounded-xl text-center text-2xl focus:ring-2 focus:ring-green-400 focus:outline-none"
+              className="w-12 h-12 border border-gray-300 rounded-xl text-center text-2xl focus:ring-2 focus:ring-[#20B2AA] focus:outline-none"
               maxLength={1}
               value={data}
               onChange={(e) => handleChange(e.target, index)}
@@ -54,7 +57,7 @@ const EmailCode: React.FC = () => {
           Didn't receive the code? Click below to resend.
         </p>
         <button
-          className="text-green-500 font-semibold hover:underline mb-6"
+          className="text-[#20B2AA] font-semibold hover:underline mb-6"
           onClick={() => console.log("Resend OTP clicked")}
         >
           Resend Code
@@ -67,7 +70,7 @@ const EmailCode: React.FC = () => {
             Back
           </button>
           <button
-            className="w-1/3 py-3 bg-green-500 text-white font-semibold rounded-full shadow-md hover:bg-green-600 transition"
+            className="w-1/3 py-3 bg-[#20B2AA] text-white font-semibold rounded-full shadow-md hover:bg-[#1C8C8A] transition"
             onClick={handleVerify}
           >
             Verify
@@ -76,7 +79,10 @@ const EmailCode: React.FC = () => {
       </div>
       {showSuccess && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+          <div
+            className="bg-white p-6 rounded-xl shadow-lg text-center"
+            style={{ fontFamily: "Poppins, sans-serif" }}
+          >
             <h2 className="text-2xl font-bold mb-3">
               Successful Email Verification
             </h2>
@@ -84,7 +90,7 @@ const EmailCode: React.FC = () => {
               Your email has been successfully verified!
             </p>
             <button
-              className="py-2 px-6 bg-green-500 text-white font-semibold rounded-full shadow-md hover:bg-green-600 transition"
+              className="py-2 px-6 bg-[#20B2AA] text-white font-semibold rounded-full shadow-md hover:bg-[#1C8C8A] transition"
               onClick={() => navigate("/")}
             >
               OK

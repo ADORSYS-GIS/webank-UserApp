@@ -25,7 +25,7 @@ export const SelectWithPopup: React.FC<SelectWithPopupProps> = ({
     <button
       type="button"
       className="w-full p-4 text-left border border-gray-200 rounded-2xl 
-                 focus:ring-2 focus:ring-green-400 focus:border-green-400 
+                 focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] 
                  transition duration-200 ease-in-out"
       onClick={() => setShowPopup(true)}
     >
@@ -51,8 +51,8 @@ export const SelectWithPopup: React.FC<SelectWithPopupProps> = ({
               <button
                 key={option}
                 className={`w-full p-4 text-left transition 
-                           hover:bg-green-50 ${
-                             selectedValue === option ? "bg-green-100" : ""
+                           hover:bg-[#20B2AA]/10 ${
+                             selectedValue === option ? "bg-[#20B2AA]/20" : ""
                            }`}
                 onClick={() => {
                   onSelect(option);
@@ -93,7 +93,7 @@ export const DateInput: React.FC<DateInputProps> = ({ label, id }) => (
       onFocus={(e) => (e.target.type = "date")}
       onBlur={(e) => (e.target.type = "text")}
       className="w-full p-4 border border-gray-200 rounded-2xl 
-                 focus:ring-2 focus:ring-green-400 focus:border-green-400 
+                 focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] 
                  transition duration-200 ease-in-out"
     />
   </div>
@@ -119,7 +119,7 @@ export const TextInput: React.FC<TextInputProps> = ({
       id={id}
       placeholder={placeholder}
       className="w-full p-4 border border-gray-200 rounded-2xl 
-                 focus:ring-2 focus:ring-green-400 focus:border-green-400 
+                 focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] 
                  transition duration-200 ease-in-out"
     />
   </div>
@@ -134,7 +134,10 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   children,
   title,
 }) => (
-  <div className="max-w-lg mx-auto p-4 md:p-6 bg-white rounded-3xl shadow-xl">
+  <div
+    className="max-w-lg mx-auto p-4 md:p-6 bg-white rounded-3xl shadow-xl"
+    style={{ fontFamily: "Poppins, sans-serif" }}
+  >
     <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
       {title}
     </h2>
