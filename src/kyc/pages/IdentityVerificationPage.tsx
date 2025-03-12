@@ -73,19 +73,13 @@ export default function IdentityVerification() {
     },
   ];
 
-  // Helper function to handle keyboard activation (Enter or Space)
-  const handleKeyDown = (event: React.KeyboardEvent, onClick: () => void) => {
-    if (event.key === "Enter" || event.key === " ") {
-      onClick();
-    }
-  };
-
   return (
     <div
       className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative"
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
       <button
+        type="button"
         onClick={() => navigate(-1)}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
@@ -115,16 +109,14 @@ export default function IdentityVerification() {
 
       <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4">
         {steps.map((step) => (
-          <div
+          <button
             key={step.id}
-            role="button"
-            tabIndex={0}
+            type="button"
             onClick={step.onClick}
-            onKeyDown={(e) => handleKeyDown(e, step.onClick)}
             className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer 
                        flex items-center justify-between 
                        transform hover:scale-[1.005] hover:border-[#20B2AA] 
-                       overflow-hidden"
+                       overflow-hidden w-full text-left"
           >
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
@@ -140,12 +132,13 @@ export default function IdentityVerification() {
               </div>
             </div>
             <FiChevronRight className="w-6 h-6 min-w-6 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
-          </div>
+          </button>
         ))}
       </div>
 
       <div className="pt-4 border-t border-gray-100 bg-white">
         <button
+          type="button"
           onClick={() => console.log("Submission triggered")}
           className="w-full py-4 bg-[#20B2AA] hover:bg-[#1C8C8A] text-white font-semibold text-base md:text-lg rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg hover:shadow-[#20B2AA]/50"
         >

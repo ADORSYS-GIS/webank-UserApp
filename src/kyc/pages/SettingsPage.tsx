@@ -23,20 +23,12 @@ const MenuItem: React.FC<MenuItemProps> = ({
   Icon,
   onClick,
 }) => {
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      onClick();
-    }
-  };
-
   return (
-    <div
-      role="button"
-      tabIndex={0}
+    <button
+      type="button"
       onClick={onClick}
-      onKeyDown={handleKeyDown}
       className="flex justify-between items-center p-4 transition-transform 
-                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer"
+                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer w-full text-left"
     >
       <div className="flex items-center space-x-3">
         <div
@@ -53,7 +45,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       <div className="text-gray-400">
         <FaChevronRight />
       </div>
-    </div>
+    </button>
   );
 };
 
