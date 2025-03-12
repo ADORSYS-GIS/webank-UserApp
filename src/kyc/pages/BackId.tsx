@@ -86,7 +86,8 @@ const BackId: React.FC<BackIdProps> = ({ onClose }) => {
           </div>
           <h3 className="text-lg font-medium text-center mb-2">Back ID</h3>
           <p className="text-gray-600 text-center mb-4">
-            Please take a clear picture of the back of your ID card or upload from your device.
+            Please take a clear picture of the back of your ID card or upload
+            from your device.
           </p>
           <button
             onClick={startCamera}
