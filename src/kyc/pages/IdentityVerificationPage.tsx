@@ -14,7 +14,6 @@ import BackId from "./BackId";
 import TaxpayerId from "./TaxpayerId";
 import VerificationModal from "../components/VerificationModal";
 
-
 interface VerificationStep {
   id: number;
   title: string;
@@ -29,10 +28,8 @@ export default function IdentityVerification() {
   const [showBackIdPopup, setShowBackIdPopup] = useState(false);
   const [showSelfieIdPopup, setShowSelfieIdPopup] = useState(false);
   const [showTaxpayerIdPopup, setShowTaxpayerIdPopup] = useState(false);
-  const [showVerificationModalPopup, setShowVerificationModalPopup] = useState(false);
-
-
-
+  const [showVerificationModalPopup, setShowVerificationModalPopup] =
+    useState(false);
 
   const steps: VerificationStep[] = [
     {
@@ -159,9 +156,10 @@ export default function IdentityVerification() {
         <TaxpayerId onClose={() => setShowTaxpayerIdPopup(false)} />
       )}
       {showVerificationModalPopup && (
-        <VerificationModal onClose={() => setShowVerificationModalPopup(false)} />
+        <VerificationModal
+          onClose={() => setShowVerificationModalPopup(false)}
+        />
       )}
-
     </div>
   );
 }

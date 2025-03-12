@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../hooks/useDisableScroll";
 
-
 const InputEmail: React.FC = () => {
   useDisableScroll();
   const [email, setEmail] = useState("");
@@ -19,7 +18,6 @@ const InputEmail: React.FC = () => {
   };
 
   return (
-    
     <div
       className="relative h-screen w-screen bg-white"
       style={{ fontFamily: "Poppins, sans-serif" }}

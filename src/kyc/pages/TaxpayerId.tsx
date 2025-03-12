@@ -145,9 +145,12 @@ const TaxpayerId: React.FC<TaxpayerProps> = ({ onClose }) => {
               />
             </div>
 
-            <h3 className="text-lg font-medium text-center mb-2">Taxpayer Document</h3>
+            <h3 className="text-lg font-medium text-center mb-2">
+              Taxpayer Document
+            </h3>
             <p className="text-gray-600 text-center mb-4">
-              Please take a clear picture of your Taxpayer Identification Document.
+              Please take a clear picture of your Taxpayer Identification
+              Document.
             </p>
 
             {/* ✅ Action Buttons */}

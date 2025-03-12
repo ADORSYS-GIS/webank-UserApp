@@ -7,7 +7,7 @@ interface VerificationModalProps {
   onClose: () => void;
 }
 
-const VerificationModal: React.FC<VerificationModalProps> = ( ) => {
+const VerificationModal: React.FC<VerificationModalProps> = () => {
   const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
 
@@ -25,7 +25,6 @@ const VerificationModal: React.FC<VerificationModalProps> = ( ) => {
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            
             className="text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
           >
             ×
