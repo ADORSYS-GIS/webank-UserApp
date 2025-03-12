@@ -1,73 +1,27 @@
-import React, { useState, useRef } from "react";
+// src/kyc/pages/BackId.tsx
+import React from "react";
+import { useCapture } from "../hooks/useCapture";
 
 interface BackIdProps {
   onClose: () => void;
 }
 
 const BackId: React.FC<BackIdProps> = ({ onClose }) => {
-  const [showCamera, setShowCamera] = useState(false);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  const startCamera = async () => {
-    setShowCamera(true);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-    }
-  };
-
-  const captureImage = () => {
-    if (videoRef.current && canvasRef.current) {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      if (context) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageUrl = canvas.toDataURL("image/png");
-        setCapturedImage(imageUrl);
-        const stream = video.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    }
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files?.[0]) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setCapturedImage(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const resetCapture = () => {
-    setCapturedImage(null);
-    setShowCamera(false);
-  };
+  const {
+    showCamera,
+    capturedImage,
+    videoRef,
+    canvasRef,
+    startCamera,
+    captureImage,
+    handleFileUpload,
+    resetCapture,
+    goBack,
+  } = useCapture();
 
   const closePopup = () => {
     resetCapture();
     onClose();
-  };
-
-  const goBack = () => {
-    if (showCamera) {
-      setShowCamera(false);
-    } else {
-      resetCapture();
-    }
   };
 
   const renderContent = () => {
@@ -97,13 +51,13 @@ const BackId: React.FC<BackIdProps> = ({ onClose }) => {
           </button>
           <div className="w-full">
             <label
-              htmlFor="file-upload"
+              htmlFor="back-id-upload"
               className="block w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition duration-200 cursor-pointer text-center"
             >
               Upload from Device
             </label>
             <input
-              id="file-upload"
+              id="back-id-upload"
               type="file"
               accept="image/*"
               className="hidden"
