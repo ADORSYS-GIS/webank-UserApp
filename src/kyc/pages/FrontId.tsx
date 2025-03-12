@@ -140,7 +140,7 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
             <div className="flex justify-center mb-4">
               <img
                 className="w-full h-auto rounded-lg"
-                src="./public/front-id.png"
+                src="/front-id.png"
                 alt="Example of a Front ID card"
               />
             </div>
