@@ -1,12 +1,12 @@
 import React, { useState, useRef } from "react";
 
-interface FrontIdProps {
+interface TaxpayerProps {
   onClose: () => void;
 }
 
-const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
-  const [showCamera, setShowCamera] = useState(false);
-  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+const TaxpayerId: React.FC<TaxpayerProps> = ({ onClose }) => {
+  const [showCamera, setShowCamera] = useState(false); // Controls camera visibility
+  const [capturedImage, setCapturedImage] = useState<string | null>(null); // Stores captured/uploaded image
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -66,8 +66,8 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
 
   // ❌ Close Popup
   const closePopup = () => {
-    resetCapture();
-    onClose(); // Reset everything
+    resetCapture(); // Reset everything
+    onClose();
     // You can add additional logic to close the modal if needed
   };
 
@@ -139,16 +139,15 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
             {/* ID Card Sample Image */}
             <div className="flex justify-center mb-4">
               <img
-                className="w-full h-auto rounded-lg"
-                src="/front-id.png"
-                alt="Example of a Front ID card"
+                className="w-3/4 h-auto rounded-lg"
+                src="/Tax.png"
+                alt="Example of a Taxpayer Identification"
               />
             </div>
 
-            <h3 className="text-lg font-medium text-center mb-2">Front ID</h3>
+            <h3 className="text-lg font-medium text-center mb-2">Taxpayer Document</h3>
             <p className="text-gray-600 text-center mb-4">
-              Please take a clear picture of the front of your ID card or upload
-              from your device.
+              Please take a clear picture of your Taxpayer Identification Document.
             </p>
 
             {/* ✅ Action Buttons */}
@@ -163,7 +162,7 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
               Upload from Device
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,application/pdf"
                 className="hidden"
                 onChange={handleFileUpload}
               />
@@ -215,4 +214,4 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
   );
 };
 
-export default FrontId;
+export default TaxpayerId;

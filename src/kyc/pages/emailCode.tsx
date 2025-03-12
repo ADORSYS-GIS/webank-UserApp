@@ -29,7 +29,7 @@ const EmailCode: React.FC = () => {
       className="flex items-center justify-center h-screen w-screen bg-white overflow-hidden relative"
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
-      <div className="w-full max-w-md p-6 bg-gray-100 shadow-lg rounded-2xl text-center">
+      <div className="w-full max-w-md p-6 mx-auto mt-5 rounded-2xl text-center">
         <div className="flex items-center mb-6">
           <i
             className="fas fa-arrow-left text-xl cursor-pointer"

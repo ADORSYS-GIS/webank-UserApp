@@ -140,7 +140,7 @@ const BackId: React.FC<BackIdProps> = ({ onClose }) => {
             <div className="flex justify-center mb-4">
               <img
                 className="w-full h-auto rounded-lg"
-                src="./public/back-id.png"
+                src="/back-id.png"
                 alt="Example of a Back ID card"
               />
             </div>
