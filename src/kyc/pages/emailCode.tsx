@@ -1,11 +1,16 @@
-// EmailCode.tsx
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
+
+  // Generate unique keys for OTP inputs
+  const otpKeys = useMemo(
+    () => Array.from({ length: 6 }, (_, i) => `otp-${i}`),
+    [],
+  );
 
   const handleChange = (element: HTMLInputElement, index: number) => {
     if (isNaN(Number(element.value))) return;
@@ -31,10 +36,26 @@ const EmailCode: React.FC = () => {
     >
       <div className="w-full max-w-md p-6 mx-auto mt-5 rounded-2xl text-center">
         <div className="flex items-center mb-6">
-          <i
-            className="fas fa-arrow-left text-xl cursor-pointer"
+          <button
             onClick={() => navigate("/inputEmail")}
-          ></i>
+            className="text-xl cursor-pointer p-2 focus:outline-none"
+            aria-label="Back"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+          </button>
         </div>
         <h1 className="text-3xl font-bold mb-3">Verify OTP Code</h1>
         <p className="text-gray-600 mb-6">
@@ -43,7 +64,7 @@ const EmailCode: React.FC = () => {
         <div className="flex justify-center space-x-2 mb-6">
           {otp.map((data, index) => (
             <input
-              key={index}
+              key={otpKeys[index]}
               type="text"
               className="w-12 h-12 border border-gray-300 rounded-xl text-center text-2xl focus:ring-2 focus:ring-[#20B2AA] focus:outline-none"
               maxLength={1}

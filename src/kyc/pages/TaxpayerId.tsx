@@ -101,7 +101,8 @@ const TaxpayerId: React.FC<TaxpayerProps> = ({ onClose }) => {
             Taxpayer Document
           </h3>
           <p className="text-gray-600 text-center mb-4">
-            Please take a clear picture of your Taxpayer Identification Document.
+            Please take a clear picture of your Taxpayer Identification
+            Document.
           </p>
 
           {/* ✅ Action Buttons */}

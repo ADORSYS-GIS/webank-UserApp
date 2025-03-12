@@ -1,4 +1,3 @@
-// IdentityVerification.tsx (first file)
 import { useState } from "react";
 import {
   FaUserEdit,
@@ -74,6 +73,13 @@ export default function IdentityVerification() {
     },
   ];
 
+  // Helper function to handle keyboard activation (Enter or Space)
+  const handleKeyDown = (event: React.KeyboardEvent, onClick: () => void) => {
+    if (event.key === "Enter" || event.key === " ") {
+      onClick();
+    }
+  };
+
   return (
     <div
       className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative"
@@ -111,7 +117,10 @@ export default function IdentityVerification() {
         {steps.map((step) => (
           <div
             key={step.id}
+            role="button"
+            tabIndex={0}
             onClick={step.onClick}
+            onKeyDown={(e) => handleKeyDown(e, step.onClick)}
             className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer 
                        flex items-center justify-between 
                        transform hover:scale-[1.005] hover:border-[#20B2AA] 

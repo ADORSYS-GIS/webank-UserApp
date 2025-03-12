@@ -1,4 +1,3 @@
-// SettingsPage.tsx (second file)
 import React from "react";
 import {
   FaLifeRing,
@@ -24,9 +23,18 @@ const MenuItem: React.FC<MenuItemProps> = ({
   Icon,
   onClick,
 }) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      onClick();
+    }
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       className="flex justify-between items-center p-4 transition-transform 
                  hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer"
     >
