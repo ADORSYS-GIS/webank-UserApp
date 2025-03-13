@@ -3,7 +3,8 @@ import * as jose from "jose";
 import { PasswordManager } from "./passwordManager";
 
 export async function encryptPrivateKey(privateJwk: JsonWebKey) {
-  const password = PasswordManager.getPassword();
+  const password = await PasswordManager.getPassword();
+  console.log("password", password )
   const salt = window.crypto.getRandomValues(new Uint8Array(16));
 
   const keyMaterial = await window.crypto.subtle.importKey(
