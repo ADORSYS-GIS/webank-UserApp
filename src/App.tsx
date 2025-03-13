@@ -14,6 +14,7 @@ import TopUpPage from "./pages/TopUpPage";
 import SuccessPage from "./pages/SuccessPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import AccountQR from "./pages/AccountQr";
+import TellerDashboard from "./pages/TellerPage";
 
 const App: React.FC = () => {
   // Check if the user is already registered from the Redux store
@@ -42,6 +43,7 @@ const App: React.FC = () => {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/account-qr" element={<AccountQR />} />
+        <Route path="/teller" element={<TellerDashboard />} />
       </Routes>
     </HashRouter>
   );

@@ -11,6 +11,7 @@ import {
   getTransactionHistory,
   TopupAccount,
   WithdrawOffline,
+  getOtps,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -257,5 +258,28 @@ export async function RequestToWithdrawOffline(
     agentAccountId,
     jwtToken,
   );
+}
+
+// Function to get otps for phonenumbers
+export async function RequestToGetOtps(
+  accountId: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    accountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(accountId + "Account ID !!!");
+  return await getOtps(accountId, jwtToken);
 }
 export const getKey = () => Key;

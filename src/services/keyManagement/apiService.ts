@@ -276,3 +276,28 @@ export const WithdrawOffline = async (
     throw new Error("Failed to withdraw offline");
   }
 };
+export const getOtps = async (accountId: string, jwtToken: string) => {
+  // Create the request object with both phone number and public key
+  const requestBody = {
+    accountID: accountId,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    // Send the POST request to retrieve account balance
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/otp`,
+      requestBody,
+      { headers },
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving otps :", error);
+    throw new Error("Failed to retrieve otps");
+  }
+};
