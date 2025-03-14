@@ -7,14 +7,13 @@ import { RequestToGetOtps } from "../services/keyManagement/requestService";
 
 export default function TellerDashboard() {
   const [data, setData] = useState<
-    { phone: string; otp: string; status: string }[]
+    { phoneNumber: string; otpCode: string; status: string }[]
   >([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 10;
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
@@ -22,43 +21,48 @@ export default function TellerDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!accountId || !accountCert) {
+        if (!accountCert) {
           toast.error("Account information is missing.");
           setLoading(false);
           return;
         }
-        const fetchedData = await RequestToGetOtps(accountId, accountCert);
-        const parsedData = JSON.parse(fetchedData) as {
-          phone: string;
-          otp: string;
-          status: string;
-        }[];
+        const fetchedData = await RequestToGetOtps(accountCert);
+        const parsedData = Array.isArray(fetchedData)
+          ? fetchedData
+          : (JSON.parse(fetchedData || "[]") as {
+              phoneNumber: string;
+              otpCode: string;
+              status: string;
+            }[]);
+
         setData(parsedData);
       } catch (error) {
-        toast.error("Failed to retrieve OTP requests. Please try again.");
+        toast.error("Failed to retrieve otpCode requests. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [accountId, accountCert]);
+  }, [accountCert]);
 
-  const handleSendWhatsApp = (phone: string, otp: string) => {
-    const url = `https://wa.me/${phone}?text=Your%20OTP%20is%20${otp}`;
+  const handleSendWhatsApp = (phoneNumber: string, otpCode: string) => {
+    const url = `https://wa.me/${phoneNumber}?text=Your%20otpCode%20is%20${otpCode}`;
     window.open(url, "_blank");
   };
 
-  const updateStatus = (phone: string, newStatus: string) => {
+  const updateStatus = (phoneNumber: string, newStatus: string) => {
     setData((prevData) =>
       prevData.map((item) =>
-        item.phone === phone ? { ...item, status: newStatus } : item,
+        item.phoneNumber === phoneNumber
+          ? { ...item, status: newStatus }
+          : item,
       ),
     );
   };
 
   const filteredData = data.filter((item) =>
-    item.phone.toLowerCase().includes(search.toLowerCase()),
+    item.phoneNumber.toLowerCase().includes(search.toLowerCase()),
   );
 
   const paginatedData = filteredData.slice(
@@ -77,7 +81,7 @@ export default function TellerDashboard() {
             <div className="relative w-full sm:w-96">
               <input
                 type="text"
-                placeholder="Search phone number..."
+                placeholder="Search phoneNumber number..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full rounded-lg border border-gray-200 py-2 pl-4 pr-10 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
@@ -91,7 +95,7 @@ export default function TellerDashboard() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sm:px-6">
-                    Phone Number
+                    phoneNumber
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700 sm:px-6">
                     Status
@@ -105,26 +109,26 @@ export default function TellerDashboard() {
                 {loading ? (
                   <tr>
                     <td colSpan={3} className="text-center py-4 text-gray-500">
-                      Loading OTP requests...
+                      Loading otpCode requests...
                     </td>
                   </tr>
                 ) : filteredData.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="text-center py-4 text-gray-500">
-                      No OTP requests found
+                      No otpCode requests found
                     </td>
                   </tr>
                 ) : (
                   paginatedData.map((item, index) => (
                     <tr key={index} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap px-4 py-4 text-gray-700 sm:px-6">
-                        {item.phone}
+                        {item.phoneNumber}
                       </td>
                       <td className="px-4 py-4 sm:px-6">
                         <button
                           onClick={() =>
                             updateStatus(
-                              item.phone,
+                              item.phoneNumber,
                               item.status === "Pending" ? "Sent" : "Pending",
                             )
                           }
@@ -140,7 +144,7 @@ export default function TellerDashboard() {
                       <td className="px-4 py-4 sm:px-6 flex items-center gap-4">
                         <button
                           onClick={() =>
-                            handleSendWhatsApp(item.phone, item.otp)
+                            handleSendWhatsApp(item.phoneNumber, item.otpCode)
                           }
                           className="text-green-600 hover:text-green-800 transition-colors"
                           title="Send via WhatsApp"
@@ -156,7 +160,7 @@ export default function TellerDashboard() {
                         </button>
 
                         <button
-                          onClick={() => updateStatus(item.phone, "Sent")}
+                          onClick={() => updateStatus(item.phoneNumber, "Sent")}
                           disabled={item.status === "Sent"}
                           className="text-blue-600 hover:text-blue-800 transition-colors"
                           title="Mark as sent"

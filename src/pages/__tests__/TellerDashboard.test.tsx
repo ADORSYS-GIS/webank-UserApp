@@ -17,10 +17,10 @@ vi.mock("../../services/keyManagement/requestService", () => ({
   RequestToGetOtps: vi.fn(),
 }));
 
-const mockStore = configureStore([]);
+const mockStore = configureStore();
 const mockData = [
-  { phone: "1234567890", otp: "123456", status: "Pending" },
-  { phone: "0987654321", otp: "654321", status: "Sent" },
+  { phoneNumber: "1234567890", otpCode: "123456", status: "Pending" },
+  { phoneNumber: "0987654321", otpCode: "654321", status: "Sent" },
 ];
 
 describe("TellerDashboard Component", () => {
@@ -46,11 +46,11 @@ describe("TellerDashboard Component", () => {
     renderComponent();
     expect(screen.getByText("Teller Dashboard")).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Search phone number..."),
+      screen.getByPlaceholderText("Search phoneNumber number..."),
     ).toBeInTheDocument();
   });
 
-  test("fetches and displays OTP requests", async () => {
+  test("fetches and displays otpCode requests", async () => {
     renderComponent();
 
     await waitFor(() => expect(RequestToGetOtps).toHaveBeenCalledTimes(2));
@@ -70,15 +70,18 @@ describe("TellerDashboard Component", () => {
     });
   });
 
-  test("filters OTP requests based on search input", async () => {
+  test("filters otpCode requests based on search input", async () => {
     renderComponent();
     await waitFor(() =>
       expect(screen.getByText("1234567890")).toBeInTheDocument(),
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Search phone number..."), {
-      target: { value: "0987" },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText("Search phoneNumber number..."),
+      {
+        target: { value: "0987" },
+      },
+    );
 
     expect(screen.queryByText("1234567890")).not.toBeInTheDocument();
     expect(screen.getByText("0987654321")).toBeInTheDocument();
@@ -96,21 +99,24 @@ describe("TellerDashboard Component", () => {
     fireEvent.click(sendButton);
 
     expect(global.open).toHaveBeenCalledWith(
-      "https://wa.me/1234567890?text=Your%20OTP%20is%20123456",
+      "https://wa.me/1234567890?text=Your%20otpCode%20is%20123456",
       "_blank",
     );
   });
 
-  test("displays 'No OTP requests found' if search doesn't match", async () => {
+  test("displays 'No otpCode requests found' if search doesn't match", async () => {
     renderComponent();
     await waitFor(() =>
       expect(screen.getByText("1234567890")).toBeInTheDocument(),
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Search phone number..."), {
-      target: { value: "99999" },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText("Search phoneNumber number..."),
+      {
+        target: { value: "99999" },
+      },
+    );
 
-    expect(screen.getByText("No OTP requests found")).toBeInTheDocument();
+    expect(screen.getByText("No otpCode requests found")).toBeInTheDocument();
   });
 });

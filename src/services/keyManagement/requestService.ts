@@ -108,7 +108,6 @@ export const RequestToSendPowJWT = async (
 export async function RequestToValidateOTP(
   phoneNumber: string,
   otp: string,
-  otpHash: string,
   deviceCert: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -124,10 +123,9 @@ export async function RequestToValidateOTP(
     null,
     phoneNumber,
     otp,
-    otpHash,
   );
   console.log(otp);
-  return await validateOTP(phoneNumber, otp, otpHash, jwtToken);
+  return await validateOTP(phoneNumber, otp, jwtToken);
 }
 
 export async function RequestToCreateBankAccount(
@@ -262,7 +260,6 @@ export async function RequestToWithdrawOffline(
 
 // Function to get otps for phonenumbers
 export async function RequestToGetOtps(
-  accountId: string,
   accountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -276,10 +273,8 @@ export async function RequestToGetOtps(
     null,
     accountCert,
     null,
-    accountId,
   );
   console.log(jwtToken + "Account Cert!!!");
-  console.log(accountId + "Account ID !!!");
-  return await getOtps(accountId, jwtToken);
+  return await getOtps(jwtToken);
 }
 export const getKey = () => Key;

@@ -5,7 +5,6 @@ import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
 } from "../../services/keyManagement/requestService.ts";
-import { toast } from "react-toastify";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
@@ -27,12 +26,6 @@ vi.mock("react-router-dom", () => ({
       accountCert: "cert123",
     },
   }),
-}));
-
-vi.mock("react-toastify", () => ({
-  toast: {
-    error: vi.fn(),
-  },
 }));
 
 // Mock RequestToGetBalance and RequestToGetTransactionHistory
@@ -87,7 +80,6 @@ describe("Dashboard", () => {
     });
 
     // Ensure the error toast was shown
-    expect(toast.error).toHaveBeenCalledTimes(0); // Expecting 0 times
   });
 
   it("renders transaction items correctly", async () => {

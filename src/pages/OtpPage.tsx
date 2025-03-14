@@ -31,7 +31,6 @@ const Otp = () => {
       const response = await RequestToValidateOTP(
         fullPhoneNumber,
         otp,
-        otpHash,
         devCert,
       );
 

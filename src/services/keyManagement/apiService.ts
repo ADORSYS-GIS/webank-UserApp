@@ -95,14 +95,12 @@ export const sendOTP = async (
 export const validateOTP = async (
   fullPhoneNumber: string,
   otp: string,
-  otpHash: string,
   jwtToken: string,
 ) => {
   // Create the request object with both phone number and public key
   const requestBody = {
     phoneNumber: fullPhoneNumber,
     otpInput: otp,
-    otpHash: otpHash,
   };
   const headers = {
     "Content-Type": "application/json",
@@ -276,28 +274,23 @@ export const WithdrawOffline = async (
     throw new Error("Failed to withdraw offline");
   }
 };
-export const getOtps = async (accountId: string, jwtToken: string) => {
-  // Create the request object with both phone number and public key
-  const requestBody = {
-    accountID: accountId,
-  };
+export const getOtps = async (jwtToken: string) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
 
   try {
-    // Send the POST request to retrieve account balance
-    const response = await axios.post(
-      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/otp`,
-      requestBody,
+    // Send the GET request to retrieve OTPs
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/otp/pending`,
       { headers },
     );
 
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error retrieving otps :", error);
+    console.error("Error retrieving otps:", error);
     throw new Error("Failed to retrieve otps");
   }
 };
