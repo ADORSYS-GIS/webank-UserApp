@@ -1,7 +1,6 @@
-import { handleRegister, handleAuthenticate, saveMessage } from "@adorsys-gis/web-auth-prf";
+import { handleRegister, handleAuthenticate, saveMessage } from "web-auth-prf";
 
 export class PasswordManager {
-  private static readonly MESSAGE_ID = "password-storage";
   private static isRegistering = false;
   private static isAuthenticating = false;
 
@@ -13,14 +12,14 @@ export class PasswordManager {
       input.id = "messageInput";
       document.body.appendChild(input);
     }
-    
+
     if (!document.querySelector("#messageList")) {
       const list = document.createElement("ul");
       list.id = "messageList";
       list.style.display = "none";
       document.body.appendChild(list);
     }
-    
+
     if (!document.querySelector("#error")) {
       const errorDiv = document.createElement("div");
       errorDiv.id = "error";
@@ -29,7 +28,7 @@ export class PasswordManager {
     }
   }
 
-  static async getPassword(): Promise<string> {
+  static async getPassword(): Promise<string | null> {
     console.log("🔍 Starting password retrieval process...");
     await this.initializeDOMElements();
 
@@ -44,7 +43,7 @@ export class PasswordManager {
       return await this.handleNewUserRegistration();
     } catch (error) {
       console.error("❌ Critical error in password retrieval:", error);
-      return "";
+      return null;
     }
   }
 
@@ -58,10 +57,11 @@ export class PasswordManager {
     try {
       console.log("🔑 Starting authentication process...");
       await this.cancelPendingRequests();
-      const decyptedPassword = await handleAuthenticate();
+      const decryptedPassword = await handleAuthenticate();
       console.log("✅ Authentication successful");
+      console.log("🔑 Decrypted password:", decryptedPassword);
 
-      return "decyptedPassword";
+      return decryptedPassword.length > 0 ? decryptedPassword[0] : null;
     } catch (error) {
       console.error("❌ Authentication failed:", error);
       return null;
@@ -70,27 +70,27 @@ export class PasswordManager {
     }
   }
 
-  private static async handleNewUserRegistration(): Promise<string> {
+  private static async handleNewUserRegistration(): Promise<string | null> {
     console.log("👤 No existing user found. Starting registration...");
-  
+
     if (this.isRegistering) {
       console.warn("⚠️ Registration already in progress");
-      return "";
+      return null;
     }
-  
+
     this.isRegistering = true;
     try {
       console.log("📝 Starting WebAuthn registration...");
       await this.cancelPendingRequests();
       await handleRegister();
       console.log("✅ User successfully registered");
-  
+
       console.log("✅ Post-registration authentication successful");
-  
+
       // Generate and store password only if authentication is successful
       const newPassword = this.generateSecurePassword();
       console.log("Generated non-encrypted password:", newPassword);
-  
+
       console.log("💾 Storing encrypted password...");
       const input = document.querySelector<HTMLInputElement>("#messageInput")!;
       input.value = newPassword;
@@ -98,7 +98,7 @@ export class PasswordManager {
       return this.attemptAuthentication();
     } catch (error) {
       console.error("❌ Registration failed:", error);
-      return "";
+      return null;
     } finally {
       this.isRegistering = false;
     }
@@ -119,5 +119,4 @@ export class PasswordManager {
     window.crypto.getRandomValues(array);
     return btoa(String.fromCharCode(...array)).slice(0, 32);
   }
-
 }
