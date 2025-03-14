@@ -11,6 +11,7 @@ import {
   getTransactionHistory,
   TopupAccount,
   WithdrawOffline,
+  getOtps,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -107,7 +108,6 @@ export const RequestToSendPowJWT = async (
 export async function RequestToValidateOTP(
   phoneNumber: string,
   otp: string,
-  otpHash: string,
   deviceCert: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -123,10 +123,9 @@ export async function RequestToValidateOTP(
     null,
     phoneNumber,
     otp,
-    otpHash,
   );
   console.log(otp);
-  return await validateOTP(phoneNumber, otp, otpHash, jwtToken);
+  return await validateOTP(phoneNumber, otp, jwtToken);
 }
 
 export async function RequestToCreateBankAccount(
@@ -257,5 +256,25 @@ export async function RequestToWithdrawOffline(
     agentAccountId,
     jwtToken,
   );
+}
+
+// Function to get otps for phonenumbers
+export async function RequestToGetOtps(
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getOtps(jwtToken);
 }
 export const getKey = () => Key;
