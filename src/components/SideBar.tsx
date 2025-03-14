@@ -61,7 +61,7 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
           <li>
             <button
               onClick={() =>
-                navigate("/teller", {
+                navigate("/login", {
                   state: {
                     tellerAccountId: accountId,
                     tellerAccountCert: accountCert,
