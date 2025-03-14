@@ -14,12 +14,18 @@ import TopUpPage from "./pages/TopUpPage";
 import SuccessPage from "./pages/SuccessPage";
 import ConfirmationPage from "./pages/ConfirmationPage";
 import AccountQR from "./pages/AccountQr";
+import SettingsPage from "./kyc/pages/SettingsPage";
+import EmailVerification from "./kyc/pages/emailVerification";
+import EmailCode from "./kyc/pages/emailCode";
+import IdentityVerificationPage from "./kyc/pages/IdentityVerificationPage";
+import IDCardForm from "./kyc/pages/IDCardForm";
+import DriverLicenseForm from "./kyc/pages/DriverLicenseForm";
+import PassportForm from "./kyc/pages/PassportForm";
 import TellerDashboard from "./pages/TellerPage";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App: React.FC = () => {
-  // Check if the user is already registered from the Redux store
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   return (
@@ -45,6 +51,16 @@ const App: React.FC = () => {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/account-qr" element={<AccountQR />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/inputEmail" element={<EmailVerification />} />
+        <Route path="/emailCode" element={<EmailCode />} />
+        <Route path="/kyc" element={<IdentityVerificationPage />} />
+        <Route path="/verification/id-card" element={<IDCardForm />} />
+        <Route path="/verification/passport" element={<PassportForm />} />
+        <Route
+          path="/verification/driving-license"
+          element={<DriverLicenseForm />}
+        />
         <Route path="/login" element={<Login />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/teller" element={<TellerDashboard />} />
