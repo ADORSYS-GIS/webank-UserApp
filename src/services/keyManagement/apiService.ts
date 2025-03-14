@@ -279,6 +279,7 @@ export const getOtps = async (jwtToken: string) => {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
+  console.log(headers, "headers");
 
   try {
     // Send the GET request to retrieve OTPs

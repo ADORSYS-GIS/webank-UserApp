@@ -50,7 +50,7 @@ describe("TellerDashboard Component", () => {
     ).toBeInTheDocument();
   });
 
-  test("fetches and displays otpCode requests", async () => {
+  test("fetches and displays otp requests", async () => {
     renderComponent();
 
     await waitFor(() => expect(RequestToGetOtps).toHaveBeenCalledTimes(2));
@@ -104,7 +104,7 @@ describe("TellerDashboard Component", () => {
     );
   });
 
-  test("displays 'No otpCode requests found' if search doesn't match", async () => {
+  test("displays 'No otp requests found' if search doesn't match", async () => {
     renderComponent();
     await waitFor(() =>
       expect(screen.getByText("1234567890")).toBeInTheDocument(),
@@ -117,6 +117,6 @@ describe("TellerDashboard Component", () => {
       },
     );
 
-    expect(screen.getByText("No otpCode requests found")).toBeInTheDocument();
+    expect(screen.getByText("No otp requests found")).toBeInTheDocument();
   });
 });
