@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { getProjectEnvVariables } from "../shared/projectEnvVariables.ts";
 
-const PASSWORD = "webank123456";
+const { envVariables } = getProjectEnvVariables();
+
+const PASSWORD = `${envVariables.VITE_WEBANK_TELLER_PASSWORD}`;
 
 export default function Login() {
   const [password, setPassword] = useState("");
