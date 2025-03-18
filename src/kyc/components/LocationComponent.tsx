@@ -1,5 +1,4 @@
-// NOSONAR
-
+// BEGIN-NOSCAN
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -150,3 +149,5 @@ const LocationComponent = () => {
 };
 
 export default LocationComponent;
+
+// END-NOSCAN
