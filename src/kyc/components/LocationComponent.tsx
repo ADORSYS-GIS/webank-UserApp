@@ -6,18 +6,6 @@ interface GeoLocation {
   lng: number;
 }
 
-/**
- * KYC Location Verification Component
- *
- * Required for regulatory compliance to verify user's physical location during
- * identity verification process. Geolocation data is essential for:
- * - Fraud prevention
- * - Compliance with financial regulations
- * - Anti-money laundering (AML) checks
- *
- * Data is transmitted securely and not stored beyond verification process
- * **/
-
 const LocationComponent = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -69,11 +57,16 @@ const LocationComponent = () => {
       }
     };
 
+    // Check if geolocation is supported by the browser
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser");
       setIsLoading(false);
       return;
     }
+
+    // SonarQube Warning: navigator.geolocation.getCurrentPosition
+    // Justification: Geolocation is necessary for KYC verification to confirm the user's current location.
+    // This ensures compliance with regulatory requirements and enhances security.
 
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
       enableHighAccuracy: true,
