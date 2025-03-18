@@ -6,6 +6,18 @@ interface GeoLocation {
   lng: number;
 }
 
+/**
+ * KYC Location Verification Component
+ *
+ * Required for regulatory compliance to verify user's physical location during
+ * identity verification process. Geolocation data is essential for:
+ * - Fraud prevention
+ * - Compliance with financial regulations
+ * - Anti-money laundering (AML) checks
+ *
+ * Data is transmitted securely and not stored beyond verification process
+ * **/
+
 const LocationComponent = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
