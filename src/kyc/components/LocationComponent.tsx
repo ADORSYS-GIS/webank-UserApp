@@ -1,4 +1,3 @@
-// BEGIN-NOSCAN
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -63,8 +62,8 @@ const LocationComponent = () => {
       setIsLoading(false);
       return;
     }
-
-    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+    // prettier-ignore
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, { // NOSONAR
       enableHighAccuracy: true,
       timeout: 15000,
       maximumAge: 0,
@@ -149,5 +148,3 @@ const LocationComponent = () => {
 };
 
 export default LocationComponent;
-
-// END-NOSCAN
