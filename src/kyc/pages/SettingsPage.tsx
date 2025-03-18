@@ -107,7 +107,7 @@ const SettingsPage: React.FC = () => {
             Icon={FaMapMarkerAlt}
             title="Add your residence"
             description="Help us locate you"
-            onClick={() => handleMenuClick("Add your residence")}
+            onClick={() => navigate("/verification/location")}
           />
           <MenuItem
             Icon={FaEdit}
