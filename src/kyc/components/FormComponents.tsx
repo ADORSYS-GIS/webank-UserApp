@@ -10,6 +10,19 @@ interface SelectWithPopupProps {
   showPopup: boolean;
   setShowPopup: (show: boolean) => void;
 }
+interface TextInputProps {
+    label: string;
+    id: string;
+    placeholder: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+interface DateInputProps {
+    label: string;
+    id: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 export const SelectWithPopup: React.FC<SelectWithPopupProps> = ({
   label,
@@ -81,22 +94,29 @@ interface DateInputProps {
   id: string;
 }
 
-export const DateInput: React.FC<DateInputProps> = ({ label, id }) => (
-  <div>
-    <label className="block text-gray-600 text-sm mb-2" htmlFor={id}>
-      {label}
-    </label>
-    <input
-      type="text"
-      id={id}
-      placeholder={`Select ${label}`}
-      onFocus={(e) => (e.target.type = "date")}
-      onBlur={(e) => (e.target.type = "text")}
-      className="w-full p-4 border border-gray-200 rounded-2xl 
+export const DateInput: React.FC<DateInputProps> = ({
+                                                        label,
+                                                        id,
+                                                        value,
+                                                        onChange,
+                                                    }) => (
+    <div>
+        <label className="block text-gray-600 text-sm mb-2" htmlFor={id}>
+            {label}
+        </label>
+        <input
+            type="text"
+            id={id}
+            value={value}
+            onChange={onChange}
+            placeholder={`Select ${label}`}
+            onFocus={(e) => (e.target.type = "date")}
+            onBlur={(e) => (e.target.type = "text")}
+            className="w-full p-4 border border-gray-200 rounded-2xl
                  focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] 
                  transition duration-200 ease-in-out"
-    />
-  </div>
+        />
+    </div>
 );
 
 interface TextInputProps {
@@ -106,23 +126,27 @@ interface TextInputProps {
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
-  label,
-  id,
-  placeholder,
-}) => (
-  <div>
-    <label className="block text-gray-600 text-sm mb-2" htmlFor={id}>
-      {label}
-    </label>
-    <input
-      type="text"
-      id={id}
-      placeholder={placeholder}
-      className="w-full p-4 border border-gray-200 rounded-2xl 
+                                                        label,
+                                                        id,
+                                                        placeholder,
+                                                        value,
+                                                        onChange,
+                                                    }) => (
+    <div>
+        <label className="block text-gray-600 text-sm mb-2" htmlFor={id}>
+            {label}
+        </label>
+        <input
+            type="text"
+            id={id}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="w-full p-4 border border-gray-200 rounded-2xl
                  focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] 
                  transition duration-200 ease-in-out"
-    />
-  </div>
+        />
+    </div>
 );
 
 interface FormContainerProps {
