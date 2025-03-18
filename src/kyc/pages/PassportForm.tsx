@@ -1,96 +1,50 @@
 // PassportForm.tsx
-import React, { useState } from "react";
-import {
-    FormContainer,
-    SelectWithPopup,
-    TextInput,
-    DateInput,
-} from "../components/FormComponents.tsx";
+import React from "react";
+import { FormContainer, SelectWithPopup, TextInput, DateInput } from "../components/FormComponents";
 
 const PassportForm: React.FC = () => {
-    const [showPassportType, setShowPassportType] = useState(false);
-    const [selectedType, setSelectedType] = useState("");
-    const [showRegion, setShowRegion] = useState(false);
-    const [selectedRegion, setSelectedRegion] = useState("");
-
-    const passportTypes = [
-        "Ordinary Passport",
-        "Diplomatic Passport",
-        "Service Passport",
-    ];
+    const passportTypes = ["Ordinary Passport", "Diplomatic Passport", "Service Passport"];
     const regions = [
-        "Adamawa",
-        "Centre",
-        "East",
-        "Far North",
-        "Littoral",
-        "North",
-        "North West",
-        "West",
-        "South",
-        "South West",
+        "Adamawa", "Centre", "East", "Far North", "Littoral",
+        "North", "North West", "West", "South", "South West"
     ];
+
+    const handleSubmit = (formData: Record<string, string>) => {
+        // Handle passport specific submission
+        console.log("Passport Form Data:", formData);
+    };
 
     return (
-        <FormContainer title="Passport Information">
-            {/* Passport Type Selection */}
+        <FormContainer title="Passport Information" onSubmit={handleSubmit}>
             <SelectWithPopup
                 label="Passport Type"
                 options={passportTypes}
-                selectedValue={selectedType}
-                onSelect={setSelectedType}
+                fieldName="passportType"
                 placeholder="Select Passport Type"
-                showPopup={showPassportType}
-                setShowPopup={setShowPassportType}
             />
-
-            {/* Full Name */}
             <TextInput
                 label="Full Name"
-                id="fullName"
+                fieldName="fullName"
                 placeholder="Enter your full name"
             />
-
-            {/* Profession */}
             <TextInput
                 label="Profession"
-                id="profession"
+                fieldName="profession"
                 placeholder="Enter your profession"
             />
-
-            {/* Passport Number */}
             <TextInput
                 label="Passport Number"
-                id="passportNumber"
+                fieldName="UniqueDocumentIdentifier"
                 placeholder="Enter your passport number"
             />
-
-            {/* Date of Birth */}
-            <DateInput label="Date of Birth" id="dob" />
-
-            {/* Current Region */}
+            <DateInput label="Date of Birth" fieldName="dob" />
             <SelectWithPopup
                 label="Current Region"
                 options={regions}
-                selectedValue={selectedRegion}
-                onSelect={setSelectedRegion}
+                fieldName="region"
                 placeholder="Select Region"
-                showPopup={showRegion}
-                setShowPopup={setShowRegion}
             />
-
-            {/* Expiration Date */}
-            <DateInput label="Expiration Date" id="expiry" />
-
-            {/* Submit Button */}
-            <button
-                type="submit"
-                className="w-full bg-[#20B2AA] text-white py-4 rounded-3xl
-                   font-semibold transition
-                   duration-300 ease-in-out shadow-lg mt-2"
-            >
-                Submit
-            </button>
+            <DateInput label="Expiration Date" fieldName="expiry" />
         </FormContainer>
     );
 };

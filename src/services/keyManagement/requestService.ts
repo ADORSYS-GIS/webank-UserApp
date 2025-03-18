@@ -13,7 +13,7 @@ import {
   WithdrawOffline,
   getOtps,
   sendEmailOTP,
-  verifyEmailCode,storeIDCardInfo, getUserLocation, storeKycDocument,
+  verifyEmailCode,storeKYCInfo, getUserLocation, storeKycDocument,
 
 } from "./apiService";
 
@@ -334,10 +334,10 @@ export async function RequestToGetUserLocation(
 }
 
 
-export async function RequestToStoreIDCardInfo(
+export async function RequestToStoreKYCInfo(
     fullName: string,
     profession: string,
-    idNumber: string,
+    docNumber: string,
     dateOfBirth: string,
     currentRegion: string,
     expiryDate: string,
@@ -352,10 +352,10 @@ export async function RequestToStoreIDCardInfo(
       accountCert,
       null
   );
-  return await storeIDCardInfo(
+  return await storeKYCInfo(
       fullName,
       profession,
-      idNumber,
+      docNumber,
       dateOfBirth,
       currentRegion,
       expiryDate,

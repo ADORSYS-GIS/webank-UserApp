@@ -354,7 +354,7 @@ export const getUserLocation = async (jwtToken: string) => {
   };
 
   try {
-    const response = await axios.get(
+    const response = await axios.post(
         `${envVariables.VITE_WEBANK_PRS_URL}/user/location`,
         { headers },
     );
@@ -366,11 +366,10 @@ export const getUserLocation = async (jwtToken: string) => {
 };
 
 //Id Card
-
-export const storeIDCardInfo = async (
+export const storeKYCInfo = async (
     fullName: string,
     profession: string,
-    idNumber: string,
+    docNumber: string,
     dateOfBirth: string,
     currentRegion: string,
     expiryDate: string,
@@ -384,7 +383,7 @@ export const storeIDCardInfo = async (
   const requestBody = {
     fullName,
     profession,
-    idNumber,
+    idNumber: docNumber,
     dateOfBirth,
     currentRegion,
     expiryDate,
@@ -392,7 +391,7 @@ export const storeIDCardInfo = async (
 
   try {
     const response = await axios.post(
-        `${envVariables.VITE_WEBANK_PRS_URL}/kyc/id-card`,
+        `${envVariables.VITE_WEBANK_PRS_URL}/kyc/info`,
         requestBody,
         { headers }
     );
