@@ -63,11 +63,12 @@ const LocationComponent = () => {
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, { // NOSONAR
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+      // NOSONAR
       enableHighAccuracy: true,
       timeout: 15000,
       maximumAge: 0,
-    }); 
+    });
   };
 
   return (
