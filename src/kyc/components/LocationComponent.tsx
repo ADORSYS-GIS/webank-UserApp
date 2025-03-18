@@ -134,7 +134,7 @@ const LocationComponent = () => {
         {location && (
           <div className="mt-6 p-4 bg-gray-50 rounded-md">
             <p className="text-sm text-gray-600">
-              Retrieved location:
+              Retrieved location:{" "}
               <span className="block font-mono mt-1">
                 Latitude: {location.lat.toFixed(6)}, Longitude:{" "}
                 {location.lng.toFixed(6)}
