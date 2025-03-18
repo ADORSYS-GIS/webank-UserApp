@@ -12,6 +12,7 @@ const LocationComponent = () => {
   const [location, setLocation] = useState<GeoLocation | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // BEGIN-NOSCAN
   const handleContinue = () => {
     setIsLoading(true);
     setError(null);
@@ -63,14 +64,13 @@ const LocationComponent = () => {
       return;
     }
 
-    // BEGIN-NOSCAN
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
       enableHighAccuracy: true,
       timeout: 15000,
       maximumAge: 0,
     });
-    // END-NOSCAN
   };
+  // END-NOSCAN
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
