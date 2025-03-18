@@ -57,16 +57,13 @@ const LocationComponent = () => {
       }
     };
 
-    // Check if geolocation is supported by the browser
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser");
       setIsLoading(false);
       return;
     }
 
-    // SonarQube Warning: navigator.geolocation.getCurrentPosition
-    // Justification: Geolocation is necessary for KYC verification to confirm the user's current location.
-    // This ensures compliance with regulatory requirements and enhances security.
+    // NOSONAR: Geolocation is necessary for KYC verification to confirm the user's current location.
 
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
       enableHighAccuracy: true,
