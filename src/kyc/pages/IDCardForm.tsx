@@ -77,5 +77,4 @@ const IDCardForm: React.FC = () => {
     </FormContainer>
   );
 };
-
 export default IDCardForm;
