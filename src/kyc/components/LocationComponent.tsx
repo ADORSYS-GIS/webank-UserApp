@@ -63,11 +63,11 @@ const LocationComponent = () => {
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, { // NOSONAR
       enableHighAccuracy: true,
       timeout: 15000,
       maximumAge: 0,
-    }); // NOSONAR: Geolocation is necessary for KYC verification to confirm the user's current location.
+    }); 
   };
 
   return (
