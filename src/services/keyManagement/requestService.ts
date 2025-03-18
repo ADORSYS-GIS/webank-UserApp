@@ -12,7 +12,12 @@ import {
   TopupAccount,
   WithdrawOffline,
   getOtps,
+  sendEmailOTP,
+  verifyEmailCode,storeIDCardInfo, getUserLocation, storeKycDocument,
+
 } from "./apiService";
+
+
 
 let Key: string | null = null;
 
@@ -276,5 +281,99 @@ export async function RequestToGetOtps(
   );
   console.log(jwtToken + "Account Cert!!!");
   return await getOtps(jwtToken);
+}
+
+//Request to send Email code
+export async function RequestToSendEmailOTP(
+    email: string,
+    accountCert: string | null): Promise<string> {
+    const { publicKey, privateKey } = await KeyManagement();
+    Key = JSON.stringify(publicKey);
+    const jwtToken = await generateJWT(
+        privateKey,
+        publicKey,
+        null,
+        null,
+        accountCert,
+        null, email);
+    return await sendEmailOTP(email, jwtToken, Key);
+}
+
+//Request to  Email code
+export async function RequestToVerifyEmailCode(
+    email: string,
+    otp: string,
+    accountCert: string | null): Promise<string> {
+    const { publicKey, privateKey } = await KeyManagement();
+
+    Key = JSON.stringify(publicKey);
+    const jwtToken = await generateJWT(
+        privateKey,
+        publicKey,
+        null,
+        null,
+        accountCert,
+        null,
+        email,
+        otp);
+    return await verifyEmailCode(email, otp, jwtToken);
+}
+
+//Request to get user Location
+export async function RequestToGetUserLocation(
+    accountCert: string | null): Promise<string> {
+    const { publicKey, privateKey } = await KeyManagement();
+    const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null);
+  return await getUserLocation(jwtToken);
+}
+
+
+export async function RequestToStoreIDCardInfo(
+    fullName: string,
+    profession: string,
+    idNumber: string,
+    dateOfBirth: string,
+    currentRegion: string,
+    expiryDate: string,
+    accountCert: string | null
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null
+  );
+  return await storeIDCardInfo(
+      fullName,
+      profession,
+      idNumber,
+      dateOfBirth,
+      currentRegion,
+      expiryDate,
+      jwtToken
+  );
+}
+
+//Store Kyc doc
+export async function RequestToStoreKycDocument(documentData: never, documentType: string, accountCert: string | null): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null
+  );
+  return await storeKycDocument(documentData, jwtToken, documentType);
 }
 export const getKey = () => Key;
