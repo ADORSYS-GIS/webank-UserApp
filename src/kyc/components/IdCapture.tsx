@@ -121,18 +121,18 @@ const IdCapture: React.FC<IdCaptureProps> = ({
   };
 
   // Helper function to convert data URL to Blob (for camera captures)
-    // Helper function to convert data URL to Blob (for camera captures)
-    function dataURLtoBlob(dataURL: string): Blob {
-        const [header, data] = dataURL.split(",");
-        const mimeMatch = /^data:(.*?);base64$/.exec(header);
-        const mime = mimeMatch ? mimeMatch[1] : "";
-        const binary = atob(data);
-        const array = [];
-        for (let i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
-        }
-        return new Blob([new Uint8Array(array)], { type: mime });
+  // Helper function to convert data URL to Blob (for camera captures)
+  function dataURLtoBlob(dataURL: string): Blob {
+    const [header, data] = dataURL.split(",");
+    const mimeMatch = /^data:(.*?);base64$/.exec(header);
+    const mime = mimeMatch ? mimeMatch[1] : "";
+    const binary = atob(data);
+    const array = [];
+    for (let i = 0; i < binary.length; i++) {
+      array.push(binary.charCodeAt(i));
     }
+    return new Blob([new Uint8Array(array)], { type: mime });
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
