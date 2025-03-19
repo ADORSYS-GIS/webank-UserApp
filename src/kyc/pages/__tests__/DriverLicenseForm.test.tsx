@@ -1,5 +1,5 @@
 // DriverLicenseForm.test.tsx
-import { describe, it } from "vitest";
+import { describe, it, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { store } from "../../../store/Store.ts";
@@ -16,6 +16,12 @@ describe("DriverLicenseForm", () => {
         <DriverLicenseForm />
       </Provider>,
     );
+
+  beforeEach(async () => {
+    (window.alert as jest.Mock).mockClear();
+    // Clear IndexedDB before each test
+    indexedDB.deleteDatabase("your-database-name");
+  });
 
   it("renders all form elements", () => {
     renderForm();
