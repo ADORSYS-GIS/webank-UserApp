@@ -295,3 +295,83 @@ export const getOtps = async (jwtToken: string) => {
     throw new Error("Failed to retrieve otps");
   }
 };
+
+export const getKycRecords = async (jwtToken: string) => {
+  const headers = {
+    Authorization: `Bearer ${jwtToken}`,
+  };
+  console.log(headers, "headers");
+
+  try {
+    // get the kyc records
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/info`,
+      { headers },
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving kyc records:", error);
+    throw new Error("Failed to retrieve kyc records");
+  }
+};
+
+
+export const getKycDocuments = async (
+  publicKeyHash: string,
+  jwtToken: string,
+) => {
+  //Update the kyc status for a particular account
+  const headers = {
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/record/${publicKeyHash}`, 
+      { headers },
+    );
+
+    console.log(response.data); 
+      console.log(`${envVariables.VITE_WEBANK_PRS_URL}/kyc/record/${publicKeyHash}`, "url");
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving kyc records:", error);
+    throw new Error("Failed to retrieve kyc records");
+
+  }
+};
+
+export const UpdateKycStatus = async (
+  publicKeyHash: string,
+  status: string,
+  jwtToken: string
+) => {
+  // Update the KYC status for a particular account
+  const headers = {
+    Authorization: `Bearer ${jwtToken}`,
+    "Content-Type": "application/json", 
+  };
+
+  try {
+    const response = await axios.patch(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${publicKeyHash}/${status}`,
+      {}, 
+      { headers }
+    );
+
+    console.log(response.data);
+    console.log(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${publicKeyHash}/${status}`,
+      "url"
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating KYC status:", error);
+    throw new Error("Failed to update KYC status");
+  }
+};
+

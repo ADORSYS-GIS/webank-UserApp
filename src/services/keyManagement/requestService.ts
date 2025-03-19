@@ -12,6 +12,9 @@ import {
   TopupAccount,
   WithdrawOffline,
   getOtps,
+  getKycRecords,
+  UpdateKycStatus,
+  getKycDocuments,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -273,8 +276,73 @@ export async function RequestToGetOtps(
     null,
     accountCert,
     null,
+    
   );
   console.log(jwtToken + "Account Cert!!!");
   return await getOtps(jwtToken);
+}
+
+// Function to get otps for phonenumbers
+export async function RequestToGetKycRecords(
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getKycRecords(jwtToken);
+}
+
+export async function RequestToGetKycDocuments(
+  publicKeyHash: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    publicKeyHash,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getKycDocuments(publicKeyHash, jwtToken);
+}
+
+export async function RequestToUpdateKycStatus(
+  publicKeyHash: string,
+  status: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    publicKeyHash,
+    status
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await UpdateKycStatus( publicKeyHash, status, jwtToken);
 }
 export const getKey = () => Key;
