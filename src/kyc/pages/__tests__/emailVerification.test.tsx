@@ -15,7 +15,6 @@ vi.mock("react-router-dom", async () => {
     useNavigate: () => navigateMock,
   };
 });
-
 // Helper to render InputEmail with routing context
 const renderWithRouter = (
   ui: React.ReactElement,
