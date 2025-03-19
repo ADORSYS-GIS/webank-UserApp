@@ -298,7 +298,11 @@ export const getOtps = async (jwtToken: string) => {
 
 //Email
 
-export const sendEmailOTP = async (email: string, jwtToken: string, publicKey: string) => {
+export const sendEmailOTP = async (
+  email: string,
+  jwtToken: string,
+  publicKey: string,
+) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
@@ -306,14 +310,14 @@ export const sendEmailOTP = async (email: string, jwtToken: string, publicKey: s
 
   const requestBody = {
     email,
-    publicKey
+    publicKey,
   };
 
   try {
     const response = await axios.post(
-        `${envVariables.VITE_WEBANK_PRS_URL}/email/send-otp`,
-        requestBody,
-        { headers },
+      `${envVariables.VITE_WEBANK_PRS_URL}/email/send-otp`,
+      requestBody,
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -322,7 +326,11 @@ export const sendEmailOTP = async (email: string, jwtToken: string, publicKey: s
   }
 };
 
-export const verifyEmailCode = async (email: string, otp: string, jwtToken: string) => {
+export const verifyEmailCode = async (
+  email: string,
+  otp: string,
+  jwtToken: string,
+) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
@@ -335,9 +343,9 @@ export const verifyEmailCode = async (email: string, otp: string, jwtToken: stri
 
   try {
     const response = await axios.post(
-        `${envVariables.VITE_WEBANK_PRS_URL}/email/verify-code`,
-        requestBody,
-        { headers },
+      `${envVariables.VITE_WEBANK_PRS_URL}/email/verify-code`,
+      requestBody,
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -355,8 +363,8 @@ export const getUserLocation = async (jwtToken: string) => {
 
   try {
     const response = await axios.post(
-        `${envVariables.VITE_WEBANK_PRS_URL}/user/location`,
-        { headers },
+      `${envVariables.VITE_WEBANK_PRS_URL}/user/location`,
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -367,13 +375,13 @@ export const getUserLocation = async (jwtToken: string) => {
 
 //Id Card
 export const storeKYCInfo = async (
-    fullName: string,
-    profession: string,
-    docNumber: string,
-    dateOfBirth: string,
-    currentRegion: string,
-    expiryDate: string,
-    jwtToken: string
+  fullName: string,
+  profession: string,
+  docNumber: string,
+  dateOfBirth: string,
+  currentRegion: string,
+  expiryDate: string,
+  jwtToken: string,
 ) => {
   const headers = {
     "Content-Type": "application/json",
@@ -391,9 +399,9 @@ export const storeKYCInfo = async (
 
   try {
     const response = await axios.post(
-        `${envVariables.VITE_WEBANK_PRS_URL}/kyc/info`,
-        requestBody,
-        { headers }
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/info`,
+      requestBody,
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -402,21 +410,34 @@ export const storeKYCInfo = async (
   }
 };
 
-export const storeKycDocument = async (documentData: never, jwtToken: string, documentType: string) => {
+export const storeKycDocument = async (
+  frontId: string,
+  backId: string,
+  selfieId: string,
+  taxId: string,
+  jwtToken: string,
+) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
 
+  const requestBody = {
+    frontId,
+    backId,
+    selfieId,
+    taxId,
+  };
+
   try {
     const response = await axios.post(
-        `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${documentType}`,
-        documentData,
-        { headers },
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/documents`,
+      requestBody,
+      { headers },
     );
     return response.data;
   } catch (error) {
-    console.error(`Error storing ${documentType} info:`, error);
-    throw new Error(`Failed to store ${documentType} info`);
+    console.error("Error storing ID Card info:", error);
+    throw new Error("Failed to store ID Card info");
   }
 };

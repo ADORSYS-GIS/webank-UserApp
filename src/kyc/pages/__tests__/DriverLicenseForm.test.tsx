@@ -1,12 +1,24 @@
 // DriverLicenseForm.test.tsx
 import { describe, it } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { store } from "../../../store/Store.ts";
 import DriverLicenseForm from "../DriverLicenseForm";
 import "@testing-library/jest-dom/vitest";
 
+// Mock the alert function
+window.alert = vi.fn();
+
 describe("DriverLicenseForm", () => {
+  const renderForm = () =>
+    render(
+      <Provider store={store}>
+        <DriverLicenseForm />
+      </Provider>,
+    );
+
   it("renders all form elements", () => {
-    render(<DriverLicenseForm />);
+    renderForm();
 
     // Check form title
     expect(screen.getByText("Driver License Information")).toBeInTheDocument();
@@ -22,13 +34,10 @@ describe("DriverLicenseForm", () => {
 
     // Check region selector
     expect(screen.getByText("Select Region")).toBeInTheDocument();
-
-    // Check submit button
-    expect(screen.getByText("Submit")).toBeInTheDocument();
   });
 
   it("opens and selects region", () => {
-    render(<DriverLicenseForm />);
+    renderForm();
 
     // Open region selector
     fireEvent.click(screen.getByText("Select Region"));

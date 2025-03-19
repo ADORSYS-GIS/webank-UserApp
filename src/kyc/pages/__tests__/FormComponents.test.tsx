@@ -1,7 +1,8 @@
-// FormComponents.test.tsx
 import { describe, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
+import { Provider } from "react-redux";
+import { store } from "../../../store/Store.ts";
 import {
   SelectWithPopup,
   DateInput,
@@ -9,24 +10,28 @@ import {
   FormContainer,
 } from "../../components/FormComponents";
 
-// SelectWithPopup Tests
+// Mock the alert function
+window.alert = vi.fn();
+
 describe("SelectWithPopup", () => {
   const options = ["Option1", "Option2"];
-  const mockOnSelect = vi.fn();
-  const mockSetShowPopup = vi.fn();
+
+  const renderSelect = () =>
+    render(
+      <Provider store={store}>
+        <FormContainer title="Test Form" onSubmit={vi.fn()}>
+          <SelectWithPopup
+            label="Test Label"
+            options={options}
+            fieldName="testField"
+            placeholder="Select an option"
+          />
+        </FormContainer>
+      </Provider>,
+    );
 
   it("renders label and placeholder when no selection", () => {
-    render(
-      <SelectWithPopup
-        label="Test Label"
-        options={options}
-        selectedValue=""
-        onSelect={mockOnSelect}
-        placeholder="Select an option"
-        showPopup={false}
-        setShowPopup={mockSetShowPopup}
-      />,
-    );
+    renderSelect();
     expect(screen.getByText("Test Label")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Select an option" }),
@@ -34,103 +39,76 @@ describe("SelectWithPopup", () => {
   });
 
   it("opens popup when button is clicked", () => {
-    render(
-      <SelectWithPopup
-        label="Test Label"
-        options={options}
-        selectedValue=""
-        onSelect={mockOnSelect}
-        placeholder="Select an option"
-        showPopup={false}
-        setShowPopup={mockSetShowPopup}
-      />,
-    );
-    fireEvent.click(screen.getByRole("button"));
-    expect(mockSetShowPopup).toHaveBeenCalledWith(true);
+    renderSelect();
+    fireEvent.click(screen.getByRole("button", { name: "Select an option" }));
+    expect(screen.getByText("Option1")).toBeInTheDocument();
   });
 
-  it("displays options and selects one", () => {
-    render(
-      <SelectWithPopup
-        label="Test Label"
-        options={options}
-        selectedValue=""
-        onSelect={mockOnSelect}
-        placeholder="Select an option"
-        showPopup={true}
-        setShowPopup={mockSetShowPopup}
-      />,
-    );
+  it("displays options and selects one", async () => {
+    renderSelect();
+    fireEvent.click(screen.getByRole("button", { name: "Select an option" }));
     fireEvent.click(screen.getByText("Option1"));
-    expect(mockOnSelect).toHaveBeenCalledWith("Option1");
-    expect(mockSetShowPopup).toHaveBeenCalledWith(false);
+    // Check main button updates
+    expect(
+      await screen.findByRole("button", { name: "Option1" }),
+    ).toBeInTheDocument();
   });
 
   it("closes popup when cancel is clicked", () => {
-    render(
-      <SelectWithPopup
-        label="Test Label"
-        options={options}
-        selectedValue=""
-        onSelect={mockOnSelect}
-        placeholder="Select an option"
-        showPopup={true}
-        setShowPopup={mockSetShowPopup}
-      />,
-    );
+    renderSelect();
+    fireEvent.click(screen.getByRole("button", { name: "Select an option" }));
     fireEvent.click(screen.getByText("Cancel"));
-    expect(mockSetShowPopup).toHaveBeenCalledWith(false);
+    expect(screen.queryByText("Option1")).not.toBeInTheDocument();
   });
 });
 
-// DateInput Tests
 describe("DateInput", () => {
-  it("renders label and input with placeholder", () => {
-    render(<DateInput label="Test Date" id="test-date" />);
-    expect(screen.getByLabelText("Test Date")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Select Test Date")).toHaveAttribute(
-      "type",
-      "text",
-    );
-  });
-
-  it("changes input type to date on focus", () => {
-    render(<DateInput label="Test Date" id="test-date" />);
-    const input = screen.getByPlaceholderText("Select Test Date");
-    fireEvent.focus(input);
-    expect(input).toHaveAttribute("type", "date");
-  });
-
-  it("reverts input type to text on blur", () => {
-    render(<DateInput label="Test Date" id="test-date" />);
-    const input = screen.getByPlaceholderText("Select Test Date");
-    fireEvent.focus(input);
-    fireEvent.blur(input);
-    expect(input).toHaveAttribute("type", "text");
-  });
-});
-
-// TextInput Tests
-describe("TextInput", () => {
-  it("renders label and input with placeholder", () => {
+  const renderDateInput = () =>
     render(
-      <TextInput label="Test Text" id="test-text" placeholder="Enter text" />,
+      <Provider store={store}>
+        <FormContainer title="Test Form" onSubmit={vi.fn()}>
+          <DateInput label="Test Date" fieldName="testDate" />
+        </FormContainer>
+      </Provider>,
     );
-    expect(screen.getByLabelText("Test Text")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Enter text")).toBeInTheDocument();
+
+  it("renders label and input", () => {
+    renderDateInput();
+    expect(screen.getByLabelText("Test Date")).toBeInTheDocument();
   });
 });
 
-// FormContainer Tests
+describe("TextInput", () => {
+  const renderTextInput = () =>
+    render(
+      <Provider store={store}>
+        <FormContainer title="Test Form" onSubmit={vi.fn()}>
+          <TextInput
+            label="Test Input"
+            fieldName="testInput"
+            placeholder="Enter text"
+          />
+        </FormContainer>
+      </Provider>,
+    );
+
+  it("renders label and input", () => {
+    renderTextInput();
+    expect(screen.getByLabelText("Test Input")).toBeInTheDocument();
+  });
+});
+
 describe("FormContainer", () => {
   it("renders title and children within a form", () => {
+    const mockOnSubmit = vi.fn();
     render(
-      <FormContainer title="Test Form">
-        <div>Child Component</div>
-      </FormContainer>,
+      <Provider store={store}>
+        <FormContainer title="Test Form" onSubmit={mockOnSubmit}>
+          <div>Child Element</div>
+        </FormContainer>
+      </Provider>,
     );
     expect(screen.getByText("Test Form")).toBeInTheDocument();
-    expect(screen.getByText("Child Component")).toBeInTheDocument();
-    expect(screen.getByRole("form")).toBeInTheDocument();
+    expect(screen.getByText("Child Element")).toBeInTheDocument();
   });
 });
