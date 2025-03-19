@@ -123,7 +123,8 @@ const IdCapture: React.FC<IdCaptureProps> = ({
   // Helper function to convert data URL to Blob (for camera captures)
   function dataURLtoBlob(dataURL: string): Blob {
     const [header, data] = dataURL.split(",");
-    const mime = header.match(/:(.*?);/)![1];
+    const mimeMatch = /:(.*?);/.exec(header);
+    const mime = mimeMatch ? mimeMatch[1] : "";
     const binary = atob(data);
     const array = [];
     for (let i = 0; i < binary.length; i++) {

@@ -1,5 +1,10 @@
-// FormComponents.tsx
-import React, { useState, createContext, useContext } from "react";
+import React, {
+  useState,
+  createContext,
+  useContext,
+  useMemo,
+  useCallback,
+} from "react";
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
@@ -32,12 +37,18 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  const setFormField: SetFormField = (fieldName, value) => {
+
+  const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
       ...prev,
       [fieldName]: value,
     }));
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({ formData, setFormField }),
+    [formData, setFormField],
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     console.log("ID Card Form Data:", formData);
@@ -83,7 +94,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   };
 
   return (
-    <FormContext.Provider value={{ formData, setFormField }}>
+    <FormContext.Provider value={contextValue}>
       <div
         className="max-w-lg mx-auto p-4 md:p-6 bg-white rounded-3xl shadow-xl"
         style={{ fontFamily: "Poppins, sans-serif" }}
@@ -216,7 +227,6 @@ interface TextInputProps {
   placeholder: string;
 }
 
-// Update TextInput component's label and input
 export const TextInput: React.FC<TextInputProps> = ({
   label,
   fieldName,

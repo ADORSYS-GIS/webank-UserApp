@@ -1,4 +1,3 @@
-// src/kyc/pages/IdentityVerification.tsx
 import { useState } from "react";
 import {
   FaUserEdit,
@@ -25,6 +24,8 @@ interface VerificationStep {
   onClick: () => void;
 }
 
+type FileOrBlob = File | Blob | null;
+
 export default function IdentityVerification() {
   const navigate = useNavigate();
   const [showFrontIdPopup, setShowFrontIdPopup] = useState(false);
@@ -35,12 +36,10 @@ export default function IdentityVerification() {
     useState(false);
 
   // State to store each document file
-  const [frontIdFile, setFrontIdFile] = useState<File | Blob | null>(null);
-  const [backIdFile, setBackIdFile] = useState<File | Blob | null>(null);
-  const [selfieIdFile, setSelfieIdFile] = useState<File | Blob | null>(null);
-  const [taxpayerIdFile, setTaxpayerIdFile] = useState<File | Blob | null>(
-    null,
-  );
+  const [frontIdFile, setFrontIdFile] = useState<FileOrBlob>(null);
+  const [backIdFile, setBackIdFile] = useState<FileOrBlob>(null);
+  const [selfieIdFile, setSelfieIdFile] = useState<FileOrBlob>(null);
+  const [taxpayerIdFile, setTaxpayerIdFile] = useState<FileOrBlob>(null);
 
   const steps: VerificationStep[] = [
     {
