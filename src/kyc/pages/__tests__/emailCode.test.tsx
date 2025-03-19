@@ -44,7 +44,7 @@ const renderWithRouter = (ui: React.ReactElement) => {
 describe("EmailCode Component", () => {
   beforeEach(() => {
     navigateMock.mockClear();
-    (RequestToVerifyEmailCode as vi.Mock).mockClear();
+    (RequestToVerifyEmailCode as jest.Mock).mockClear();
   });
 
   test("renders OTP inputs and buttons", () => {
@@ -58,7 +58,7 @@ describe("EmailCode Component", () => {
   });
 
   test("shows success message when correct OTP is entered", async () => {
-    (RequestToVerifyEmailCode as vi.Mock).mockResolvedValueOnce({
+    (RequestToVerifyEmailCode as jest.Mock).mockResolvedValueOnce({
       success: true,
     });
     renderWithRouter(<EmailCode />);
@@ -77,7 +77,7 @@ describe("EmailCode Component", () => {
   });
 
   test("alerts when incorrect OTP is entered", async () => {
-    (RequestToVerifyEmailCode as vi.Mock).mockRejectedValueOnce(
+    (RequestToVerifyEmailCode as jest.Mock).mockRejectedValueOnce(
       new Error("Invalid OTP"),
     );
     window.alert = vi.fn();
