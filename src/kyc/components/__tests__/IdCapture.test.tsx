@@ -26,8 +26,7 @@ describe("IdCapture Component", () => {
         title="Front ID"
         description="Please take a clear picture of the front of your ID card or upload from your device."
         sampleImageSrc="/front-id.png"
-        onFileCaptured={() => {
-        }}
+        onFileCaptured={() => {}}
       />,
     );
     expect(
@@ -48,8 +47,7 @@ describe("IdCapture Component", () => {
         title="Front ID"
         description="Please take a clear picture of the front of your ID card or upload from your device."
         sampleImageSrc="/front-id.png"
-        onFileCaptured={() => {
-        }}
+        onFileCaptured={() => {}}
       />,
     );
 
@@ -70,8 +68,7 @@ describe("IdCapture Component", () => {
         title="Front ID"
         description="Please take a clear picture of the front of your ID card or upload from your device."
         sampleImageSrc="/front-id.png"
-        onFileCaptured={() => {
-        }}
+        onFileCaptured={() => {}}
       />,
     );
 
@@ -100,8 +97,7 @@ describe("IdCapture Component", () => {
         title="Front ID"
         description="Please take a clear picture of the front of your ID card or upload from your device."
         sampleImageSrc="/front-id.png"
-        onFileCaptured={() => {
-        }}
+        onFileCaptured={() => {}}
       />,
     );
     // In our component, the close button is the second button in the header.
