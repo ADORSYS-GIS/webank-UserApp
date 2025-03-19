@@ -1,16 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../hooks/useDisableScroll";
+import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
 
 const InputEmail: React.FC = () => {
   useDisableScroll();
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const accountCert = "your-account-cert"; // Replace with the actual account certificate
 
-  const handleProceed = () => {
+  const handleProceed = async () => {
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (emailRegex.test(email)) {
-      navigate("/emailCode");
+      try {
+        await RequestToSendEmailOTP(email, accountCert);
+        navigate("/emailCode", { state: { email, accountCert } });
+      } catch (error) {
+        alert("Failed to send OTP. Please try again.");
+      }
     } else {
       alert("Please enter a valid email address.");
     }

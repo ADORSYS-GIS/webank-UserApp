@@ -1,10 +1,13 @@
 import React, { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { RequestToVerifyEmailCode } from "../../services/keyManagement/requestService";
 
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { email, accountCert } = location.state || {};
 
   // Generate unique keys for OTP inputs
   const otpKeys = useMemo(
@@ -20,11 +23,17 @@ const EmailCode: React.FC = () => {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const enteredCode = otp.join("");
-    if (enteredCode === "123456") {
+    try {
+      const response = await RequestToVerifyEmailCode(
+        email,
+        enteredCode,
+        accountCert,
+      );
+      console.log("Email code verified successfully:", response);
       setShowSuccess(true);
-    } else {
+    } catch (error) {
       alert("Invalid OTP. Please try again.");
     }
   };

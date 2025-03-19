@@ -1,18 +1,13 @@
 // IDCardForm.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   FormContainer,
   SelectWithPopup,
   TextInput,
   DateInput,
-} from "../components/FormComponents.tsx";
+} from "../components/FormComponents";
 
 const IDCardForm: React.FC = () => {
-  const [showIDType, setShowIDType] = useState(false);
-  const [selectedID, setSelectedID] = useState("");
-  const [showRegion, setShowRegion] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState("");
-
   const idTypes = ["Original ID", "Receipt ID"];
   const regions = [
     "Adamawa",
@@ -27,53 +22,42 @@ const IDCardForm: React.FC = () => {
     "South West",
   ];
 
-  // IDCardForm.tsx
+  const handleSubmit = (formData: Record<string, string>) => {
+    // Handle ID card specific submission
+    console.log("ID Card Form Data:", formData);
+  };
+
   return (
-    <FormContainer title="ID Card Information">
-      {/* Add actual form components here */}
+    <FormContainer title="ID Card Information" onSubmit={handleSubmit}>
       <SelectWithPopup
         label="ID Card Type"
         options={idTypes}
-        selectedValue={selectedID}
-        onSelect={setSelectedID}
+        fieldName="idType"
         placeholder="Select ID Type"
-        showPopup={showIDType}
-        setShowPopup={setShowIDType}
       />
       <TextInput
         label="Full Name"
-        id="fullName"
+        fieldName="fullName"
         placeholder="Enter your full name"
       />
       <TextInput
         label="Profession"
-        id="profession"
+        fieldName="profession"
         placeholder="Enter your profession"
       />
       <TextInput
         label="ID Card Number"
-        id="idNumber"
+        fieldName="UniqueDocumentIdentifier"
         placeholder="Enter your ID card number"
       />
-      <DateInput label="Date Of Birth" id="dob" />
+      <DateInput label="Date Of Birth" fieldName="dob" />
       <SelectWithPopup
         label="Current Region"
         options={regions}
-        selectedValue={selectedRegion}
-        onSelect={setSelectedRegion}
+        fieldName="region"
         placeholder="Select Region"
-        showPopup={showRegion}
-        setShowPopup={setShowRegion}
       />
-      <DateInput label="Expiry Date" id="expiry" />
-      <button
-        type="submit"
-        className="w-full bg-[#20B2AA] text-white py-4 rounded-3xl 
-                   font-semibold transition 
-                   duration-300 ease-in-out shadow-lg mt-2"
-      >
-        Submit
-      </button>
+      <DateInput label="Expiry Date" fieldName="expiry" />
     </FormContainer>
   );
 };
