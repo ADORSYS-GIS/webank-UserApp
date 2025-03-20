@@ -24,7 +24,11 @@ import PassportForm from "./kyc/pages/PassportForm";
 import TellerDashboard from "./pages/TellerPage";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+
 import LocationComponent from "./kyc/components/LocationComponent";
+
+import KYCPage from "./kyc/pages/KycVerificationPage";
+
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -66,6 +70,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/teller" element={<TellerDashboard />} />
+          <Route path="/agency" element={<KYCPage />} />
         </Route>
       </Routes>
     </HashRouter>

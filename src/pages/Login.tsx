@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { getProjectEnvVariables } from "../shared/projectEnvVariables.ts";
 
@@ -11,7 +11,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const redirectTo = location.state?.redirectTo || "/teller";
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === PASSWORD) {
@@ -19,7 +21,7 @@ export default function Login() {
       toast.success("Login successful!");
 
       setTimeout(() => {
-        navigate("/teller");
+        navigate(redirectTo);
       }, 3000);
     } else {
       toast.error("Invalid password. Please try again.");
