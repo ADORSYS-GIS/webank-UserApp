@@ -54,6 +54,10 @@ interface ImageModalProps {
   selectedImage: string | null;
   onClose: () => void;
 }
+interface UserCardProps {
+  user: UserKYC;
+  onSelectUser: (user: UserKYC) => void;
+}
 
 const ImageModal = ({ selectedImage, onClose }: ImageModalProps) => {
   if (!selectedImage) return null;
@@ -95,6 +99,26 @@ const getStatusClass = (status: string) => {
       return "bg-gray-100 text-gray-800";
   }
 };
+const UserCard = ({ user, onSelectUser }: UserCardProps) => (
+  <button
+    onClick={() => onSelectUser(user)}
+    className="w-full text-left bg-white rounded-xl shadow-sm p-6 cursor-pointer hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+    aria-label={`View ${user.info.fullName}'s KYC details`}
+    type="button"
+  >
+    <div className="flex justify-between items-center">
+      <div>
+        <h2 className="text-xl font-semibold">{user.info.fullName}</h2>
+        <p className="text-sm text-gray-500 mt-1">{user.info.profession}</p>
+      </div>
+      <span
+        className={`px-3 py-1 rounded-full text-sm ${getStatusClass(user.status)}`}
+      >
+        {user.status}
+      </span>
+    </div>
+  </button>
+);
 
 export default function KYCDashboard() {
   const accountCert = useSelector(
@@ -220,29 +244,6 @@ export default function KYCDashboard() {
     }
   };
 
-  const UserCard = ({ user }: { user: UserKYC }) => (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={() => setSelectedUser(user)}
-      onKeyDown={(e) => e.key === "Enter" && setSelectedUser(user)}
-      className="bg-white rounded-xl shadow-sm p-6 cursor-pointer hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-      aria-label={`View ${user.info.fullName}'s KYC details`}
-    >
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-xl font-semibold">{user.info.fullName}</h2>
-          <p className="text-sm text-gray-500 mt-1">{user.info.profession}</p>
-        </div>
-        <span
-          className={`px-3 py-1 rounded-full text-sm ${getStatusClass(user.status)}`}
-        >
-          {user.status}
-        </span>
-      </div>
-    </div>
-  );
-
   if (loading)
     return <div className="p-8 text-center">Loading verifications...</div>;
 
@@ -260,7 +261,11 @@ export default function KYCDashboard() {
             </h1>
             <div className="grid grid-cols-1 gap-4">
               {users.map((user) => (
-                <UserCard key={user.id} user={user} />
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  onSelectUser={setSelectedUser}
+                />
               ))}
             </div>
           </>
@@ -437,21 +442,20 @@ const DocumentCard = ({
   };
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      className="bg-gray-50 rounded-lg p-4 h-50 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <button
+      className="w-full bg-gray-50 rounded-lg p-4 h-50 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
       onClick={handleClick}
-      onKeyDown={(e) => e.key === "Enter" && handleClick()}
       aria-label={`View ${title} document`}
+      type="button"
     >
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex justify-between items-center mb-2 w-full">
         <p className="text-sm font-medium text-gray-700">{title}</p>
         <button
           onClick={handleDownload}
           className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200"
           title="Download document"
           aria-label={`Download ${title}`}
+          type="button"
         >
           <FiDownload className="w-4 h-4" />
         </button>
@@ -476,7 +480,7 @@ const DocumentCard = ({
           </div>
         )}
       </div>
-    </div>
+    </button>
   );
 };
 
