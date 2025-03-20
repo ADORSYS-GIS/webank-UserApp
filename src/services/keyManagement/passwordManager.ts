@@ -1,4 +1,8 @@
-import { handleRegister, handleAuthenticate, saveMessage } from "web-auth-prf";
+import {
+  handleRegister,
+  handleAuthenticate,
+  saveMessage,
+} from "@adorsys-gis/web-auth-prf";
 
 export class PasswordManager {
   private static isRegistering = false;

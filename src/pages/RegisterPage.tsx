@@ -25,16 +25,16 @@ const Register = ({ initialShowSpinner = true }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner); // Start with spinner active
+  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner);
+
+  // ✅ Call the hook at the top level
+  const { devCert, error } = useInitialization();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSpinner(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const { devCert } = useInitialization();
+    if (devCert || error) {
+      setShowSpinner(false); // Hide spinner after initialization completes
+    }
+  }, [devCert, error]);
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
