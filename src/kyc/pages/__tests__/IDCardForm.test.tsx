@@ -10,6 +10,11 @@ import "@testing-library/jest-dom/vitest";
 window.alert = vi.fn();
 
 describe("IDCardForm", () => {
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase("yourDBName");
+  });
+
   const renderForm = () =>
     render(
       <Provider store={store}>

@@ -9,6 +9,11 @@ import "@testing-library/jest-dom/vitest";
 window.alert = vi.fn();
 
 describe("PassportForm", () => {
+
+  beforeEach(() => {
+    indexedDB.deleteDatabase("yourDBName");
+  });
+
   const renderForm = () =>
     render(
       <Provider store={store}>
