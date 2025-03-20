@@ -2,14 +2,21 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import IdentityVerification from "../IdentityVerificationPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "../../../store/Store.ts";
 
 describe("IdentityVerification Component", () => {
-  test("renders the component correctly", () => {
+  const renderComponent = () =>
     render(
-      <MemoryRouter>
-        <IdentityVerification />
-      </MemoryRouter>,
+      <Provider store={store}>
+        <MemoryRouter>
+          <IdentityVerification />
+        </MemoryRouter>
+      </Provider>,
     );
+
+  test("renders the component correctly", () => {
+    renderComponent();
 
     // Check if the header is rendered
     expect(screen.getByText("Let’s Verify Your Identity")).toBeInTheDocument();
@@ -21,38 +28,42 @@ describe("IdentityVerification Component", () => {
   });
 
   test("renders all verification steps", () => {
-    render(
-      <MemoryRouter>
-        <IdentityVerification />
-      </MemoryRouter>,
-    );
+    renderComponent();
 
     // Verify that each step is displayed
     expect(screen.getByText("Personal Info")).toBeInTheDocument();
     expect(screen.getByText("Upload your Front ID")).toBeInTheDocument();
     expect(screen.getByText("Upload your Back ID")).toBeInTheDocument();
     expect(screen.getByText("Take a photo with your ID")).toBeInTheDocument();
+    expect(screen.getByText("Tax Identifier Document")).toBeInTheDocument();
   });
 
-  test("clicking on a step updates the current step", () => {
-    render(
-      <MemoryRouter>
-        <IdentityVerification />
-      </MemoryRouter>,
-    );
-
-    const personalInfoStep = screen.getByText("Personal Info");
+  test("clicking on a step opens the corresponding popup", () => {
+    renderComponent();
 
     // Click on "Personal Info" step
-    fireEvent.click(personalInfoStep);
+    fireEvent.click(screen.getByText("Personal Info"));
+    expect(screen.getByText("Personal Info")).toBeInTheDocument();
+
+    // Click on "Upload your Front ID" step
+    fireEvent.click(screen.getByText("Upload your Front ID"));
+    expect(screen.getByText("Upload your Front ID")).toBeInTheDocument();
+
+    // Click on "Upload your Back ID" step
+    fireEvent.click(screen.getByText("Upload your Back ID"));
+    expect(screen.getByText("Upload your Back ID")).toBeInTheDocument();
+
+    // Click on "Take a photo with your ID" step
+    fireEvent.click(screen.getByText("Take a photo with your ID"));
+    expect(screen.getByText("Take a photo with your ID")).toBeInTheDocument();
+
+    // Click on "Tax Identifier Document" step
+    fireEvent.click(screen.getByText("Tax Identifier Document"));
+    expect(screen.getByText("Tax Identifier Document")).toBeInTheDocument();
   });
 
   test("Back button resets to step selection", () => {
-    render(
-      <MemoryRouter>
-        <IdentityVerification />
-      </MemoryRouter>,
-    );
+    renderComponent();
 
     // Click on a step
     fireEvent.click(screen.getByText("Personal Info"));

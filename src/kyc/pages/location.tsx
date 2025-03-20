@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function LocationFinder() {
   const [latitude, setLatitude] = useState<number | null>(null);
@@ -9,7 +9,7 @@ export default function LocationFinder() {
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported by your browser');
+      setError("Geolocation is not supported by your browser");
       return;
     }
 
@@ -27,16 +27,16 @@ export default function LocationFinder() {
         setIsLoading(false);
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            setError('Permission to access location was denied');
+            setError("Permission to access location was denied");
             break;
           case error.POSITION_UNAVAILABLE:
-            setError('Location information is unavailable');
+            setError("Location information is unavailable");
             break;
           case error.TIMEOUT:
-            setError('The request to get location timed out');
+            setError("The request to get location timed out");
             break;
           default:
-            setError('An unknown error occurred');
+            setError("An unknown error occurred");
             break;
         }
       },
@@ -44,23 +44,27 @@ export default function LocationFinder() {
         enableHighAccuracy: true,
         maximumAge: 0,
         timeout: 5000,
-      }
+      },
     );
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Device Location Finder</h1>
-        
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">
+          Device Location Finder
+        </h1>
+
         <button
           onClick={handleGetLocation}
           disabled={isLoading}
           className={`w-full py-2 px-4 rounded-md text-white font-semibold ${
-            isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            isLoading
+              ? "bg-blue-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
           } transition-colors`}
         >
-          {isLoading ? 'Getting Location...' : 'Get My Current Location'}
+          {isLoading ? "Getting Location..." : "Get My Current Location"}
         </button>
 
         {error && (
@@ -72,22 +76,31 @@ export default function LocationFinder() {
         {latitude && longitude && (
           <div className="mt-6 space-y-3">
             <div className="p-4 bg-gray-50 rounded-md">
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">Coordinates</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                Coordinates
+              </h2>
               <p className="text-gray-600">
-                Latitude: <span className="font-mono">{latitude.toFixed(6)}</span>
+                Latitude:{" "}
+                <span className="font-mono">{latitude.toFixed(6)}</span>
               </p>
               <p className="text-gray-600">
-                Longitude: <span className="font-mono">{longitude.toFixed(6)}</span>
+                Longitude:{" "}
+                <span className="font-mono">{longitude.toFixed(6)}</span>
               </p>
               {accuracy && (
                 <p className="text-gray-600">
-                  Accuracy: <span className="font-mono">{accuracy.toFixed(1)} meters</span>
+                  Accuracy:{" "}
+                  <span className="font-mono">
+                    {accuracy.toFixed(1)} meters
+                  </span>
                 </p>
               )}
             </div>
 
             <div className="p-4 bg-gray-50 rounded-md">
-              <h2 className="text-lg font-semibold text-gray-800 mb-2">Google Maps</h2>
+              <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                Google Maps
+              </h2>
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
                 target="_blank"

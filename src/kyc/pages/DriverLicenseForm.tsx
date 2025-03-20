@@ -1,16 +1,13 @@
 // DriverLicenseForm.tsx
-import React, { useState } from "react";
+import React from "react";
 import {
   FormContainer,
   SelectWithPopup,
   TextInput,
   DateInput,
-} from "../components/FormComponents.tsx";
+} from "../components/FormComponents";
 
 const DriverLicenseForm: React.FC = () => {
-  const [showRegion, setShowRegion] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState("");
-
   const regions = [
     "Adamawa",
     "Centre",
@@ -24,55 +21,36 @@ const DriverLicenseForm: React.FC = () => {
     "South West",
   ];
 
+  const handleSubmit = (formData: Record<string, string>) => {
+    // Handle driver license specific submission
+    console.log("Driver License Form Data:", formData);
+  };
+
   return (
-    <FormContainer title="Driver License Information">
-      {/* Full Name */}
+    <FormContainer title="Driver License Information" onSubmit={handleSubmit}>
       <TextInput
         label="Full Name"
-        id="fullName"
+        fieldName="fullName"
         placeholder="Enter your full name"
       />
-
-      {/* Profession */}
       <TextInput
         label="Profession"
-        id="profession"
+        fieldName="profession"
         placeholder="Enter your profession"
       />
-
-      {/* License Number */}
       <TextInput
         label="Driver License Number"
-        id="licenseNumber"
+        fieldName="UniqueDocumentIdentifier"
         placeholder="Enter your license number"
       />
-
-      {/* Date of Birth */}
-      <DateInput label="Date of Birth" id="dob" />
-
-      {/* Current Region */}
+      <DateInput label="Date of Birth" fieldName="dob" />
       <SelectWithPopup
         label="Current Region"
         options={regions}
-        selectedValue={selectedRegion}
-        onSelect={setSelectedRegion}
+        fieldName="region"
         placeholder="Select Region"
-        showPopup={showRegion}
-        setShowPopup={setShowRegion}
       />
-
-      {/* Expiration Date */}
-      <DateInput label="Expiration Date" id="expiry" />
-
-      {/* Submit Button */}
-      <button
-        type="submit"
-        className="w-full bg-[#20B2AA] text-white py-4 rounded-3xl 
-                   font-semibold transition 
-                   duration-300 ease-in-out shadow-lg mt-2"
-      >
-        Submit
-      </button>
+      <DateInput label="Expiration Date" fieldName="expiry" />
     </FormContainer>
   );
 };

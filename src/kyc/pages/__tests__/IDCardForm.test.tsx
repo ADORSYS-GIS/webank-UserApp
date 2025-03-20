@@ -1,12 +1,28 @@
 // IDCardForm.test.tsx
-import { describe, it } from "vitest";
+import { describe, it, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { Provider } from "react-redux";
+import { store } from "../../../store/Store.ts";
 import IDCardForm from "../IDCardForm";
 import "@testing-library/jest-dom/vitest";
 
+// Mock the alert function
+window.alert = vi.fn();
+
 describe("IDCardForm", () => {
+  const renderForm = () =>
+    render(
+      <Provider store={store}>
+        <IDCardForm />
+      </Provider>,
+    );
+
+  beforeEach(() => {
+    (window.alert as jest.Mock).mockClear();
+  });
+
   it("renders all form elements", () => {
-    render(<IDCardForm />);
+    renderForm();
 
     // Check form title
     expect(screen.getByText("ID Card Information")).toBeInTheDocument();
@@ -23,13 +39,10 @@ describe("IDCardForm", () => {
     // Check date inputs
     expect(screen.getByLabelText("Date Of Birth")).toBeInTheDocument();
     expect(screen.getByLabelText("Expiry Date")).toBeInTheDocument();
-
-    // Check submit button
-    expect(screen.getByText("Submit")).toBeInTheDocument();
   });
 
   it("selects ID type and region", () => {
-    render(<IDCardForm />);
+    renderForm();
 
     // Select ID type
     fireEvent.click(screen.getByText("Select ID Type"));

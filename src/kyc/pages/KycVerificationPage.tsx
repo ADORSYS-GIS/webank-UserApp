@@ -1,16 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store/Store';
-import { toast } from 'react-toastify';
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/Store";
+import { toast, ToastContainer } from "react-toastify";
 import {
-  FiUser, FiMail, FiMapPin, FiBriefcase, FiClock, FiCreditCard,
-  FiCalendar, FiMap, FiCheck, FiDownload, FiX, FiArrowLeft
+  FiUser,
+  FiMail,
+  FiMapPin,
+  FiBriefcase,
+  FiClock,
+  FiCreditCard,
+  FiCalendar,
+  FiMap,
+  FiCheck,
+  FiDownload,
+  FiX,
+  FiArrowLeft,
 } from "react-icons/fi";
 import {
   RequestToGetKycRecords,
   RequestToUpdateKycStatus,
-  RequestToGetKycDocuments
-} from '../../services/keyManagement/requestService';
+  RequestToGetKycDocuments,
+} from "../../services/keyManagement/requestService";
 
 interface DocumentSet {
   FrontID: string;
@@ -36,12 +46,13 @@ interface UserKYC {
   id: string;
   documents: DocumentSet;
   info: UserInfo;
-  status: 'PENDING' | 'approved' | 'rejected';
+  status: "PENDING" | "approved" | "rejected";
 }
 
 export default function KYCDashboard() {
-  const accountCert = useSelector((state: RootState) => state.account.accountCert);
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
   const [users, setUsers] = useState<UserKYC[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -57,29 +68,40 @@ export default function KYCDashboard() {
           return;
         }
 
-        const [infoResponse] = await Promise.all([RequestToGetKycRecords(accountCert)]);
-        const parsedInfo = Array.isArray(infoResponse) ? infoResponse : JSON.parse(infoResponse || "[]");
-        
+        const [infoResponse] = await Promise.all([
+          RequestToGetKycRecords(accountCert),
+        ]);
+        const parsedInfo = Array.isArray(infoResponse)
+          ? infoResponse
+          : JSON.parse(infoResponse || "[]");
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const validatedInfo = parsedInfo.map((item: any) => ({
-          id: item.documentUniqueId || '',
-          publicKeyHash: item.publicKeyHash || '',
+          id: item.documentUniqueId || "",
+          publicKeyHash: item.publicKeyHash || "",
           info: {
-            fullName: item.name || '',
-            profession: item.profession || '',
-            idNumber: item.documentUniqueId || '',
-            dob: item.dateOfBirth || '',
-            region: item.region || '',
-            expirationDate: item.expirationDate || '',
-            location: item.location || 'N/A',
-            email: item.email || 'N/A',
-            status: item.status || 'PENDING',
+            fullName: item.name || "",
+            profession: item.profession || "",
+            idNumber: item.documentUniqueId || "",
+            dob: item.dateOfBirth || "",
+            region: item.region || "",
+            expirationDate: item.expirationDate || "",
+            location: item.location || "N/A",
+            email: item.email || "N/A",
+            status: item.status || "PENDING",
           },
-          status: item.status?.toLowerCase() || 'pending'
+          status: item.status?.toLowerCase() || "pending",
         }));
 
         const publicKeyHash = validatedInfo[0].publicKeyHash;
-        const docsResponse = await RequestToGetKycDocuments(publicKeyHash, accountCert);
-        const parsedDocs = typeof docsResponse === "string" ? JSON.parse(docsResponse) : docsResponse;
+        const docsResponse = await RequestToGetKycDocuments(
+          publicKeyHash,
+          accountCert,
+        );
+        const parsedDocs =
+          typeof docsResponse === "string"
+            ? JSON.parse(docsResponse)
+            : docsResponse;
 
         const validatedDocs = {
           id: parsedDocs.publicKeyHash || "",
@@ -87,27 +109,36 @@ export default function KYCDashboard() {
             FrontID: parsedDocs.frontID || "",
             BackID: parsedDocs.backID || "",
             Selfie: parsedDocs.selfieID || "",
-            TaxDocument: parsedDocs.taxID || ""
+            TaxDocument: parsedDocs.taxID || "",
           },
-          status: parsedDocs.status || "PENDING"
+          status: parsedDocs.status || "PENDING",
         };
 
-        const mergedData = validatedInfo.map(infoItem => ({
-          id: infoItem.publicKeyHash,
-          info: infoItem.info,
-          documents: validatedDocs.id === infoItem.publicKeyHash ? validatedDocs.documents : {
-            FrontID: '',
-            BackID: '',
-            Selfie: '',
-            TaxDocument: ''
-          },
-          status: validatedDocs.id === infoItem.publicKeyHash ? validatedDocs.status : "PENDING"
-        }));
+        const mergedData = validatedInfo.map(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (infoItem: { publicKeyHash: any; info: any }) => ({
+            id: infoItem.publicKeyHash,
+            info: infoItem.info,
+            documents:
+              validatedDocs.id === infoItem.publicKeyHash
+                ? validatedDocs.documents
+                : {
+                    FrontID: "",
+                    BackID: "",
+                    Selfie: "",
+                    TaxDocument: "",
+                  },
+            status:
+              validatedDocs.id === infoItem.publicKeyHash
+                ? validatedDocs.status
+                : "PENDING",
+          }),
+        );
 
         setUsers(mergedData);
       } catch (error) {
         toast.error("Failed to load KYC requests");
-        console.error('Error:', error);
+        console.error("Error:", error);
       } finally {
         setLoading(false);
       }
@@ -116,42 +147,51 @@ export default function KYCDashboard() {
     fetchKYCData();
   }, [accountCert]);
 
-  const updateKYCStatus = async (userId: string, status: 'approved' | 'rejected') => {
+  const updateKYCStatus = async (
+    userId: string,
+    status: "approved" | "rejected",
+  ) => {
     try {
       if (!accountCert) {
         toast.error("Authentication required");
         return;
       }
-  
-      const user = users.find(user => user.id === userId);
+
+      const user = users.find((user) => user.id === userId);
       if (!user) {
         toast.error("User not found");
         return;
       }
-  
+
       console.log("Updating KYC for publicKeyHash:", user.id);
-  
-      const response = await RequestToUpdateKycStatus(user.id, status, accountCert);
-  
+
+      const response = await RequestToUpdateKycStatus(
+        user.id,
+        status,
+        accountCert,
+      );
+
       console.log("Update response:", response);
-  
-      setUsers(users.map(user => 
-        user.id === userId ? { ...user, status } : user
-      ));
-      toast.success(`KYC ${status === 'approved' ? 'approved' : 'rejected'} successfully`);
+
+      setUsers(
+        users.map((user) => (user.id === userId ? { ...user, status } : user)),
+      );
+      toast.success(
+        `KYC ${status === "approved" ? "approved" : "rejected"} successfully`,
+      );
     } catch (error) {
       toast.error(`Failed to ${status} KYC`);
-      console.error('Update error:', error);
+      console.error("Update error:", error);
     }
   };
-  
-  const ImageModal = () => (
+
+  const ImageModal = () =>
     selectedImage && (
       <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full">
           <div className="flex justify-between items-center p-4 border-b">
             <h3 className="text-lg font-semibold">Document Preview</h3>
-            <button 
+            <button
               onClick={() => setSelectedImage(null)}
               className="text-gray-500 hover:text-gray-700 p-2"
             >
@@ -159,18 +199,18 @@ export default function KYCDashboard() {
             </button>
           </div>
           <div className="p-4 overflow-auto">
-            <img 
-              src={selectedImage} 
-              alt="Enlarged document" 
+            <img
+              src={selectedImage}
+              alt="Enlarged document"
               className="max-w-full max-h-[75vh] object-contain mx-auto"
             />
           </div>
         </div>
       </div>
-    )
-  );
+    );
 
-  if (loading) return <div className="p-8 text-center">Loading verifications...</div>;
+  if (loading)
+    return <div className="p-8 text-center">Loading verifications...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -178,9 +218,11 @@ export default function KYCDashboard() {
       <div className="max-w-7xl mx-auto">
         {!selectedUser ? (
           <>
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">Pending KYC Verifications</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">
+              Pending KYC Verifications
+            </h1>
             <div className="grid grid-cols-1 gap-4">
-              {users.map(user => (
+              {users.map((user) => (
                 <div
                   key={user.id}
                   onClick={() => setSelectedUser(user)}
@@ -188,13 +230,22 @@ export default function KYCDashboard() {
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-xl font-semibold">{user.info.fullName}</h2>
-                      <p className="text-sm text-gray-500 mt-1">{user.info.profession}</p>
+                      <h2 className="text-xl font-semibold">
+                        {user.info.fullName}
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {user.info.profession}
+                      </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm ${
-                      user.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                      user.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        user.status === "PENDING"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : user.status === "approved"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {user.status}
                     </span>
                   </div>
@@ -211,28 +262,39 @@ export default function KYCDashboard() {
               <FiArrowLeft className="w-5 h-5" />
               <span>Back to Pending Profiles</span>
             </button>
-            
+
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{selectedUser.info.fullName}</h2>
-                  <p className="text-sm text-gray-500">{selectedUser.info.profession}</p>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {selectedUser.info.fullName}
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    {selectedUser.info.profession}
+                  </p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm ${
-                  selectedUser.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
-                  selectedUser.status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    selectedUser.status === "PENDING"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : selectedUser.status === "approved"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                  }`}
+                >
                   {selectedUser.status}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">📁 Documents</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    📁 Documents
+                  </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    <DocumentCard 
-                      title="Front ID" 
-                      url={selectedUser.documents.FrontID} 
+                    <DocumentCard
+                      title="Front ID"
+                      url={selectedUser.documents.FrontID}
                       type="image"
                       onImageClick={setSelectedImage}
                     />
@@ -258,33 +320,71 @@ export default function KYCDashboard() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">👤 Personal Information</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    👤 Personal Information
+                  </h3>
                   <div className="space-y-4">
-                    <InfoRow icon={<FiUser />} label="Full Name" value={selectedUser.info.fullName} />
-                    <InfoRow icon={<FiBriefcase />} label="Profession" value={selectedUser.info.profession} />
-                    <InfoRow icon={<FiCreditCard />} label="ID Number" value={selectedUser.info.idNumber} />
-                    <InfoRow icon={<FiCalendar />} label="Date of Birth" value={selectedUser.info.dob} />
-                    <InfoRow icon={<FiMapPin />} label="Region" value={selectedUser.info.region} />
-                    <InfoRow icon={<FiClock />} label="Expiration Date" value={selectedUser.info.expirationDate} />
-                    <InfoRow icon={<FiMap />} label="Location" value={selectedUser.info.location} />
-                    <InfoRow icon={<FiMail />} label="Email" value={selectedUser.info.email} />
-                    <InfoRow icon={<FiCheck />} label="Status" value={selectedUser.info.status} />
+                    <InfoRow
+                      icon={<FiUser />}
+                      label="Full Name"
+                      value={selectedUser.info.fullName}
+                    />
+                    <InfoRow
+                      icon={<FiBriefcase />}
+                      label="Profession"
+                      value={selectedUser.info.profession}
+                    />
+                    <InfoRow
+                      icon={<FiCreditCard />}
+                      label="ID Number"
+                      value={selectedUser.info.idNumber}
+                    />
+                    <InfoRow
+                      icon={<FiCalendar />}
+                      label="Date of Birth"
+                      value={selectedUser.info.dob}
+                    />
+                    <InfoRow
+                      icon={<FiMapPin />}
+                      label="Region"
+                      value={selectedUser.info.region}
+                    />
+                    <InfoRow
+                      icon={<FiClock />}
+                      label="Expiration Date"
+                      value={selectedUser.info.expirationDate}
+                    />
+                    <InfoRow
+                      icon={<FiMap />}
+                      label="Location"
+                      value={selectedUser.info.location}
+                    />
+                    <InfoRow
+                      icon={<FiMail />}
+                      label="Email"
+                      value={selectedUser.info.email}
+                    />
+                    <InfoRow
+                      icon={<FiCheck />}
+                      label="Status"
+                      value={selectedUser.info.status}
+                    />
                   </div>
                 </div>
               </div>
 
               <div className="mt-8 flex justify-end gap-4">
                 <button
-                  onClick={() => updateKYCStatus(selectedUser.id, 'rejected')}
+                  onClick={() => updateKYCStatus(selectedUser.id, "rejected")}
                   className="px-6 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
-                  disabled={selectedUser.status !== 'PENDING'}
+                  disabled={selectedUser.status !== "PENDING"}
                 >
                   Reject
                 </button>
                 <button
-                  onClick={() => updateKYCStatus(selectedUser.id, 'approved')}
+                  onClick={() => updateKYCStatus(selectedUser.id, "approved")}
                   className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
-                  disabled={selectedUser.status !== 'PENDING'}
+                  disabled={selectedUser.status !== "PENDING"}
                 >
                   Approve
                 </button>
@@ -293,35 +393,39 @@ export default function KYCDashboard() {
           </div>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 }
 
-const DocumentCard = ({ 
-  title, 
-  url, 
+const DocumentCard = ({
+  title,
+  url,
   type,
-  onImageClick 
-}: { 
-  title: string; 
-  url: string; 
-  type: 'image' | 'pdf';
-  onImageClick?: (url: string) => void 
+  onImageClick,
+}: {
+  title: string;
+  url: string;
+  type: "image" | "pdf";
+  onImageClick?: (url: string) => void;
 }) => {
   const handleDownload = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!url) return;
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.setAttribute('download', `${title}_${Date.now()}.${type === 'image' ? 'jpg' : 'pdf'}`);
+    link.setAttribute(
+      "download",
+      `${title}_${Date.now()}.${type === "image" ? "jpg" : "pdf"}`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   return (
-    <div 
+    <div
       className="bg-gray-50 rounded-lg p-4 h-50 flex flex-col cursor-pointer"
       onClick={() => url && onImageClick?.(url)}
     >
@@ -336,7 +440,7 @@ const DocumentCard = ({
         </button>
       </div>
       <div className="relative flex-1">
-        {type === 'image' ? (
+        {type === "image" ? (
           <img
             src={url}
             alt={title}
@@ -358,12 +462,20 @@ const DocumentCard = ({
   );
 };
 
-const InfoRow = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
+const InfoRow = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) => (
   <div className="flex justify-between items-center py-2 border-b border-gray-100">
     <div className="flex items-center gap-2">
       <span className="text-gray-400">{icon}</span>
       <span className="text-sm text-gray-600">{label}</span>
     </div>
-    <span className="text-sm font-medium text-gray-900">{value || 'N/A'}</span>
+    <span className="text-sm font-medium text-gray-900">{value || "N/A"}</span>
   </div>
 );

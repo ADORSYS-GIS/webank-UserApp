@@ -72,4 +72,5 @@ const App: React.FC = () => {
   );
 };
 
-export default App;KYCPage
+export default App;
+KYCPage;

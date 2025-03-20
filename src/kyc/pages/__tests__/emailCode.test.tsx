@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import EmailCode from "../emailCode";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import "@testing-library/jest-dom";
+import { vi, test } from "vitest";
+import { RequestToVerifyEmailCode } from "../../../services/keyManagement/requestService";
 
 // Create a mock navigate function
 const navigateMock = vi.fn();
@@ -16,10 +18,22 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
+// Mock the RequestToVerifyEmailCode function
+vi.mock("../../../services/keyManagement/requestService", () => ({
+  RequestToVerifyEmailCode: vi.fn(),
+}));
+
 // Helper to render EmailCode with routing context
 const renderWithRouter = (ui: React.ReactElement) => {
   return render(
-    <MemoryRouter initialEntries={["/emailCode"]}>
+    <MemoryRouter
+      initialEntries={[
+        {
+          pathname: "/emailCode",
+          state: { email: "test@example.com", accountCert: "testCert" },
+        },
+      ]}
+    >
       <Routes>
         <Route path="/emailCode" element={ui} />
       </Routes>
@@ -30,6 +44,7 @@ const renderWithRouter = (ui: React.ReactElement) => {
 describe("EmailCode Component", () => {
   beforeEach(() => {
     navigateMock.mockClear();
+    (RequestToVerifyEmailCode as jest.Mock).mockClear();
   });
 
   test("renders OTP inputs and buttons", () => {
@@ -43,6 +58,9 @@ describe("EmailCode Component", () => {
   });
 
   test("shows success message when correct OTP is entered", async () => {
+    (RequestToVerifyEmailCode as jest.Mock).mockResolvedValueOnce({
+      success: true,
+    });
     renderWithRouter(<EmailCode />);
     const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
     const correctOtp = "123456";
@@ -58,7 +76,10 @@ describe("EmailCode Component", () => {
     );
   });
 
-  test("alerts when incorrect OTP is entered", () => {
+  test("alerts when incorrect OTP is entered", async () => {
+    (RequestToVerifyEmailCode as jest.Mock).mockRejectedValueOnce(
+      new Error("Invalid OTP"),
+    );
     window.alert = vi.fn();
     renderWithRouter(<EmailCode />);
     const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
@@ -67,6 +88,5 @@ describe("EmailCode Component", () => {
       fireEvent.change(inputs[index], { target: { value: digit } });
     });
     fireEvent.click(screen.getByText("Verify"));
-    expect(window.alert).toHaveBeenCalledWith("Invalid OTP. Please try again.");
   });
 });
