@@ -57,7 +57,7 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
               Agent Services
             </button>
           </li>
-          {/* Added Teller Menu */}
+          {/*  Teller Menu */}
           <li>
             <button
               onClick={() =>
@@ -65,6 +65,7 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
                   state: {
                     tellerAccountId: accountId,
                     tellerAccountCert: accountCert,
+                    redirectTo: "/teller",
                   },
                 })
               }
@@ -76,6 +77,28 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
             >
               <FontAwesomeIcon icon={faMoneyCheckAlt} className="mr-3" />
               Teller Services
+            </button>
+          </li>
+          {/*  Agency Menu */}
+          <li>
+            <button
+              onClick={() =>
+                navigate("/login", {
+                  state: {
+                    tellerAccountId: accountId,
+                    tellerAccountCert: accountCert,
+                    redirectTo: "/agency",
+                  },
+                })
+              }
+              className={`flex items-center w-full text-left p-3 rounded-lg ${
+                location.pathname === "/agency"
+                  ? "bg-blue-700"
+                  : "hover:bg-blue-700"
+              } transition-colors text-white`}
+            >
+              <FontAwesomeIcon icon={faUserTie} className="mr-3" />
+              KYC Verificaion
             </button>
           </li>
         </ul>
