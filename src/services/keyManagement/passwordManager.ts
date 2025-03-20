@@ -38,7 +38,7 @@ export class PasswordManager {
 
     try {
       // Check for existing password
-      const messages = JSON.parse(localStorage.getItem("messages") || "[]");
+      const messages = JSON.parse(localStorage.getItem("messages") ?? "[]");
       if (messages.length > 0) {
         const storedPassword = await this.attemptAuthentication();
         if (storedPassword) return storedPassword;
