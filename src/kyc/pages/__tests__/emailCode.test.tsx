@@ -58,15 +58,18 @@ describe("EmailCode Component", () => {
   });
 
   test("shows success message when correct OTP is entered", async () => {
-    (RequestToVerifyEmailCode as jest.Mock).mockResolvedValueOnce({
-      success: true,
-    });
+    (RequestToVerifyEmailCode as jest.Mock).mockResolvedValueOnce(
+      "Webank email verified successfully",
+    );
+
     renderWithRouter(<EmailCode />);
     const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
     const correctOtp = "123456";
+
     correctOtp.split("").forEach((digit, index) => {
       fireEvent.change(inputs[index], { target: { value: digit } });
     });
+
     fireEvent.click(screen.getByText("Verify"));
 
     await waitFor(() =>
