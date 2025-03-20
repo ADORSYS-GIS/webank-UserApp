@@ -29,7 +29,6 @@ import LocationComponent from "./kyc/components/LocationComponent";
 
 import KYCPage from "./kyc/pages/KycVerificationPage";
 
-
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
