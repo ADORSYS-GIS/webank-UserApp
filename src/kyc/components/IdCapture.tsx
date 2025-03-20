@@ -1,6 +1,6 @@
 // src/kyc/components/IdCapture.tsx
 import React from "react";
-import { useCapture } from "../hooks/useCapture"; // our previously extracted hook
+import { useCapture } from "../hooks/useCapture";
 
 interface IdCaptureProps {
   title: string;
@@ -8,6 +8,7 @@ interface IdCaptureProps {
   sampleImageSrc: string;
   uploadAccept?: string;
   onClose: () => void;
+  onFileCaptured: (file: File | Blob) => void; // New prop to send the file back
 }
 
 const IdCapture: React.FC<IdCaptureProps> = ({
@@ -16,6 +17,7 @@ const IdCapture: React.FC<IdCaptureProps> = ({
   sampleImageSrc,
   uploadAccept = "image/*",
   onClose,
+  onFileCaptured,
 }) => {
   const {
     showCamera,
@@ -102,7 +104,15 @@ const IdCapture: React.FC<IdCaptureProps> = ({
           >
             Retake
           </button>
-          <button className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200">
+          <button
+            onClick={() => {
+              // Assuming capturedImage is a data URL; we'll convert it to a Blob later
+              const blob = dataURLtoBlob(capturedImage);
+              onFileCaptured(blob);
+              onClose();
+            }}
+            className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200"
+          >
             Submit
           </button>
         </>
@@ -110,10 +120,23 @@ const IdCapture: React.FC<IdCaptureProps> = ({
     }
   };
 
+  // Helper function to convert data URL to Blob (for camera captures)
+  // Helper function to convert data URL to Blob (for camera captures)
+  function dataURLtoBlob(dataURL: string): Blob {
+    const [header, data] = dataURL.split(",");
+    const mimeMatch = /^data:(.*?);base64$/.exec(header);
+    const mime = mimeMatch ? mimeMatch[1] : "";
+    const binary = atob(data);
+    const array = [];
+    for (let i = 0; i < binary.length; i++) {
+      array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], { type: mime });
+  }
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white shadow-xl rounded-2xl p-6 w-11/12 max-w-md">
-        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={goBack}

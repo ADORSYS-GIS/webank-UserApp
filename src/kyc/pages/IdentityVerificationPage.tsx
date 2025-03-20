@@ -12,6 +12,9 @@ import SelfieId from "./SelfieId";
 import BackId from "./BackId";
 import TaxpayerId from "./TaxpayerId";
 import VerificationModal from "../components/VerificationModal";
+import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService.ts";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/Store.ts";
 
 interface VerificationStep {
   id: number;
@@ -21,6 +24,8 @@ interface VerificationStep {
   onClick: () => void;
 }
 
+type FileOrBlob = File | Blob | null;
+
 export default function IdentityVerification() {
   const navigate = useNavigate();
   const [showFrontIdPopup, setShowFrontIdPopup] = useState(false);
@@ -29,6 +34,12 @@ export default function IdentityVerification() {
   const [showTaxpayerIdPopup, setShowTaxpayerIdPopup] = useState(false);
   const [showVerificationModalPopup, setShowVerificationModalPopup] =
     useState(false);
+
+  // State to store each document file
+  const [frontIdFile, setFrontIdFile] = useState<FileOrBlob>(null);
+  const [backIdFile, setBackIdFile] = useState<FileOrBlob>(null);
+  const [selfieIdFile, setSelfieIdFile] = useState<FileOrBlob>(null);
+  const [taxpayerIdFile, setTaxpayerIdFile] = useState<FileOrBlob>(null);
 
   const steps: VerificationStep[] = [
     {
@@ -73,6 +84,56 @@ export default function IdentityVerification() {
     },
   ];
 
+  // Utility function to convert a file to a base64 string
+  const fileToBase64 = (file: File | Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result as string;
+        const base64 = dataUrl.split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
+
+  // Handle submission to the backend
+  const handleSubmit = async () => {
+    // Check if all files are uploaded
+    if (!frontIdFile || !backIdFile || !selfieIdFile || !taxpayerIdFile) {
+      alert("Please upload all required documents");
+      return;
+    }
+
+    try {
+      // Convert files to base64 strings
+      const frontIdBase64 = await fileToBase64(frontIdFile);
+      const backIdBase64 = await fileToBase64(backIdFile);
+      const selfieIdBase64 = await fileToBase64(selfieIdFile);
+      const taxpayerIdBase64 = await fileToBase64(taxpayerIdFile);
+
+      // Call RequestToStoreKycDocument with base64 strings
+      const response = await RequestToStoreKycDocument(
+        frontIdBase64,
+        backIdBase64,
+        selfieIdBase64,
+        taxpayerIdBase64,
+        accountCert,
+      );
+
+      alert("KYC submitted, You’re good to go!");
+      console.log("Response from server:", response);
+    } catch (error) {
+      console.error("Error submitting KYC:", error);
+      alert("Error submitting KYC, please try again later");
+    }
+  };
+
   return (
     <div
       className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative"
@@ -97,7 +158,6 @@ export default function IdentityVerification() {
             className="w-15 h-15 md:w-10 md:h-10 object-contain"
           />
         </div>
-
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
           Let’s Verify Your Identity
         </h1>
@@ -113,9 +173,9 @@ export default function IdentityVerification() {
             key={step.id}
             type="button"
             onClick={step.onClick}
-            className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer 
-                       flex items-center justify-between 
-                       transform hover:scale-[1.005] hover:border-[#20B2AA] 
+            className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer
+                       flex items-center justify-between
+                       transform hover:scale-[1.005] hover:border-[#20B2AA]
                        overflow-hidden w-full text-left"
           >
             <div className="flex items-center space-x-4">
@@ -139,7 +199,7 @@ export default function IdentityVerification() {
       <div className="pt-4 border-t border-gray-100 bg-white">
         <button
           type="button"
-          onClick={() => console.log("Submission triggered")}
+          onClick={handleSubmit} // Trigger the submission
           className="w-full py-4 bg-[#20B2AA] hover:bg-[#1C8C8A] text-white font-semibold text-base md:text-lg rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg hover:shadow-[#20B2AA]/50"
         >
           <span>Secure My Account</span>
@@ -148,14 +208,28 @@ export default function IdentityVerification() {
       </div>
 
       {showFrontIdPopup && (
-        <FrontId onClose={() => setShowFrontIdPopup(false)} />
+        <FrontId
+          onClose={() => setShowFrontIdPopup(false)}
+          onFileCaptured={(file) => setFrontIdFile(file)} // Save the file
+        />
       )}
-      {showBackIdPopup && <BackId onClose={() => setShowBackIdPopup(false)} />}
+      {showBackIdPopup && (
+        <BackId
+          onClose={() => setShowBackIdPopup(false)}
+          onFileCaptured={(file) => setBackIdFile(file)}
+        />
+      )}
       {showSelfieIdPopup && (
-        <SelfieId onClose={() => setShowSelfieIdPopup(false)} />
+        <SelfieId
+          onClose={() => setShowSelfieIdPopup(false)}
+          onFileCaptured={(file) => setSelfieIdFile(file)}
+        />
       )}
       {showTaxpayerIdPopup && (
-        <TaxpayerId onClose={() => setShowTaxpayerIdPopup(false)} />
+        <TaxpayerId
+          onClose={() => setShowTaxpayerIdPopup(false)}
+          onFileCaptured={(file) => setTaxpayerIdFile(file)}
+        />
       )}
       {showVerificationModalPopup && (
         <VerificationModal
