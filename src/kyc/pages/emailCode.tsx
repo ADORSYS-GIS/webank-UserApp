@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { RequestToSendEmailOTP, RequestToVerifyEmailCode } from "../../services/keyManagement/requestService";
+import {
+  RequestToSendEmailOTP,
+  RequestToVerifyEmailCode,
+} from "../../services/keyManagement/requestService";
 
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -23,19 +26,19 @@ const EmailCode: React.FC = () => {
     }
   };
 
-    const resendOTP = async () => {
-      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-      if (emailRegex.test(email)) {
-        try {
-          await RequestToSendEmailOTP(email, accountCert);
-          navigate("/emailCode", { state: { email, accountCert } });
-        } catch (error) {
-          alert("Failed to send OTP. Please try again.");
-        }
-      } else {
-        alert("Please enter a valid email address.");
+  const resendOTP = async () => {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (emailRegex.test(email)) {
+      try {
+        await RequestToSendEmailOTP(email, accountCert);
+        navigate("/emailCode", { state: { email, accountCert } });
+      } catch (error) {
+        alert("Failed to send OTP. Please try again.");
       }
-    };
+    } else {
+      alert("Please enter a valid email address.");
+    }
+  };
 
   const handleVerify = async () => {
     const enteredCode = otp.join("");
