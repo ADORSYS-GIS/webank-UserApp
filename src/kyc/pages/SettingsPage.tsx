@@ -1,4 +1,3 @@
-// SettingsPage.tsx (second file)
 import React from "react";
 import {
   FaLifeRing,
@@ -25,14 +24,15 @@ const MenuItem: React.FC<MenuItemProps> = ({
   onClick,
 }) => {
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className="flex justify-between items-center p-4 transition-transform 
-                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer"
+      className="flex justify-between items-center p-4 transition-transform
+                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer w-full text-left"
     >
       <div className="flex items-center space-x-3">
         <div
-          className="w-10 h-10 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] 
+          className="w-10 h-10 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
                         rounded-full flex items-center justify-center text-white"
         >
           <Icon size={16} />
@@ -45,7 +45,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       <div className="text-gray-400">
         <FaChevronRight />
       </div>
-    </div>
+    </button>
   );
 };
 
@@ -72,7 +72,7 @@ const SettingsPage: React.FC = () => {
         <div className="mt-6 mb-8 bg-gradient-to-br from-white to-[#20B2AA]/10 rounded-xl shadow-lg p-6">
           <div className="flex items-center space-x-4">
             <div
-              className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] 
+              className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
                             rounded-full flex items-center justify-center text-2xl text-white font-bold"
             >
               U

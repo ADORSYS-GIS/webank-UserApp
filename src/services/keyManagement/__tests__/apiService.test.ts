@@ -100,15 +100,10 @@ describe("API Functions", () => {
   it("should call validateOTP API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { verified: true } });
 
-    const result = await validateOTP(
-      "+1234567890",
-      "123456",
-      "otpHashXYZ",
-      mockJwt,
-    );
+    const result = await validateOTP("+1234567890", "123456", mockJwt);
     expect(mockPost).toHaveBeenCalledWith(
       expect.stringContaining("/otp/validate"),
-      { phoneNumber: "+1234567890", otpInput: "123456", otpHash: "otpHashXYZ" },
+      { phoneNumber: "+1234567890", otpInput: "123456" },
       {
         headers: expect.objectContaining({
           Authorization: `Bearer ${mockJwt}`,
@@ -120,9 +115,9 @@ describe("API Functions", () => {
   it("should handle validateOTP API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
 
-    await expect(
-      validateOTP("+1234567890", "123456", "otpHashXYZ", mockJwt),
-    ).rejects.toThrow("Incorrect OTP");
+    await expect(validateOTP("+1234567890", "123456", mockJwt)).rejects.toThrow(
+      "Incorrect OTP",
+    );
   });
 
   it("should call createBankAccount API correctly", async () => {

@@ -1,17 +1,23 @@
-// InputEmail.tsx (fifth file)
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../hooks/useDisableScroll";
+import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
 
 const InputEmail: React.FC = () => {
   useDisableScroll();
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const accountCert = "your-account-cert"; // Replace with the actual account certificate
 
-  const handleProceed = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const handleProceed = async () => {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (emailRegex.test(email)) {
-      navigate("/emailCode");
+      try {
+        await RequestToSendEmailOTP(email, accountCert);
+        navigate("/emailCode", { state: { email, accountCert } });
+      } catch (error) {
+        alert("Failed to send OTP. Please try again.");
+      }
     } else {
       alert("Please enter a valid email address.");
     }
@@ -23,9 +29,10 @@ const InputEmail: React.FC = () => {
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
       {/* Back Icon */}
-      <div
-        className=" top-4 left-4 cursor-pointer p-2"
+      <button
         onClick={() => navigate(-1)}
+        className="absolute top-4 left-4 p-2 focus:outline-none"
+        aria-label="Go Back"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -41,10 +48,10 @@ const InputEmail: React.FC = () => {
             d="M10 19l-7-7m0 0l7-7m-7 7h18"
           />
         </svg>
-      </div>
+      </button>
 
       {/* Email Verification Content */}
-      <div className="w-full max-w-md p-6 mx-auto mt-5  rounded-2xl">
+      <div className="w-full max-w-md p-6 mx-auto mt-5 rounded-2xl">
         <h1 className="text-3xl font-bold mb-3">Email Verification</h1>
         <p className="text-gray-600 mb-4">
           Please enter a valid email address to receive a 6-digit code.
@@ -61,7 +68,7 @@ const InputEmail: React.FC = () => {
       </div>
 
       {/* Proceed Button at Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 p-4  ">
+      <div className="fixed bottom-0 left-0 right-0 p-4">
         <div className="max-w-md mx-auto">
           <button
             className="w-full py-3 bg-[#20B2AA] text-white font-semibold rounded-full shadow-md hover:bg-[#1C8C8A] transition"

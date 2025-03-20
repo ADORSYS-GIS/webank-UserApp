@@ -95,14 +95,12 @@ export const sendOTP = async (
 export const validateOTP = async (
   fullPhoneNumber: string,
   otp: string,
-  otpHash: string,
   jwtToken: string,
 ) => {
   // Create the request object with both phone number and public key
   const requestBody = {
     phoneNumber: fullPhoneNumber,
     otpInput: otp,
-    otpHash: otpHash,
   };
   const headers = {
     "Content-Type": "application/json",
@@ -274,5 +272,172 @@ export const WithdrawOffline = async (
   } catch (error) {
     console.error("Error withdrawing offline ", error);
     throw new Error("Failed to withdraw offline");
+  }
+};
+export const getOtps = async (jwtToken: string) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+  console.log(headers, "headers");
+
+  try {
+    // Send the GET request to retrieve OTPs
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/otp/pending`,
+      { headers },
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving otps:", error);
+    throw new Error("Failed to retrieve otps");
+  }
+};
+
+//Email
+
+export const sendEmailOTP = async (
+  email: string,
+  jwtToken: string,
+  publicKey: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    email,
+    publicKey,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/email/send-otp`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error sending email OTP:", error);
+    throw new Error("Failed to send email OTP");
+  }
+};
+
+export const verifyEmailCode = async (
+  email: string,
+  otp: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    email,
+    otp,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/email/verify-code`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying email code:", error);
+    throw new Error("Failed to verify email code");
+  }
+};
+
+//User Location
+export const getUserLocation = async (jwtToken: string) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/user/location`,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving user location:", error);
+    throw new Error("Failed to retrieve user location");
+  }
+};
+
+//Id Card
+export const storeKYCInfo = async (
+  fullName: string,
+  profession: string,
+  docNumber: string,
+  dateOfBirth: string,
+  currentRegion: string,
+  expiryDate: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    fullName,
+    profession,
+    idNumber: docNumber,
+    dateOfBirth,
+    currentRegion,
+    expiryDate,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/info`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error storing ID Card info:", error);
+    throw new Error("Failed to store ID Card info");
+  }
+};
+
+export const storeKycDocument = async (
+  frontId: string,
+  backId: string,
+  selfieId: string,
+  taxId: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    frontId,
+    backId,
+    selfieId,
+    taxId,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/documents`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error storing ID Card info:", error);
+    throw new Error("Failed to store ID Card info");
   }
 };

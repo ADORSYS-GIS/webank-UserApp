@@ -21,6 +21,9 @@ import IdentityVerificationPage from "./kyc/pages/IdentityVerificationPage";
 import IDCardForm from "./kyc/pages/IDCardForm";
 import DriverLicenseForm from "./kyc/pages/DriverLicenseForm";
 import PassportForm from "./kyc/pages/PassportForm";
+import TellerDashboard from "./pages/TellerPage";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -58,6 +61,10 @@ const App: React.FC = () => {
           path="/verification/driving-license"
           element={<DriverLicenseForm />}
         />
+        <Route path="/login" element={<Login />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/teller" element={<TellerDashboard />} />
+        </Route>
       </Routes>
     </HashRouter>
   );
