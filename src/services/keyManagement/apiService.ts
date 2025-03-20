@@ -315,7 +315,7 @@ export const sendEmailOTP = async (
 
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/email/send-otp`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/email-otp/send`,
       requestBody,
       { headers },
     );
@@ -343,7 +343,7 @@ export const verifyEmailCode = async (
 
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/email/verify-code`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/email-otp/validate`,
       requestBody,
       { headers },
     );
