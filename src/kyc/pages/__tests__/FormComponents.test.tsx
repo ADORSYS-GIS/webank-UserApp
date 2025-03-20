@@ -15,10 +15,6 @@ window.alert = vi.fn();
 
 describe("SelectWithPopup", () => {
 
-  beforeEach(() => {
-    indexedDB.deleteDatabase("yourDBName");
-  });
-
   const options = ["Option1", "Option2"];
 
   const renderSelect = () =>
