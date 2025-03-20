@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { RequestToVerifyEmailCode } from "../../services/keyManagement/requestService";
-import { toast, ToastContainer } from "react-toastify";
 
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -33,10 +32,9 @@ const EmailCode: React.FC = () => {
         accountCert,
       );
       console.log("Email code verified successfully:", response);
-      toast.success("Email code verified successfully");
       setShowSuccess(true);
     } catch (error) {
-      toast.error("Failed to verify email code");
+      alert("Invalid OTP. Please try again.");
     }
   };
 
@@ -130,7 +128,6 @@ const EmailCode: React.FC = () => {
           </div>
         </div>
       )}
-      <ToastContainer />
     </div>
   );
 };

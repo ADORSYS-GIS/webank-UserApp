@@ -8,7 +8,6 @@ import React, {
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
-import { toast, ToastContainer } from "react-toastify";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -84,11 +83,11 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         expiry,
         accountCert,
       );
-      toast.success("KYC submitted, You’re good to go!");
+      alert("Data submitted successfully");
       console.log(response);
     } catch (error) {
       console.error("Error submitting data:", error);
-      toast.error("Error submitting data, please try again later");
+      alert("Error submitting data, please try again later");
     }
     e.preventDefault();
     onSubmit(formData);
@@ -217,9 +216,7 @@ export const DateInput: React.FC<DateInputProps> = ({ label, fieldName }) => {
         className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] transition duration-200 ease-in-out"
         value={formData[fieldName] || ""}
         onChange={(e) => setFormField(fieldName, e.target.value)}
-        required
       />
-      <ToastContainer />
     </div>
   );
 };
@@ -249,7 +246,6 @@ export const TextInput: React.FC<TextInputProps> = ({
         className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] transition duration-200 ease-in-out"
         value={formData[fieldName] || ""}
         onChange={(e) => setFormField(fieldName, e.target.value)}
-        required
       />
     </div>
   );

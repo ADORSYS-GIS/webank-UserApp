@@ -88,5 +88,11 @@ describe("EmailCode Component", () => {
       fireEvent.change(inputs[index], { target: { value: digit } });
     });
     fireEvent.click(screen.getByText("Verify"));
+
+    await waitFor(() =>
+      expect(window.alert).toHaveBeenCalledWith(
+        "Invalid OTP. Please try again.",
+      ),
+    );
   });
 });

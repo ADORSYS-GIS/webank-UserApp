@@ -451,7 +451,7 @@ export const getKycRecords = async (jwtToken: string) => {
   try {
     // get the kyc records
     const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/info`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/infos`,
       { headers },
     );
 
