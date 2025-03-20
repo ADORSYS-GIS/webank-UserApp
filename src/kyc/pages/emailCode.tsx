@@ -1,6 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { RequestToVerifyEmailCode } from "../../services/keyManagement/requestService";
+import {
+  RequestToSendEmailOTP,
+  RequestToVerifyEmailCode,
+} from "../../services/keyManagement/requestService";
 
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -23,6 +26,20 @@ const EmailCode: React.FC = () => {
     }
   };
 
+  const resendOTP = async () => {
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (emailRegex.test(email)) {
+      try {
+        await RequestToSendEmailOTP(email, accountCert);
+        navigate("/emailCode", { state: { email, accountCert } });
+      } catch (error) {
+        alert("Failed to send OTP. Please try again.");
+      }
+    } else {
+      alert("Please enter a valid email address.");
+    }
+  };
+
   const handleVerify = async () => {
     const enteredCode = otp.join("");
     try {
@@ -31,8 +48,10 @@ const EmailCode: React.FC = () => {
         enteredCode,
         accountCert,
       );
-      console.log("Email code verified successfully:", response);
-      setShowSuccess(true);
+
+      if (response === "Webank email verified successfully") {
+        setShowSuccess(true);
+      }
     } catch (error) {
       alert("Invalid OTP. Please try again.");
     }
@@ -88,7 +107,7 @@ const EmailCode: React.FC = () => {
         </p>
         <button
           className="text-[#20B2AA] font-semibold hover:underline mb-6"
-          onClick={() => console.log("Resend OTP clicked")}
+          onClick={resendOTP}
         >
           Resend Code
         </button>
