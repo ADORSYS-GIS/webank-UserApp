@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
@@ -49,6 +50,52 @@ interface UserKYC {
   status: "PENDING" | "approved" | "rejected";
 }
 
+interface ImageModalProps {
+  selectedImage: string | null;
+  onClose: () => void;
+}
+
+const ImageModal = ({ selectedImage, onClose }: ImageModalProps) => {
+  if (!selectedImage) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full">
+        <div className="flex justify-between items-center p-4 border-b">
+          <h3 className="text-lg font-semibold">Document Preview</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 p-2"
+            aria-label="Close modal"
+          >
+            <FiX className="w-6 h-6" />
+          </button>
+        </div>
+        <div className="p-4 overflow-auto">
+          <img
+            src={selectedImage}
+            alt="Enlarged document"
+            className="max-w-full max-h-[75vh] object-contain mx-auto"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const getStatusClass = (status: string) => {
+  switch (status.toUpperCase()) {
+    case "PENDING":
+      return "bg-yellow-100 text-yellow-800";
+    case "APPROVED":
+      return "bg-green-100 text-green-800";
+    case "REJECTED":
+      return "bg-red-100 text-red-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+};
+
 export default function KYCDashboard() {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
@@ -75,7 +122,6 @@ export default function KYCDashboard() {
           ? infoResponse
           : JSON.parse(infoResponse || "[]");
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const validatedInfo = parsedInfo.map((item: any) => ({
           id: item.documentUniqueId || "",
           publicKeyHash: item.publicKeyHash || "",
@@ -114,26 +160,23 @@ export default function KYCDashboard() {
           status: parsedDocs.status || "PENDING",
         };
 
-        const mergedData = validatedInfo.map(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (infoItem: { publicKeyHash: any; info: any }) => ({
-            id: infoItem.publicKeyHash,
-            info: infoItem.info,
-            documents:
-              validatedDocs.id === infoItem.publicKeyHash
-                ? validatedDocs.documents
-                : {
-                    FrontID: "",
-                    BackID: "",
-                    Selfie: "",
-                    TaxDocument: "",
-                  },
-            status:
-              validatedDocs.id === infoItem.publicKeyHash
-                ? validatedDocs.status
-                : "PENDING",
-          }),
-        );
+        const mergedData = validatedInfo.map((infoItem: any) => ({
+          id: infoItem.publicKeyHash,
+          info: infoItem.info,
+          documents:
+            validatedDocs.id === infoItem.publicKeyHash
+              ? validatedDocs.documents
+              : {
+                  FrontID: "",
+                  BackID: "",
+                  Selfie: "",
+                  TaxDocument: "",
+                },
+          status:
+            validatedDocs.id === infoItem.publicKeyHash
+              ? validatedDocs.status
+              : "PENDING",
+        }));
 
         setUsers(mergedData);
       } catch (error) {
@@ -163,15 +206,7 @@ export default function KYCDashboard() {
         return;
       }
 
-      console.log("Updating KYC for publicKeyHash:", user.id);
-
-      const response = await RequestToUpdateKycStatus(
-        user.id,
-        status,
-        accountCert,
-      );
-
-      console.log("Update response:", response);
+      await RequestToUpdateKycStatus(user.id, status, accountCert);
 
       setUsers(
         users.map((user) => (user.id === userId ? { ...user, status } : user)),
@@ -185,36 +220,38 @@ export default function KYCDashboard() {
     }
   };
 
-  const ImageModal = () =>
-    selectedImage && (
-      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full">
-          <div className="flex justify-between items-center p-4 border-b">
-            <h3 className="text-lg font-semibold">Document Preview</h3>
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="text-gray-500 hover:text-gray-700 p-2"
-            >
-              <FiX className="w-6 h-6" />
-            </button>
-          </div>
-          <div className="p-4 overflow-auto">
-            <img
-              src={selectedImage}
-              alt="Enlarged document"
-              className="max-w-full max-h-[75vh] object-contain mx-auto"
-            />
-          </div>
+  const UserCard = ({ user }: { user: UserKYC }) => (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setSelectedUser(user)}
+      onKeyDown={(e) => e.key === "Enter" && setSelectedUser(user)}
+      className="bg-white rounded-xl shadow-sm p-6 cursor-pointer hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+      aria-label={`View ${user.info.fullName}'s KYC details`}
+    >
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-xl font-semibold">{user.info.fullName}</h2>
+          <p className="text-sm text-gray-500 mt-1">{user.info.profession}</p>
         </div>
+        <span
+          className={`px-3 py-1 rounded-full text-sm ${getStatusClass(user.status)}`}
+        >
+          {user.status}
+        </span>
       </div>
-    );
+    </div>
+  );
 
   if (loading)
     return <div className="p-8 text-center">Loading verifications...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <ImageModal />
+      <ImageModal
+        selectedImage={selectedImage}
+        onClose={() => setSelectedImage(null)}
+      />
       <div className="max-w-7xl mx-auto">
         {!selectedUser ? (
           <>
@@ -223,33 +260,7 @@ export default function KYCDashboard() {
             </h1>
             <div className="grid grid-cols-1 gap-4">
               {users.map((user) => (
-                <div
-                  key={user.id}
-                  onClick={() => setSelectedUser(user)}
-                  className="bg-white rounded-xl shadow-sm p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h2 className="text-xl font-semibold">
-                        {user.info.fullName}
-                      </h2>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {user.info.profession}
-                      </p>
-                    </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        user.status === "PENDING"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : user.status === "approved"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {user.status}
-                    </span>
-                  </div>
-                </div>
+                <UserCard key={user.id} user={user} />
               ))}
             </div>
           </>
@@ -258,6 +269,7 @@ export default function KYCDashboard() {
             <button
               onClick={() => setSelectedUser(null)}
               className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-800"
+              aria-label="Return to previous screen"
             >
               <FiArrowLeft className="w-5 h-5" />
               <span>Back to Pending Profiles</span>
@@ -274,13 +286,7 @@ export default function KYCDashboard() {
                   </p>
                 </div>
                 <span
-                  className={`px-3 py-1 rounded-full text-sm ${
-                    selectedUser.status === "PENDING"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : selectedUser.status === "approved"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                  }`}
+                  className={`px-3 py-1 rounded-full text-sm ${getStatusClass(selectedUser.status)}`}
                 >
                   {selectedUser.status}
                 </span>
@@ -424,10 +430,20 @@ const DocumentCard = ({
     document.body.removeChild(link);
   };
 
+  const handleClick = () => {
+    if (url && onImageClick) {
+      onImageClick(url);
+    }
+  };
+
   return (
     <div
-      className="bg-gray-50 rounded-lg p-4 h-50 flex flex-col cursor-pointer"
-      onClick={() => url && onImageClick?.(url)}
+      role="button"
+      tabIndex={0}
+      className="bg-gray-50 rounded-lg p-4 h-50 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+      onClick={handleClick}
+      onKeyDown={(e) => e.key === "Enter" && handleClick()}
+      aria-label={`View ${title} document`}
     >
       <div className="flex justify-between items-center mb-2">
         <p className="text-sm font-medium text-gray-700">{title}</p>
@@ -435,6 +451,7 @@ const DocumentCard = ({
           onClick={handleDownload}
           className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200"
           title="Download document"
+          aria-label={`Download ${title}`}
         >
           <FiDownload className="w-4 h-4" />
         </button>
@@ -452,6 +469,7 @@ const DocumentCard = ({
             <button
               onClick={handleDownload}
               className="text-sm text-blue-600 hover:text-blue-800 underline"
+              aria-label={`Download ${title} PDF`}
             >
               Download PDF
             </button>
