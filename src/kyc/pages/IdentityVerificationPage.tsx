@@ -15,6 +15,7 @@ import VerificationModal from "../components/VerificationModal";
 import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
+import { ToastContainer } from "react-toastify";
 
 interface VerificationStep {
   id: number;
@@ -90,8 +91,7 @@ export default function IdentityVerification() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUrl = reader.result as string;
-        const base64 = dataUrl.split(",")[1];
-        resolve(base64);
+        resolve(dataUrl);
       };
       reader.onerror = reject;
       reader.readAsDataURL(file);
@@ -236,6 +236,7 @@ export default function IdentityVerification() {
           onClose={() => setShowVerificationModalPopup(false)}
         />
       )}
+      <ToastContainer />
     </div>
   );
 }
