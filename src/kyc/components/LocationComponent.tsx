@@ -12,43 +12,56 @@ interface GeoLocation {
 const LocationComponent = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [location, setLocation] = useState<GeoLocation | null>(null);
+  const [, setLocation] = useState<GeoLocation | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
 
-  // Function to send location to backend
-  const sendToBackend = async (coords: GeoLocation) => {
+  const sendToBackend = async (coords: GeoLocation): Promise<boolean> => {
     if (!accountCert) {
       console.error("Account certificate is missing");
-      return;
+      return false;
     }
 
     const location = `${coords.lat},${coords.lng}`;
     try {
       await RequestToGetUserLocation(accountCert, location);
       console.log("Location sent successfully");
-      navigate("/dashboard");
+      return true;
     } catch (error) {
       console.error("Error sending location to backend:", error);
       setError("Failed to send location. Please try again.");
+      return false;
     }
   };
 
   const handleContinue = () => {
     setIsLoading(true);
     setError(null);
+    setSuccessMessage(null);
     // prettier-ignore
-    navigator.geolocation.getCurrentPosition( //NOSONAR
-      (position) => {
+    navigator.geolocation.getCurrentPosition( //NoSONAR
+      async (position) => {
         const coords = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-        console.log("Coordinates:", coords);
         setLocation(coords);
-        sendToBackend(coords);
+        try {
+          const success = await sendToBackend(coords);
+          if (success) {
+            setSuccessMessage("Location verified successfully! Redirecting...");
+            setTimeout(() => {
+              navigate("/settings");
+            }, 3000);
+          }
+        } catch (error) {
+          console.error("Unexpected error:", error);
+        } finally {
+          setIsLoading(false);
+        }
       },
       (err) => {
         console.error("Geolocation error:", err);
@@ -93,6 +106,12 @@ const LocationComponent = () => {
           </div>
         )}
 
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+            {successMessage}
+          </div>
+        )}
+
         <div className="flex flex-col space-y-4">
           <button
             onClick={handleContinue}
@@ -110,18 +129,6 @@ const LocationComponent = () => {
             Cancel
           </button>
         </div>
-
-        {location && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-md">
-            <p className="text-sm text-gray-600">
-              Retrieved location: {""}
-              <span className="block font-mono mt-1">
-                Latitude: {location.lat.toFixed(6)}, Longitude:{" "}
-                {location.lng.toFixed(6)}
-              </span>
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
