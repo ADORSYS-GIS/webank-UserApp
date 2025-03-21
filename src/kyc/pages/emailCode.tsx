@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux"; // Import useDispatch
+import { setStatus } from "../../slices/accountSlice"; // Import setStatus action
 import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
@@ -8,6 +10,7 @@ import {
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [showSuccess, setShowSuccess] = useState(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { email, accountCert } = location.state || {};
@@ -50,11 +53,12 @@ const EmailCode: React.FC = () => {
       );
 
       if (response === "Webank email verified successfully") {
+        dispatch(setStatus("PENDING")); 
         setShowSuccess(true);
       }
     } catch (error) {
       alert("Invalid OTP. Please try again.");
-    }
+    }// Set Redux status to PENDING
   };
 
   return (
