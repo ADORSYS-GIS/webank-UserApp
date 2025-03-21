@@ -5,11 +5,14 @@ import {
 } from "../services/keyManagement/requestService";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/Store";
 
 const ConfirmationPage: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
+  const kycCert = useSelector((state: RootState) => state.account.kycCert);
 
   // Check if state exists; if not, redirect to top-up page
   if (!location.state) {
@@ -70,7 +73,7 @@ const ConfirmationPage: React.FC = () => {
           clientAccountId,
           amount,
           agentAccountId,
-          agentAccountCert,
+          kycCert,
         );
         if (response?.includes("Success")) {
           const transactionCert = response.replace(" Success", "");
@@ -98,7 +101,7 @@ const ConfirmationPage: React.FC = () => {
         clientAccountId,
         amount,
         agentAccountId,
-        agentAccountCert,
+        kycCert,
         transactionJwt,
       );
       if (response?.includes("Success")) {

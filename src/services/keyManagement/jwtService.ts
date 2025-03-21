@@ -12,6 +12,7 @@ export async function generateJWT(
   phoneNumberJwt?: string | null,
   accountJwt?: string | null,
   transactionJwt?: string | null,
+  kycJwt?: string | null,
   ...data: Array<string | number>
 ): Promise<string> {
   // Hash the payload
@@ -51,6 +52,10 @@ export async function generateJWT(
     }
     if (transactionJwt) {
       header["transactionJwt"] = transactionJwt;
+    }
+
+    if (kycJwt) {
+      header["kycJwt"] = kycJwt;
     }
 
     // Sign the JWT with the private key and custom header
