@@ -12,7 +12,7 @@ interface GeoLocation {
 const LocationComponent = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [, setLocation] = useState<GeoLocation | null>(null);
+  const [location, setLocation] = useState<GeoLocation | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const accountCert = useSelector(
@@ -110,6 +110,13 @@ const LocationComponent = () => {
           <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
             {successMessage}
           </div>
+        )}
+
+        {/* ✅ Hidden location data */}
+        {location && (
+          <p className="hidden">
+            Your location: {location.lat}, {location.lng}
+          </p>
         )}
 
         <div className="flex flex-col space-y-4">

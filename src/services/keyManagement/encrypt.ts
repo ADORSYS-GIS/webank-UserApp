@@ -42,7 +42,7 @@ export async function decryptPrivateKey(encryptedPriv: {
   jwe: string;
   salt: number[];
 }) {
-  const password = await PasswordManager.getPassword();
+  const password = PasswordManager.getPassword();
   const salt = new Uint8Array(encryptedPriv.salt);
 
   const keyMaterial = await window.crypto.subtle.importKey(
