@@ -363,7 +363,14 @@ export async function RequestToStoreKYCInfo(
     null,
     accountCert,
     null,
+    fullName,
+    profession,
+    docNumber,
+    dateOfBirth,
+    currentRegion,
+    expiryDate,
   );
+  console.log(jwtToken, "kyc store");
   return await storeKYCInfo(
     fullName,
     profession,
@@ -391,6 +398,10 @@ export async function RequestToStoreKycDocument(
     null,
     accountCert,
     null,
+    frontId,
+    backId,
+    selfieId,
+    taxId,
   );
   return await storeKycDocument(frontId, backId, selfieId, taxId, jwtToken);
 }

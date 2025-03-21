@@ -51,7 +51,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     [formData, setFormField],
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     console.log("ID Card Form Data:", formData);
     //extract data from all fields in formData variable
     const fullName = formData["fullName"];
@@ -84,8 +84,9 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         expiry,
         accountCert,
       );
-      toast.success("Data submitted successfully");
-      console.log(response);
+      if ((await response) === "KYC Info sent successfully and saved.") {
+        toast.success("KYC Info sent successfully and saved.");
+      } else toast.error("Error submitting data, please try again later");
     } catch (error) {
       console.error("Error submitting data:", error);
       toast.error("Error submitting data, please try again later");
