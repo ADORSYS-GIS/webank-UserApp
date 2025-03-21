@@ -115,7 +115,7 @@ describe("Dashboard", () => {
     );
 
     // Click the "View Last Transactions" button to fetch and display transactions
-    const viewTransactionsButton = screen.getByText("View Last Transactions");
+    const viewTransactionsButton = screen.getByText("View Allq Transactions");
     viewTransactionsButton.click();
 
     // Wait for the transactions to be rendered
