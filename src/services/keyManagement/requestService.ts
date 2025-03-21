@@ -20,6 +20,7 @@ import {
   getKycRecords,
   UpdateKycStatus,
   getKycDocuments,
+  getKycCert,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -330,7 +331,6 @@ export async function RequestToVerifyEmailCode(
 //Request to get user Location
 export async function RequestToGetUserLocation(
   accountCert: string | null,
-  location: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
   const jwtToken = await generateJWT(
@@ -340,9 +340,8 @@ export async function RequestToGetUserLocation(
     null,
     accountCert,
     null,
-    location,
   );
-  return await getUserLocation(jwtToken, location);
+  return await getUserLocation(jwtToken);
 }
 
 export async function RequestToStoreKYCInfo(
@@ -394,7 +393,7 @@ export async function RequestToStoreKycDocument(
   return await storeKycDocument(frontId, backId, selfieId, taxId, jwtToken);
 }
 
-// Function to get otps for phonenumbers
+// Function to get kyc records
 export async function RequestToGetKycRecords(
   accountCert?: string | null,
 ): Promise<string> {
@@ -456,5 +455,24 @@ export async function RequestToUpdateKycStatus(
   );
   console.log(jwtToken + "Account Cert!!!");
   return await UpdateKycStatus(publicKeyHash, status, jwtToken);
+}
+
+export async function RequestToGetCert(
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getKycCert(jwtToken);
 }
 export const getKey = () => Key;
