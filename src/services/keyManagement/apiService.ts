@@ -355,29 +355,21 @@ export const verifyEmailCode = async (
 };
 
 //User Location
-// User Location API Call
-export const getUserLocation = async (jwtToken: string, location: string) => {
+export const getUserLocation = async (jwtToken: string) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
 
-  const requestBody = {
-    location,
-  };
-
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/location`,
-      requestBody,
+      `${envVariables.VITE_WEBANK_PRS_URL}/user/location`,
       { headers },
     );
-    console.log(response.data);
-    console.log(requestBody, "requestBody");
     return response.data;
   } catch (error) {
-    console.error("Error sending user location:", error);
-    throw new Error("Failed to send user location");
+    console.error("Error retrieving user location:", error);
+    throw new Error("Failed to retrieve user location");
   }
 };
 
@@ -525,5 +517,26 @@ export const UpdateKycStatus = async (
   } catch (error) {
     console.error("Error updating KYC status:", error);
     throw new Error("Failed to update KYC status");
+  }
+};
+
+export const getKycCert = async (jwtToken: string) => {
+  const headers = {
+    Authorization: `Bearer ${jwtToken}`,
+  };
+  console.log(headers, "headers");
+
+  try {
+    // get the kyc Cert
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/cert`,
+      { headers },
+    );
+
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving kyc Cert:", error);
+    throw new Error("Failed to retrieve kyc Cert");
   }
 };
