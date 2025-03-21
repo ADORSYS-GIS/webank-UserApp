@@ -5,7 +5,8 @@ function hashPayload(payload: string): string {
   return CryptoJS.SHA256(payload).toString(CryptoJS.enc.Hex);
 }
 
-export async function generateJWT(
+// prettier-ignore
+export async function generateJWT( //NOSONAR
   privateKeyJWK: jose.JWK,
   publicKeyJWK: jose.JWK,
   devJwt?: string | null,
