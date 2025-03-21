@@ -1,19 +1,28 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../store/Store";
+import { toast } from "react-toastify";
+
 
 interface ActionButtonsProps {
   accountId: string | undefined; // Ensure it's correctly typed
   accountCert: string | undefined;
 }
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({
-  accountId,
-  accountCert,
-}) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ accountId, accountCert }) => {
   const navigate = useNavigate();
+  const kycCert = useSelector((state: RootState) => state.account.kycCert);
 
-  // Function to handle the "Top Up" button click
-  const handleTopUpClick = () => {
+  const handleActionClick = (callback: () => void) => {
+    if (kycCert === null) {
+      toast.warning("Please complete the KYC process to proceed.");
+      return;
+    }
+    callback();
+  };
+
+  const handleTopUpClick = () => handleActionClick(() => {
     navigate("/top-up", {
       state: {
         show: "Top up",
@@ -23,16 +32,16 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
       },
     });
     console.log("Top Up button clicked", accountId);
-  };
+  });
 
-  const handleWithdrawClick = () => {
+  const handleWithdrawClick = () => handleActionClick(() => {
     navigate("/qr-scan", {
       state: { clientAccountId: accountId, clientAccountCert: accountCert },
     });
-    console.log("withdrawal", accountId);
-  };
+    console.log("Withdrawal", accountId);
+  });
 
-  const handleTransferClick = () => {
+  const handleTransferClick = () => handleActionClick(() => {
     navigate("/qr-scan", {
       state: {
         clientAccountId: accountId,
@@ -40,10 +49,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
         show: "Transfer",
       },
     });
-    console.log("withdrawal", accountId);
-  };
+    console.log("Transfer", accountId);
+  });
 
-  const handlePayClick = () => {
+  const handlePayClick = () => handleActionClick(() => {
     navigate("/qr-scan", {
       state: {
         clientAccountId: accountId,
@@ -52,7 +61,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
       },
     });
     console.log("Payment", accountId);
-  };
+  });
+
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
