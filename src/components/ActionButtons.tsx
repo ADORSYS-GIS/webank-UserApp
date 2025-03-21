@@ -1,5 +1,8 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../store/Store";
+import { toast } from "react-toastify";
 
 interface ActionButtonsProps {
   accountId: string | undefined; // Ensure it's correctly typed
@@ -11,48 +14,60 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   accountCert,
 }) => {
   const navigate = useNavigate();
+  const kycCert = useSelector((state: RootState) => state.account.kycCert);
 
-  // Function to handle the "Top Up" button click
-  const handleTopUpClick = () => {
-    navigate("/top-up", {
-      state: {
-        show: "Top up",
-        clientAccountId: accountId,
-        clientAccountCert: accountCert,
-        isClientOnline: true,
-      },
-    });
-    console.log("Top Up button clicked", accountId);
+  const handleActionClick = (callback: () => void) => {
+    if (kycCert === null) {
+      toast.warning("Please complete the KYC process to proceed.");
+      return;
+    }
+    callback();
   };
 
-  const handleWithdrawClick = () => {
-    navigate("/qr-scan", {
-      state: { clientAccountId: accountId, clientAccountCert: accountCert },
+  const handleTopUpClick = () =>
+    handleActionClick(() => {
+      navigate("/top-up", {
+        state: {
+          show: "Top up",
+          clientAccountId: accountId,
+          clientAccountCert: accountCert,
+          isClientOnline: true,
+        },
+      });
+      console.log("Top Up button clicked", accountId);
     });
-    console.log("withdrawal", accountId);
-  };
 
-  const handleTransferClick = () => {
-    navigate("/qr-scan", {
-      state: {
-        clientAccountId: accountId,
-        clientAccountCert: accountCert,
-        show: "Transfer",
-      },
+  const handleWithdrawClick = () =>
+    handleActionClick(() => {
+      navigate("/qr-scan", {
+        state: { clientAccountId: accountId, clientAccountCert: accountCert },
+      });
+      console.log("Withdrawal", accountId);
     });
-    console.log("withdrawal", accountId);
-  };
 
-  const handlePayClick = () => {
-    navigate("/qr-scan", {
-      state: {
-        clientAccountId: accountId,
-        clientAccountCert: accountCert,
-        show: "Payment",
-      },
+  const handleTransferClick = () =>
+    handleActionClick(() => {
+      navigate("/qr-scan", {
+        state: {
+          clientAccountId: accountId,
+          clientAccountCert: accountCert,
+          show: "Transfer",
+        },
+      });
+      console.log("Transfer", accountId);
     });
-    console.log("Payment", accountId);
-  };
+
+  const handlePayClick = () =>
+    handleActionClick(() => {
+      navigate("/qr-scan", {
+        state: {
+          clientAccountId: accountId,
+          clientAccountCert: accountCert,
+          show: "Payment",
+        },
+      });
+      console.log("Payment", accountId);
+    });
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

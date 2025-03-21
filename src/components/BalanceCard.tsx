@@ -17,7 +17,6 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
 }) => {
   return (
     <div className="bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg p-6 shadow-lg mb-6">
-      <h2 className="text-3xl font-bold text-white">Webank</h2>
       <h3 className="text-sm mt-2 text-white">Current Balance</h3>
       <div className="flex items-center mt-1">
         <p className="text-4xl font-bold text-white">

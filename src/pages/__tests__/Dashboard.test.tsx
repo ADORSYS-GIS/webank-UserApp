@@ -39,6 +39,8 @@ const mockStore = createStore(rootReducer, {
   account: {
     accountId: "12345", // Mock accountId
     accountCert: "cert123", // Mock accountCert
+    status: null, // KYC Status
+    kycCert: null,
   },
 });
 
@@ -115,7 +117,7 @@ describe("Dashboard", () => {
     );
 
     // Click the "View Last Transactions" button to fetch and display transactions
-    const viewTransactionsButton = screen.getByText("View Last Transactions");
+    const viewTransactionsButton = screen.getByText("View All Transactions");
     viewTransactionsButton.click();
 
     // Wait for the transactions to be rendered

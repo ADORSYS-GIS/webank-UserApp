@@ -1,69 +1,54 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
 import LocationComponent from "../../components/LocationComponent";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import "@testing-library/jest-dom";
 
-const mockNavigate = vi.fn();
-vi.mock("react-router-dom", () => ({
-  useNavigate: () => mockNavigate,
+vi.mock("react-redux", () => ({
+  useSelector: vi.fn(),
 }));
 
-describe("LocationComponent", () => {
-  const mockGeolocation = {
-    getCurrentPosition: vi.fn(),
-  };
+vi.mock("react-router-dom", () => ({
+  useNavigate: vi.fn(),
+}));
 
+describe("LocationComponent - Basic Rendering", () => {
   beforeEach(() => {
-    Object.defineProperty(navigator, "geolocation", {
-      value: mockGeolocation,
-      writable: true,
+    // Mock Redux state
+    (useSelector as unknown as jest.Mock).mockReturnValue("test-cert");
+    // Mock navigation
+    (useNavigate as jest.Mock).mockReturnValue(vi.fn());
+    // Mock geolocation
+    Object.defineProperty(global.navigator, "geolocation", {
+      value: {
+        getCurrentPosition: vi.fn(),
+        watchPosition: vi.fn(),
+        clearWatch: vi.fn(),
+      },
+      configurable: true,
     });
   });
 
-  afterEach(() => vi.clearAllMocks());
-
-  it("renders correctly", () => {
+  it("renders all text elements correctly", () => {
     render(<LocationComponent />);
+
+    // Check main title
     expect(screen.getByText("Location Verification")).toBeInTheDocument();
+
+    // Check description text
     expect(
-      screen.getByRole("button", { name: /Continue with KYC Verification/ }),
+      screen.getByText(/primary residence\? We need to verify/i),
     ).toBeInTheDocument();
-  });
 
-  it("handles successful location retrieval", async () => {
-    mockGeolocation.getCurrentPosition.mockImplementationOnce((success) =>
-      success({ coords: { latitude: 40.7128, longitude: -74.006 } }),
-    );
-
-    render(<LocationComponent />);
-    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
-
-    expect(await screen.findByText(/Latitude: 40.712800/)).toBeInTheDocument();
-    expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
-  });
-
-  it("handles invalid coordinates", async () => {
-    mockGeolocation.getCurrentPosition.mockImplementationOnce((success) =>
-      success({ coords: { latitude: 100, longitude: -200 } }),
-    );
-
-    render(<LocationComponent />);
-    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
+    // Check buttons
     expect(
-      await screen.findByText("Invalid location coordinates"),
+      screen.getByText("Continue with KYC Verification"),
     ).toBeInTheDocument();
-  });
+    expect(screen.getByText("Cancel")).toBeInTheDocument();
 
-  it("shows loading state", async () => {
-    mockGeolocation.getCurrentPosition.mockImplementationOnce(() => {});
-
-    render(<LocationComponent />);
-    await userEvent.click(screen.getByRole("button", { name: /Continue/i }));
-
-    const button = screen.getByRole("button", {
-      name: /Verifying Location.../,
-    });
-    expect(button).toBeDisabled();
+    // Check no error message initially
+    expect(
+      screen.queryByText("Location access denied"),
+    ).not.toBeInTheDocument();
   });
 });

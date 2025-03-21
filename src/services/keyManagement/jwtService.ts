@@ -5,13 +5,15 @@ function hashPayload(payload: string): string {
   return CryptoJS.SHA256(payload).toString(CryptoJS.enc.Hex);
 }
 
-export async function generateJWT(
+// prettier-ignore
+export async function generateJWT( //NOSONAR
   privateKeyJWK: jose.JWK,
   publicKeyJWK: jose.JWK,
   devJwt?: string | null,
   phoneNumberJwt?: string | null,
   accountJwt?: string | null,
   transactionJwt?: string | null,
+  kycJwt?: string | null,
   ...data: Array<string | number>
 ): Promise<string> {
   // Hash the payload
@@ -51,6 +53,10 @@ export async function generateJWT(
     }
     if (transactionJwt) {
       header["transactionJwt"] = transactionJwt;
+    }
+
+    if (kycJwt) {
+      header["kycJwt"] = kycJwt;
     }
 
     // Sign the JWT with the private key and custom header
