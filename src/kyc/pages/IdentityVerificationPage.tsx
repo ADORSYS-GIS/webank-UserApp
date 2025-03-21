@@ -126,9 +126,11 @@ export default function IdentityVerification() {
         accountCert,
       );
 
-      if (response == "KYC Document sent successfully ") {
+      if (response === "KYC Document sent successfully and saved") {
         toast.success("KYC Document submitted successfully");
-        navigate("/dashboard");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
       } else {
         toast.error("Error submitting KYC, please try again later");
       }

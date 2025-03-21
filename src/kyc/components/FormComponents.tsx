@@ -9,6 +9,7 @@ import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestServi
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -38,6 +39,8 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+
+  const navigate = useNavigate();
 
   const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
@@ -86,6 +89,9 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       );
       if ((await response) === "KYC Info sent successfully and saved.") {
         toast.success("KYC Info sent successfully and saved.");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
       } else toast.error("Error submitting data, please try again later");
     } catch (error) {
       console.error("Error submitting data:", error);
