@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/Store";
 
 const InputEmail: React.FC = () => {
   useDisableScroll();
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const accountCert = "your-account-cert"; // Replace with the actual account certificate
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
 
   const handleProceed = async () => {
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
