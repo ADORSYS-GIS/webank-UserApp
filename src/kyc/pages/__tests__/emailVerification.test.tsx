@@ -84,7 +84,9 @@ describe("InputEmail Component", () => {
     fireEvent.change(emailInput, { target: { value: "invalid-email" } });
     fireEvent.click(proceedButton);
 
-    const errorMessage = await screen.findByText("Please enter a valid email address.");
+    const errorMessage = await screen.findByText(
+      "Please enter a valid email address.",
+    );
     expect(errorMessage).toBeInTheDocument();
   });
 

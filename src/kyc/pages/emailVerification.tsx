@@ -73,7 +73,7 @@ const InputEmail: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          
+
           {/* Desktop-only proceed button */}
           <div className="hidden md:block">
             <button
@@ -97,7 +97,7 @@ const InputEmail: React.FC = () => {
           </button>
         </div>
       </footer>
-      
+
       <ToastContainer />
     </div>
   );
