@@ -7,16 +7,22 @@ import { RequestToGetCert } from "../../services/keyManagement/requestService";
 const KycCertChecker = () => {
   const dispatch = useDispatch();
   const status = useSelector((state: RootState) => state.account.status);
-  const accountCert = useSelector((state: RootState) => state.account.accountCert);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
 
   useEffect(() => {
     // If status is null, approved, or rejected, stop execution
     if (status === null || status === "APPROVED" || status === "REJECTED") {
-      console.log("[KycCertChecker] Status is null, APPROVED, or REJECTED. Stopping execution.");
+      console.log(
+        "[KycCertChecker] Status is null, APPROVED, or REJECTED. Stopping execution.",
+      );
       return;
     }
 
-    console.log("[KycCertChecker] Status is PENDING, starting certificate polling...");
+    console.log(
+      "[KycCertChecker] Status is PENDING, starting certificate polling...",
+    );
 
     const interval = setInterval(async () => {
       console.log("[KycCertChecker] Sending request to get certificate...");
@@ -28,17 +34,25 @@ const KycCertChecker = () => {
         if (response && typeof response === "string") {
           if (response.includes("certificate")) {
             // Extract the certificate by trimming the response
-            const certificate = response.split("certificate").pop()?.trim();
+            const certificate = response
+              .replace("Your certificate is:", "")
+              .trim();
 
             if (certificate) {
-              console.log("[KycCertChecker] Certificate found. Updating Redux state...");
+              console.log(
+                "[KycCertChecker] Certificate found. Updating Redux state...",
+              );
               dispatch(setKycCert(certificate)); // Store the certificate in Redux
               dispatch(setStatus("APPROVED")); // Change status to APPROVED
               clearInterval(interval); // Stop making requests
-              console.log("[KycCertChecker] Polling stopped as certificate is received.");
+              console.log(
+                "[KycCertChecker] Polling stopped as certificate is received.",
+              );
             }
           } else if (response === "null") {
-            console.log("[KycCertChecker] Response is null. Continuing polling...");
+            console.log(
+              "[KycCertChecker] Response is null. Continuing polling...",
+            );
           }
         }
       } catch (error) {
@@ -47,7 +61,9 @@ const KycCertChecker = () => {
     }, 30 * 1000); // Runs every 30 seconds
 
     return () => {
-      console.log("[KycCertChecker] Cleaning up interval on component unmount.");
+      console.log(
+        "[KycCertChecker] Cleaning up interval on component unmount.",
+      );
       clearInterval(interval);
     };
   }, [status, accountCert, dispatch]);

@@ -4,6 +4,7 @@ import useDisableScroll from "../../hooks/useDisableScroll";
 import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
+import { toast, ToastContainer } from "react-toastify";
 
 const InputEmail: React.FC = () => {
   useDisableScroll();
@@ -20,10 +21,10 @@ const InputEmail: React.FC = () => {
         await RequestToSendEmailOTP(email, accountCert);
         navigate("/emailCode", { state: { email, accountCert } });
       } catch (error) {
-        alert("Failed to send OTP. Please try again.");
+        toast.error("Failed to send OTP. Please try again.");
       }
     } else {
-      alert("Please enter a valid email address.");
+      toast.error("Please enter a valid email address.");
     }
   };
 
@@ -82,6 +83,7 @@ const InputEmail: React.FC = () => {
           </button>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

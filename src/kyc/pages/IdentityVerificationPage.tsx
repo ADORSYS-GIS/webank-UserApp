@@ -15,7 +15,7 @@ import VerificationModal from "../components/VerificationModal";
 import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 interface VerificationStep {
   id: number;
@@ -106,7 +106,7 @@ export default function IdentityVerification() {
   const handleSubmit = async () => {
     // Check if all files are uploaded
     if (!frontIdFile || !backIdFile || !selfieIdFile || !taxpayerIdFile) {
-      alert("Please upload all required documents");
+      toast.warn("Please upload all required documents");
       return;
     }
 
@@ -126,11 +126,11 @@ export default function IdentityVerification() {
         accountCert,
       );
 
-      alert("KYC submitted, You’re good to go!");
+      toast.success("KYC submitted, You’re good to go!");
       console.log("Response from server:", response);
     } catch (error) {
       console.error("Error submitting KYC:", error);
-      alert("Error submitting KYC, please try again later");
+      toast.error("Error submitting KYC, please try again later");
     }
   };
 

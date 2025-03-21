@@ -8,6 +8,7 @@ import React, {
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
+import { toast, ToastContainer } from "react-toastify";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -83,11 +84,11 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         expiry,
         accountCert,
       );
-      alert("Data submitted successfully");
+      toast.success("Data submitted successfully");
       console.log(response);
     } catch (error) {
       console.error("Error submitting data:", error);
-      alert("Error submitting data, please try again later");
+      toast.error("Error submitting data, please try again later");
     }
     e.preventDefault();
     onSubmit(formData);
@@ -247,6 +248,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         value={formData[fieldName] || ""}
         onChange={(e) => setFormField(fieldName, e.target.value)}
       />
+      <ToastContainer />
     </div>
   );
 };

@@ -355,21 +355,29 @@ export const verifyEmailCode = async (
 };
 
 //User Location
-export const getUserLocation = async (jwtToken: string) => {
+// User Location API Call
+export const getUserLocation = async (jwtToken: string, location: string) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
 
+  const requestBody = {
+    location,
+  };
+
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/user/location`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/location`,
+      requestBody,
       { headers },
     );
+    console.log(response.data);
+    console.log(requestBody, "requestBody");
     return response.data;
   } catch (error) {
-    console.error("Error retrieving user location:", error);
-    throw new Error("Failed to retrieve user location");
+    console.error("Error sending user location:", error);
+    throw new Error("Failed to send user location");
   }
 };
 

@@ -29,7 +29,10 @@ const accountSlice = createSlice({
       state.accountCert = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },
-    setStatus: (state, action: PayloadAction<"PENDING" | "APPROVED" | "REJECTED">) => {
+    setStatus: (
+      state,
+      action: PayloadAction<"PENDING" | "APPROVED" | "REJECTED">,
+    ) => {
       state.status = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },
@@ -49,8 +52,13 @@ const accountSlice = createSlice({
 });
 
 // Export actions
-export const { setAccountId, setAccountCert, setStatus, setKycCert, clearAccount } =
-  accountSlice.actions;
+export const {
+  setAccountId,
+  setAccountCert,
+  setStatus,
+  setKycCert,
+  clearAccount,
+} = accountSlice.actions;
 
 // Export the reducer
 export default accountSlice.reducer;

@@ -331,6 +331,7 @@ export async function RequestToVerifyEmailCode(
 //Request to get user Location
 export async function RequestToGetUserLocation(
   accountCert: string | null,
+  location: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
   const jwtToken = await generateJWT(
@@ -340,8 +341,9 @@ export async function RequestToGetUserLocation(
     null,
     accountCert,
     null,
+    location,
   );
-  return await getUserLocation(jwtToken);
+  return await getUserLocation(jwtToken, location);
 }
 
 export async function RequestToStoreKYCInfo(
@@ -393,7 +395,7 @@ export async function RequestToStoreKycDocument(
   return await storeKycDocument(frontId, backId, selfieId, taxId, jwtToken);
 }
 
-// Function to get kyc records
+// Function to get otps for phonenumbers
 export async function RequestToGetKycRecords(
   accountCert?: string | null,
 ): Promise<string> {

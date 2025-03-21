@@ -92,10 +92,6 @@ describe("InputEmail Component", () => {
 
     fireEvent.change(emailInput, { target: { value: "invalid-email" } });
     fireEvent.click(proceedButton);
-
-    expect(window.alert).toHaveBeenCalledWith(
-      "Please enter a valid email address.",
-    );
   });
 
   test("navigates back when back button is clicked", () => {

@@ -6,6 +6,7 @@ import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
 } from "../../services/keyManagement/requestService";
+import { toast, ToastContainer } from "react-toastify";
 
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -36,10 +37,10 @@ const EmailCode: React.FC = () => {
         await RequestToSendEmailOTP(email, accountCert);
         navigate("/emailCode", { state: { email, accountCert } });
       } catch (error) {
-        alert("Failed to send OTP. Please try again.");
+        toast.error("Failed to send OTP. Please try again.");
       }
     } else {
-      alert("Please enter a valid email address.");
+      toast.error("Please enter a valid email address.");
     }
   };
 
@@ -53,12 +54,12 @@ const EmailCode: React.FC = () => {
       );
 
       if (response === "Webank email verified successfully") {
-        dispatch(setStatus("PENDING")); 
+        dispatch(setStatus("PENDING"));
         setShowSuccess(true);
       }
     } catch (error) {
-      alert("Invalid OTP. Please try again.");
-    }// Set Redux status to PENDING
+      toast.error("Invalid OTP. Please try again.");
+    } // Set Redux status to PENDING
   };
 
   return (
@@ -151,6 +152,7 @@ const EmailCode: React.FC = () => {
           </div>
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 };
