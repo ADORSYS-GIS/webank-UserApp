@@ -9,7 +9,6 @@ export class PasswordManager {
   private static isAuthenticating = false;
 
   static async initializeDOMElements() {
-    console.log("🛠 Initializing required DOM elements...");
     if (!document.querySelector("#messageInput")) {
       const input = document.createElement("input");
       input.type = "hidden";
@@ -23,52 +22,33 @@ export class PasswordManager {
       list.style.display = "none";
       document.body.appendChild(list);
     }
-
-    if (!document.querySelector("#error")) {
-      const errorDiv = document.createElement("div");
-      errorDiv.id = "error";
-      errorDiv.style.color = "red";
-      errorDiv.style.display = "none";
-      document.body.appendChild(errorDiv);
-    }
   }
 
   static async getPassword(): Promise<string | undefined> {
-    console.log("🔍 Starting password retrieval process...");
     await this.initializeDOMElements();
 
     try {
-      // Check for existing password
       const messages = JSON.parse(localStorage.getItem("messages") ?? "[]");
       if (messages.length > 0) {
-        const storedPassword = await this.attemptAuthentication();
-        if (storedPassword) return storedPassword;
+        return await this.attemptAuthentication();
       }
-      // Proceed to registration if no password is found
       return await this.handleNewUserRegistration();
     } catch (error) {
-      console.error("❌ Critical error in password retrieval:", error);
+      console.error("Password retrieval error:", error);
       return undefined;
     }
   }
 
   private static async attemptAuthentication(): Promise<string | undefined> {
-    if (this.isAuthenticating) {
-      console.warn("⚠️ Authentication already in progress");
-      return undefined;
-    }
-
+    if (this.isAuthenticating) return undefined;
     this.isAuthenticating = true;
+
     try {
-      console.log("🔑 Starting authentication process...");
       await this.cancelPendingRequests();
       const decryptedPassword = await handleAuthenticate();
-      console.log("✅ Authentication successful");
-      console.log("🔑 Decrypted password:", decryptedPassword);
-
-      return decryptedPassword.length > 0 ? decryptedPassword[0] : undefined;
+      return decryptedPassword?.[0];
     } catch (error) {
-      console.error("❌ Authentication failed:", error);
+      console.error("Authentication failed:", error);
       return undefined;
     } finally {
       this.isAuthenticating = false;
@@ -78,33 +58,21 @@ export class PasswordManager {
   private static async handleNewUserRegistration(): Promise<
     string | undefined
   > {
-    console.log("👤 No existing user found. Starting registration...");
-
-    if (this.isRegistering) {
-      console.warn("⚠️ Registration already in progress");
-      return undefined;
-    }
-
+    if (this.isRegistering) return undefined;
     this.isRegistering = true;
+
     try {
-      console.log("📝 Starting WebAuthn registration...");
       await this.cancelPendingRequests();
       await handleRegister();
-      console.log("✅ User successfully registered");
 
-      console.log("✅ Post-registration authentication successful");
-
-      // Generate and store password only if authentication is successful
       const newPassword = this.generateSecurePassword();
-      console.log("Generated non-encrypted password:", newPassword);
-
-      console.log("💾 Storing encrypted password...");
       const input = document.querySelector<HTMLInputElement>("#messageInput")!;
       input.value = newPassword;
       await saveMessage();
-      return this.attemptAuthentication();
+
+      return newPassword;
     } catch (error) {
-      console.error("❌ Registration failed:", error);
+      console.error("Registration failed:", error);
       return undefined;
     } finally {
       this.isRegistering = false;
@@ -112,18 +80,21 @@ export class PasswordManager {
   }
 
   private static async cancelPendingRequests(): Promise<void> {
-    console.log("🔄 Cleaning up pending WebAuthn requests...");
     try {
-      const challenge = new Uint8Array(32); // Generate a random challenge
+      const abortController = new AbortController();
+      const challenge = new Uint8Array(32);
       window.crypto.getRandomValues(challenge);
+
+      setTimeout(() => abortController.abort(), 100);
       await navigator.credentials.get({
+        signal: abortController.signal,
         publicKey: { challenge, allowCredentials: [] },
       });
-      console.log("✅ Pending requests cleared");
     } catch (error) {
-      console.warn("⚠️ Error cleaning pending requests:");
+      // Expected abort error
     }
   }
+
   private static generateSecurePassword(): string {
     const array = new Uint8Array(32);
     window.crypto.getRandomValues(array);
