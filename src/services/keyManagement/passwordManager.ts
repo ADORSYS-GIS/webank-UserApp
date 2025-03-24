@@ -28,6 +28,7 @@ export class PasswordManager {
       const errorDiv = document.createElement("div");
       errorDiv.id = "error";
       errorDiv.style.color = "red";
+      errorDiv.style.display = "none";
       document.body.appendChild(errorDiv);
     }
   }
