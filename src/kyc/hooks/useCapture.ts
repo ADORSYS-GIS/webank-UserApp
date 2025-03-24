@@ -13,13 +13,12 @@ export const useCapture = (
 
   // Function to stop the camera stream
   const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
+    if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach((track) => track.stop());
       videoRef.current.srcObject = null;
     }
   };
-
   // Function to start the camera with the current facingMode
   const startCamera = useCallback(async () => {
     try {
