@@ -1,6 +1,6 @@
 // src/pages/Dashboard.tsx
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
@@ -132,6 +132,7 @@ const Dashboard: React.FC = () => {
           />
         </main>
       </div>
+      <ToastContainer />
     </div>
   );
 };

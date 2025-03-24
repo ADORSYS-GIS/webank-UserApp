@@ -1,10 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserTie, faHome } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserTie,
+  faHome,
+  faMoneyCheckAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface SideBarProps {
   accountId: string | undefined;
-  accountCert: string | undefined; // Ensure it's correctly typed
+  accountCert: string | undefined;
 }
 
 const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
@@ -51,6 +55,50 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
             >
               <FontAwesomeIcon icon={faUserTie} className="mr-3" />
               Agent Services
+            </button>
+          </li>
+          {/*  Teller Menu */}
+          <li>
+            <button
+              onClick={() =>
+                navigate("/login", {
+                  state: {
+                    tellerAccountId: accountId,
+                    tellerAccountCert: accountCert,
+                    redirectTo: "/teller",
+                  },
+                })
+              }
+              className={`flex items-center w-full text-left p-3 rounded-lg ${
+                location.pathname === "/teller"
+                  ? "bg-blue-700"
+                  : "hover:bg-blue-700"
+              } transition-colors text-white`}
+            >
+              <FontAwesomeIcon icon={faMoneyCheckAlt} className="mr-3" />
+              Teller Services
+            </button>
+          </li>
+          {/*  Agency Menu */}
+          <li>
+            <button
+              onClick={() =>
+                navigate("/login", {
+                  state: {
+                    tellerAccountId: accountId,
+                    tellerAccountCert: accountCert,
+                    redirectTo: "/agency",
+                  },
+                })
+              }
+              className={`flex items-center w-full text-left p-3 rounded-lg ${
+                location.pathname === "/agency"
+                  ? "bg-blue-700"
+                  : "hover:bg-blue-700"
+              } transition-colors text-white`}
+            >
+              <FontAwesomeIcon icon={faUserTie} className="mr-3" />
+              KYC Verificaion
             </button>
           </li>
         </ul>

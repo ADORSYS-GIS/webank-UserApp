@@ -66,6 +66,7 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
         <button
           className="p-2 rounded-full hover:bg-gray-200"
           aria-label="Settings"
+          onClick={() => navigate("/settings")}
         >
           <FontAwesomeIcon icon={faCog} className="text-lg" />
         </button>

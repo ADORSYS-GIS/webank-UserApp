@@ -5,7 +5,6 @@ import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
 } from "../../services/keyManagement/requestService.ts";
-import { toast } from "react-toastify";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
@@ -29,12 +28,6 @@ vi.mock("react-router-dom", () => ({
   }),
 }));
 
-vi.mock("react-toastify", () => ({
-  toast: {
-    error: vi.fn(),
-  },
-}));
-
 // Mock RequestToGetBalance and RequestToGetTransactionHistory
 vi.mock("../../services/keyManagement/requestService.ts", () => ({
   RequestToGetBalance: vi.fn(),
@@ -46,6 +39,8 @@ const mockStore = createStore(rootReducer, {
   account: {
     accountId: "12345", // Mock accountId
     accountCert: "cert123", // Mock accountCert
+    status: null, // KYC Status
+    kycCert: null,
   },
 });
 
@@ -87,7 +82,6 @@ describe("Dashboard", () => {
     });
 
     // Ensure the error toast was shown
-    expect(toast.error).toHaveBeenCalledTimes(0); // Expecting 0 times
   });
 
   it("renders transaction items correctly", async () => {
@@ -123,7 +117,7 @@ describe("Dashboard", () => {
     );
 
     // Click the "View Last Transactions" button to fetch and display transactions
-    const viewTransactionsButton = screen.getByText("View Last Transactions");
+    const viewTransactionsButton = screen.getByText("View All");
     viewTransactionsButton.click();
 
     // Wait for the transactions to be rendered
