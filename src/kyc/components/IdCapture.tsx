@@ -1,6 +1,6 @@
 // src/kyc/components/IdCapture.tsx
 import React from "react";
-import { useCapture } from "../hooks/useCapture";
+import useCapture from "../hooks/useCapture.ts";
 
 interface IdCaptureProps {
   title: string;
