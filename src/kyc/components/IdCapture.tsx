@@ -8,7 +8,8 @@ interface IdCaptureProps {
   sampleImageSrc: string;
   uploadAccept?: string;
   onClose: () => void;
-  onFileCaptured: (file: File | Blob) => void; // New prop to send the file back
+  onFileCaptured: (file: File | Blob) => void;
+  defaultFacingMode?: "user" | "environment"; // New optional prop
 }
 
 const IdCapture: React.FC<IdCaptureProps> = ({
@@ -18,18 +19,20 @@ const IdCapture: React.FC<IdCaptureProps> = ({
   uploadAccept = "image/*",
   onClose,
   onFileCaptured,
+  defaultFacingMode = "user",
 }) => {
   const {
     showCamera,
     capturedImage,
     videoRef,
     canvasRef,
-    startCamera,
+    setShowCamera,
     captureImage,
     handleFileUpload,
     resetCapture,
     goBack,
-  } = useCapture();
+    switchCamera,
+  } = useCapture(defaultFacingMode);
 
   const closePopup = () => {
     resetCapture();
@@ -53,7 +56,7 @@ const IdCapture: React.FC<IdCaptureProps> = ({
           <h3 className="text-lg font-medium text-center mb-2">{title}</h3>
           <p className="text-gray-600 text-center mb-4">{description}</p>
           <button
-            onClick={startCamera}
+            onClick={() => setShowCamera(true)} // Updated to set showCamera
             className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200 mb-2"
           >
             Open Camera
@@ -82,12 +85,20 @@ const IdCapture: React.FC<IdCaptureProps> = ({
             <track kind="captions" label="Camera feed" />
           </video>
           <canvas ref={canvasRef} className="hidden"></canvas>
-          <button
-            onClick={captureImage}
-            className="w-full mt-4 bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition duration-200"
-          >
-            Capture Image
-          </button>
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={switchCamera}
+              className="bg-gray-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-gray-600 transition duration-200"
+            >
+              Switch Camera
+            </button>
+            <button
+              onClick={captureImage}
+              className="bg-blue-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-blue-600 transition duration-200"
+            >
+              Capture Image
+            </button>
+          </div>
         </>
       );
     } else if (capturedImage) {
@@ -106,7 +117,6 @@ const IdCapture: React.FC<IdCaptureProps> = ({
           </button>
           <button
             onClick={() => {
-              // Assuming capturedImage is a data URL; we'll convert it to a Blob later
               const blob = dataURLtoBlob(capturedImage);
               onFileCaptured(blob);
               onClose();
@@ -120,8 +130,7 @@ const IdCapture: React.FC<IdCaptureProps> = ({
     }
   };
 
-  // Helper function to convert data URL to Blob (for camera captures)
-  // Helper function to convert data URL to Blob (for camera captures)
+  // Helper function to convert data URL to Blob
   function dataURLtoBlob(dataURL: string): Blob {
     const [header, data] = dataURL.split(",");
     const mimeMatch = /^data:(.*?);base64$/.exec(header);

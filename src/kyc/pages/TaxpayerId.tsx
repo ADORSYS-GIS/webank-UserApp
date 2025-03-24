@@ -16,6 +16,7 @@ const TaxpayerId: React.FC<TaxpayerProps> = ({ onClose, onFileCaptured }) => {
       description="Please take a clear picture of your Taxpayer Identification Document."
       sampleImageSrc="/Tax.png"
       uploadAccept="image/*,application/pdf"
+      defaultFacingMode="environment"
     />
   );
 };
