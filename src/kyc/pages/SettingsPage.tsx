@@ -42,8 +42,12 @@ const MenuItem: React.FC<MenuItemProps> = ({
           <Icon size={20} className="shrink-0 sm:w-5 sm:h-5" />
         </div>
         <div className="pr-2">
-          <p className="font-semibold text-gray-800 text-lg sm:text-xl">{title}</p>
-          <p className="text-sm text-gray-500 mt-1 sm:text-base">{description}</p>
+          <p className="font-semibold text-gray-800 text-lg sm:text-xl">
+            {title}
+          </p>
+          <p className="text-sm text-gray-500 mt-1 sm:text-base">
+            {description}
+          </p>
         </div>
       </div>
       <div className="text-[#20B2AA] opacity-80 group-hover:opacity-100 transition-opacity">
@@ -73,7 +77,9 @@ const SettingsPage: React.FC = () => {
             <FaArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">Settings</h1>
+            <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">
+              Settings
+            </h1>
             <p className="text-[#1C8C8A] font-medium mt-1 sm:text-lg">
               Manage your account preferences
             </p>
@@ -81,8 +87,10 @@ const SettingsPage: React.FC = () => {
         </div>
 
         {/* User Profile Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-[#e0f2f1]
-                        sm:p-8 sm:mb-10">
+        <div
+          className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-[#e0f2f1]
+                        sm:p-8 sm:mb-10"
+        >
           <div className="flex items-center space-x-5 flex-col sm:flex-row">
             <div
               className="w-20 h-20 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
@@ -92,7 +100,9 @@ const SettingsPage: React.FC = () => {
               U
             </div>
             <div className="text-center sm:text-left">
-              <h2 className="text-xl font-bold text-gray-800 mb-1 sm:text-2xl">@USER</h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-1 sm:text-2xl">
+                @USER
+              </h2>
               <div className="text-sm space-y-1">
                 <p className="text-gray-600 flex items-center justify-center sm:justify-start">
                   <span className="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
