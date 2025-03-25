@@ -50,7 +50,6 @@ describe("TellerDashboard Component", () => {
     ).toBeInTheDocument();
   });
 
-
   test("displays error if account information is missing", async () => {
     store = mockStore({ account: { accountId: "", accountCert: "" } });
     renderComponent();

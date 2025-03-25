@@ -3,7 +3,15 @@ import Register from "../RegisterPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import { RequestToSendOTP } from "../../services/keyManagement/requestService";
-import { describe, it, beforeEach, vi, expect, afterEach, afterAll } from "vitest";
+import {
+  describe,
+  it,
+  beforeEach,
+  vi,
+  expect,
+  afterEach,
+  afterAll,
+} from "vitest";
 import { toast, ToastContainer } from "react-toastify";
 
 // Mock global objects and methods
@@ -11,9 +19,9 @@ global.alert = vi.fn();
 
 // Corrected mock for useInitialization (default export)
 vi.mock("../../hooks/useInitialization.ts", () => ({
-  default: vi.fn(() => ({ 
-    devCert: "mock-cert", 
-    error: null 
+  default: vi.fn(() => ({
+    devCert: "mock-cert",
+    error: null,
   })),
 }));
 
@@ -42,7 +50,7 @@ describe("Register component", () => {
       <MemoryRouter>
         {component}
         <ToastContainer />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
   };
 
@@ -68,7 +76,9 @@ describe("Register component", () => {
   });
 
   it("displays error message on invalid phone number", async () => {
-    vi.mocked(RequestToSendOTP).mockRejectedValueOnce(new Error("Invalid number"));
+    vi.mocked(RequestToSendOTP).mockRejectedValueOnce(
+      new Error("Invalid number"),
+    );
     const { getByText, getByPlaceholderText } = renderWithRouter(
       <Register initialShowSpinner={false} />,
     );
@@ -93,7 +103,9 @@ describe("Register component", () => {
       <Register initialShowSpinner={false} />,
     );
 
-    fireEvent.change(getByPlaceholderText("Phone number"), { target: { value: "657040277" } });
+    fireEvent.change(getByPlaceholderText("Phone number"), {
+      target: { value: "657040277" },
+    });
     fireEvent.click(getByText("Send OTP"));
 
     await waitFor(() => {
