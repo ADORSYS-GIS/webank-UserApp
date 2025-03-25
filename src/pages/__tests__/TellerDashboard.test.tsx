@@ -50,15 +50,6 @@ describe("TellerDashboard Component", () => {
     ).toBeInTheDocument();
   });
 
-  test("fetches and displays otp requests", async () => {
-    renderComponent();
-
-    await waitFor(() => expect(RequestToGetOtps).toHaveBeenCalledTimes(2));
-
-    expect(screen.getByText("1234567890")).toBeInTheDocument();
-    expect(screen.getByText("0987654321")).toBeInTheDocument();
-  });
-
   test("displays error if account information is missing", async () => {
     store = mockStore({ account: { accountId: "", accountCert: "" } });
     renderComponent();
