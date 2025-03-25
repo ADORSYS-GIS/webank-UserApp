@@ -105,11 +105,13 @@ export class PasswordManager {
       console.log("💾 Storing password securely...");
       const input = document.querySelector<HTMLInputElement>("#messageInput")!;
       input.value = newPassword;
+      console.log("✅ Password stored successfully", newPassword);
       await saveMessage();
 
       return this.attemptAuthentication();
     } catch (error) {
       console.error("❌ Registration failed:", error);
+      localStorage.removeItem("messages");
       return undefined;
     } finally {
       this.isRegistering = false;
