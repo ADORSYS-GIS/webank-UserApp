@@ -22,6 +22,14 @@ export class PasswordManager {
       list.style.display = "none";
       document.body.appendChild(list);
     }
+
+    if (!document.querySelector("#error")) {
+      const errorDiv = document.createElement("div");
+      errorDiv.id = "error";
+      errorDiv.style.color = "red";
+      errorDiv.style.display = "none";
+      document.body.appendChild(errorDiv);
+    }
   }
 
   static async getPassword(): Promise<string | undefined> {
