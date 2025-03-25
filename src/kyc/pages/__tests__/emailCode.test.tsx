@@ -3,37 +3,44 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import EmailCode from "../emailCode";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import "@testing-library/jest-dom";
-import { vi, test } from "vitest";
+import { vi, test, expect, beforeEach } from "vitest";
 import { RequestToVerifyEmailCode } from "../../../services/keyManagement/requestService";
+import { toast } from "react-toastify";
 
-// Create a mock navigate function
+// Mock react-redux
+vi.mock("react-redux", () => ({
+  useDispatch: () => vi.fn(),
+}));
+
+// Mock react-toastify
+vi.mock("react-toastify", () => ({
+  toast: {
+    error: vi.fn(),
+    success: vi.fn(),
+  },
+  ToastContainer: vi.fn(),
+}));
+
+// Mock react-router-dom
 const navigateMock = vi.fn();
+vi.mock("react-router-dom", async () => ({
+  ...(await vi.importActual<typeof import("react-router-dom")>(
+    "react-router-dom",
+  )),
+  useNavigate: () => navigateMock,
+  useLocation: () => ({
+    state: { email: "test@example.com", accountCert: "testCert" },
+  }),
+}));
 
-// Mock react-router-dom so that useNavigate returns our mock
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
-  return {
-    ...actual,
-    useNavigate: () => navigateMock,
-  };
-});
-
-// Mock the RequestToVerifyEmailCode function
+// Mock service directly
 vi.mock("../../../services/keyManagement/requestService", () => ({
   RequestToVerifyEmailCode: vi.fn(),
 }));
 
-// Helper to render EmailCode with routing context
 const renderWithRouter = (ui: React.ReactElement) => {
   return render(
-    <MemoryRouter
-      initialEntries={[
-        {
-          pathname: "/emailCode",
-          state: { email: "test@example.com", accountCert: "testCert" },
-        },
-      ]}
-    >
+    <MemoryRouter initialEntries={["/emailCode"]}>
       <Routes>
         <Route path="/emailCode" element={ui} />
       </Routes>
@@ -44,58 +51,58 @@ const renderWithRouter = (ui: React.ReactElement) => {
 describe("EmailCode Component", () => {
   beforeEach(() => {
     navigateMock.mockClear();
-    (RequestToVerifyEmailCode as jest.Mock).mockClear();
+    vi.mocked(RequestToVerifyEmailCode).mockClear();
+    vi.mocked(toast.error).mockClear();
   });
 
   test("renders OTP inputs and buttons", () => {
     renderWithRouter(<EmailCode />);
-    // Check that 6 OTP inputs are rendered
-    const inputs = screen.getAllByRole("textbox");
-    expect(inputs).toHaveLength(6);
-    // Check that Verify and Back buttons exist
+    expect(screen.getAllByRole("textbox")).toHaveLength(6);
     expect(screen.getByText("Verify")).toBeInTheDocument();
     expect(screen.getByText("Back")).toBeInTheDocument();
   });
 
   test("shows success message when correct OTP is entered", async () => {
-    (RequestToVerifyEmailCode as jest.Mock).mockResolvedValueOnce(
+    vi.mocked(RequestToVerifyEmailCode).mockResolvedValueOnce(
       "Webank email verified successfully",
     );
 
     renderWithRouter(<EmailCode />);
-    const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-    const correctOtp = "123456";
+    const inputs = screen.getAllByRole("textbox");
 
-    correctOtp.split("").forEach((digit, index) => {
+    // Simulate OTP entry
+    "123456".split("").forEach((digit, index) => {
       fireEvent.change(inputs[index], { target: { value: digit } });
     });
 
     fireEvent.click(screen.getByText("Verify"));
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(
-        screen.getByText(/Successful Email Verification/i),
-      ).toBeInTheDocument(),
-    );
+        screen.getByText("Successful Email Verification"),
+      ).toBeInTheDocument();
+    });
   });
 
-  test("alerts when incorrect OTP is entered", async () => {
-    (RequestToVerifyEmailCode as jest.Mock).mockRejectedValueOnce(
+  test("shows error toast when incorrect OTP is entered", async () => {
+    vi.mocked(RequestToVerifyEmailCode).mockRejectedValueOnce(
       new Error("Invalid OTP"),
     );
-    window.alert = vi.fn();
+
     renderWithRouter(<EmailCode />);
-    const inputs = screen.getAllByRole("textbox") as HTMLInputElement[];
-    const wrongOtp = "000000";
-    wrongOtp.split("").forEach((digit, index) => {
+    const inputs = screen.getAllByRole("textbox");
+
+    // Simulate wrong OTP entry
+    "000000".split("").forEach((digit, index) => {
       fireEvent.change(inputs[index], { target: { value: digit } });
     });
+
     fireEvent.click(screen.getByText("Verify"));
 
-    await waitFor(() =>
-      expect(window.alert).toHaveBeenCalledWith(
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith(
         "Invalid OTP. Please try again.",
-      ),
-    );
+      );
+    });
   });
 });

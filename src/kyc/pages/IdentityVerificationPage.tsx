@@ -15,7 +15,7 @@ import VerificationModal from "../components/VerificationModal";
 import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 interface VerificationStep {
   id: number;
@@ -106,7 +106,7 @@ export default function IdentityVerification() {
   const handleSubmit = async () => {
     // Check if all files are uploaded
     if (!frontIdFile || !backIdFile || !selfieIdFile || !taxpayerIdFile) {
-      alert("Please upload all required documents");
+      toast.warn("Please upload all required documents");
       return;
     }
 
@@ -126,17 +126,23 @@ export default function IdentityVerification() {
         accountCert,
       );
 
-      alert("KYC submitted, You’re good to go!");
-      console.log("Response from server:", response);
+      if (response === "KYC Document sent successfully and saved") {
+        toast.success("KYC Document submitted successfully");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
+      } else {
+        toast.error("Error submitting KYC, please try again later");
+      }
     } catch (error) {
       console.error("Error submitting KYC:", error);
-      alert("Error submitting KYC, please try again later");
+      toast.error("Error submitting KYC, please try again later");
     }
   };
 
   return (
     <div
-      className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative"
+      className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative overflow-x-hidden"
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
       <button
@@ -159,7 +165,7 @@ export default function IdentityVerification() {
           />
         </div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
-          Let’s Verify Your Identity
+          Let's Verify Your Identity
         </h1>
         <p className="text-gray-600 text-sm md:text-base max-w-prose mx-auto leading-relaxed">
           Follow these quick steps to complete your identity verification and
@@ -167,7 +173,7 @@ export default function IdentityVerification() {
         </p>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4">
+      <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
         {steps.map((step) => (
           <button
             key={step.id}
@@ -176,30 +182,30 @@ export default function IdentityVerification() {
             className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer
                        flex items-center justify-between
                        transform hover:scale-[1.005] hover:border-[#20B2AA]
-                       overflow-hidden w-full text-left"
+                       w-full text-left"
           >
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
+            <div className="flex items-center space-x-4 flex-1 min-w-0">
+              <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100 flex-shrink-0">
                 {step.icon}
               </div>
-              <div className="space-y-1">
-                <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900">
+              <div className="space-y-1 flex-1 min-w-0">
+                <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 text-sm md:text-base leading-snug">
+                <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
                   {step.description}
                 </p>
               </div>
             </div>
-            <FiChevronRight className="w-6 h-6 min-w-6 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
+            <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
           </button>
         ))}
       </div>
 
-      <div className="pt-4 border-t border-gray-100 bg-white">
+      <div className="pt-4 border-t border-gray-100 bg-white w-full">
         <button
           type="button"
-          onClick={handleSubmit} // Trigger the submission
+          onClick={handleSubmit}
           className="w-full py-4 bg-[#20B2AA] hover:bg-[#1C8C8A] text-white font-semibold text-base md:text-lg rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg hover:shadow-[#20B2AA]/50"
         >
           <span>Secure My Account</span>
@@ -210,7 +216,7 @@ export default function IdentityVerification() {
       {showFrontIdPopup && (
         <FrontId
           onClose={() => setShowFrontIdPopup(false)}
-          onFileCaptured={(file) => setFrontIdFile(file)} // Save the file
+          onFileCaptured={(file) => setFrontIdFile(file)}
         />
       )}
       {showBackIdPopup && (

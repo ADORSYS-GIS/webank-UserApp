@@ -15,6 +15,7 @@ const SelfieId: React.FC<SelfieProps> = ({ onClose, onFileCaptured }) => {
       title="Selfie ID"
       description="Please take a clear picture of a selfie of you holding your ID card or upload from your device."
       sampleImageSrc="/selfie-id.png"
+      defaultFacingMode="user"
     />
   );
 };

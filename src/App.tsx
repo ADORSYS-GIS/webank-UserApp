@@ -24,13 +24,16 @@ import PassportForm from "./kyc/pages/PassportForm";
 import TellerDashboard from "./pages/TellerPage";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
+import LocationComponent from "./kyc/components/LocationComponent";
 import KYCPage from "./kyc/pages/KycVerificationPage";
+import KycCertChecker from "./kyc/pages/KycCertChecker";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   return (
     <HashRouter>
+      <KycCertChecker /> {/* Ensures KYC checking runs in the background */}
       <Header />
       <Routes>
         <Route
@@ -57,6 +60,7 @@ const App: React.FC = () => {
         <Route path="/emailCode" element={<EmailCode />} />
         <Route path="/kyc" element={<IdentityVerificationPage />} />
         <Route path="/verification/id-card" element={<IDCardForm />} />
+        <Route path="/verification/location" element={<LocationComponent />} />
         <Route path="/verification/passport" element={<PassportForm />} />
         <Route
           path="/verification/driving-license"

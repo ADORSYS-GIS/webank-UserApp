@@ -1,13 +1,12 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import InputEmail from "../emailVerification";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import "@testing-library/jest-dom";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
 
-// Create a mock navigate function
 const navigateMock = vi.fn();
-
-// Mock react-router-dom so that useNavigate returns our mock
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual("react-router-dom");
   return {
@@ -15,57 +14,84 @@ vi.mock("react-router-dom", async () => {
     useNavigate: () => navigateMock,
   };
 });
-// Helper to render InputEmail with routing context
-const renderWithRouter = (
+
+vi.mock("../../../services/keyManagement/requestService", () => ({
+  RequestToSendEmailOTP: vi.fn(() => Promise.resolve()),
+}));
+
+import { RequestToSendEmailOTP } from "../../../services/keyManagement/requestService";
+
+const mockStore = configureStore();
+const store = mockStore({
+  account: { accountCert: "mockCert123" },
+});
+
+const renderWithProviders = (
   ui: React.ReactElement,
   initialEntry = "/inputEmail",
 ) => {
   return render(
-    <MemoryRouter initialEntries={[initialEntry]}>
-      <Routes>
-        <Route path="/inputEmail" element={ui} />
-        <Route path="/emailCode" element={<div>EmailCode Page</div>} />
-      </Routes>
-    </MemoryRouter>,
+    <Provider store={store}>
+      <MemoryRouter initialEntries={[initialEntry]}>
+        <Routes>
+          <Route path="/inputEmail" element={ui} />
+          <Route path="/emailCode" element={<div>EmailCode Page</div>} />
+        </Routes>
+      </MemoryRouter>
+    </Provider>,
   );
 };
 
 describe("InputEmail Component", () => {
   beforeEach(() => {
     navigateMock.mockClear();
+    (RequestToSendEmailOTP as jest.Mock).mockClear();
   });
 
   test("renders email input and proceed button", () => {
-    renderWithRouter(<InputEmail />);
+    renderWithProviders(<InputEmail />);
     expect(screen.getByPlaceholderText("Enter your email")).toBeInTheDocument();
-    expect(screen.getByText("Proceed")).toBeInTheDocument();
+    expect(screen.getAllByText("Proceed").length).toBeGreaterThan(0);
   });
 
   test("navigates to /emailCode for a valid email", async () => {
-    renderWithRouter(<InputEmail />);
+    renderWithProviders(<InputEmail />);
     const emailInput = screen.getByPlaceholderText("Enter your email");
-    const proceedButton = screen.getByText("Proceed");
+    const proceedButton = screen.getAllByText("Proceed")[0];
 
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
     fireEvent.click(proceedButton);
+
+    await waitFor(() => {
+      expect(RequestToSendEmailOTP).toHaveBeenCalledWith(
+        "test@example.com",
+        "mockCert123",
+      );
+    });
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith("/emailCode", {
+        state: { email: "test@example.com", accountCert: "mockCert123" },
+      });
+    });
   });
 
-  test("alerts for an invalid email", () => {
-    window.alert = vi.fn();
-    renderWithRouter(<InputEmail />);
+  test("shows error toast for an invalid email", async () => {
+    renderWithProviders(<InputEmail />);
     const emailInput = screen.getByPlaceholderText("Enter your email");
-    const proceedButton = screen.getByText("Proceed");
+    const proceedButton = screen.getAllByText("Proceed")[0];
 
     fireEvent.change(emailInput, { target: { value: "invalid-email" } });
     fireEvent.click(proceedButton);
 
-    expect(window.alert).toHaveBeenCalledWith(
+    const errorMessage = await screen.findByText(
       "Please enter a valid email address.",
     );
+    expect(errorMessage).toBeInTheDocument();
   });
 
   test("navigates back when back button is clicked", () => {
-    renderWithRouter(<InputEmail />);
+    renderWithProviders(<InputEmail />);
     const backButton = screen.getByRole("button", { name: /Go Back/i });
     fireEvent.click(backButton);
     expect(navigateMock).toHaveBeenCalledWith(-1);
