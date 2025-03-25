@@ -6,6 +6,7 @@ import {
   FaIdCard,
   FaEdit,
   FaChevronRight,
+  FaArrowLeft,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useNavigate } from "react-router-dom";
@@ -27,93 +28,113 @@ const MenuItem: React.FC<MenuItemProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className="flex justify-between items-center p-4 transition-transform
-                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer w-full text-left"
+      className="flex justify-between items-center p-5 transition-all
+                 hover:bg-[#20B2AA]/5 hover:translate-x-1 cursor-pointer w-full text-left
+                 duration-300 ease-out group lg:p-6"
     >
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-4">
         <div
-          className="w-10 h-10 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
-                        rounded-full flex items-center justify-center text-white"
+          className="w-12 h-12 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
+                        rounded-xl flex items-center justify-center text-white
+                        shadow-md group-hover:shadow-lg transition-shadow
+                        sm:w-14 sm:h-14"
         >
-          <Icon size={16} />
+          <Icon size={20} className="shrink-0 sm:w-5 sm:h-5" />
         </div>
-        <div>
-          <p className="font-medium text-gray-800">{title}</p>
-          <p className="text-sm text-gray-500">{description}</p>
+        <div className="pr-2">
+          <p className="font-semibold text-gray-800 text-lg sm:text-xl">{title}</p>
+          <p className="text-sm text-gray-500 mt-1 sm:text-base">{description}</p>
         </div>
       </div>
-      <div className="text-gray-400">
-        <FaChevronRight />
+      <div className="text-[#20B2AA] opacity-80 group-hover:opacity-100 transition-opacity">
+        <FaChevronRight size={14} className="sm:w-4 sm:h-4" />
       </div>
     </button>
   );
 };
 
 const SettingsPage: React.FC = () => {
-  const handleMenuClick = (option: string) => {
-    console.log(`Clicked on: ${option}`);
-  };
-
   const navigate = useNavigate();
 
   return (
     <div
-      className="bg-gradient-to-b from-white to-gray-50 min-h-screen py-6 px-4"
+      className="bg-gradient-to-b from-white to-[#f3fdfc] min-h-screen py-8 px-4
+                 sm:py-10 sm:px-6 lg:px-8"
       style={{ fontFamily: "Poppins, sans-serif" }}
     >
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800">
-          Settings
-        </h1>
-        <p className="mt-2 text-center text-[#20B2AA]">
-          All your account settings here
-        </p>
+      <div className="max-w-2xl mx-auto">
+        {/* Header with Back Button */}
+        <div className="flex items-center mb-8 sm:mb-10">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[#20B2AA] hover:text-[#1C8C8A] transition-colors
+                       p-2 rounded-lg hover:bg-[#20B2AA]/10 mr-4"
+          >
+            <FaArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">Settings</h1>
+            <p className="text-[#1C8C8A] font-medium mt-1 sm:text-lg">
+              Manage your account preferences
+            </p>
+          </div>
+        </div>
 
-        <div className="mt-6 mb-8 bg-gradient-to-br from-white to-[#20B2AA]/10 rounded-xl shadow-lg p-6">
-          <div className="flex items-center space-x-4">
+        {/* User Profile Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-[#e0f2f1]
+                        sm:p-8 sm:mb-10">
+          <div className="flex items-center space-x-5 flex-col sm:flex-row">
             <div
-              className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
-                            rounded-full flex items-center justify-center text-2xl text-white font-bold"
+              className="w-20 h-20 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
+                        rounded-2xl flex items-center justify-center text-3xl text-white
+                        font-bold shadow-md mb-4 sm:mb-0 sm:w-24 sm:h-24"
             >
               U
             </div>
-            <div>
-              <p className="text-xl font-semibold text-gray-800">@USER</p>
-              <p className="text-sm text-gray-600">Email Not Verified</p>
-              <p className="text-sm text-gray-600">237---------</p>
+            <div className="text-center sm:text-left">
+              <h2 className="text-xl font-bold text-gray-800 mb-1 sm:text-2xl">@USER</h2>
+              <div className="text-sm space-y-1">
+                <p className="text-gray-600 flex items-center justify-center sm:justify-start">
+                  <span className="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
+                  Email Not Verified
+                </p>
+                <p className="text-gray-600">237---</p>
+              </div>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-md divide-y divide-gray-200">
+
+        {/* Menu Items */}
+        <div className="bg-white rounded-2xl shadow-md divide-y divide-[#e0f2f1] overflow-hidden">
           <MenuItem
             Icon={FaLifeRing}
             title="Help & Support"
-            description="Chat with our team"
-            onClick={() => handleMenuClick("Help & Support")}
+            description="24/7 live chat assistance"
+            onClick={() => console.log("Help & Support")}
           />
           <MenuItem
             Icon={FaEnvelope}
-            title="Email verification"
-            description="Email not added"
+            title="Email Verification"
+            description="Secure your account"
             onClick={() => navigate("/inputEmail")}
           />
           <MenuItem
             Icon={FaIdCard}
             title="Verify my ID (KYC)"
-            description="Show proof of ID"
+            description="Complete identity verification"
             onClick={() => navigate("/kyc")}
           />
           <MenuItem
             Icon={FaMapMarkerAlt}
-            title="Add your residence"
-            description="Help us locate you"
+            title="Add Residence"
+            description="For personalized services"
             onClick={() => navigate("/verification/location")}
           />
           <MenuItem
             Icon={FaEdit}
-            title="Modify your handle"
-            description="Change your profile handle"
-            onClick={() => handleMenuClick("Modify your handle")}
+            title="Modify Handle"
+            description="Customize your profile"
+            onClick={() => console.log("Modify Handle")}
           />
         </div>
       </div>
