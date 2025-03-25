@@ -15,20 +15,24 @@ interface MyDatabase extends DBSchema {
   };
 }
 
-// Initialize the storage with the schema
-const storage: StorageFactory<MyDatabase> = new StorageFactory<MyDatabase>(
-  "KeysDB",
-  1,
-  {
-    upgrade: (db) => {
-      if (!db.objectStoreNames.contains("keys")) {
-        db.createObjectStore("keys", {
-          keyPath: "kid",
-          autoIncrement: true,
-        });
-      }
-    },
-  },
-);
+async function initializeStorage(): Promise<StorageFactory<MyDatabase> | null> {
+  const databases = await indexedDB.databases();
+  const dbExists = databases.some((db) => db.name === "KeysDB");
 
-export default storage;
+  if (!dbExists) {
+    return new StorageFactory<MyDatabase>("KeysDB", 1, {
+      upgrade: (db) => {
+        if (!db.objectStoreNames.contains("keys")) {
+          db.createObjectStore("keys", {
+            keyPath: "kid",
+            autoIncrement: true,
+          });
+        }
+      },
+    });
+  }
+  return null;
+}
+
+const storagePromise = initializeStorage();
+export default storagePromise;
