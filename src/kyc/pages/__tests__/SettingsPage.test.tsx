@@ -13,9 +13,6 @@ describe("SettingsPage", () => {
     );
 
     expect(screen.getByText("Settings")).toBeInTheDocument();
-    expect(
-      screen.getByText("Manage your account preferences"),
-    ).toBeInTheDocument();
   });
 
   it("renders all menu items", () => {

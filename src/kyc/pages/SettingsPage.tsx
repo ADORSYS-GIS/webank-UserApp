@@ -28,31 +28,22 @@ const MenuItem: React.FC<MenuItemProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className="flex justify-between items-center p-5 transition-all
-                 hover:bg-[#20B2AA]/5 hover:translate-x-1 cursor-pointer w-full text-left
-                 duration-300 ease-out group lg:p-6"
+      className="flex justify-between items-center p-5 bg-white rounded-lg shadow-md border border-gray-300
+                 hover:bg-gray-50 transition-all duration-300 ease-in-out w-full text-left"
     >
       <div className="flex items-center space-x-4">
         <div
-          className="w-12 h-12 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
-                        rounded-xl flex items-center justify-center text-white
-                        shadow-md group-hover:shadow-lg transition-shadow
-                        sm:w-14 sm:h-14"
+          className="w-12 h-12 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] rounded-full
+                        flex items-center justify-center text-white shadow-md"
         >
-          <Icon size={20} className="shrink-0 sm:w-5 sm:h-5" />
+          <Icon size={20} />
         </div>
         <div className="pr-2">
-          <p className="font-semibold text-gray-800 text-lg sm:text-xl">
-            {title}
-          </p>
-          <p className="text-sm text-gray-500 mt-1 sm:text-base">
-            {description}
-          </p>
+          <p className="font-semibold text-gray-800 text-lg">{title}</p>
+          <p className="text-sm text-gray-500 mt-1">{description}</p>
         </div>
       </div>
-      <div className="text-[#20B2AA] opacity-80 group-hover:opacity-100 transition-opacity">
-        <FaChevronRight size={14} className="sm:w-4 sm:h-4" />
-      </div>
+      <FaChevronRight className="text-gray-400" size={16} />
     </button>
   );
 };
@@ -61,61 +52,34 @@ const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div
-      className="bg-gradient-to-b from-white to-[#f3fdfc] min-h-screen py-8 px-4
-                 sm:py-10 sm:px-6 lg:px-8"
-      style={{ fontFamily: "Poppins, sans-serif" }}
-    >
-      <div className="max-w-2xl mx-auto">
-        {/* Header with Back Button */}
-        <div className="flex items-center mb-8 sm:mb-10">
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+      <div className="max-w-3xl w-full mx-auto bg-white rounded-2xl shadow-lg p-8">
+        <div className="flex items-center mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="text-[#20B2AA] hover:text-[#1C8C8A] transition-colors
-                       p-2 rounded-lg hover:bg-[#20B2AA]/10 mr-4"
+            className="text-[#20B2AA] hover:text-[#1C8C8A] transition-colors p-2"
           >
-            <FaArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            <FaArrowLeft className="w-6 h-6" />
           </button>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">
-              Settings
-            </h1>
-            <p className="text-[#1C8C8A] font-medium mt-1 sm:text-lg">
-              Manage your account preferences
-            </p>
-          </div>
+          <h1 className="text-3xl font-bold text-gray-800 ml-4">Settings</h1>
         </div>
 
-        {/* User Profile Section */}
-        <div
-          className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-[#e0f2f1]
-                        sm:p-8 sm:mb-10"
-        >
-          <div className="flex items-center space-x-5 flex-col sm:flex-row">
-            <div
-              className="w-20 h-20 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
-                        rounded-2xl flex items-center justify-center text-3xl text-white
-                        font-bold shadow-md mb-4 sm:mb-0 sm:w-24 sm:h-24"
-            >
-              U
+        <div className="bg-[#E6F7F5] p-6 rounded-xl shadow-md mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] rounded-full flex items-center justify-center text-white shadow-md">
+              <span className="text-2xl font-bold">U</span>
             </div>
-            <div className="text-center sm:text-left">
-              <h2 className="text-xl font-bold text-gray-800 mb-1 sm:text-2xl">
-                @USER
-              </h2>
-              <div className="text-sm space-y-1">
-                <p className="text-gray-600 flex items-center justify-center sm:justify-start gap-2">
-                  <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
-                  <span>Email Not Verified</span>
-                </p>
-                <p className="text-gray-600">237---</p>
-              </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-800">@USER</h2>
+              <p className="text-md font-medium">Webank Account</p>
+              <p className="text-sm text-gray-600 mt-1">Email Not Verified</p>
             </div>
           </div>
         </div>
 
-        {/* Menu Items */}
-        <div className="bg-white rounded-2xl shadow-md divide-y divide-[#e0f2f1] overflow-hidden">
+        <div className="border-t border-gray-300 my-6"></div>
+
+        <div className="space-y-4">
           <MenuItem
             Icon={FaLifeRing}
             title="Help & Support"
