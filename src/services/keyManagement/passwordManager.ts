@@ -10,7 +10,7 @@ export class PasswordManager {
 
   static async initializeDOMElements() {
     console.log("🛠 Initializing required DOM elements...");
-    
+
     if (!document.querySelector("#messageInput")) {
       console.log("ℹ️ Creating message input field...");
       const input = document.createElement("input");
@@ -68,7 +68,10 @@ export class PasswordManager {
     try {
       await this.cancelPendingRequests();
       const decryptedPassword = await handleAuthenticate();
-      console.log("✅ Authentication successful. Decrypted password:", decryptedPassword?.[0]);
+      console.log(
+        "✅ Authentication successful. Decrypted password:",
+        decryptedPassword?.[0],
+      );
       return decryptedPassword?.[0];
     } catch (error) {
       console.error("❌ Authentication failed:", error);
@@ -78,9 +81,11 @@ export class PasswordManager {
     }
   }
 
-  private static async handleNewUserRegistration(): Promise<string | undefined> {
+  private static async handleNewUserRegistration(): Promise<
+    string | undefined
+  > {
     console.log("👤 Registering new user...");
-    
+
     if (this.isRegistering) {
       console.warn("⚠️ Registration already in progress");
       return undefined;
@@ -92,16 +97,16 @@ export class PasswordManager {
       await this.cancelPendingRequests();
       await handleRegister();
       console.log("✅ User successfully registered");
-      
+
       console.log("🔄 Attempting post-registration authentication...");
       const newPassword = this.generateSecurePassword();
       console.log("🔑 Generated password (unencrypted):", newPassword);
-      
+
       console.log("💾 Storing password securely...");
       const input = document.querySelector<HTMLInputElement>("#messageInput")!;
       input.value = newPassword;
       await saveMessage();
-      
+
       return this.attemptAuthentication();
     } catch (error) {
       console.error("❌ Registration failed:", error);
@@ -117,7 +122,7 @@ export class PasswordManager {
       const abortController = new AbortController();
       const challenge = new Uint8Array(32);
       window.crypto.getRandomValues(challenge);
-      
+
       setTimeout(() => abortController.abort(), 100);
       await navigator.credentials.get({
         signal: abortController.signal,
@@ -125,7 +130,10 @@ export class PasswordManager {
       });
       console.log("✅ Pending requests cancelled");
     } catch (error) {
-      console.warn("⚠️ Expected abort error during request cancellation", error);
+      console.warn(
+        "⚠️ Expected abort error during request cancellation",
+        error,
+      );
     }
   }
 
