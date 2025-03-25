@@ -104,9 +104,9 @@ const SettingsPage: React.FC = () => {
                 @USER
               </h2>
               <div className="text-sm space-y-1">
-                <p className="text-gray-600 flex items-center justify-center sm:justify-start">
-                  <span className="w-2 h-2 bg-amber-400 rounded-full mr-2"></span>
-                  Email Not Verified
+                <p className="text-gray-600 flex items-center justify-center sm:justify-start gap-2">
+                  <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
+                  <span>Email Not Verified</span>
                 </p>
                 <p className="text-gray-600">237---</p>
               </div>
