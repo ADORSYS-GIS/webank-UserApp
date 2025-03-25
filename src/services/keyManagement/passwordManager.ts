@@ -9,6 +9,7 @@ export class PasswordManager {
   private static isAuthenticating = false;
 
   static async initializeDOMElements() {
+    console.log("🛠 Initializing required DOM elements...");
     if (!document.querySelector("#messageInput")) {
       const input = document.createElement("input");
       input.type = "hidden";
@@ -21,6 +22,13 @@ export class PasswordManager {
       list.id = "messageList";
       list.style.display = "none";
       document.body.appendChild(list);
+    }
+
+    if (!document.querySelector("#error")) {
+      const errorDiv = document.createElement("div");
+      errorDiv.id = "error";
+      errorDiv.style.color = "red";
+      document.body.appendChild(errorDiv);
     }
   }
 
@@ -58,21 +66,33 @@ export class PasswordManager {
   private static async handleNewUserRegistration(): Promise<
     string | undefined
   > {
-    if (this.isRegistering) return undefined;
-    this.isRegistering = true;
+    console.log("👤 No existing user found. Starting registration...");
 
+    if (this.isRegistering) {
+      console.warn("⚠️ Registration already in progress");
+      return undefined;
+    }
+
+    this.isRegistering = true;
     try {
+      console.log("📝 Starting WebAuthn registration...");
       await this.cancelPendingRequests();
       await handleRegister();
+      console.log("✅ User successfully registered");
 
+      console.log("✅ Post-registration authentication successful");
+
+      // Generate and store password only if authentication is successful
       const newPassword = this.generateSecurePassword();
+      console.log("Generated non-encrypted password:", newPassword);
+
+      console.log("💾 Storing encrypted password...");
       const input = document.querySelector<HTMLInputElement>("#messageInput")!;
       input.value = newPassword;
       await saveMessage();
-
-      return newPassword;
+      return this.attemptAuthentication();
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error("❌ Registration failed:", error);
       return undefined;
     } finally {
       this.isRegistering = false;

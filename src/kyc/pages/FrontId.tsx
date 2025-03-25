@@ -15,6 +15,7 @@ const FrontId: React.FC<FrontIdProps> = ({ onClose, onFileCaptured }) => {
       title="Front ID"
       description="Please take a clear picture of the front of your ID card or upload from your device."
       sampleImageSrc="/front-id.png"
+      defaultFacingMode="environment"
     />
   );
 };
