@@ -1,62 +1,66 @@
-# Account Recovery Process for Webank
+# Account Recovery Process - Webank
 
 ## Overview
-The Webank account recovery process enables users who have lost their devices to reclaim their old accounts. The recovery process is embedded within the standard registration flow and leverages KYC verification.
+The account recovery process allows users who have lost their device (and thus access to their account) to reclaim their previous account after verifying their identity. This is done through a structured KYC process involving interaction with a Webank agent via WhatsApp.
 
-## Step-by-Step Process
+## Process Flow
 
-### 1. Initiating the Recovery
-- Users who have lost access to their accounts must begin a **new registration** process as if they were signing up for a new account.
-- There is no explicit "Recover My Account" button on the sign-up page.
-- The option to recover an account appears during the **KYC verification step**.
+1. **Initiate Registration**
+   - There is no explicit "Recover My Account" button on the sign-up page.
+   - The user begins the standard registration process as if creating a new account.
 
-### 2. Redirect to WhatsApp for Verification
-- On the KYC page, users see a **"Recover Account"** button.
-- Clicking this button redirects the user to WhatsApp using a **wa.link**, opening a chat with a Webank agent.
-- A **predefined message** is automatically generated:  
-  _"I want to recover a lost account via KYC."_
-- The agent or bot, configured to expect this message, responds with detailed recovery instructions.
+2. **KYC and Account Recovery Button**
+   - On the KYC page, there is a "Recover Account" button.
+   - Clicking this button redirects the user to WhatsApp using a `wa.link` to chat with a Webank agent.
+   - A predefined message is automatically written for the user: _"I want to recover a lost account via KYC."_
 
-### 3. Required Information for Recovery
-Users must provide the following via WhatsApp:
-1. **Unique Document Identifier** linked to their previous account’s KYC documents.
-2. **All necessary KYC documents**, ensuring they match the ones used in the previous KYC verification.
-3. **The accountQR** of the newly created account.
+3. **Interaction with the Webank Agent (or Automated Bot)**
+   - The agent or bot provides detailed recovery instructions:
+     - The user must send the **unique document identifier** associated with their previous account's verification document.
+     - The user must upload all required KYC documents, ensuring they match those used in the previous account's verification.
+     - The user must upload the **account QR** of their newly created account.
+     - A **random nonce (unique string/number)** is generated and included in the instructions.
+       - The user is instructed to take a picture holding a paper with this nonce clearly visible and upload it along with the other required documents.
+       - This step ensures the liveness of the recovery process and prevents fraudulent recovery attempts using stolen images.
 
-### 4. Agent Verification
-- The agent enters the **unique document identifier** into a dedicated UI.
-- The backend queries the associated **documents and personal information**.
-- The agent is redirected to a **comparison page** to match the retrieved records with the ones received via WhatsApp.
-- If a match is confirmed, the agent proceeds to approve the recovery.
+4. **Verification by a Random Agent**
+   - The recovery verification is assigned to a **random Webank agent** in the background.
+   - This ensures that no specific agent can deliberately approve fraudulent account recoveries in collusion with unauthorized individuals.
 
-### 5. Approval & Token Generation
-1. The agent clicks the **"Approve"** button.
-2. They are prompted to upload the **accountQR** of the new account (sent by the user).
-3. Upon uploading, a **"Generate Recovery Token"** button appears.
-4. Clicking this button instructs the backend to create an **auth token** containing:
-   - `OldAccountID`: The original account’s ID.
-   - `NewAccountID`: The new account’s ID (ensuring only this account can reclaim the old one).
-   - `Backend Signature`: A signature certifying the token's authenticity.
-   - `Timestamp`: Ensuring token validity is time-bound.
-5. The backend returns this auth token to the agent.
-6. The agent copies and transmits the token to the user via WhatsApp.
+5. **Agent Verification Process**
+   - The agent inputs the provided **unique document ID** into a special UI.
+   - The backend queries the database for the personal details and documents linked to this ID.
+   - The queried information is displayed on a verification page for comparison with the documents received via WhatsApp.
+   - If the documents match, the agent clicks an **Approve** button.
+   - The agent is prompted to upload the **account QR** of the user's new account.
+   - Upon uploading, a button appears labeled **Generate Recovery Token**.
 
-### 6. User Validation of the Recovery Token
-1. The user copies the **auth token** received from WhatsApp.
-2. On the KYC page, clicking "Recover Account" again now reveals a **"Validate Recovery via Token"** button.
-3. Clicking this button opens an input field to enter the **auth token**.
-4. Upon submitting, the frontend sends the token to the backend.
+6. **Recovery Token Generation**
+   - Clicking the **Generate Recovery Token** button sends a request to the backend.
+   - The backend creates an **authentication token** containing:
+     - The **account ID** of the old account.
+     - The **account ID** of the new account (ensuring only the new account can use the token to reclaim the old one).
+     - The **backend’s signature** certifying the token's authenticity.
+     - A **timestamp** to enforce token validity limits.
+   - The token is returned to the agent, who can copy it and send it to the user via WhatsApp.
 
-### 7. Backend Response & Final Recovery Steps
-- If the token is valid, the backend responds with:
-  - `OldAccountID`: The recovered account’s ID.
-  - `AccountCert`: A new account certificate bound to the old account ID and the user’s new public key.
-  - `KYCCert`: A KYC certificate similarly updated with the new public key.
-- The frontend updates the user’s session:
-  - The **new account ID is replaced** with the old one.
-  - The **new account cert and KYC cert** are overwritten with the ones returned.
-- The user sees a **success message**: _"Account recovery successful! Redirecting to your old account’s dashboard... ENJOY!"_
-- The system redirects the user to the recovered account's dashboard.
+7. **User Validation and Account Restoration**
+   - The user copies the received token and returns to the KYC page.
+   - Clicking "Recover Account" again now presents a **Validate Account Recovery via Token** option.
+   - The user is directed to a page with an input field to enter the recovery token.
+   - Clicking **Validate** sends a final request to the backend.
 
-## Conclusion
-This account recovery process ensures secure and seamless restoration of lost accounts while maintaining strict KYC compliance.
+8. **Backend Response & Account Restoration**
+   - If validation is successful, the backend returns:
+     - The **account ID** of the old recovered account.
+     - An **account certificate** bound to the old account ID but linked to the new device’s public key.
+     - A **KYC certificate** confirming verification.
+   - The frontend updates the user’s stored account information.
+   - The user is redirected to the recovered account’s dashboard with a success message: _"Account recovery successful. Redirecting to your past account dashboard... Enjoy!"_
+
+## Security Measures
+- **Randomized Agent Verification**: Recovery is handled by a randomly assigned agent to prevent collusion and unauthorized approvals.
+- **Nonce for Liveness Check**: The recovery instructions include a unique nonce requiring the user to submit a live picture holding it, ensuring real-time identity verification and preventing document theft-based fraud.
+- **Signature & Timestamp in Token**: Ensures authenticity and time-restricted validity of recovery operations.
+
+This process ensures a secure and seamless way for legitimate users to reclaim their lost accounts while preventing fraud.
