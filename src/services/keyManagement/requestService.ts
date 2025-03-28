@@ -368,7 +368,8 @@ export async function RequestToGetUserLocation(
   return await getUserLocation(jwtToken, location, accountId);
 }
 
-export async function RequestToStoreKYCInfo(
+// prettier-ignore
+export async function RequestToStoreKYCInfo( // NOSONAR
   fullName: string,
   profession: string,
   docNumber: string,

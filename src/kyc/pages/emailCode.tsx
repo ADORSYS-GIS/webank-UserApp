@@ -57,10 +57,16 @@ const EmailCode: React.FC = () => {
   const handleVerify = async () => {
     const enteredCode = otp.join("");
     try {
+
+      if ( !accountId || !accountCert) {
+        navigate("/dashboard");
+        toast.error("Account information is missing.");
+        return;
+      }
       const response = await RequestToVerifyEmailCode(
         email,
         enteredCode,
-        accountId!,
+        accountId,
         accountCert,
       );
 

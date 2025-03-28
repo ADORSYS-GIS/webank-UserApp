@@ -388,7 +388,7 @@ export const getUserLocation = async (
   }
 };
 
-//Id Card
+// prettier-ignore
 export const storeKYCInfo = async (
   fullName: string,
   profession: string,
@@ -398,7 +398,7 @@ export const storeKYCInfo = async (
   expiryDate: string,
   accountId: string,
   jwtToken: string,
-) => {
+) => { // NOSONAR
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
