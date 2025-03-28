@@ -183,58 +183,69 @@ export default function RecoveryDashboard() {
   const handleSearch = async () => {
     try {
       setLoading(true);
+
       if (!accountCert) {
         toast.error("Account authentication missing");
         return;
       }
 
-      // Fetch user data based on the document number
       const response = await RequestToGetKycRecordsBySearch(
         searchTerm,
         accountCert,
       );
       console.log("test", response);
-      const parsedInfo = Array.isArray(response)
-        ? response
-        : JSON.parse(response || "[]");
 
+      const parsedInfo = parseResponse(response);
       if (parsedInfo.length === 0) {
         toast.error("No user found with the provided document number");
         return;
       }
 
       const userInfo = parsedInfo[0];
-
-      // Extract documents and oldAccountId from the response
-      const { frontID, backID, selfie, taxDocument, accountId } = userInfo;
-
-      console.log("oldaccid", accountId);
-      setUser({
-        id: userInfo.id,
-        oldAccountId: accountId || undefined,
-        documents: {
-          FrontID: frontID || "",
-          BackID: backID || "",
-          Selfie: selfie || "",
-          TaxDocument: taxDocument || "",
-        },
-        info: {
-          fullName: userInfo.fullName || "",
-          profession: userInfo.profession || "",
-          idNumber: userInfo.idNumber || "",
-          dob: userInfo.dob || "",
-          region: userInfo.region || "",
-          expirationDate: userInfo.expirationDate || "",
-          location: userInfo.location || "N/A",
-          email: userInfo.email || "N/A",
-        },
-      });
+      const userKYC = createUserKYC(userInfo);
+      setUser(userKYC);
     } catch (error) {
-      toast.error("Failed to load user data");
-      console.error("Error:", error);
+      handleError(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to parse the response
+  const parseResponse = (response: any): any[] => {
+    return Array.isArray(response) ? response : JSON.parse(response || "[]");
+  };
+
+  // Helper function to create a UserKYC object
+  const createUserKYC = (userInfo: any): UserKYC => {
+    const { frontID, backID, selfie, taxDocument, accountId } = userInfo;
+
+    return {
+      id: userInfo.id,
+      oldAccountId: accountId || undefined,
+      documents: {
+        FrontID: frontID || "",
+        BackID: backID || "",
+        Selfie: selfie || "",
+        TaxDocument: taxDocument || "",
+      },
+      info: {
+        fullName: userInfo.fullName || "",
+        profession: userInfo.profession || "",
+        idNumber: userInfo.idNumber || "",
+        dob: userInfo.dob || "",
+        region: userInfo.region || "",
+        expirationDate: userInfo.expirationDate || "",
+        location: userInfo.location || "N/A",
+        email: userInfo.email || "N/A",
+      },
+    };
+  };
+
+  // Helper function to handle errors
+  const handleError = (error: any) => {
+    toast.error("Failed to load user data");
+    console.error("Error:", error);
   };
 
   const handleContinueRecovery = () => {
