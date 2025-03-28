@@ -1,9 +1,15 @@
 // encrypt.ts
 import * as jose from "jose";
 import { PasswordManager } from "./passwordManager";
+import { toast } from "react-toastify";
 
 export async function encryptPrivateKey(privateJwk: JsonWebKey) {
   const password = await PasswordManager.getPassword();
+  if (!password) {
+    toast.error("Password retrieval failed. please try again");
+    throw new Error("Password retrieval failed.");
+  }
+
   const salt = window.crypto.getRandomValues(new Uint8Array(16));
 
   const keyMaterial = await window.crypto.subtle.importKey(
@@ -43,6 +49,11 @@ export async function decryptPrivateKey(encryptedPriv: {
   salt: number[];
 }) {
   const password = await PasswordManager.getPassword();
+  if (!password) {
+    toast.error("Password retrieval failed. please try again");
+    throw new Error("Password retrieval failed.");
+  }
+
   const salt = new Uint8Array(encryptedPriv.salt);
 
   const keyMaterial = await window.crypto.subtle.importKey(
