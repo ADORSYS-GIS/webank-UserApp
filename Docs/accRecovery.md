@@ -58,6 +58,42 @@ The account recovery process allows users who have lost their device (and thus a
    - The frontend updates the user’s stored account information.
    - The user is redirected to the recovered account’s dashboard with a success message: _"Account recovery successful. Redirecting to your past account dashboard... Enjoy!"_
 
+## Sequence Diagram
+
+The following sequence diagram visually illustrates the step-by-step account recovery process:
+
+```mermaid
+sequenceDiagram
+
+participant User
+participant Webank_KYC_Page
+participant WhatsApp_Agent
+participant Webank_Backend
+participant Verification_Agent
+
+User -> Webank_KYC_Page: Clicks "Recover Account"
+Webank_KYC_Page -> User: Redirects to WhatsApp with preset message
+
+User -> WhatsApp_Agent: Sends account recovery request
+WhatsApp_Agent -> User: Requests unique document ID, KYC docs, and account QR
+WhatsApp_Agent -> User: Generates and sends nonce for liveness check
+User -> WhatsApp_Agent: Uploads requested documents and photo with nonce
+
+WhatsApp_Agent -> Verification_Agent: Assigns verification task
+Verification_Agent -> Webank_Backend: Queries database with document ID
+Webank_Backend -> Verification_Agent: Returns stored details for verification
+Verification_Agent -> WhatsApp_Agent: Approves recovery if documents match
+Verification_Agent -> Webank_Backend: Uploads new account QR and requests recovery token
+
+Webank_Backend -> Verification_Agent: Generates and returns signed recovery token
+Verification_Agent -> User: Sends recovery token via WhatsApp
+
+User -> Webank_KYC_Page: Inputs recovery token
+Webank_KYC_Page -> Webank_Backend: Validates token
+Webank_Backend -> Webank_KYC_Page: Returns old account ID and new credentials
+Webank_KYC_Page -> User: Restores old account and redirects to dashboard
+```
+
 ## Security Measures
 - **Randomized Agent Verification**: Recovery is handled by a randomly assigned agent to prevent collusion and unauthorized approvals.
 - **Nonce for Liveness Check**: The recovery instructions include a unique nonce requiring the user to submit a live picture holding it, ensuring real-time identity verification and preventing document theft-based fraud.
