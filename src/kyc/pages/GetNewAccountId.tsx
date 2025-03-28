@@ -123,7 +123,7 @@ const GetNewAccountId: React.FC = () => {
 
         {/* Action Buttons */}
         <label className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
-          Upload QR Image
+          <span>Upload QR Image</span>
           <input
             type="file"
             accept="image/*"

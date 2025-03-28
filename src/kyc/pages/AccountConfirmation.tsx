@@ -67,13 +67,13 @@ const AccountConfirmation: React.FC = () => {
           <div className="text-left">
             <span className="font-medium text-gray-600">Old Account ID:</span>
             <p className="text-gray-800 break-all mt-1">
-              {oldAccountId || "Not available"}
+              {oldAccountId ?? "Not available"}
             </p>
           </div>
           <div className="text-left">
             <span className="font-medium text-gray-600">New Account ID:</span>
             <p className="text-gray-800 break-all mt-1">
-              {newAccountId || "Not available"}
+              {newAccountId ?? "Not available"}
             </p>
           </div>
         </div>
