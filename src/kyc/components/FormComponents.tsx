@@ -78,6 +78,19 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       expiry,
     );
     try {
+      if (
+        !fullName ||
+        !profession ||
+        !documentNumber ||
+        !dob ||
+        !region ||
+        !expiry ||
+        !accountCert ||
+        !accountId
+      ) {
+        toast.error("Please fill in all the required fields");
+        return;
+      }
       const response = RequestToStoreKYCInfo(
         fullName,
         profession,
@@ -86,7 +99,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         region,
         expiry,
         accountCert,
-        accountId!,
+        accountId,
       );
       if ((await response) === "KYC Info sent successfully and saved.") {
         toast.success("KYC Info sent successfully and saved.");

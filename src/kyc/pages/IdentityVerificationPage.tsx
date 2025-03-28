@@ -113,6 +113,10 @@ export default function IdentityVerification() {
     }
 
     try {
+      if (!accountCert || !accountId) {
+        console.error("Account certificate or account ID is missing");
+        return;
+      }
       // Convert files to base64 strings
       const frontIdBase64 = await fileToBase64(frontIdFile);
       const backIdBase64 = await fileToBase64(backIdFile);
@@ -126,7 +130,7 @@ export default function IdentityVerification() {
         selfieIdBase64,
         taxpayerIdBase64,
         accountCert,
-        accountId!,
+        accountId,
       );
 
       if (response === "KYC Document sent successfully and saved") {
