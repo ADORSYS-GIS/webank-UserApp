@@ -250,7 +250,7 @@ export default function RecoveryDashboard() {
 
   const handleContinueRecovery = () => {
     const oldAccountId = user?.oldAccountId;
-    navigate("/next-page", {
+    navigate("/recovery/getnewid", {
       state: { oldAccountId },
     });
   };

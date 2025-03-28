@@ -2,12 +2,18 @@ import React, { useMemo } from "react";
 import { RE_DIGIT } from "../constants";
 
 export type Props = {
-  value: string;
-  valueLength: number;
-  onChange: (value: string) => void;
+  readonly value: string;
+  readonly valueLength: number;
+  readonly onChange: (value: string) => void;
+  readonly showHeader?: boolean;
 };
 
-export default function OtpInput({ value, valueLength, onChange }: Props) {
+export default function OtpInput({
+  value,
+  valueLength,
+  onChange,
+  showHeader = true,
+}: Props) {
   const valueItems = useMemo(() => {
     const valueArray = value.split("");
     const items: Array<string> = [];
@@ -79,14 +85,16 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
 
   return (
     <div className="max-w-md  bg-white px-4 sm:px-8 py-10 ">
-      <header className="mb-8 ">
-        <h1 className="text-3xl font-bold mb-2">OTP Verification</h1>
-        <p className="text-[15px]">
-          Enter the 4-digit verification code that was sent to your phone
-          number.
-        </p>
-      </header>
-      <form className="flex items-center justify-center gap-3">
+      {showHeader && (
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">OTP Verification</h1>
+          <p className="text-[15px]">
+            Enter the 4-digit verification code that was sent to your phone
+            number.
+          </p>
+        </header>
+      )}
+      <form className="flex justify-center gap-x-1 sm:gap-x-2 md:gap-x-3 lg:gap-x-4 w-full max-w-[90%]">
         {valueItems.map((digit, idx) => (
           <input
             key={idx}
@@ -95,7 +103,7 @@ export default function OtpInput({ value, valueLength, onChange }: Props) {
             autoComplete="one-time-code"
             pattern="\d{1}"
             maxLength={1}
-            className="w-14 h-17 text-center text-2xl font-extrabold text-slate-900 bg-white border border-slate-300 hover:border-slate-400 appearance-none rounded-lg p-5 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+            className="min-w-8 sm:min-w-10 md:min-w-12 lg:min-w-14 h-12 text-center text-2xl font-bold text-slate-900 bg-white border border-slate-300 hover:border-slate-400 rounded-lg outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 flex-grow"
             value={digit}
             onChange={(e) => handleOTPInputChange(e, idx)}
             onKeyDown={inputOnKeyDown}
