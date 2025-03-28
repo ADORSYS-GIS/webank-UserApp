@@ -6,7 +6,6 @@ import {
   FaIdCard,
   FaEdit,
   FaChevronRight,
-  FaArrowLeft,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useNavigate } from "react-router-dom";
@@ -28,87 +27,93 @@ const MenuItem: React.FC<MenuItemProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className="flex justify-between items-center p-5 bg-white rounded-lg shadow-md border border-gray-300
-                 hover:bg-gray-50 transition-all duration-300 ease-in-out w-full text-left"
+      className="flex justify-between items-center p-4 transition-transform
+                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer w-full text-left"
     >
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-3">
         <div
-          className="w-12 h-12 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] rounded-full
-                        flex items-center justify-center text-white shadow-md"
+          className="w-10 h-10 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
+                        rounded-full flex items-center justify-center text-white"
         >
-          <Icon size={20} />
+          <Icon size={16} />
         </div>
-        <div className="pr-2">
-          <p className="font-semibold text-gray-800 text-lg">{title}</p>
-          <p className="text-sm text-gray-500 mt-1">{description}</p>
+        <div>
+          <p className="font-medium text-gray-800">{title}</p>
+          <p className="text-sm text-gray-500">{description}</p>
         </div>
       </div>
-      <FaChevronRight className="text-gray-400" size={16} />
+      <div className="text-gray-400">
+        <FaChevronRight />
+      </div>
     </button>
   );
 };
 
 const SettingsPage: React.FC = () => {
+  const handleMenuClick = (option: string) => {
+    console.log(`Clicked on: ${option}`);
+  };
+
   const navigate = useNavigate();
 
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="max-w-3xl w-full mx-auto bg-white rounded-2xl shadow-lg p-8">
-        <div className="flex items-center mb-8">
-          <button
-            onClick={() => navigate(-1)}
-            className="text-[#20B2AA] hover:text-[#1C8C8A] transition-colors p-2"
-          >
-            <FaArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-3xl font-bold text-gray-800 ml-4">Settings</h1>
-        </div>
+    <div
+      className="bg-gradient-to-b from-white to-gray-50 min-h-screen py-6 px-4"
+      style={{ fontFamily: "Poppins, sans-serif" }}
+    >
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-center text-gray-800">
+          Settings
+        </h1>
+        <p className="mt-2 text-center text-[#20B2AA]">
+          All your account settings here
+        </p>
 
-        <div className="bg-[#E6F7F5] p-6 rounded-xl shadow-md mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A] rounded-full flex items-center justify-center text-white shadow-md">
-              <span className="text-2xl font-bold">U</span>
+        <div className="mt-6 mb-8 bg-gradient-to-br from-white to-[#20B2AA]/10 rounded-xl shadow-lg p-6">
+          <div className="flex items-center space-x-4">
+            <div
+              className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
+                            rounded-full flex items-center justify-center text-2xl text-white font-bold"
+            >
+              U
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-800">@USER</h2>
-              <p className="text-md font-medium">Webank Account</p>
-              <p className="text-sm text-gray-600 mt-1">Email Not Verified</p>
+              <p className="text-xl font-semibold text-gray-800">@USER</p>
+              <p className="text-sm text-gray-600">Email Not Verified</p>
+              <p className="text-sm text-gray-600">237---------</p>
             </div>
           </div>
         </div>
-
-        <div className="border-t border-gray-300 my-6"></div>
-
-        <div className="space-y-4">
+        <div className="bg-white rounded-xl shadow-md divide-y divide-gray-200">
           <MenuItem
             Icon={FaLifeRing}
             title="Help & Support"
-            description="24/7 live chat assistance"
-            onClick={() => console.log("Help & Support")}
+            description="Chat with our team"
+            onClick={() => handleMenuClick("Help & Support")}
           />
           <MenuItem
             Icon={FaEnvelope}
-            title="Email Verification"
-            description="Secure your account"
+            title="Email verification"
+            description="Email not added"
             onClick={() => navigate("/inputEmail")}
           />
           <MenuItem
             Icon={FaIdCard}
             title="Verify my ID (KYC)"
-            description="Complete identity verification"
+            description="Show proof of ID"
             onClick={() => navigate("/kyc")}
           />
           <MenuItem
             Icon={FaMapMarkerAlt}
-            title="Add Residence"
-            description="For personalized services"
+            title="Add your residence"
+            description="Help us locate you"
             onClick={() => navigate("/verification/location")}
           />
           <MenuItem
             Icon={FaEdit}
-            title="Modify Handle"
-            description="Customize your profile"
-            onClick={() => console.log("Modify Handle")}
+            title="Modify your handle"
+            description="Change your profile handle"
+            onClick={() => handleMenuClick("Modify your handle")}
           />
         </div>
       </div>

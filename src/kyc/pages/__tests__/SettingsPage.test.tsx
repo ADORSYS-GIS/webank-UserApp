@@ -13,6 +13,9 @@ describe("SettingsPage", () => {
     );
 
     expect(screen.getByText("Settings")).toBeInTheDocument();
+    expect(
+      screen.getByText("All your account settings here"),
+    ).toBeInTheDocument();
   });
 
   it("renders all menu items", () => {
@@ -23,10 +26,10 @@ describe("SettingsPage", () => {
     );
 
     expect(screen.getByText("Help & Support")).toBeInTheDocument();
-    expect(screen.getByText("Email Verification")).toBeInTheDocument();
+    expect(screen.getByText("Email verification")).toBeInTheDocument();
     expect(screen.getByText("Verify my ID (KYC)")).toBeInTheDocument();
-    expect(screen.getByText("Add Residence")).toBeInTheDocument();
-    expect(screen.getByText("Modify Handle")).toBeInTheDocument();
+    expect(screen.getByText("Add your residence")).toBeInTheDocument();
+    expect(screen.getByText("Modify your handle")).toBeInTheDocument();
   });
 
   it("triggers click event on menu items", () => {
@@ -41,6 +44,6 @@ describe("SettingsPage", () => {
 
     fireEvent.click(helpItem);
 
-    expect(console.log).toHaveBeenCalledWith("Help & Support");
+    expect(console.log).toHaveBeenCalledWith("Clicked on: Help & Support");
   });
 });
