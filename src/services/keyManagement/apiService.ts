@@ -300,8 +300,8 @@ export const getOtps = async (jwtToken: string) => {
 
 export const sendEmailOTP = async (
   email: string,
+  accountId: string,
   jwtToken: string,
-  publicKey: string,
 ) => {
   const headers = {
     "Content-Type": "application/json",
@@ -310,7 +310,7 @@ export const sendEmailOTP = async (
 
   const requestBody = {
     email,
-    publicKey,
+    accountId,
   };
 
   try {
@@ -329,6 +329,7 @@ export const sendEmailOTP = async (
 export const verifyEmailCode = async (
   email: string,
   otp: string,
+  accountId: string,
   jwtToken: string,
 ) => {
   const headers = {
@@ -339,6 +340,7 @@ export const verifyEmailCode = async (
   const requestBody = {
     email,
     otp,
+    accountId,
   };
 
   try {
@@ -356,7 +358,11 @@ export const verifyEmailCode = async (
 
 //User Location
 // User Location API Call
-export const getUserLocation = async (jwtToken: string, location: string) => {
+export const getUserLocation = async (
+  jwtToken: string,
+  location: string,
+  accountId: string,
+) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
@@ -364,6 +370,7 @@ export const getUserLocation = async (jwtToken: string, location: string) => {
 
   const requestBody = {
     location,
+    accountId,
   };
 
   try {
@@ -389,6 +396,7 @@ export const storeKYCInfo = async (
   dateOfBirth: string,
   currentRegion: string,
   expiryDate: string,
+  accountId: string,
   jwtToken: string,
 ) => {
   const headers = {
@@ -403,6 +411,7 @@ export const storeKYCInfo = async (
     dateOfBirth,
     currentRegion,
     expiryDate,
+    accountId,
   };
 
   try {
@@ -423,6 +432,7 @@ export const storeKycDocument = async (
   backId: string,
   selfieId: string,
   taxId: string,
+  accountId: string,
   jwtToken: string,
 ) => {
   const headers = {
@@ -435,6 +445,7 @@ export const storeKycDocument = async (
     backId,
     selfieId,
     taxId,
+    accountId,
   };
 
   try {
@@ -468,6 +479,27 @@ export const getKycRecords = async (jwtToken: string) => {
   } catch (error) {
     console.error("Error retrieving kyc records:", error);
     throw new Error("Failed to retrieve kyc records");
+  }
+};
+
+export const GetKycRecordsBySearch = async (
+  docNumber: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/findId/${docNumber}`,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving KYC records:", error);
+    throw new Error("Failed to retrieve KYC records");
   }
 };
 

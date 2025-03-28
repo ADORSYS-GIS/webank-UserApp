@@ -18,6 +18,7 @@ const LocationComponent = () => {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+  const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const sendToBackend = async (coords: GeoLocation): Promise<boolean> => {
     if (!accountCert) {
@@ -27,7 +28,7 @@ const LocationComponent = () => {
 
     const location = `${coords.lat},${coords.lng}`;
     try {
-      await RequestToGetUserLocation(accountCert, location);
+      await RequestToGetUserLocation(accountCert, location, accountId!);
       console.log("Location sent successfully");
       return true;
     } catch (error) {

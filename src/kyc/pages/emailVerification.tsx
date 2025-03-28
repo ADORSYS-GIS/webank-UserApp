@@ -13,12 +13,13 @@ const InputEmail: React.FC = () => {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+  const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const handleProceed = async () => {
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (emailRegex.test(email)) {
       try {
-        await RequestToSendEmailOTP(email, accountCert);
+        await RequestToSendEmailOTP(email, accountCert, accountId!);
         navigate("/emailCode", { state: { email, accountCert } });
       } catch (error) {
         toast.error("Failed to send OTP. Please try again.");

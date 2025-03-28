@@ -102,6 +102,8 @@ export default function IdentityVerification() {
     (state: RootState) => state.account.accountCert,
   );
 
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+
   // Handle submission to the backend
   const handleSubmit = async () => {
     // Check if all files are uploaded
@@ -124,6 +126,7 @@ export default function IdentityVerification() {
         selfieIdBase64,
         taxpayerIdBase64,
         accountCert,
+        accountId!,
       );
 
       if (response === "KYC Document sent successfully and saved") {
