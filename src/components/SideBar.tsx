@@ -101,6 +101,28 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
               KYC Verificaion
             </button>
           </li>
+
+          <li>
+            <button
+              onClick={() =>
+                navigate("/login", {
+                  state: {
+                    tellerAccountId: accountId,
+                    tellerAccountCert: accountCert,
+                    redirectTo: "/account-recovery",
+                  },
+                })
+              }
+              className={`flex items-center w-full text-left p-3 rounded-lg ${
+                location.pathname === "/account-recovery"
+                  ? "bg-blue-700"
+                  : "hover:bg-blue-700"
+              } transition-colors text-white`}
+            >
+              <FontAwesomeIcon icon={faUserTie} className="mr-3" />
+              KYC recovery agency
+            </button>
+          </li>
         </ul>
       </nav>
     </div>

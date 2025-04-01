@@ -18,7 +18,6 @@ interface FormContextType {
   formData: FormData;
   setFormField: SetFormField;
 }
-
 const FormContext = createContext<FormContextType>({
   formData: {},
   setFormField: () => {},
@@ -39,6 +38,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+  const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const navigate = useNavigate();
 
@@ -78,6 +78,19 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       expiry,
     );
     try {
+      if (
+        !fullName ||
+        !profession ||
+        !documentNumber ||
+        !dob ||
+        !region ||
+        !expiry ||
+        !accountCert ||
+        !accountId
+      ) {
+        toast.error("Please fill in all the required fields");
+        return;
+      }
       const response = RequestToStoreKYCInfo(
         fullName,
         profession,
@@ -86,6 +99,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         region,
         expiry,
         accountCert,
+        accountId,
       );
       if ((await response) === "KYC Info sent successfully and saved.") {
         toast.success("KYC Info sent successfully and saved.");
