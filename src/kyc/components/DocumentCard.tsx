@@ -43,15 +43,16 @@ export const DocumentCard = ({
     >
       <div className="flex justify-between items-center mb-2 w-full">
         <p className="text-sm font-medium text-gray-700">{title}</p>
-        <button
+        <a
+          href={url}
           onClick={handleDownload}
           className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200"
           title="Download document"
           aria-label={`Download ${title}`}
-          type="button"
+          download
         >
           <FiDownload className="w-4 h-4" />
-        </button>
+        </a>
       </div>
       <div className="relative flex-1">
         {type === "image" ? (
@@ -63,13 +64,14 @@ export const DocumentCard = ({
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-white rounded-md p-2">
             <span className="text-blue-600 mb-2">PDF Document</span>
-            <button
-              onClick={handleDownload}
+            <a
+              href={url}
+              download
               className="text-sm text-blue-600 hover:text-blue-800 underline"
               aria-label={`Download ${title} PDF`}
             >
               Download PDF
-            </button>
+            </a>
           </div>
         )}
       </div>
