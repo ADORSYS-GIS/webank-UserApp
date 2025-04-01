@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux"; // Import useDispatch
+import { useDispatch, useSelector } from "react-redux"; // Import useDispatch
 import { setStatus } from "../../slices/accountSlice"; // Import setStatus action
 import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
 } from "../../services/keyManagement/requestService";
 import { toast, ToastContainer } from "react-toastify";
+import { RootState } from "../../store/Store";
 
 const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -15,6 +16,8 @@ const EmailCode: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { email, accountCert } = location.state || {};
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+  console.log(accountId + "Account ID in email page !!!");
 
   // Generate unique keys for OTP inputs
   const otpKeys = useMemo(
@@ -34,8 +37,15 @@ const EmailCode: React.FC = () => {
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (emailRegex.test(email)) {
       try {
-        await RequestToSendEmailOTP(email, accountCert);
-        navigate("/emailCode", { state: { email, accountCert } });
+        if (!accountId || !accountCert) {
+          navigate("/dashboard");
+          toast.error("Account information is missing.");
+          return;
+        }
+
+        await RequestToSendEmailOTP(email, accountCert, accountId);
+
+        navigate("/emailCode", { state: { email, accountCert, accountId } });
       } catch (error) {
         toast.error("Failed to send OTP. Please try again.");
       }
@@ -47,9 +57,15 @@ const EmailCode: React.FC = () => {
   const handleVerify = async () => {
     const enteredCode = otp.join("");
     try {
+      if (!accountId || !accountCert) {
+        navigate("/dashboard");
+        toast.error("Account information is missing.");
+        return;
+      }
       const response = await RequestToVerifyEmailCode(
         email,
         enteredCode,
+        accountId,
         accountCert,
       );
 

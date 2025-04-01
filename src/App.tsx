@@ -27,7 +27,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LocationComponent from "./kyc/components/LocationComponent";
 import KYCPage from "./kyc/pages/KycVerificationPage";
 import KycCertChecker from "./kyc/pages/KycCertChecker";
+
 import RecoverAccountPage from "./kyc/pages/RecoverAccountPage.tsx";
+
+import RecoveryDashboard from "./kyc/pages/KycRecoveryPage";
+
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -72,6 +76,7 @@ const App: React.FC = () => {
         <Route element={<ProtectedRoute />}>
           <Route path="/teller" element={<TellerDashboard />} />
           <Route path="/agency" element={<KYCPage />} />
+          <Route path="/account-recovery" element={<RecoveryDashboard />} />
         </Route>
       </Routes>
     </HashRouter>
