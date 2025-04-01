@@ -13,8 +13,6 @@ import {
   FiCalendar,
   FiMap,
   FiCheck,
-  FiDownload,
-  FiX,
   FiArrowLeft,
 } from "react-icons/fi";
 import {
@@ -22,6 +20,10 @@ import {
   RequestToUpdateKycStatus,
   RequestToGetKycDocuments,
 } from "../../services/keyManagement/requestService";
+
+import { ImageModal } from "../components/ImageModal";
+import { DocumentCard } from "../components/DocumentCard";
+import { InfoRow } from "../components/InfoRow";
 
 interface DocumentSet {
   FrontID: string;
@@ -50,42 +52,10 @@ interface UserKYC {
   status: "PENDING" | "approved" | "rejected";
 }
 
-interface ImageModalProps {
-  selectedImage: string | null;
-  onClose: () => void;
-}
 interface UserCardProps {
   user: UserKYC;
   onSelectUser: (user: UserKYC) => void;
 }
-
-const ImageModal = ({ selectedImage, onClose }: ImageModalProps) => {
-  if (!selectedImage) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h3 className="text-lg font-semibold">Document Preview</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 p-2"
-            aria-label="Close modal"
-          >
-            <FiX className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="p-4 overflow-auto">
-          <img
-            src={selectedImage}
-            alt="Enlarged document"
-            className="max-w-full max-h-[75vh] object-contain mx-auto"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const getStatusClass = (status: string) => {
   switch (status.toUpperCase()) {
@@ -408,96 +378,3 @@ export default function KYCDashboard() {
     </div>
   );
 }
-
-const DocumentCard = ({
-  title,
-  url,
-  type,
-  onImageClick,
-}: {
-  title: string;
-  url: string;
-  type: "image" | "pdf";
-  onImageClick?: (url: string) => void;
-}) => {
-  const handleDownload = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!url) return;
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute(
-      "download",
-      `${title}_${Date.now()}.${type === "image" ? "jpg" : "pdf"}`,
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const handleClick = () => {
-    if (url && onImageClick) {
-      onImageClick(url);
-    }
-  };
-
-  return (
-    <button
-      className="w-full bg-gray-50 rounded-lg p-4 h-50 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-      onClick={handleClick}
-      aria-label={`View ${title} document`}
-      type="button"
-    >
-      <div className="flex justify-between items-center mb-2 w-full">
-        <p className="text-sm font-medium text-gray-700">{title}</p>
-        <button
-          onClick={handleDownload}
-          className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200"
-          title="Download document"
-          aria-label={`Download ${title}`}
-          type="button"
-        >
-          <FiDownload className="w-4 h-4" />
-        </button>
-      </div>
-      <div className="relative flex-1">
-        {type === "image" ? (
-          <img
-            src={url}
-            alt={title}
-            className="w-full h-full object-contain rounded-md bg-white"
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-white rounded-md p-2">
-            <span className="text-blue-600 mb-2">📄 PDF Document</span>
-            <button
-              onClick={handleDownload}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-              aria-label={`Download ${title} PDF`}
-            >
-              Download PDF
-            </button>
-          </div>
-        )}
-      </div>
-    </button>
-  );
-};
-
-const InfoRow = ({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) => (
-  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-    <div className="flex items-center gap-2">
-      <span className="text-gray-400">{icon}</span>
-      <span className="text-sm text-gray-600">{label}</span>
-    </div>
-    <span className="text-sm font-medium text-gray-900">{value || "N/A"}</span>
-  </div>
-);
