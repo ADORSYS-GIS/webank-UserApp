@@ -29,7 +29,7 @@ describe("SettingsPage", () => {
     expect(screen.getByText("Email verification")).toBeInTheDocument();
     expect(screen.getByText("Verify my ID (KYC)")).toBeInTheDocument();
     expect(screen.getByText("Add your residence")).toBeInTheDocument();
-    expect(screen.getByText("Modify your handle")).toBeInTheDocument();
+    expect(screen.getByText("Recover your account")).toBeInTheDocument();
   });
 
   it("triggers click event on menu items", () => {

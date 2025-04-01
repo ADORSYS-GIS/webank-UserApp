@@ -27,6 +27,7 @@ describe("JWT Generation", () => {
       null,
       null,
       null,
+      null,
       data,
     );
 
