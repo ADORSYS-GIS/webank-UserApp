@@ -23,7 +23,7 @@ import { RequestToSendEmailOTP } from "../../../services/keyManagement/requestSe
 
 const mockStore = configureStore();
 const store = mockStore({
-  account: { accountCert: "mockCert123" },
+  account: { accountCert: "mockCert123", accountId: 1 },
 });
 
 const renderWithProviders = (
@@ -66,6 +66,7 @@ describe("InputEmail Component", () => {
       expect(RequestToSendEmailOTP).toHaveBeenCalledWith(
         "test@example.com",
         "mockCert123",
+        1,
       );
     });
 
