@@ -4,7 +4,7 @@ import { PasswordManager } from "./passwordManager";
 import { toast } from "react-toastify";
 
 export async function encryptPrivateKey(privateJwk: JsonWebKey) {
-  const password = await PasswordManager.getPassword();
+  const password = PasswordManager.getPassword();
   if (!password) {
     toast.error("Password retrieval failed. please try again");
     throw new Error("Password retrieval failed.");
@@ -48,7 +48,7 @@ export async function decryptPrivateKey(encryptedPriv: {
   jwe: string;
   salt: number[];
 }) {
-  const password = await PasswordManager.getPassword();
+  const password = PasswordManager.getPassword();
   if (!password) {
     toast.error("Password retrieval failed. please try again");
     throw new Error("Password retrieval failed.");
