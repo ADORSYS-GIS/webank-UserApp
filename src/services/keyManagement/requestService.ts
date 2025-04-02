@@ -24,6 +24,7 @@ import {
   submitRecoveryToken,
   recoverAccountCert,
   GetKycRecordsBySearch,
+  requestToGetRecoveryToken,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -571,11 +572,18 @@ export async function RequestToGetCert(
   return await getKycCert(jwtToken);
 }
 
+
 //Request to send account recovery token
 export async function RequestToSubmitRecoveryToken(
   newAccountId: string,
   recoveryToken: string,
   accountCert: string | null,
+
+export async function RequestToGetRecoveryToken(
+  oldAccountId: string,
+  newAccountId: string,
+  accountCert?: string | null,
+
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -587,6 +595,7 @@ export async function RequestToSubmitRecoveryToken(
     accountCert,
     null,
     null,
+
     recoveryToken,
     newAccountId,
   );
@@ -617,3 +626,11 @@ export async function RequestToRecoverAccountCert(
   return await recoverAccountCert(jwtToken, accountId);
 }
 export const getKey = () => Key;
+
+    oldAccountId,
+    newAccountId,
+  );
+
+  return await requestToGetRecoveryToken(oldAccountId, newAccountId, jwtToken);
+}
+
