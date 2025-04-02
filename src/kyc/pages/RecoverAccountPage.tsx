@@ -91,12 +91,10 @@ const RecoverAccountPage: React.FC = () => {
     }
   };
 
-  const handleCloseOverlay = (e?: React.MouseEvent | React.KeyboardEvent) => {
-    if (e && e.target === e.currentTarget) {
-      setShowTokenInput(false);
-      setShowConfirmation(false);
-      setToken("");
-    }
+  const handleCloseOverlay = () => {
+    setShowTokenInput(false);
+    setShowConfirmation(false);
+    setToken("");
   };
 
   const handleCancel = () => {
@@ -127,19 +125,13 @@ const RecoverAccountPage: React.FC = () => {
         </button>
       </div>
       {showTokenInput && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
-          onClick={handleCloseOverlay}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleCloseOverlay(e);
-            }
-          }}
-          tabIndex={0}
-          role="button"
-          aria-label="Close token input overlay"
-        >
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <button
+            className="absolute inset-0 w-full h-full bg-transparent cursor-default"
+            onClick={handleCloseOverlay}
+            aria-label="Close token input overlay"
+          />
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative z-10">
             <div className="flex justify-end">
               <button
                 className="text-gray-500 hover:text-gray-700"
@@ -168,19 +160,13 @@ const RecoverAccountPage: React.FC = () => {
         </div>
       )}
       {showConfirmation && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
-          onClick={handleCloseOverlay}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleCloseOverlay(e);
-            }
-          }}
-          tabIndex={0}
-          role="button"
-          aria-label="Close confirmation overlay"
-        >
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <button
+            className="absolute inset-0 w-full h-full bg-transparent cursor-default"
+            onClick={handleCloseOverlay}
+            aria-label="Close confirmation overlay"
+          />
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative z-10">
             <h2 className="text-xl font-bold mb-4 text-center">
               Are you sure you want to proceed?
             </h2>
