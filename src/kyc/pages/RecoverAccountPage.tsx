@@ -22,7 +22,7 @@ const RecoverAccountPage: React.FC = () => {
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
+      (state: RootState) => state.account.accountCert,
   );
   const dispatch = useDispatch();
   const supportPhoneNumber = "+237654066316";
@@ -33,7 +33,7 @@ const RecoverAccountPage: React.FC = () => {
   const handleKYCRecovery = () => {
     const accountIdText = accountId ? `Account ID: ${accountId}\n\n` : "";
     const customMessage = encodeURIComponent(
-      `Welcome to KYC Recovery!\n\n` + accountIdText + `My name is : `,
+        `Welcome to KYC Recovery!\n\n` + accountIdText + `My name is : `,
     );
     const whatsappLink = `https://wa.me/${supportPhoneNumber}?text=${customMessage}`;
     window.open(whatsappLink, "_blank");
@@ -70,19 +70,14 @@ const RecoverAccountPage: React.FC = () => {
   const handleYesClick = async () => {
     try {
       const certResponse = await RequestToRecoverAccountCert(
-        oldAccountId,
-        token,
+          oldAccountId,
+          token,
       );
       console.log(certResponse, "response");
       if (certResponse) {
-        // Save to localStorage
-
         localStorage.setItem("accountCert", certResponse);
-
         console.log(certResponse, "certResponse");
         dispatch(setAccountCert(certResponse));
-
-        // This sets the accountId in the global state
         alert("Account recovery successful. Redirecting to your dashboard...");
         navigate("/dashboard");
       } else {
@@ -106,112 +101,91 @@ const RecoverAccountPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-        <button
-          className="text-gray-500 hover:text-gray-700"
-          onClick={handleCancel}
-        >
-          <FaTimes size={20} />
-        </button>
-        <h1 className="text-2xl font-bold mb-6 text-center">Recover Account</h1>
-        <button
-          onClick={handleKYCRecovery}
-          className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200 mb-4"
-        >
-          Initiate KYC Recovery
-        </button>
-        <button
-          onClick={() => setShowTokenInput(true)}
-          className="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition duration-200 mb-4"
-        >
-          Input Recovery Token
-        </button>
-      </div>
-      {showTokenInput && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
-          onClick={handleCloseOverlay}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleCloseOverlay();
-            }
-          }}
-        >
-          <div
-            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative"
-            onClick={(e) => e.stopPropagation()}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.stopPropagation();
-              }
-            }}
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+          <button
+              className="text-gray-500 hover:text-gray-700"
+              onClick={handleCancel}
           >
-            <div className="flex justify-end">
-              <button
-                className="text-gray-500 hover:text-gray-700"
+            <FaTimes size={20} />
+          </button>
+          <h1 className="text-2xl font-bold mb-6 text-center">Recover Account</h1>
+          <button
+              onClick={handleKYCRecovery}
+              className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200 mb-4"
+          >
+            Initiate KYC Recovery
+          </button>
+          <button
+              onClick={() => setShowTokenInput(true)}
+              className="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition duration-200 mb-4"
+          >
+            Input Recovery Token
+          </button>
+        </div>
+        {showTokenInput && (
+            <div
+                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
                 onClick={handleCloseOverlay}
-              >
-                <FaTimes size={20} />
-              </button>
-            </div>
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Enter Recovery Token
-            </h2>
-            <input
-              type="text"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg mb-4"
-              placeholder="Recovery Token"
-            />
-            <button
-              onClick={handleTokenSubmit}
-              className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200"
             >
-              Submit
-            </button>
-          </div>
-        </div>
-      )}
-      {showConfirmation && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
-          role="button"
-          tabIndex={0}
-          onClick={handleCloseOverlay}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleCloseOverlay();
-            }
-          }}
-        >
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Are you sure you want to proceed?
-            </h2>
-            <div className="flex justify-between">
-              <button
-                onClick={handleYesClick}
-                className="bg-green-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-green-600 transition duration-200"
+              <div
+                  className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative"
+                  onClick={(e) => e.stopPropagation()}
               >
-                Yes
-              </button>
-              <button
-                onClick={() => setShowConfirmation(false)}
-                className="bg-red-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-red-600 transition duration-200"
-              >
-                No
-              </button>
+                <div className="flex justify-end">
+                  <button
+                      className="text-gray-500 hover:text-gray-700"
+                      onClick={handleCloseOverlay}
+                  >
+                    <FaTimes size={20} />
+                  </button>
+                </div>
+                <h2 className="text-xl font-bold mb-4 text-center">
+                  Enter Recovery Token
+                </h2>
+                <input
+                    type="text"
+                    value={token}
+                    onChange={(e) => setToken(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg mb-4"
+                    placeholder="Recovery Token"
+                />
+                <button
+                    onClick={handleTokenSubmit}
+                    className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200"
+                >
+                  Submit
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+        {showConfirmation && (
+            <div
+                className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
+                onClick={handleCloseOverlay}
+            >
+              <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+                <h2 className="text-xl font-bold mb-4 text-center">
+                  Are you sure you want to proceed?
+                </h2>
+                <div className="flex justify-between">
+                  <button
+                      onClick={handleYesClick}
+                      className="bg-green-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-green-600 transition duration-200"
+                  >
+                    Yes
+                  </button>
+                  <button
+                      onClick={() => setShowConfirmation(false)}
+                      className="bg-red-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-red-600 transition duration-200"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+        )}
+      </div>
   );
 };
 
