@@ -572,18 +572,10 @@ export async function RequestToGetCert(
   return await getKycCert(jwtToken);
 }
 
-
-//Request to send account recovery token
-export async function RequestToSubmitRecoveryToken(
-  newAccountId: string,
-  recoveryToken: string,
-  accountCert: string | null,
-
 export async function RequestToGetRecoveryToken(
   oldAccountId: string,
   newAccountId: string,
   accountCert?: string | null,
-
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -595,7 +587,30 @@ export async function RequestToGetRecoveryToken(
     accountCert,
     null,
     null,
+    null,
+    oldAccountId,
+    newAccountId,
+  );
 
+  return await requestToGetRecoveryToken(oldAccountId, newAccountId, jwtToken);
+}
+
+//Request to send account recovery token
+export async function RequestToSubmitRecoveryToken(
+  newAccountId: string,
+  recoveryToken: string,
+  accountCert: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
     recoveryToken,
     newAccountId,
   );
@@ -625,12 +640,3 @@ export async function RequestToRecoverAccountCert(
 
   return await recoverAccountCert(jwtToken, accountId);
 }
-export const getKey = () => Key;
-
-    oldAccountId,
-    newAccountId,
-  );
-
-  return await requestToGetRecoveryToken(oldAccountId, newAccountId, jwtToken);
-}
-

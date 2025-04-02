@@ -356,8 +356,6 @@ export const verifyEmailCode = async (
   }
 };
 
-//User Location
-// User Location API Call
 export const getUserLocation = async (
   jwtToken: string,
   location: string,
@@ -581,6 +579,34 @@ export const getKycCert = async (jwtToken: string) => {
   }
 };
 
+export const requestToGetRecoveryToken = async (
+  oldAccountId: string,
+  newAccountId: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    oldAccountId,
+    newAccountId,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/token`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting recovery token:", error);
+    throw new Error("Failed to get recovery token");
+  }
+};
+
 //Recovery AccountToken
 
 interface RecoveredTokens {
@@ -595,13 +621,6 @@ export const submitRecoveryToken = async (
   const requestBody = {
     newAccountId,
   };
-
-
-export const requestToGetRecoveryToken = async (
-  oldAccountId: string,
-  newAccountId: string,
-  jwtToken: string,
-) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
@@ -634,31 +653,17 @@ export const recoverAccountCert = async (
   };
   const requestBody = {
     accountId,
-
-  const requestBody = {
-    oldAccountId,
-    newAccountId,
-
   };
 
   try {
     const response = await axios.post(
-
       `${envVariables.VITE_WEBANK_OBS_URL}/accounts/recovery`,
-
-      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/token`,
-
       requestBody,
       { headers },
     );
     return response.data;
   } catch (error) {
-
     console.error("Error recovering account certificate:", error);
     throw new Error("Failed to recover account certificate");
-
-    console.error("Error getting recovery token:", error);
-    throw new Error("Failed to get recovery token");
-
   }
 };
