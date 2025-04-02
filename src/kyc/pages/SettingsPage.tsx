@@ -111,9 +111,9 @@ const SettingsPage: React.FC = () => {
           />
           <MenuItem
             Icon={FaEdit}
-            title="Modify your handle"
-            description="Change your profile handle"
-            onClick={() => handleMenuClick("Modify your handle")}
+            title="Recover Account"
+            description="Recover your account"
+            onClick={() => navigate("/recoverAccount")}
           />
         </div>
       </div>

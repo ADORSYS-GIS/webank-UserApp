@@ -356,8 +356,6 @@ export const verifyEmailCode = async (
   }
 };
 
-//User Location
-// User Location API Call
 export const getUserLocation = async (
   jwtToken: string,
   location: string,
@@ -606,5 +604,66 @@ export const requestToGetRecoveryToken = async (
   } catch (error) {
     console.error("Error getting recovery token:", error);
     throw new Error("Failed to get recovery token");
+  }
+};
+
+//Recovery AccountToken
+
+interface RecoveredTokens {
+  oldAccountId: string;
+  newKycCertificate: string;
+  message: string;
+}
+export const submitRecoveryToken = async (
+  newAccountId: string,
+  jwtToken: string,
+) => {
+  const requestBody = {
+    newAccountId,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/validate`,
+      requestBody,
+      { headers },
+    );
+    const data: RecoveredTokens = response.data;
+    console.log(data, "data");
+    return data.oldAccountId + " " + data.newKycCertificate;
+  } catch (error) {
+    console.error("Error submitting recovery token:", error);
+    throw new Error("Failed to submit recovery token");
+  }
+};
+
+//Recover Account cert
+
+export const recoverAccountCert = async (
+  jwtToken: string,
+  accountId: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+  const requestBody = {
+    accountId,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/recovery`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error recovering account certificate:", error);
+    throw new Error("Failed to recover account certificate");
   }
 };
