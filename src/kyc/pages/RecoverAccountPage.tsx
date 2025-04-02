@@ -132,10 +132,24 @@ const RecoverAccountPage: React.FC = () => {
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
           onClick={handleCloseOverlay}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleCloseOverlay();
+            }
+          }}
         >
           <div
             className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative"
             onClick={(e) => e.stopPropagation()}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
+              }
+            }}
           >
             <div className="flex justify-end">
               <button
@@ -165,7 +179,17 @@ const RecoverAccountPage: React.FC = () => {
         </div>
       )}
       {showConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
+          role="button"
+          tabIndex={0}
+          onClick={handleCloseOverlay}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleCloseOverlay();
+            }
+          }}
+        >
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
             <h2 className="text-xl font-bold mb-4 text-center">
               Are you sure you want to proceed?
