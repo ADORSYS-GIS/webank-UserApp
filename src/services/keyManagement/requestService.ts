@@ -22,6 +22,7 @@ import {
   getKycDocuments,
   getKycCert,
   GetKycRecordsBySearch,
+  requestToGetRecoveryToken,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -549,4 +550,25 @@ export async function RequestToGetCert(
   console.log(jwtToken + "Account Cert!!!");
   return await getKycCert(jwtToken);
 }
-export const getKey = () => Key;
+
+export async function RequestToGetRecoveryToken(
+  oldAccountId: string,
+  newAccountId: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    oldAccountId,
+    newAccountId,
+  );
+
+  return await requestToGetRecoveryToken(oldAccountId, newAccountId, jwtToken);
+}

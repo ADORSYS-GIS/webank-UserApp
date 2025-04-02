@@ -580,3 +580,31 @@ export const getKycCert = async (jwtToken: string) => {
     throw new Error("Failed to retrieve kyc Cert");
   }
 };
+
+export const requestToGetRecoveryToken = async (
+  oldAccountId: string,
+  newAccountId: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    oldAccountId,
+    newAccountId,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/token`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting recovery token:", error);
+    throw new Error("Failed to get recovery token");
+  }
+};
