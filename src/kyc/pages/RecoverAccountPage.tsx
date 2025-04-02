@@ -91,9 +91,12 @@ const RecoverAccountPage: React.FC = () => {
     }
   };
 
-  const handleCloseOverlay = () => {
-    setShowTokenInput(false);
-    setToken("");
+  const handleCloseOverlay = (e?: React.MouseEvent | React.KeyboardEvent) => {
+    if (e && e.target === e.currentTarget) {
+      setShowTokenInput(false);
+      setShowConfirmation(false);
+      setToken("");
+    }
   };
 
   const handleCancel = () => {
@@ -127,11 +130,16 @@ const RecoverAccountPage: React.FC = () => {
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
           onClick={handleCloseOverlay}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleCloseOverlay(e);
+            }
+          }}
+          tabIndex={0}
+          role="button"
+          aria-label="Close token input overlay"
         >
-          <div
-            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative">
             <div className="flex justify-end">
               <button
                 className="text-gray-500 hover:text-gray-700"
@@ -163,6 +171,14 @@ const RecoverAccountPage: React.FC = () => {
         <div
           className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
           onClick={handleCloseOverlay}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleCloseOverlay(e);
+            }
+          }}
+          tabIndex={0}
+          role="button"
+          aria-label="Close confirmation overlay"
         >
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
             <h2 className="text-xl font-bold mb-4 text-center">
