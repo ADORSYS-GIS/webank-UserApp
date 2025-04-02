@@ -32,7 +32,6 @@ import RecoverAccountPage from "./kyc/pages/RecoverAccountPage.tsx";
 
 import RecoveryDashboard from "./kyc/pages/KycRecoveryPage";
 
-
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
 

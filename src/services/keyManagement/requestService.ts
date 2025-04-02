@@ -21,12 +21,9 @@ import {
   UpdateKycStatus,
   getKycDocuments,
   getKycCert,
-
   submitRecoveryToken,
   recoverAccountCert,
-
   GetKycRecordsBySearch,
-
 } from "./apiService";
 
 let Key: string | null = null;
