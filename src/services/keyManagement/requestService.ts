@@ -504,7 +504,7 @@ export async function RequestToGetKycRecordsBySearch(
 }
 
 export async function RequestToGetKycDocuments(
-  publicKeyHash: string,
+  accountId : string,
   accountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -520,10 +520,10 @@ export async function RequestToGetKycDocuments(
     null,
     null,
     null,
-    publicKeyHash,
+    accountId ,
   );
   console.log(jwtToken + "Account Cert!!!");
-  return await getKycDocuments(publicKeyHash, jwtToken);
+  return await getKycDocuments(accountId , jwtToken);
 }
 
 export async function RequestToUpdateKycStatus(
@@ -552,6 +552,7 @@ export async function RequestToUpdateKycStatus(
 }
 
 export async function RequestToGetCert(
+  accountId: string,
   accountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -569,7 +570,7 @@ export async function RequestToGetCert(
     null,
   );
   console.log(jwtToken + "Account Cert!!!");
-  return await getKycCert(jwtToken);
+  return await getKycCert(accountId, jwtToken);
 }
 
 export async function RequestToGetRecoveryToken(

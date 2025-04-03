@@ -33,7 +33,7 @@ interface DocumentSet {
 }
 
 interface UserInfo {
-  publicKeyHash: string;
+  accountId : string;
   fullName: string;
   profession: string;
   idNumber: string;
@@ -94,6 +94,7 @@ export default function KYCDashboard() {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+
   const [users, setUsers] = useState<UserKYC[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -118,7 +119,7 @@ export default function KYCDashboard() {
 
         const validatedInfo = parsedInfo.map((item: any) => ({
           id: item.documentUniqueId || "",
-          publicKeyHash: item.publicKeyHash || "",
+          accountId : item.accountId  || "",
           info: {
             fullName: item.name || "",
             profession: item.profession || "",
@@ -133,18 +134,20 @@ export default function KYCDashboard() {
           status: item.status?.toLowerCase() || "pending",
         }));
 
-        const publicKeyHash = validatedInfo[0].publicKeyHash;
+        const accountId  = validatedInfo[0].accountId ;
+        console.log("Raw accountId :", accountId );
         const docsResponse = await RequestToGetKycDocuments(
-          publicKeyHash,
+          accountId ,
           accountCert,
         );
+        console.log("Raw docsResponse:", docsResponse);
         const parsedDocs =
           typeof docsResponse === "string"
             ? JSON.parse(docsResponse)
             : docsResponse;
 
         const validatedDocs = {
-          id: parsedDocs.publicKeyHash || "",
+          id: parsedDocs.accountId  || "",
           documents: {
             FrontID: parsedDocs.frontID || "",
             BackID: parsedDocs.backID || "",
@@ -155,10 +158,10 @@ export default function KYCDashboard() {
         };
 
         const mergedData = validatedInfo.map((infoItem: any) => ({
-          id: infoItem.publicKeyHash,
+          id: infoItem.accountId ,
           info: infoItem.info,
           documents:
-            validatedDocs.id === infoItem.publicKeyHash
+            validatedDocs.id === infoItem.accountId 
               ? validatedDocs.documents
               : {
                   FrontID: "",
@@ -167,7 +170,7 @@ export default function KYCDashboard() {
                   TaxDocument: "",
                 },
           status:
-            validatedDocs.id === infoItem.publicKeyHash
+            validatedDocs.id === infoItem.accountId 
               ? validatedDocs.status
               : "PENDING",
         }));

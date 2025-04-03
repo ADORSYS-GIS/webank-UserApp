@@ -502,7 +502,7 @@ export const GetKycRecordsBySearch = async (
 };
 
 export const getKycDocuments = async (
-  publicKeyHash: string,
+  accountId : string,
   jwtToken: string,
 ) => {
   const headers = {
@@ -511,7 +511,7 @@ export const getKycDocuments = async (
   };
 
   const requestBody = {
-    publicKeyHash,
+    accountId ,
   };
 
   try {
@@ -558,16 +558,18 @@ export const UpdateKycStatus = async (
   }
 };
 
-export const getKycCert = async (jwtToken: string) => {
+export const getKycCert = async (accountId: string, jwtToken: string) => {
   const headers = {
     Authorization: `Bearer ${jwtToken}`,
   };
   console.log(headers, "headers");
 
+ 
+
   try {
     // get the kyc Cert
     const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/cert`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/cert/${accountId}`,
       { headers },
     );
 
