@@ -68,11 +68,16 @@ const RecoverAccountPage: React.FC = () => {
   };
 
   const handleYesClick = async () => {
+    console.log(accountId, "oldAccountId");
     try {
-      const certResponse = await RequestToRecoverAccountCert(
-        oldAccountId,
-        token,
-      );
+      console.log(accountId, "oldAccountId2");
+
+      if (!accountId) {
+        toast.error("Account information is missing.");
+        return;
+      }
+
+      const certResponse = await RequestToRecoverAccountCert(accountId);
       console.log(certResponse, "response");
       if (certResponse) {
         localStorage.setItem("accountCert", certResponse);

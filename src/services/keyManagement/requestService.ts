@@ -623,7 +623,6 @@ export async function RequestToSubmitRecoveryToken(
 //Request to get Account Cert
 export async function RequestToRecoverAccountCert(
   accountId: string,
-  recoveryToken: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -635,7 +634,6 @@ export async function RequestToRecoverAccountCert(
     null,
     null,
     null,
-    recoveryToken,
     accountId,
   );
 

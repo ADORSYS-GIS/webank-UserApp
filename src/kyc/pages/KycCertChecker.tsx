@@ -78,7 +78,7 @@ const KycCertChecker = () => {
       );
       clearInterval(interval);
     };
-  }, [status, accountCert, dispatch]);
+  }, [status, accountCert, dispatch, accountId]);
 
   return null; // No UI needed, just background processing
 };
