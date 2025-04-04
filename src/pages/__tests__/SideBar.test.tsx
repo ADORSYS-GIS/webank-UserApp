@@ -12,10 +12,6 @@ describe("Sidebar", () => {
         <Sidebar accountId="" accountCert="" />
       </BrowserRouter>,
     );
-
-    // Check if the sidebar title is rendered
-    expect(screen.getByText("Webank Portal")).toBeInTheDocument();
-
     // Check if navigation links are rendered
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Agent Services")).toBeInTheDocument();

@@ -13,6 +13,9 @@ const ConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
 
   // Check if state exists; if not, redirect to top-up page
   if (!location.state) {
@@ -101,7 +104,7 @@ const ConfirmationPage: React.FC = () => {
         clientAccountId,
         amount,
         agentAccountId,
-        kycCert,
+        accountCert,
         transactionJwt,
       );
       if (response?.includes("Success")) {

@@ -257,7 +257,7 @@ export async function RequestToWithdrawOffline(
   clientAccountId: string,
   amount: number,
   agentAccountId: string,
-  kycCert?: string | null,
+  accountCert?: string | null,
   transactionJwt?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -269,10 +269,10 @@ export async function RequestToWithdrawOffline(
     publicKey,
     null,
     null,
-    null,
-    kycCert,
-    null,
+    accountCert,
     transactionJwt,
+    null,
+    null,
     clientAccountId,
     amount,
     agentAccountId,
@@ -504,7 +504,7 @@ export async function RequestToGetKycRecordsBySearch(
 }
 
 export async function RequestToGetKycDocuments(
-  accountId : string,
+  accountId: string,
   accountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -520,10 +520,10 @@ export async function RequestToGetKycDocuments(
     null,
     null,
     null,
-    accountId ,
+    accountId,
   );
   console.log(jwtToken + "Account Cert!!!");
-  return await getKycDocuments(accountId , jwtToken);
+  return await getKycDocuments(accountId, jwtToken);
 }
 
 export async function RequestToUpdateKycStatus(

@@ -33,7 +33,7 @@ interface DocumentSet {
 }
 
 interface UserInfo {
-  accountId : string;
+  accountId: string;
   fullName: string;
   profession: string;
   idNumber: string;
@@ -119,7 +119,7 @@ export default function KYCDashboard() {
 
         const validatedInfo = parsedInfo.map((item: any) => ({
           id: item.documentUniqueId || "",
-          accountId : item.accountId  || "",
+          accountId: item.accountId || "",
           info: {
             fullName: item.name || "",
             profession: item.profession || "",
@@ -134,10 +134,10 @@ export default function KYCDashboard() {
           status: item.status?.toLowerCase() || "pending",
         }));
 
-        const accountId  = validatedInfo[0].accountId ;
-        console.log("Raw accountId :", accountId );
+        const accountId = validatedInfo[0].accountId;
+        console.log("Raw accountId :", accountId);
         const docsResponse = await RequestToGetKycDocuments(
-          accountId ,
+          accountId,
           accountCert,
         );
         console.log("Raw docsResponse:", docsResponse);
@@ -147,7 +147,7 @@ export default function KYCDashboard() {
             : docsResponse;
 
         const validatedDocs = {
-          id: parsedDocs.accountId  || "",
+          id: parsedDocs.accountId || "",
           documents: {
             FrontID: parsedDocs.frontID || "",
             BackID: parsedDocs.backID || "",
@@ -158,10 +158,10 @@ export default function KYCDashboard() {
         };
 
         const mergedData = validatedInfo.map((infoItem: any) => ({
-          id: infoItem.accountId ,
+          id: infoItem.accountId,
           info: infoItem.info,
           documents:
-            validatedDocs.id === infoItem.accountId 
+            validatedDocs.id === infoItem.accountId
               ? validatedDocs.documents
               : {
                   FrontID: "",
@@ -170,7 +170,7 @@ export default function KYCDashboard() {
                   TaxDocument: "",
                 },
           status:
-            validatedDocs.id === infoItem.accountId 
+            validatedDocs.id === infoItem.accountId
               ? validatedDocs.status
               : "PENDING",
         }));

@@ -501,17 +501,14 @@ export const GetKycRecordsBySearch = async (
   }
 };
 
-export const getKycDocuments = async (
-  accountId : string,
-  jwtToken: string,
-) => {
+export const getKycDocuments = async (accountId: string, jwtToken: string) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
 
   const requestBody = {
-    accountId ,
+    accountId,
   };
 
   try {
@@ -563,8 +560,6 @@ export const getKycCert = async (accountId: string, jwtToken: string) => {
     Authorization: `Bearer ${jwtToken}`,
   };
   console.log(headers, "headers");
-
- 
 
   try {
     // get the kyc Cert
