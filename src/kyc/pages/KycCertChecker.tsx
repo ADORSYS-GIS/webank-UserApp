@@ -11,6 +11,8 @@ const KycCertChecker = () => {
     (state: RootState) => state.account.accountCert,
   );
 
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+
   useEffect(() => {
     // If status is null, approved, or rejected, stop execution
     if (status === null || status === "APPROVED" || status === "REJECTED") {
@@ -28,7 +30,17 @@ const KycCertChecker = () => {
       console.log("[KycCertChecker] Sending request to get certificate...");
 
       try {
-        const response = await RequestToGetCert(accountCert);
+        if (!accountCert || !accountId) {
+          console.log(
+            "[KycCertChecker] Account authentication missing. Stopping polling.",
+          );
+          clearInterval(interval);
+          return;
+        } else
+          console.log(
+            "[KycCertChecker] Account authentication present. Fetching certificate...",
+          );
+        const response = await RequestToGetCert(accountId, accountCert);
         console.log("[KycCertChecker] Response received:", response);
 
         if (response && typeof response === "string") {
@@ -58,7 +70,7 @@ const KycCertChecker = () => {
       } catch (error) {
         console.error("[KycCertChecker] Error fetching certificate:", error);
       }
-    }, 30 * 1000); // Runs every 30 seconds
+    }, 5 * 1000); // Runs every 5 seconds
 
     return () => {
       console.log(
@@ -66,7 +78,7 @@ const KycCertChecker = () => {
       );
       clearInterval(interval);
     };
-  }, [status, accountCert, dispatch]);
+  }, [status, accountCert, dispatch, accountId]);
 
   return null; // No UI needed, just background processing
 };

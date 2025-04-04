@@ -257,7 +257,7 @@ export async function RequestToWithdrawOffline(
   clientAccountId: string,
   amount: number,
   agentAccountId: string,
-  kycCert?: string | null,
+  accountCert?: string | null,
   transactionJwt?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -269,10 +269,10 @@ export async function RequestToWithdrawOffline(
     publicKey,
     null,
     null,
-    null,
-    kycCert,
-    null,
+    accountCert,
     transactionJwt,
+    null,
+    null,
     clientAccountId,
     amount,
     agentAccountId,
@@ -504,7 +504,7 @@ export async function RequestToGetKycRecordsBySearch(
 }
 
 export async function RequestToGetKycDocuments(
-  publicKeyHash: string,
+  accountId: string,
   accountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -520,10 +520,10 @@ export async function RequestToGetKycDocuments(
     null,
     null,
     null,
-    publicKeyHash,
+    accountId,
   );
   console.log(jwtToken + "Account Cert!!!");
-  return await getKycDocuments(publicKeyHash, jwtToken);
+  return await getKycDocuments(accountId, jwtToken);
 }
 
 export async function RequestToUpdateKycStatus(
@@ -552,6 +552,7 @@ export async function RequestToUpdateKycStatus(
 }
 
 export async function RequestToGetCert(
+  accountId: string,
   accountCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -569,7 +570,7 @@ export async function RequestToGetCert(
     null,
   );
   console.log(jwtToken + "Account Cert!!!");
-  return await getKycCert(jwtToken);
+  return await getKycCert(accountId, jwtToken);
 }
 
 export async function RequestToGetRecoveryToken(
@@ -622,7 +623,6 @@ export async function RequestToSubmitRecoveryToken(
 //Request to get Account Cert
 export async function RequestToRecoverAccountCert(
   accountId: string,
-  recoveryToken: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -634,7 +634,6 @@ export async function RequestToRecoverAccountCert(
     null,
     null,
     null,
-    recoveryToken,
     accountId,
   );
 

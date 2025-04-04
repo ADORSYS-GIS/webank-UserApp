@@ -17,9 +17,6 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
 
   return (
     <div className="w-64 h-full bg-gradient-to-b from-purple-500 to-blue-600 p-4 shadow-lg">
-      <div className="mb-8">
-        <h2 className="text-white text-xl font-bold">Webank Portal</h2>
-      </div>
       <nav>
         <ul className="space-y-2">
           <li>
