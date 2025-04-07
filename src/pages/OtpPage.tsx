@@ -7,8 +7,8 @@ import {
 } from "../services/keyManagement/requestService.ts";
 import { toast, ToastContainer } from "react-toastify";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
-import { useDispatch } from "react-redux"; // Import useDispatch from redux
-import { setAccountId, setAccountCert } from "../slices/accountSlice"; // Import the setAccountId action
+import { useDispatch } from "react-redux";
+import { setAccountId, setAccountCert } from "../slices/accountSlice";
 
 const Otp = () => {
   useDisableScroll();
@@ -19,7 +19,7 @@ const Otp = () => {
   const devCert = location.state?.devCert;
   let phoneCert: string;
 
-  const dispatch = useDispatch(); // Initialize the dispatch hook
+  const dispatch = useDispatch();
 
   const handleverifyClick = async () => {
     try {
@@ -65,8 +65,7 @@ const Otp = () => {
 
             // Dispatch action to save accountId to the Redux state
             dispatch(setAccountId(accountId));
-            dispatch(setAccountCert(accountCert)); // This sets the accountId in the global state
-            // This sets the accountId in the global state
+            dispatch(setAccountCert(accountCert));
 
             await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -104,7 +103,6 @@ const Otp = () => {
     const interval = setInterval(() => {
       // Decrease seconds if greater than 0
       if (seconds > 0) {
-        otp;
         setSeconds(seconds - 1);
       }
       // If seconds reach 0, and minutes are greater than 0, decrease minutes
@@ -121,38 +119,43 @@ const Otp = () => {
 
     // Cleanup: clear the interval when the component unmounts or when seconds/minutes change
     return () => clearInterval(interval);
-  }, [seconds, minutes, otp]); // Dependency array ensures the effect re-runs when 'seconds' or 'minutes' change
+  }, [seconds, minutes]); // Removed otp from dependency array as it's not used in effect
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen py-10">
-      {/* Render the OTP input */}
-      <OtpInput value={otp} valueLength={5} onChange={onChange} />
+    <div className="flex flex-col justify-center items-center min-h-screen px-4 py-6 sm:py-10">
+      <div className="w-full max-w-md">
+        {/* OTP Input wrapper with responsive size */}
+        <div className="mb-8">
+          <OtpInput value={otp} valueLength={5} onChange={onChange} />
+        </div>
 
-      <div className="mx-auto mt-10 w-full max-w-xs lg:max-w-md">
-        <button
-          type="button"
-          className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
-          onClick={handleverifyClick}
-        >
-          Verify Account
-        </button>
-      </div>
+        {/* Verify button */}
+        <div className="w-full mb-6">
+          <button
+            type="button"
+            className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] text-base sm:text-lg hover:bg-[#1433FF] transition duration-300"
+            onClick={handleverifyClick}
+          >
+            Verify Account
+          </button>
+        </div>
 
-      <div className="flex flex-col items-center mt-5 mb-5">
-        <p className="text-[13px] font-normal text-[#2d1d35] mb-5 text-center">
-          Resend OTP in{" "}
-          <span className="font-semibold">
-            {minutes < 10 ? `0${minutes}` : minutes}:
-            {seconds < 10 ? `0${seconds}` : seconds}
-          </span>
-        </p>
-        <div className="countdown-wrapper">
-          <p>
-            Didn't you receive the OTP?{" "}
+        {/* Timer and Resend section */}
+        <div className="flex flex-col items-center space-y-3">
+          <p className="text-xs sm:text-sm font-normal text-gray-700 text-center">
+            Resend OTP in{" "}
+            <span className="font-semibold">
+              {minutes < 10 ? `0${minutes}` : minutes}:
+              {seconds < 10 ? `0${seconds}` : seconds}
+            </span>
+          </p>
+
+          <p className="text-xs sm:text-sm text-gray-700">
+            Didn't receive the OTP?{" "}
             <a
               className={`${
                 seconds > 0 || minutes > 0 ? "text-gray-400" : "text-blue-500"
-              } cursor-${seconds > 0 || minutes > 0 ? "not-allowed" : "pointer"}`}
+              } cursor-${seconds > 0 || minutes > 0 ? "not-allowed" : "pointer"} font-medium`}
               onClick={(e) => {
                 if (seconds > 0 || minutes > 0) {
                   e.preventDefault();
@@ -167,8 +170,9 @@ const Otp = () => {
           </p>
         </div>
       </div>
+
       {/* Toast container */}
-      <ToastContainer />
+      <ToastContainer position="bottom-center" />
     </div>
   );
 };

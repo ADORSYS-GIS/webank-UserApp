@@ -104,7 +104,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       if ((await response) === "KYC Info sent successfully and saved.") {
         toast.success("KYC Info sent successfully and saved.");
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/kyc");
         }, 2000);
       } else toast.error("Error submitting data, please try again later");
     } catch (error) {

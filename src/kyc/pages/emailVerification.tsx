@@ -42,7 +42,7 @@ const InputEmail: React.FC = () => {
       {/* Header with back button */}
       <header className="p-3">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/settings")}
           className="p-2 focus:outline-none"
           aria-label="Go Back"
         >

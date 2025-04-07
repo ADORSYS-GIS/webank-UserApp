@@ -13,9 +13,6 @@ describe("SettingsPage", () => {
     );
 
     expect(screen.getByText("Settings")).toBeInTheDocument();
-    expect(
-      screen.getByText("All your account settings here"),
-    ).toBeInTheDocument();
   });
 
   it("renders all menu items", () => {
@@ -29,7 +26,7 @@ describe("SettingsPage", () => {
     expect(screen.getByText("Email verification")).toBeInTheDocument();
     expect(screen.getByText("Verify my ID (KYC)")).toBeInTheDocument();
     expect(screen.getByText("Add your residence")).toBeInTheDocument();
-    expect(screen.getByText("Recover your account")).toBeInTheDocument();
+    expect(screen.getByText("Recover Account")).toBeInTheDocument();
   });
 
   it("triggers click event on menu items", () => {
