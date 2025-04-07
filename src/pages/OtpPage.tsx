@@ -172,7 +172,7 @@ const Otp = () => {
       </div>
 
       {/* Toast container */}
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };
