@@ -7,7 +7,7 @@ import {
 } from "../../services/keyManagement/requestService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import {
   setAccountCert,
   setAccountId,
@@ -50,6 +50,16 @@ const RecoverAccountPage: React.FC = () => {
       oldAccountId = data.split(" ")[0];
       kycCert = data.split(" ")[1];
       console.log(kycCert, "kycCert");
+
+      if (
+        oldAccountId === "null" ||
+        kycCert === "null" ||
+        !oldAccountId ||
+        !kycCert
+      ) {
+        toast.error("Invalid token. Please try again.");
+        return;
+      }
 
       localStorage.setItem("accountId", oldAccountId);
       localStorage.setItem("kycCert", kycCert);
@@ -192,6 +202,7 @@ const RecoverAccountPage: React.FC = () => {
           </div>
         </div>
       )}
+      <ToastContainer />
     </div>
   );
 };
