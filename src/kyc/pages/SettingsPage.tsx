@@ -6,6 +6,8 @@ import {
   FaIdCard,
   FaEdit,
   FaChevronRight,
+  FaUser,
+  FaExclamationCircle,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useNavigate } from "react-router-dom";
@@ -27,22 +29,18 @@ const MenuItem: React.FC<MenuItemProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className="flex justify-between items-center p-4 transition-transform
-                 hover:bg-[#20B2AA]/10 hover:scale-[1.01] cursor-pointer w-full text-left"
+      className="flex justify-between items-center py-4 px-4 w-full text-left border-b border-gray-100 last:border-b-0"
     >
-      <div className="flex items-center space-x-3">
-        <div
-          className="w-10 h-10 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
-                        rounded-full flex items-center justify-center text-white"
-        >
-          <Icon size={16} />
+      <div className="flex items-center">
+        <div className="w-12 h-12 bg-[#20B2AA] rounded-lg flex items-center justify-center text-white mr-4">
+          <Icon size={20} />
         </div>
         <div>
           <p className="font-medium text-gray-800">{title}</p>
-          <p className="text-sm text-gray-500">{description}</p>
+          <p className="text-sm text-gray-500 mt-1">{description}</p>
         </div>
       </div>
-      <div className="text-gray-400">
+      <div className="text-gray-300">
         <FaChevronRight />
       </div>
     </button>
@@ -58,61 +56,70 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div
-      className="bg-gradient-to-b from-white to-gray-50 min-h-screen py-6 px-4"
-      style={{ fontFamily: "Poppins, sans-serif" }}
+      className="bg-[#f8fcfc] min-h-screen"
+      style={{ fontFamily: "'Poppins', sans-serif" }}
     >
-      <div className="max-w-xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-gray-800">
-          Settings
-        </h1>
-        <p className="mt-2 text-center text-[#20B2AA]">
-          All your account settings here
-        </p>
+      <div className="max-w-xl mx-auto pb-6">
+        {/* Header */}
+        <div className="pt-8 pb-4 px-4">
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-1">
+            <span className="border-b-2 border-[#20B2AA] pb-1">Settings</span>
+          </h1>
+          <p className="text-center text-[#20B2AA]">
+            Manage your account preferences
+          </p>
+        </div>
 
-        <div className="mt-6 mb-8 bg-gradient-to-br from-white to-[#20B2AA]/10 rounded-xl shadow-lg p-6">
-          <div className="flex items-center space-x-4">
-            <div
-              className="w-16 h-16 bg-gradient-to-br from-[#20B2AA] to-[#1C8C8A]
-                            rounded-full flex items-center justify-center text-2xl text-white font-bold"
-            >
-              U
+        {/* User Profile Card */}
+        <div className="mx-4 mb-6">
+          <div className="bg-white rounded-xl shadow-sm p-4 flex items-center">
+            <div className="w-16 h-16 bg-[#20B2AA] rounded-lg flex items-center justify-center text-white mr-4">
+              <FaUser size={24} />
             </div>
             <div>
               <p className="text-xl font-semibold text-gray-800">@USER</p>
-              <p className="text-sm text-gray-600">Email Not Verified</p>
+              <div className="flex items-center mt-1">
+                <FaExclamationCircle
+                  className="text-amber-500 mr-2"
+                  size={14}
+                />
+                <p className="text-sm text-gray-600">Email Not Verified</p>
+              </div>
               <p className="text-sm text-gray-600">237---------</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-md divide-y divide-gray-200">
+
+        {/* Menu Items */}
+        <div className="mx-4 bg-white rounded-xl shadow-sm overflow-hidden">
           <MenuItem
             Icon={FaLifeRing}
             title="Help & Support"
-            description="Chat with our team"
+            description="Chat with our team for assistance"
             onClick={() => handleMenuClick("Help & Support")}
           />
           <MenuItem
             Icon={FaEnvelope}
             title="Email verification"
-            description="Email not added"
+            description="Secure your account with email verification"
             onClick={() => navigate("/inputEmail")}
           />
           <MenuItem
             Icon={FaIdCard}
             title="Verify my ID (KYC)"
-            description="Show proof of ID"
+            description="Complete identity verification process"
             onClick={() => navigate("/kyc")}
           />
           <MenuItem
             Icon={FaMapMarkerAlt}
             title="Add your residence"
-            description="Help us locate you"
+            description="Update your location information"
             onClick={() => navigate("/verification/location")}
           />
           <MenuItem
             Icon={FaEdit}
             title="Recover Account"
-            description="Recover your account"
+            description="Access account recovery options"
             onClick={() => navigate("/recoverAccount")}
           />
         </div>
