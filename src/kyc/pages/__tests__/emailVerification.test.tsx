@@ -95,5 +95,6 @@ describe("InputEmail Component", () => {
     renderWithProviders(<InputEmail />);
     const backButton = screen.getByRole("button", { name: /Go Back/i });
     fireEvent.click(backButton);
+    expect(navigateMock).toHaveBeenCalledWith("/settings");
   });
 });
