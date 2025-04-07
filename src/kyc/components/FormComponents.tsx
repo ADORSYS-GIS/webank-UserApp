@@ -113,8 +113,8 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       console.error("Error submitting data:", error);
       toast.error("Error submitting data, please try again later");
     }
-    setFormData({});
     onSubmit(formData);
+    setFormData({});
   };
 
   return (
