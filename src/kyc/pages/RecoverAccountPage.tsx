@@ -49,14 +49,8 @@ const RecoverAccountPage: React.FC = () => {
       console.log(data, "response");
       oldAccountId = data.split(" ")[0];
       kycCert = data.split(" ")[1];
-      console.log(kycCert, "kycCert");
 
-      if (
-        oldAccountId === "null" ||
-        kycCert === "null" ||
-        !oldAccountId ||
-        !kycCert
-      ) {
+      if (oldAccountId === "null" || kycCert === "null") {
         toast.error("Invalid token. Please try again.");
         return;
       }
