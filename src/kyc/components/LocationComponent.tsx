@@ -137,7 +137,7 @@ const LocationComponent = () => {
               : "Continue with KYC Verification"}
           </button>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/settings")}
             className="text-gray-600 px-6 py-3 rounded-md hover:bg-gray-100 transition-colors"
           >
             Cancel

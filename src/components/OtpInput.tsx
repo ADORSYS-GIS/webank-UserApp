@@ -89,7 +89,7 @@ export default function OtpInput({
         <header className="mb-8">
           <h1 className="text-3xl font-bold mb-2">OTP Verification</h1>
           <p className="text-[15px]">
-            Enter the 4-digit verification code that was sent to your phone
+            Enter the 5-digit verification code that was sent to your phone
             number.
           </p>
         </header>
