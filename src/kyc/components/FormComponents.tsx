@@ -6,10 +6,11 @@ import React, {
   useCallback,
 } from "react";
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { setStatus } from "../../slices/accountSlice.ts";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -41,6 +42,8 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
@@ -102,6 +105,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         accountId,
       );
       if (response === "KYC Info sent successfully and saved.") {
+        dispatch(setStatus("PENDING"));
         toast.success("KYC Info sent successfully and saved.");
         setTimeout(() => {
           navigate("/kyc");
