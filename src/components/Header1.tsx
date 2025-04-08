@@ -9,6 +9,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/Webank.png";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/Store";
 
 interface Header1Props {
   onHamburgerClick: () => void;
@@ -16,6 +19,15 @@ interface Header1Props {
 
 const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
   const navigate = useNavigate();
+  const kycCert = useSelector((state: RootState) => state.account.kycCert);
+
+  const handleActionClick = () => {
+    if (kycCert === null) {
+      toast.warning("Please complete the KYC process to proceed.");
+      return;
+    }
+    navigate("/account-qr");
+  };
 
   return (
     // 1) Removed flex-wrap from the header
@@ -42,7 +54,7 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
         {/* Text button on medium and larger screens */}
         <button
           className="hidden md:inline-flex bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded focus:outline-none"
-          onClick={() => navigate("/account-qr")}
+          onClick={handleActionClick}
           aria-label="My QR Code (desktop)"
         >
           My QR code
@@ -71,6 +83,7 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
           <FontAwesomeIcon icon={faCog} className="text-lg" />
         </button>
       </div>
+      <ToastContainer />
     </header>
   );
 };

@@ -72,8 +72,8 @@ const KycCertChecker = () => {
           console.error("[KycCertChecker] Error fetching certificate:", error);
         }
       },
-      60 * 60 * 1000,
-    ); // Runs every 1 hour
+      5 * 60 * 1000,
+    ); // 5 minutes
 
     return () => {
       console.log(
