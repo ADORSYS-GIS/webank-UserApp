@@ -6,10 +6,11 @@ import React, {
   useCallback,
 } from "react";
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { setStatus } from "../../slices/accountSlice.ts";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -42,6 +43,8 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
   const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -55,8 +58,8 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     console.log("ID Card Form Data:", formData);
-    //extract data from all fields in formData variable
     const fullName = formData["fullName"];
     const profession = formData["profession"];
     const documentNumber = formData["UniqueDocumentIdentifier"];
@@ -91,7 +94,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         toast.error("Please fill in all the required fields");
         return;
       }
-      const response = RequestToStoreKYCInfo(
+      const response = await RequestToStoreKYCInfo(
         fullName,
         profession,
         documentNumber,
@@ -101,18 +104,21 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         accountCert,
         accountId,
       );
-      if ((await response) === "KYC Info sent successfully and saved.") {
+      if (response === "KYC Info sent successfully and saved.") {
+        dispatch(setStatus("PENDING"));
         toast.success("KYC Info sent successfully and saved.");
         setTimeout(() => {
           navigate("/kyc");
         }, 2000);
-      } else toast.error("Error submitting data, please try again later");
+      } else {
+        toast.error("Error submitting data, please try again later");
+      }
     } catch (error) {
       console.error("Error submitting data:", error);
       toast.error("Error submitting data, please try again later");
     }
-    e.preventDefault();
     onSubmit(formData);
+    setFormData({});
   };
 
   return (
@@ -145,7 +151,6 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     </FormContext.Provider>
   );
 };
-
 interface SelectWithPopupProps {
   label: string;
   options: string[];
