@@ -26,51 +26,54 @@ const KycCertChecker = () => {
       "[KycCertChecker] Status is PENDING, starting certificate polling...",
     );
 
-    const interval = setInterval(async () => {
-      console.log("[KycCertChecker] Sending request to get certificate...");
+    const interval = setInterval(
+      async () => {
+        console.log("[KycCertChecker] Sending request to get certificate...");
 
-      try {
-        if (!accountCert || !accountId) {
-          console.log(
-            "[KycCertChecker] Account authentication missing. Stopping polling.",
-          );
-          clearInterval(interval);
-          return;
-        } else
-          console.log(
-            "[KycCertChecker] Account authentication present. Fetching certificate...",
-          );
-        const response = await RequestToGetCert(accountId, accountCert);
-        console.log("[KycCertChecker] Response received:", response);
+        try {
+          if (!accountCert || !accountId) {
+            console.log(
+              "[KycCertChecker] Account authentication missing. Stopping polling.",
+            );
+            clearInterval(interval);
+            return;
+          } else
+            console.log(
+              "[KycCertChecker] Account authentication present. Fetching certificate...",
+            );
+          const response = await RequestToGetCert(accountId, accountCert);
+          console.log("[KycCertChecker] Response received:", response);
 
-        if (response && typeof response === "string") {
-          if (response.includes("certificate")) {
-            // Extract the certificate by trimming the response
-            const certificate = response
-              .replace("Your certificate is:", "")
-              .trim();
+          if (response && typeof response === "string") {
+            if (response.includes("certificate")) {
+              // Extract the certificate by trimming the response
+              const certificate = response
+                .replace("Your certificate is:", "")
+                .trim();
 
-            if (certificate) {
+              if (certificate) {
+                console.log(
+                  "[KycCertChecker] Certificate found. Updating Redux state...",
+                );
+                dispatch(setKycCert(certificate)); // Store the certificate in Redux
+                dispatch(setStatus("APPROVED")); // Change status to APPROVED
+                clearInterval(interval); // Stop making requests
+                console.log(
+                  "[KycCertChecker] Polling stopped as certificate is received.",
+                );
+              }
+            } else if (response === "null") {
               console.log(
-                "[KycCertChecker] Certificate found. Updating Redux state...",
-              );
-              dispatch(setKycCert(certificate)); // Store the certificate in Redux
-              dispatch(setStatus("APPROVED")); // Change status to APPROVED
-              clearInterval(interval); // Stop making requests
-              console.log(
-                "[KycCertChecker] Polling stopped as certificate is received.",
+                "[KycCertChecker] Response is null. Continuing polling...",
               );
             }
-          } else if (response === "null") {
-            console.log(
-              "[KycCertChecker] Response is null. Continuing polling...",
-            );
           }
+        } catch (error) {
+          console.error("[KycCertChecker] Error fetching certificate:", error);
         }
-      } catch (error) {
-        console.error("[KycCertChecker] Error fetching certificate:", error);
-      }
-    }, 5 * 1000); // Runs every 5 seconds
+      },
+      5 * 60 * 1000,
+    ); // 5 minutes
 
     return () => {
       console.log(
