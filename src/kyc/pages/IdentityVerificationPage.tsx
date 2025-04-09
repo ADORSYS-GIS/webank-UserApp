@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUserEdit, FaCloudUploadAlt, FaCheck } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -19,10 +19,20 @@ export default function IdentityVerification() {
   const navigate = useNavigate();
   const [showVerificationModalPopup, setShowVerificationModalPopup] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
 
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+  const status = useSelector(
+    (state: RootState) => state.account.status,
+  );
+
+  useEffect(() => {
+    if (status === "PENDING") {
+      setPersonalInfoSubmitted(true);
+    }
+  }, [status]);
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
@@ -93,24 +103,24 @@ export default function IdentityVerification() {
 
       <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
         {steps.map((step) => {
-          const isStep1Completed = Boolean(step.id === 1 && accountCert);
+          const isPersonalInfoCompleted = step.id === 1 && personalInfoSubmitted;
           return (
             <button
               key={step.id}
               type="button"
-              onClick={isStep1Completed ? undefined : step.onClick}
-              disabled={isStep1Completed}
+              onClick={isPersonalInfoCompleted ? undefined : step.onClick}
+              disabled={isPersonalInfoCompleted}
               className={`group p-4 md:p-6 rounded-xl border transition-all
                          flex items-center justify-between
                          w-full text-left ${
-                           isStep1Completed 
+                           isPersonalInfoCompleted 
                              ? 'bg-gray-50 cursor-not-allowed opacity-75'
                              : 'cursor-pointer hover:scale-[1.005] hover:border-[#20B2AA]'
                          }`}
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
                 <div className={`p-3 rounded-lg shadow-sm border flex-shrink-0 ${
-                  isStep1Completed ? 'border-green-100 bg-green-50' : 'bg-white border-gray-100'
+                  isPersonalInfoCompleted ? 'border-green-100 bg-green-50' : 'bg-white border-gray-100'
                 }`}>
                   {step.icon}
                 </div>
@@ -123,7 +133,7 @@ export default function IdentityVerification() {
                   </p>
                 </div>
               </div>
-              {isStep1Completed ? (
+              {isPersonalInfoCompleted ? (
                 <FaCheck className="w-5 h-5 text-green-500 flex-shrink-0" />
               ) : (
                 <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
@@ -154,7 +164,7 @@ export default function IdentityVerification() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
             <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
-              Are you positively sure you submitted all the required documents via WhatsApp?
+              Are you sure you submitted all the required documents via WhatsApp?
             </p>
             <div className="flex justify-center space-x-4">
               <button
@@ -166,7 +176,7 @@ export default function IdentityVerification() {
               <button
                 onClick={() => {
                   setShowConfirmationModal(false);
-                  navigate("/verification-complete"); // Update with your desired path
+                  navigate("/verification/location");
                 }}
                 className="px-6 py-2 bg-[#20B2AA] hover:bg-[#1C8C8A] text-white font-medium rounded-lg transition-colors"
               >
