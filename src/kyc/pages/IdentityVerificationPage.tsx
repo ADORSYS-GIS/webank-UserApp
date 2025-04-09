@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaUserEdit, FaCloudUploadAlt } from "react-icons/fa";
+import { FaUserEdit, FaCloudUploadAlt, FaCheck } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import VerificationModal from "../components/VerificationModal";
@@ -17,8 +17,8 @@ interface VerificationStep {
 
 export default function IdentityVerification() {
   const navigate = useNavigate();
-  //const location = useLocation();
   const [showVerificationModalPopup, setShowVerificationModalPopup] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
@@ -27,13 +27,9 @@ export default function IdentityVerification() {
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const redirectToWhatsApp = () => {
-    // Replace with your actual WhatsApp business account phone number
-    const whatsappNumber = "1234567890"; 
+    const whatsappNumber = "1234567890";
     const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
-    
-    // Create WhatsApp URL
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
-    // Open in new tab
     window.open(whatsappUrl, '_blank');
   };
 
@@ -59,14 +55,7 @@ export default function IdentityVerification() {
       toast.error("Account information is missing");
       return;
     }
-    
-    toast.success("Your personal information has been saved");
-    toast.info("Please upload your documents via WhatsApp to complete verification");
-    
-    // Navigate back to settings after a delay
-    setTimeout(() => {
-      navigate("/settings");
-    }, 3000);
+    setShowConfirmationModal(true);
   };
 
   return (
@@ -103,32 +92,45 @@ export default function IdentityVerification() {
       </div>
 
       <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
-        {steps.map((step) => (
-          <button
-            key={step.id}
-            type="button"
-            onClick={step.onClick}
-            className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer
-                       flex items-center justify-between
-                       transform hover:scale-[1.005] hover:border-[#20B2AA]
-                       w-full text-left"
-          >
-            <div className="flex items-center space-x-4 flex-1 min-w-0">
-              <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100 flex-shrink-0">
-                {step.icon}
+        {steps.map((step) => {
+          const isStep1Completed = Boolean(step.id === 1 && accountCert);
+          return (
+            <button
+              key={step.id}
+              type="button"
+              onClick={isStep1Completed ? undefined : step.onClick}
+              disabled={isStep1Completed}
+              className={`group p-4 md:p-6 rounded-xl border transition-all
+                         flex items-center justify-between
+                         w-full text-left ${
+                           isStep1Completed 
+                             ? 'bg-gray-50 cursor-not-allowed opacity-75'
+                             : 'cursor-pointer hover:scale-[1.005] hover:border-[#20B2AA]'
+                         }`}
+            >
+              <div className="flex items-center space-x-4 flex-1 min-w-0">
+                <div className={`p-3 rounded-lg shadow-sm border flex-shrink-0 ${
+                  isStep1Completed ? 'border-green-100 bg-green-50' : 'bg-white border-gray-100'
+                }`}>
+                  {step.icon}
+                </div>
+                <div className="space-y-1 flex-1 min-w-0">
+                  <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
+                    {step.description}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1 flex-1 min-w-0">
-                <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
-                  {step.description}
-                </p>
-              </div>
-            </div>
-            <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
-          </button>
-        ))}
+              {isStep1Completed ? (
+                <FaCheck className="w-5 h-5 text-green-500 flex-shrink-0" />
+              ) : (
+                <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
+              )}
+            </button>
+          )}
+        )}
       </div>
 
       <div className="pt-4 border-t border-gray-100 bg-white w-full">
@@ -147,6 +149,34 @@ export default function IdentityVerification() {
           onClose={() => setShowVerificationModalPopup(false)}
         />
       )}
+
+      {showConfirmationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
+            <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
+              Are you positively sure you submitted all the required documents via WhatsApp?
+            </p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => setShowConfirmationModal(false)}
+                className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg border border-gray-300 hover:border-gray-400 transition-colors"
+              >
+                No
+              </button>
+              <button
+                onClick={() => {
+                  setShowConfirmationModal(false);
+                  navigate("/verification-complete"); // Update with your desired path
+                }}
+                className="px-6 py-2 bg-[#20B2AA] hover:bg-[#1C8C8A] text-white font-medium rounded-lg transition-colors"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ToastContainer />
     </div>
   );
