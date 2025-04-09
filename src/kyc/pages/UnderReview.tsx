@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { FaRegClock, FaCheckCircle } from "react-icons/fa";
 import { TbProgressCheck } from "react-icons/tb";
 
@@ -11,32 +11,41 @@ const UnderReview = () => {
   const navigate = useNavigate();
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
   const [currentQuote, setCurrentQuote] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const illustrations = [
+    "https://img.freepik.com/free-vector/work-time-concept-illustration_114360-1271.jpg",
+    "https://img.freepik.com/free-vector/lateness-concept-illustration_114360-6170.jpg",
+    "https://img.freepik.com/free-vector/reminders-concept-illustration_114360-4278.jpg",
+    "https://img.freepik.com/free-vector/waiting-room-with-sofa-concept-illustration_114360-17587.jpg"
+  ];
 
   const quotes = [
-    "Good things come to those who wait...",
     "Securing your financial future...",
+    "Precision requires careful time...",
+    "Crafting your unique safety blueprint...",
     "Excellence is worth the patience...",
-    "Crafting your secure identity...",
-    "Final touches of perfection..."
+    "Building your financial fortress...",
+    "Quality assurance in progress...",
+    "Finalizing your secure access...",
+    "Optimizing your digital vault..."
   ];
 
   useEffect(() => {
     const quoteInterval = setInterval(() => {
-      setCurrentQuote((prev) => (prev + 1) % quotes.length);
+      setCurrentQuote(prev => (prev + 1) % quotes.length);
+      setCurrentImage(prev => (prev + 1) % illustrations.length);
     }, 5000);
 
     const certCheckInterval = setInterval(() => {
-      if (kycCert) {
-        navigate("/dashboard"); // Replace with your success route
-      }
+      if (kycCert) navigate("/dashboard");
     }, 3000);
 
     return () => {
       clearInterval(quoteInterval);
       clearInterval(certCheckInterval);
     };
-  }, [kycCert, navigate, quotes.length]);
+  }, [kycCert, navigate, quotes.length, illustrations.length]);
 
   const handleActionClick = (callback: () => void) => {
     if (kycCert === null) {
@@ -47,20 +56,31 @@ const UnderReview = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full text-center space-y-8">
-        <motion.div 
-          className="relative mx-auto w-64 h-64"
-          animate={isAnimating ? "visible" : "hidden"}
-          onHoverStart={() => setIsAnimating(false)}
-          onHoverEnd={() => setIsAnimating(true)}
-        >
-          {/* Central Icon */}
-          <div className="absolute inset-0 flex items-center justify-center z-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="max-w-4xl w-full text-center space-y-8">
+        <div className="relative h-96 mx-auto">
+          <AnimatePresence mode="wait">
             <motion.div
-              className="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              key={currentImage}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-0 flex items-center justify-center"
+            >
+              <img
+                src={illustrations[currentImage]}
+                alt="Verification progress"
+                className="h-96 object-contain rounded-xl shadow-lg"
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-8">
+            <motion.div
+              className="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer border-4 border-indigo-100"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleActionClick(() => navigate("/dashboard"))}
             >
               {kycCert ? (
@@ -70,65 +90,57 @@ const UnderReview = () => {
               )}
             </motion.div>
           </div>
+        </div>
 
-          {/* Orbital Animation */}
-          <motion.div
-            className="absolute w-full h-full border-2 border-indigo-100 rounded-full"
-            animate={{
-              rotate: 360,
-              transition: { repeat: Infinity, duration: 12, ease: "linear" }
-            }}
-          />
-          
-          <motion.div
-            className="absolute left-1/2 top-0 -ml-3 w-6 h-6 bg-indigo-500 rounded-full"
-            animate={{
-              rotate: -360,
-              transition: { repeat: Infinity, duration: 8, ease: "linear" }
-            }}
-          />
-          
-          <motion.div
-            className="absolute right-0 top-1/2 -mt-3 w-6 h-6 bg-blue-400 rounded-full"
-            animate={{
-              rotate: 360,
-              transition: { repeat: Infinity, duration: 10, ease: "linear" }
-            }}
-          />
-        </motion.div>
+        <div className="space-y-6">
+          <motion.h1 
+            className="text-4xl font-bold text-slate-800"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {kycCert ? "Verification Complete" : "Application Under Review"}
+          </motion.h1>
 
-        <div className="space-y-4">
-          <h1 className="text-4xl font-bold text-gray-800">
-            {kycCert ? "Verification Complete!" : "Application Under Review"}
-          </h1>
-          
-          <p className="text-xl text-gray-600 transition-all duration-500">
-            {quotes[currentQuote]}
-          </p>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={currentQuote}
+              className="text-xl text-slate-600 italic min-h-[60px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              "{quotes[currentQuote]}"
+            </motion.p>
+          </AnimatePresence>
 
-          <div className="inline-flex items-center text-gray-500 space-x-2">
-            <FaRegClock className="animate-pulse" />
+          <div className="inline-flex items-center text-slate-500 space-x-3">
+            <FaRegClock className="animate-pulse w-5 h-5" />
             <span className="font-medium">
-              {kycCert ? "Redirecting..." : "Estimated time: 2-5 minutes"}
+              {kycCert ? "Redirecting..." : "Estimated completion: 2-5 minutes"}
             </span>
           </div>
         </div>
 
         {!kycCert && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="pt-8 max-w-xs mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="pt-8 max-w-md mx-auto"
           >
-            <div className="relative pt-1">
-              <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-100">
-                <motion.div
-                  className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"
-                  initial={{ width: "0%" }}
-                  animate={{ width: "60%" }}
-                  transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-                />
-              </div>
+            <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden">
+              <motion.div
+                className="absolute h-full bg-gradient-to-r from-indigo-400 to-blue-400"
+                initial={{ width: "0%" }}
+                animate={{ width: "65%" }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  ease: "easeInOut"
+                }}
+              />
             </div>
           </motion.div>
         )}
