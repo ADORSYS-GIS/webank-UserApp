@@ -34,6 +34,7 @@ import RecoveryDashboard from "./kyc/pages/KycRecoveryPage";
 import GetNewAccountIdPage from "./kyc/pages/GetNewAccountId";
 import RecoveryToken from "./kyc/pages/RecoveryToken";
 import AccountConfirmation from "./kyc/pages/AccountConfirmation";
+import PostRegistration from "./pages/PostRegistration.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -86,6 +87,7 @@ const App: React.FC = () => {
           />
           <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
         </Route>
+        <Route path="/post-registration" element={<PostRegistration />} />
       </Routes>
     </HashRouter>
   );

@@ -1,18 +1,8 @@
 import { useState } from "react";
-import {
-  FaUserEdit,
-  FaIdCard,
-  FaCameraRetro,
-  FaFileInvoice,
-} from "react-icons/fa";
+import { FaUserEdit, FaCloudUploadAlt } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import FrontId from "./FrontId";
-import SelfieId from "./SelfieId";
-import BackId from "./BackId";
-import TaxpayerId from "./TaxpayerId";
 import VerificationModal from "../components/VerificationModal";
-import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
 import { toast, ToastContainer } from "react-toastify";
@@ -25,78 +15,10 @@ interface VerificationStep {
   onClick: () => void;
 }
 
-type FileOrBlob = File | Blob | null;
-
 export default function IdentityVerification() {
   const navigate = useNavigate();
-  const [showFrontIdPopup, setShowFrontIdPopup] = useState(false);
-  const [showBackIdPopup, setShowBackIdPopup] = useState(false);
-  const [showSelfieIdPopup, setShowSelfieIdPopup] = useState(false);
-  const [showTaxpayerIdPopup, setShowTaxpayerIdPopup] = useState(false);
-  const [showVerificationModalPopup, setShowVerificationModalPopup] =
-    useState(false);
-
-  // State to store each document file
-  const [frontIdFile, setFrontIdFile] = useState<FileOrBlob>(null);
-  const [backIdFile, setBackIdFile] = useState<FileOrBlob>(null);
-  const [selfieIdFile, setSelfieIdFile] = useState<FileOrBlob>(null);
-  const [taxpayerIdFile, setTaxpayerIdFile] = useState<FileOrBlob>(null);
-
-  const steps: VerificationStep[] = [
-    {
-      id: 1,
-      title: "Personal Info",
-      description: "Enter your address and ID details and upload",
-      icon: <FaUserEdit className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowVerificationModalPopup(true),
-    },
-    {
-      id: 2,
-      title: "Upload your Front ID",
-      description:
-        "Take a clear photo of the front of your government-issued ID",
-      icon: <FaIdCard className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowFrontIdPopup(true),
-    },
-    {
-      id: 3,
-      title: "Upload your Back ID",
-      description:
-        "Take a clear photo of the back of your government-issued ID",
-      icon: (
-        <FaIdCard className="w-6 h-6 text-[#20B2AA] transform rotate-180" />
-      ),
-      onClick: () => setShowBackIdPopup(true),
-    },
-    {
-      id: 4,
-      title: "Take a photo with your ID",
-      description:
-        "Take a clear photo of you holding your government-issued ID",
-      icon: <FaCameraRetro className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowSelfieIdPopup(true),
-    },
-    {
-      id: 5,
-      title: "Tax Identifier Document",
-      description: "Upload your government-issued tax identification document.",
-      icon: <FaFileInvoice className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowTaxpayerIdPopup(true),
-    },
-  ];
-
-  // Utility function to convert a file to a base64 string
-  const fileToBase64 = (file: File | Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result as string;
-        resolve(dataUrl);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  //const location = useLocation();
+  const [showVerificationModalPopup, setShowVerificationModalPopup] = useState(false);
 
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
@@ -104,47 +26,47 @@ export default function IdentityVerification() {
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
-  // Handle submission to the backend
-  const handleSubmit = async () => {
-    // Check if all files are uploaded
-    if (!frontIdFile || !backIdFile || !selfieIdFile || !taxpayerIdFile) {
-      toast.warn("Please upload all required documents");
+  const redirectToWhatsApp = () => {
+    // Replace with your actual WhatsApp business account phone number
+    const whatsappNumber = "1234567890"; 
+    const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
+    
+    // Create WhatsApp URL
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+    // Open in new tab
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const steps: VerificationStep[] = [
+    {
+      id: 1,
+      title: "Personal Info",
+      description: "Enter your address and ID details",
+      icon: <FaUserEdit className="w-6 h-6 text-[#20B2AA]" />,
+      onClick: () => setShowVerificationModalPopup(true),
+    },
+    {
+      id: 2,
+      title: "Upload Documents",
+      description: "Upload your ID and verification documents via WhatsApp",
+      icon: <FaCloudUploadAlt className="w-6 h-6 text-[#20B2AA]" />,
+      onClick: redirectToWhatsApp,
+    }
+  ];
+
+  const handleSubmit = () => {
+    if (!accountCert || !accountId) {
+      toast.error("Account information is missing");
       return;
     }
-
-    try {
-      if (!accountCert || !accountId) {
-        console.error("Account certificate or account ID is missing");
-        return;
-      }
-      // Convert files to base64 strings
-      const frontIdBase64 = await fileToBase64(frontIdFile);
-      const backIdBase64 = await fileToBase64(backIdFile);
-      const selfieIdBase64 = await fileToBase64(selfieIdFile);
-      const taxpayerIdBase64 = await fileToBase64(taxpayerIdFile);
-
-      // Call RequestToStoreKycDocument with base64 strings
-      const response = await RequestToStoreKycDocument(
-        frontIdBase64,
-        backIdBase64,
-        selfieIdBase64,
-        taxpayerIdBase64,
-        accountCert,
-        accountId,
-      );
-
-      if (response === "KYC Document sent successfully and saved") {
-        toast.success("KYC Document submitted successfully");
-        setTimeout(() => {
-          navigate("/settings");
-        }, 2000);
-      } else {
-        toast.error("Error submitting KYC, please try again later");
-      }
-    } catch (error) {
-      console.error("Error submitting KYC:", error);
-      toast.error("Error submitting KYC, please try again later");
-    }
+    
+    toast.success("Your personal information has been saved");
+    toast.info("Please upload your documents via WhatsApp to complete verification");
+    
+    // Navigate back to settings after a delay
+    setTimeout(() => {
+      navigate("/settings");
+    }, 3000);
   };
 
   return (
@@ -220,30 +142,6 @@ export default function IdentityVerification() {
         </button>
       </div>
 
-      {showFrontIdPopup && (
-        <FrontId
-          onClose={() => setShowFrontIdPopup(false)}
-          onFileCaptured={(file) => setFrontIdFile(file)}
-        />
-      )}
-      {showBackIdPopup && (
-        <BackId
-          onClose={() => setShowBackIdPopup(false)}
-          onFileCaptured={(file) => setBackIdFile(file)}
-        />
-      )}
-      {showSelfieIdPopup && (
-        <SelfieId
-          onClose={() => setShowSelfieIdPopup(false)}
-          onFileCaptured={(file) => setSelfieIdFile(file)}
-        />
-      )}
-      {showTaxpayerIdPopup && (
-        <TaxpayerId
-          onClose={() => setShowTaxpayerIdPopup(false)}
-          onFileCaptured={(file) => setTaxpayerIdFile(file)}
-        />
-      )}
       {showVerificationModalPopup && (
         <VerificationModal
           onClose={() => setShowVerificationModalPopup(false)}
