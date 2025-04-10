@@ -30,60 +30,62 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
   };
 
   return (
-    // 1) Removed flex-wrap from the header
-    <header className="flex items-center justify-between p-4 bg-white shadow mb-6">
-      {/* Left side: hamburger (on small screens) + logo */}
-      {/* 2) Removed w-full and mb-4 so this stays on the same row */}
-      <div className="flex items-center md:w-auto">
-        {/* Hamburger icon for small screens */}
-        <button
-          onClick={onHamburgerClick}
-          className="text-gray-700 focus:outline-none md:hidden mr-4"
-          aria-label="Open sidebar"
-        >
-          <FontAwesomeIcon icon={faBars} size="lg" />
-        </button>
-        {/* Logo */}
+    <header className="w-full bg-white shadow">
+      <div className="max-w-8xl flex items-center justify-between">
+        {/* ← Left: hamburger + logo */}
         <div className="flex items-center">
-          <img src={Logo} alt="Logo WeBank" className="w-20" />
+          <button
+            onClick={onHamburgerClick}
+            className="text-gray-700 focus:outline-none md:hidden pl-4 pr-3"
+            aria-label="Open sidebar"
+          >
+            <FontAwesomeIcon icon={faBars} size="lg" />
+          </button>
+          <img
+            src={Logo}
+            alt="Logo WeBank"
+            className="w-24 object-contain mx-4"
+          />
+        </div>
+
+        {/* → Right: QR / bell / settings */}
+        <div className="flex items-center space-x-3 pr-4">
+          {/* Desktop text button */}
+          <button
+            className="hidden md:inline-flex bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded focus:outline-none transition"
+            onClick={handleActionClick}
+            aria-label="My QR Code (desktop)"
+          >
+            My QR code
+          </button>
+
+          {/* Mobile icon button */}
+          <button
+            className="inline-flex md:hidden p-2 rounded-full hover:bg-gray-100 focus:outline-none transition"
+            onClick={() => navigate("/account-qr")}
+            aria-label="My QR Code (mobile)"
+          >
+            <FontAwesomeIcon icon={faQrcode} className="text-lg" />
+          </button>
+
+          <button
+            className="p-2 rounded-full hover:bg-gray-100 focus:outline-none transition"
+            aria-label="Notifications"
+          >
+            <FontAwesomeIcon icon={faBell} className="text-lg" />
+          </button>
+
+          <button
+            className="p-2 rounded-full hover:bg-gray-100 focus:outline-none transition"
+            aria-label="Settings"
+            onClick={() => navigate("/settings")}
+          >
+            <FontAwesomeIcon icon={faCog} className="text-lg" />
+          </button>
         </div>
       </div>
 
-      {/* Right side: (conditional) QR code + notification + settings */}
-      <div className="flex items-center space-x-4">
-        {/* Text button on medium and larger screens */}
-        <button
-          className="hidden md:inline-flex bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded focus:outline-none"
-          onClick={handleActionClick}
-          aria-label="My QR Code (desktop)"
-        >
-          My QR code
-        </button>
-
-        {/* Icon button on small screens */}
-        <button
-          className="inline-flex md:hidden p-2 rounded-full hover:bg-gray-200"
-          onClick={() => navigate("/account-qr")}
-          aria-label="My QR Code (mobile)"
-        >
-          <FontAwesomeIcon icon={faQrcode} className="text-lg" />
-        </button>
-
-        <button
-          className="p-2 rounded-full hover:bg-gray-200"
-          aria-label="Notifications"
-        >
-          <FontAwesomeIcon icon={faBell} className="text-lg" />
-        </button>
-        <button
-          className="p-2 rounded-full hover:bg-gray-200"
-          aria-label="Settings"
-          onClick={() => navigate("/settings")}
-        >
-          <FontAwesomeIcon icon={faCog} className="text-lg" />
-        </button>
-      </div>
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={3000} />
     </header>
   );
 };
