@@ -5,34 +5,17 @@ import { RootState } from "../../store/Store";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import {
-  FiUser,
-  FiMail,
-  FiMapPin,
-  FiBriefcase,
-  FiClock,
   FiCreditCard,
-  FiCalendar,
+  FiClock,
   FiMap,
+  FiMail,
   FiArrowLeft,
 } from "react-icons/fi";
 import { RequestToGetKycRecordsBySearch } from "../../services/keyManagement/requestService";
-import { ImageModal } from "../components/ImageModal";
-import { DocumentCard } from "../components/DocumentCard";
 import { InfoRow } from "../components/InfoRow";
 
-interface DocumentSet {
-  FrontID: string;
-  BackID: string;
-  Selfie: string;
-  TaxDocument: string;
-}
-
 interface UserInfo {
-  fullName: string;
-  profession: string;
   idNumber: string;
-  dob: string;
-  region: string;
   expirationDate: string;
   location: string;
   email: string;
@@ -40,8 +23,7 @@ interface UserInfo {
 
 interface UserKYC {
   id: string;
-  oldAccountId?: string; // Sensitive data not displayed in UI
-  documents: DocumentSet;
+  oldAccountId: string;
   info: UserInfo;
 }
 
@@ -52,7 +34,6 @@ export default function RecoveryDashboard() {
   const [user, setUser] = useState<UserKYC | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleSearch = async () => {
@@ -68,65 +49,42 @@ export default function RecoveryDashboard() {
         searchTerm,
         accountCert,
       );
-      console.log("test", response);
 
-      const parsedInfo = parseResponse(response);
-      if (parsedInfo.length === 0) {
+      const parsed = Array.isArray(response)
+        ? response
+        : JSON.parse(response || "[]");
+
+      if (parsed.length === 0) {
         toast.error("No user found with the provided document number");
         return;
       }
 
-      const userInfo = parsedInfo[0];
-      const userKYC = createUserKYC(userInfo);
+      // Only extract the four fields we care about:
+      const info = parsed[0];
+      const userKYC: UserKYC = {
+        id: info.id,
+        oldAccountId: info.accountId,
+        info: {
+          idNumber: info.idNumber || "",
+          expirationDate: info.expirationDate || "",
+          location: info.location || "N/A",
+          email: info.email || "N/A",
+        },
+      };
+
       setUser(userKYC);
     } catch (error) {
-      handleError(error);
+      toast.error("Failed to load user data");
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper function to parse the response
-  const parseResponse = (response: any): any[] => {
-    return Array.isArray(response) ? response : JSON.parse(response || "[]");
-  };
-
-  // Helper function to create a UserKYC object
-  const createUserKYC = (userInfo: any): UserKYC => {
-    const { frontID, backID, selfie, taxDocument, accountId } = userInfo;
-
-    return {
-      id: userInfo.id,
-      oldAccountId: accountId || undefined,
-      documents: {
-        FrontID: frontID || "",
-        BackID: backID || "",
-        Selfie: selfie || "",
-        TaxDocument: taxDocument || "",
-      },
-      info: {
-        fullName: userInfo.fullName || "",
-        profession: userInfo.profession || "",
-        idNumber: userInfo.idNumber || "",
-        dob: userInfo.dob || "",
-        region: userInfo.region || "",
-        expirationDate: userInfo.expirationDate || "",
-        location: userInfo.location || "N/A",
-        email: userInfo.email || "N/A",
-      },
-    };
-  };
-
-  // Helper function to handle errors
-  const handleError = (error: any) => {
-    toast.error("Failed to load user data");
-    console.error("Error:", error);
-  };
-
   const handleContinueRecovery = () => {
-    const oldAccountId = user?.oldAccountId;
+    console.log("OLD ACCOUNT ID: " + user?.oldAccountId);
     navigate("/recovery/getnewid", {
-      state: { oldAccountId },
+      state: { oldAccountId: user?.oldAccountId },
     });
   };
 
@@ -140,6 +98,8 @@ export default function RecoveryDashboard() {
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
           Recovery Process
         </h1>
+
+        {/* Search bar */}
         <div className="mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
             <input
@@ -157,8 +117,10 @@ export default function RecoveryDashboard() {
             </button>
           </div>
         </div>
+
         {user ? (
           <div>
+            {/* Back button */}
             <button
               onClick={() => setUser(null)}
               className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm sm:text-base"
@@ -166,99 +128,36 @@ export default function RecoveryDashboard() {
               <FiArrowLeft className="w-5 h-5" />
               <span>Back to Search</span>
             </button>
+
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                    {user.info.fullName}
-                  </h2>
-                  <p className="text-sm sm:text-base text-gray-500">
-                    {user.info.profession}
-                  </p>
-                </div>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
+                Personal Information
+              </h3>
+              <div className="space-y-4">
+                <InfoRow
+                  icon={<FiCreditCard />}
+                  label="ID Number"
+                  value={user.info.idNumber}
+                />
+                <InfoRow
+                  icon={<FiClock />}
+                  label="Expiration Date"
+                  value={user.info.expirationDate}
+                />
+                <InfoRow
+                  icon={<FiMap />}
+                  label="Location"
+                  value={user.info.location}
+                />
+                <InfoRow
+                  icon={<FiMail />}
+                  label="Email"
+                  value={user.info.email}
+                />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-                    Documents
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <DocumentCard
-                      title="Front ID"
-                      url={user.documents.FrontID}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Back ID"
-                      url={user.documents.BackID}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Selfie"
-                      url={user.documents.Selfie}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Tax Document"
-                      url={user.documents.TaxDocument}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-                    Personal Information
-                  </h3>
-                  <div className="space-y-4">
-                    <InfoRow
-                      icon={<FiUser />}
-                      label="Full Name"
-                      value={user.info.fullName}
-                    />
-                    <InfoRow
-                      icon={<FiBriefcase />}
-                      label="Profession"
-                      value={user.info.profession}
-                    />
-                    <InfoRow
-                      icon={<FiCreditCard />}
-                      label="ID Number"
-                      value={user.info.idNumber}
-                    />
-                    <InfoRow
-                      icon={<FiCalendar />}
-                      label="Date of Birth"
-                      value={user.info.dob}
-                    />
-                    <InfoRow
-                      icon={<FiMapPin />}
-                      label="Region"
-                      value={user.info.region}
-                    />
-                    <InfoRow
-                      icon={<FiClock />}
-                      label="Expiration Date"
-                      value={user.info.expirationDate}
-                    />
-                    <InfoRow
-                      icon={<FiMap />}
-                      label="Location"
-                      value={user.info.location}
-                    />
-                    <InfoRow
-                      icon={<FiMail />}
-                      label="Email"
-                      value={user.info.email}
-                    />
-                  </div>
-                </div>
-              </div>
+
               {/* Continue Recovery Process Button */}
-              <div className="mt-8 flex justify-end">
+              <div className="mt-8 flex justify-center sm:justify-end">
                 <button
                   onClick={handleContinueRecovery}
                   className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -274,10 +173,6 @@ export default function RecoveryDashboard() {
           </p>
         )}
       </div>
-      <ImageModal
-        selectedImage={selectedImage}
-        onClose={() => setSelectedImage(null)}
-      />
     </div>
   );
 }

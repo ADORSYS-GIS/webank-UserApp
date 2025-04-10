@@ -9,9 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/Webank.png";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
+import { ToastContainer } from "react-toastify";
 
 interface Header1Props {
   onHamburgerClick: () => void;
@@ -19,15 +17,6 @@ interface Header1Props {
 
 const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
   const navigate = useNavigate();
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-
-  const handleActionClick = () => {
-    if (kycCert === null) {
-      toast.warning("Please complete the KYC process to proceed.");
-      return;
-    }
-    navigate("/account-qr");
-  };
 
   return (
     <header className="w-full bg-white shadow">
@@ -53,7 +42,7 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
           {/* Desktop text button */}
           <button
             className="hidden md:inline-flex bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded focus:outline-none transition"
-            onClick={handleActionClick}
+            onClick={() => navigate("/account-qr")}
             aria-label="My QR Code (desktop)"
           >
             My QR code
