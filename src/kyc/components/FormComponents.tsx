@@ -60,33 +60,25 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("ID Card Form Data:", formData);
-    
+
     // Extract only the required fields
     const documentNumber = formData["UniqueDocumentIdentifier"];
     const expiry = formData["expiry"];
-    
-    console.log(
-      "Document Number:", documentNumber,
-      "Expiry Date:", expiry
-    );
-    
+
+    console.log("Document Number:", documentNumber, "Expiry Date:", expiry);
+
     try {
-      if (
-        !documentNumber ||
-        !expiry ||
-        !accountCert ||
-        !accountId
-      ) {
+      if (!documentNumber || !expiry || !accountCert || !accountId) {
         toast.error("Please fill in all the required fields");
         return;
       }
-      
+
       // Use placeholder values for removed fields
       const fullName = "Not Required";
       const profession = "Not Required";
-      const dob = "1900-01-01";  // Placeholder date
+      const dob = "1900-01-01"; // Placeholder date
       const region = "Not Required";
-      
+
       const response = await RequestToStoreKYCInfo(
         fullName,
         profession,
@@ -97,7 +89,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         accountCert,
         accountId,
       );
-      
+
       if (response === "KYC Info sent successfully and saved.") {
         dispatch(setStatus("PENDING"));
         toast.success("KYC Info sent successfully and saved.");

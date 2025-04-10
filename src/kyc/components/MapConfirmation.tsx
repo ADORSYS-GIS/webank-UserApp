@@ -17,17 +17,19 @@ const MapConfirmation = () => {
   const [error, setError] = useState<string | null>(null);
   const [city, setCity] = useState<string | null>(null);
   const coords = (location.state as { coords: GeoLocation })?.coords;
-  const accountCert = useSelector((state: RootState) => state.account.accountCert);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   useEffect(() => {
     if (!coords) navigate("/location-verification");
-    
+
     // Get city name using reverse geocoding
     const getCityName = async () => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}`
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}`,
         );
         const data = await response.json();
         setCity(data.address.city || data.address.town || data.address.village);
@@ -47,12 +49,12 @@ const MapConfirmation = () => {
       await RequestToGetUserLocation(
         accountCert,
         `${coords.lat},${coords.lng}`,
-        accountId!
+        accountId!,
       );
       toast.success("Location verified!");
       setTimeout(() => {
-        navigate("/under-review"); 
-      }, 3000)
+        navigate("/under-review");
+      }, 3000);
     } catch (error) {
       setError("Verification failed. Please try again.");
     } finally {
@@ -75,7 +77,7 @@ const MapConfirmation = () => {
               width="100%"
               height="100%"
               title="OSM Map"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng-0.02}%2C${coords.lat-0.02}%2C${coords.lng+0.02}%2C${coords.lat+0.02}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`}
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.02}%2C${coords.lat - 0.02}%2C${coords.lng + 0.02}%2C${coords.lat + 0.02}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`}
             />
           </div>
           {city && (
@@ -83,9 +85,6 @@ const MapConfirmation = () => {
               📍 {city}
             </div>
           )}
-          <small className="absolute bottom-1 right-1 text-gray-500 text-xs bg-white/80 px-2 py-1 rounded">
-            © OpenStreetMap contributors
-          </small>
         </div>
 
         <p className="text-gray-600 mb-6 text-center">

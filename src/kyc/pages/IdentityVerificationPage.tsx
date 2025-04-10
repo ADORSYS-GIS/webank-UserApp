@@ -17,16 +17,15 @@ interface VerificationStep {
 
 export default function IdentityVerification() {
   const navigate = useNavigate();
-  const [showVerificationModalPopup, setShowVerificationModalPopup] = useState(false);
+  const [showVerificationModalPopup, setShowVerificationModalPopup] =
+    useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
 
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  const status = useSelector(
-    (state: RootState) => state.account.status,
-  );
+  const status = useSelector((state: RootState) => state.account.status);
 
   useEffect(() => {
     if (status === "PENDING") {
@@ -40,7 +39,7 @@ export default function IdentityVerification() {
     const whatsappNumber = "1234567890";
     const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(whatsappUrl, "_blank");
   };
 
   const steps: VerificationStep[] = [
@@ -57,7 +56,7 @@ export default function IdentityVerification() {
       description: "Upload your ID and verification documents via WhatsApp",
       icon: <FaCloudUploadAlt className="w-6 h-6 text-[#20B2AA]" />,
       onClick: redirectToWhatsApp,
-    }
+    },
   ];
 
   const handleSubmit = () => {
@@ -103,7 +102,8 @@ export default function IdentityVerification() {
 
       <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
         {steps.map((step) => {
-          const isPersonalInfoCompleted = step.id === 1 && personalInfoSubmitted;
+          const isPersonalInfoCompleted =
+            step.id === 1 && personalInfoSubmitted;
           return (
             <button
               key={step.id}
@@ -113,15 +113,19 @@ export default function IdentityVerification() {
               className={`group p-4 md:p-6 rounded-xl border transition-all
                          flex items-center justify-between
                          w-full text-left ${
-                           isPersonalInfoCompleted 
-                             ? 'bg-gray-50 cursor-not-allowed opacity-75'
-                             : 'cursor-pointer hover:scale-[1.005] hover:border-[#20B2AA]'
+                           isPersonalInfoCompleted
+                             ? "bg-gray-50 cursor-not-allowed opacity-75"
+                             : "cursor-pointer hover:scale-[1.005] hover:border-[#20B2AA]"
                          }`}
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div className={`p-3 rounded-lg shadow-sm border flex-shrink-0 ${
-                  isPersonalInfoCompleted ? 'border-green-100 bg-green-50' : 'bg-white border-gray-100'
-                }`}>
+                <div
+                  className={`p-3 rounded-lg shadow-sm border flex-shrink-0 ${
+                    isPersonalInfoCompleted
+                      ? "border-green-100 bg-green-50"
+                      : "bg-white border-gray-100"
+                  }`}
+                >
                   {step.icon}
                 </div>
                 <div className="space-y-1 flex-1 min-w-0">
@@ -139,8 +143,8 @@ export default function IdentityVerification() {
                 <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
               )}
             </button>
-          )}
-        )}
+          );
+        })}
       </div>
 
       <div className="pt-4 border-t border-gray-100 bg-white w-full">
@@ -164,7 +168,8 @@ export default function IdentityVerification() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
             <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
-              Are you sure you submitted all the required documents via WhatsApp?
+              Are you sure you submitted all the required documents via
+              WhatsApp?
             </p>
             <div className="flex justify-center space-x-4">
               <button

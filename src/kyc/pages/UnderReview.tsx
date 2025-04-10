@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaRegClock, FaCheckCircle } from "react-icons/fa";
 import { TbProgressCheck } from "react-icons/tb";
@@ -17,7 +17,7 @@ const UnderReview = () => {
     "https://img.freepik.com/free-vector/work-time-concept-illustration_114360-1271.jpg",
     "https://img.freepik.com/free-vector/lateness-concept-illustration_114360-6170.jpg",
     "https://img.freepik.com/free-vector/reminders-concept-illustration_114360-4278.jpg",
-    "https://img.freepik.com/free-vector/waiting-room-with-sofa-concept-illustration_114360-17587.jpg"
+    "https://img.freepik.com/free-vector/waiting-room-with-sofa-concept-illustration_114360-17587.jpg",
   ];
 
   const quotes = [
@@ -28,13 +28,13 @@ const UnderReview = () => {
     "Building your financial fortress...",
     "Quality assurance in progress...",
     "Finalizing your secure access...",
-    "Optimizing your digital vault..."
+    "Optimizing your digital vault...",
   ];
 
   useEffect(() => {
     const quoteInterval = setInterval(() => {
-      setCurrentQuote(prev => (prev + 1) % quotes.length);
-      setCurrentImage(prev => (prev + 1) % illustrations.length);
+      setCurrentQuote((prev) => (prev + 1) % quotes.length);
+      setCurrentImage((prev) => (prev + 1) % illustrations.length);
     }, 5000);
 
     const certCheckInterval = setInterval(() => {
@@ -47,12 +47,15 @@ const UnderReview = () => {
     };
   }, [kycCert, navigate, quotes.length, illustrations.length]);
 
-  const handleActionClick = (callback: () => void) => {
+  const handleActionClick = () => {
     if (kycCert === null) {
       toast.warning("Please complete the KYC process to proceed.");
       return;
     }
-    callback();
+    toast.success("KYC process completed successfully!");
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 3000);
   };
 
   return (
@@ -81,7 +84,7 @@ const UnderReview = () => {
               className="w-20 h-20 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer border-4 border-indigo-100"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => handleActionClick(() => navigate("/dashboard"))}
+              onClick={() => handleActionClick()}
             >
               {kycCert ? (
                 <FaCheckCircle className="w-12 h-12 text-emerald-500" />
@@ -93,7 +96,7 @@ const UnderReview = () => {
         </div>
 
         <div className="space-y-6">
-          <motion.h1 
+          <motion.h1
             className="text-4xl font-bold text-slate-800"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -138,13 +141,14 @@ const UnderReview = () => {
                   duration: 2,
                   repeat: Infinity,
                   repeatType: "mirror",
-                  ease: "easeInOut"
+                  ease: "easeInOut",
                 }}
               />
             </div>
           </motion.div>
         )}
       </div>
+      <ToastContainer />
     </div>
   );
 };
