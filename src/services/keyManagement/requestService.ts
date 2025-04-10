@@ -412,8 +412,6 @@ export async function RequestToStoreKYCInfo( // NOSONAR
   );
 }
 
-
-
 // Function to get otps for phonenumbers
 export async function RequestToGetKycRecords(
   accountCert?: string | null,
@@ -456,7 +454,6 @@ export async function RequestToGetKycRecordsBySearch(
   console.log(jwtToken + "Account Cert!!!");
   return await GetKycRecordsBySearch(docNumber, jwtToken);
 }
-
 
 export async function RequestToUpdateKycStatus(
   publicKeyHash: string,

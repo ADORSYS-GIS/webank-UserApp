@@ -417,7 +417,6 @@ export const storeKYCInfo = async (
   }
 };
 
-
 export const getKycRecords = async (jwtToken: string) => {
   const headers = {
     Authorization: `Bearer ${jwtToken}`,
@@ -459,8 +458,6 @@ export const GetKycRecordsBySearch = async (
     throw new Error("Failed to retrieve KYC records");
   }
 };
-
-
 
 export const UpdateKycStatus = async (
   publicKeyHash: string,

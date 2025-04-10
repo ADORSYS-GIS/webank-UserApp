@@ -40,6 +40,7 @@ import UnderReview from "./kyc/pages/UnderReview.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const kycCert = useSelector((state: RootState) => state.account.kycCert);
 
   return (
     <HashRouter>
@@ -49,7 +50,15 @@ const App: React.FC = () => {
         <Route
           path="/"
           element={
-            accountId ? <Navigate to="/dashboard" replace /> : <Register />
+            accountId ? (
+              kycCert ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Navigate to="/under-review" replace />
+              )
+            ) : (
+              <Register />
+            )
           }
         />
         <Route path="/otp" element={<OtpPage />} />

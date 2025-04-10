@@ -73,18 +73,8 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         return;
       }
 
-      // Use placeholder values for removed fields
-      const fullName = "Not Required";
-      const profession = "Not Required";
-      const dob = "1900-01-01"; // Placeholder date
-      const region = "Not Required";
-
       const response = await RequestToStoreKYCInfo(
-        fullName,
-        profession,
         documentNumber,
-        dob,
-        region,
         expiry,
         accountCert,
         accountId,
