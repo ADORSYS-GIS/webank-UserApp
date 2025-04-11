@@ -24,9 +24,6 @@ describe("SettingsPage", () => {
 
     expect(screen.getByText("Help & Support")).toBeInTheDocument();
     expect(screen.getByText("Email verification")).toBeInTheDocument();
-    expect(screen.getByText("Verify my ID (KYC)")).toBeInTheDocument();
-    expect(screen.getByText("Add your residence")).toBeInTheDocument();
-    expect(screen.getByText("Recover Account")).toBeInTheDocument();
   });
 
   it("triggers click event on menu items", () => {

@@ -28,12 +28,14 @@ interface FormContainerProps {
   children: React.ReactNode;
   title: string;
   onSubmit: (data: FormData) => void;
+  onCancel?: () => void;
 }
 
 export const FormContainer: React.FC<FormContainerProps> = ({
   children,
   title,
   onSubmit,
+  onCancel,
 }) => {
   const [formData, setFormData] = useState<FormData>({});
   const accountCert = useSelector(
@@ -60,50 +62,26 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("ID Card Form Data:", formData);
-    const fullName = formData["fullName"];
-    const profession = formData["profession"];
+
+    // Extract only the required fields
     const documentNumber = formData["UniqueDocumentIdentifier"];
-    const dob = formData["dob"];
-    const region = formData["region"];
     const expiry = formData["expiry"];
-    console.log(
-      "Full Name:",
-      fullName,
-      "Profession:",
-      profession,
-      "document Number:",
-      documentNumber,
-      "Date of Birth:",
-      dob,
-      "Region:",
-      region,
-      "Expiry Date:",
-      expiry,
-    );
+
+    console.log("Document Number:", documentNumber, "Expiry Date:", expiry);
+
     try {
-      if (
-        !fullName ||
-        !profession ||
-        !documentNumber ||
-        !dob ||
-        !region ||
-        !expiry ||
-        !accountCert ||
-        !accountId
-      ) {
+      if (!documentNumber || !expiry || !accountCert || !accountId) {
         toast.error("Please fill in all the required fields");
         return;
       }
+
       const response = await RequestToStoreKYCInfo(
-        fullName,
-        profession,
         documentNumber,
-        dob,
-        region,
         expiry,
         accountCert,
         accountId,
       );
+
       if (response === "KYC Info sent successfully and saved.") {
         dispatch(setStatus("PENDING"));
         toast.success("KYC Info sent successfully and saved.");
@@ -121,18 +99,37 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     setFormData({});
   };
 
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel(); // Call the custom onCancel function if provided
+    } else {
+      setFormData({}); // Reset the form data
+      navigate(-1); // Navigate back to the previous page
+    }
+  };
+
   return (
     <FormContext.Provider value={contextValue}>
       <div
-        className="max-w-lg mx-auto p-4 md:p-6 bg-white rounded-3xl shadow-xl"
+        className="max-w-lg mx-auto items-center mt-32 p-4 md:p-6 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.1)]"
         style={{ fontFamily: "Poppins, sans-serif" }}
       >
-        <h2
-          id="form-title"
-          className="text-2xl font-bold mb-6 text-center text-gray-800"
-        >
-          {title}
-        </h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2
+            id="form-title"
+            className="text-2xl font-bold mb-6 text-center text-gray-800"
+          >
+            {title}
+          </h2>
+          <button
+            onClick={handleCancel}
+            className="text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
+            aria-label="Close form"
+            title="Close form"
+          >
+            ×
+          </button>
+        </div>
         <form
           className="space-y-5"
           aria-labelledby="form-title"
@@ -151,19 +148,15 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     </FormContext.Provider>
   );
 };
-interface SelectWithPopupProps {
+
+// Keeping SelectWithPopup for reference but not exporting it as default
+// You can remove this if not needed elsewhere in your application
+const SelectWithPopup: React.FC<{
   label: string;
   options: string[];
   fieldName: string;
   placeholder: string;
-}
-
-export const SelectWithPopup: React.FC<SelectWithPopupProps> = ({
-  label,
-  options,
-  fieldName,
-  placeholder,
-}) => {
+}> = ({ label, options, fieldName, placeholder }) => {
   const { formData, setFormField } = useContext(FormContext);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -220,6 +213,9 @@ export const SelectWithPopup: React.FC<SelectWithPopupProps> = ({
     </div>
   );
 };
+
+// Re-exporting the components we still need
+export { SelectWithPopup };
 
 interface DateInputProps {
   label: string;
