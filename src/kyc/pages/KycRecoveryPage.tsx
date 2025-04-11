@@ -64,7 +64,7 @@ export default function RecoveryDashboard() {
         : JSON.parse(response || "[]");
 
       if (!parsed.length) {
-        toast.error("No user found with the provided document number");
+        toast.info("No user found with the provided document number");
         return;
       }
 

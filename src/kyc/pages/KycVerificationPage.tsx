@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
@@ -13,7 +14,7 @@ interface UserKYC {
   accountId: string;
   docNumber: string;
   expirationDate: string;
-  status: "PENDING" | "approved" | "rejected";
+  status: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 const getStatusClass = (status: string) => {
@@ -79,8 +80,8 @@ export default function KYCDashboard() {
         expirationDate: userInfo.expirationDate || "",
         status: (userInfo.status?.toLowerCase() || "pending") as
           | "PENDING"
-          | "approved"
-          | "rejected",
+          | "APPROVED"
+          | "REJECTED",
       });
 
       setFormData({
@@ -117,8 +118,8 @@ export default function KYCDashboard() {
       if (user) {
         const backendResponse = await RequestToUpdateKycStatus(
           user.accountId,
-          user.docNumber,
-          user.expirationDate,
+          formData.docNumber,
+          formData.expirationDate,
           "APPROVED",
           accountCert,
         );
@@ -200,7 +201,7 @@ export default function KYCDashboard() {
                   className={`px-4 py-2 rounded-full text-sm font-medium 
       ${getStatusClass(user.status)} transition-all`}
                 >
-                  {user.status}
+                  {user.status.toUpperCase()}
                 </span>
               </div>
               <button

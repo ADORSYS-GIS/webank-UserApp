@@ -36,7 +36,7 @@ export default function IdentityVerification() {
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const redirectToWhatsApp = () => {
-    const whatsappNumber = "1234567890";
+    const whatsappNumber = "674388690";
     const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
