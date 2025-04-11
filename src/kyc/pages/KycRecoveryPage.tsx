@@ -203,10 +203,14 @@ export default function RecoveryDashboard() {
             <form onSubmit={handleContinueRecovery} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="docNumber"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Document Number
                   </label>
                   <input
+                    id="docNumber"
                     type="text"
                     value={formData.docNumber}
                     onChange={(e) =>
@@ -221,10 +225,14 @@ export default function RecoveryDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="expirationDate"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Expiration Date
                   </label>
                   <input
+                    id="expirationDate"
                     type="date"
                     value={formData.expirationDate}
                     onChange={(e) =>

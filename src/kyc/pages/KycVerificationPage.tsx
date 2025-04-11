@@ -216,10 +216,14 @@ export default function KYCDashboard() {
             <form onSubmit={handleVerification} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-full md:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="accountId"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Account ID
                   </label>
                   <input
+                    id="accountId"
                     value={formData.accountId}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -235,10 +239,14 @@ export default function KYCDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="docNumber"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Document Number
                   </label>
                   <input
+                    id="docNumber"
                     value={formData.docNumber}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -254,10 +262,14 @@ export default function KYCDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="expirationDate"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Expiration Date
                   </label>
                   <input
+                    id="expirationDate"
                     type="date"
                     value={formData.expirationDate}
                     onChange={(e) =>
