@@ -19,6 +19,7 @@ export default function RecoveryDashboard() {
     oldAccountId: string;
     location: string;
     email: string;
+    status: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +28,18 @@ export default function RecoveryDashboard() {
     expirationDate: "",
   });
   const navigate = useNavigate();
+
+  // helper to pick badge styles
+  const getStatusStyles = (status: string) => {
+    switch (status.toUpperCase()) {
+      case "APPROVED":
+        return "bg-emerald-100 text-emerald-800";
+      case "PENDING":
+        return "bg-amber-100 text-amber-800";
+      default:
+        return "bg-rose-100 text-rose-800";
+    }
+  };
 
   /** Step1: search by document ID */
   const handleSearch = async () => {
@@ -41,6 +54,7 @@ export default function RecoveryDashboard() {
     try {
       setLoading(true);
       setFoundRecord(null);
+
       const response = await RequestToGetKycRecordsBySearch(
         searchTerm,
         accountCert,
@@ -48,16 +62,19 @@ export default function RecoveryDashboard() {
       const parsed = Array.isArray(response)
         ? response
         : JSON.parse(response || "[]");
+
       if (!parsed.length) {
         toast.error("No user found with the provided document number");
         return;
       }
+
       const info = parsed[0];
       setFoundRecord({
         id: info.id,
         oldAccountId: info.accountId,
         location: info.location || "N/A",
         email: info.email || "N/A",
+        status: info.status || "PENDING",
       });
       setFormData({ docNumber: "", expirationDate: "" });
     } catch (err) {
@@ -139,17 +156,26 @@ export default function RecoveryDashboard() {
           </div>
         )}
 
-        {/* Step2: Validation Form + Display of location & email */}
+        {/* Step2: Validation Form + Display of location, email & status */}
         {foundRecord && (
           <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 space-y-6">
-            <button
-              onClick={() => setFoundRecord(null)}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
-            >
-              <FiArrowLeft className="w-5 h-5" />
-              Back to Search
-            </button>
-
+            {/* Header row: Back button on left, Status badge on right */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => setFoundRecord(null)}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+              >
+                <FiArrowLeft className="w-5 h-5" />
+                Back to Search
+              </button>
+              <span
+                className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusStyles(
+                  foundRecord.status,
+                )}`}
+              >
+                {foundRecord.status.toUpperCase()}
+              </span>
+            </div>
             {/* Instruction */}
             <p className="text-gray-700">
               We found the following info for this customer. To proceed, please
@@ -212,10 +238,16 @@ export default function RecoveryDashboard() {
                   />
                 </div>
               </div>
+
               <div className="flex justify-center sm:justify-end">
                 <button
                   type="submit"
-                  className="px-10 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  disabled={foundRecord.status.toUpperCase() !== "APPROVED"}
+                  className={`px-10 py-4 rounded-lg text-white transition-colors ${
+                    foundRecord.status.toUpperCase() === "APPROVED"
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-gray-300 cursor-not-allowed"
+                  }`}
                 >
                   Continue Recovery Process
                 </button>
