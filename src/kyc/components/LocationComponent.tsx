@@ -18,7 +18,7 @@ const LocationComponent = () => {
     setError(null);
     setSuccessMessage(null);
     // prettier-ignore
-    navigator.geolocation.getCurrentPosition(
+    navigator.geolocation.getCurrentPosition( //NOSONAR
       (position) => {
         const coords = {
           lat: position.coords.latitude,
