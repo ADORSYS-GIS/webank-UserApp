@@ -42,14 +42,14 @@ const MapConfirmation = () => {
   }, [coords, navigate]);
 
   const sendToBackend = async () => {
-    if (!accountCert || !coords) return;
+    if (!accountCert || !accountId || !coords) return;
 
     try {
       setIsSubmitting(true);
       await RequestToGetUserLocation(
         accountCert,
         `${coords.lat},${coords.lng}`,
-        accountId!,
+        accountId,
       );
       toast.success("Location verified!");
       setTimeout(() => {
