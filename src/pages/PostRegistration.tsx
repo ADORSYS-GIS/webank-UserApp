@@ -14,7 +14,7 @@ const PostRegistration: FC = () => {
   const { accountId, accountCert } = (location.state || {}) as LocationState;
 
   const handleRecover = () => {
-    navigate("/recover", { state: { accountId, accountCert } });
+    navigate("/recoverAccount", { state: { accountId, accountCert } });
   };
 
   const handleSecure = () => {

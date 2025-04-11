@@ -115,7 +115,17 @@ export default function KYCDashboard() {
       }
 
       if (user) {
-        await RequestToUpdateKycStatus(user.accountId, "APPROVED", accountCert);
+        const backendResponse = await RequestToUpdateKycStatus(
+          user.accountId,
+          user.docNumber,
+          user.expirationDate,
+          "APPROVED",
+          accountCert,
+        );
+        if (backendResponse.startsWith("Failed")) {
+          toast.error("Verification failed, user identity mismatch");
+          return;
+        }
         setUser((prev) => (prev ? { ...prev, ...formData } : null));
         toast.success("KYC updated successfully");
       } else {
