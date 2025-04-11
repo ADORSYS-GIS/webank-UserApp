@@ -41,26 +41,23 @@ import UnderReview from "./kyc/pages/UnderReview.tsx";
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
+  let homePageElement;
+  if (accountId) {
+    homePageElement = kycCert ? (
+      <Navigate to="/dashboard" replace />
+    ) : (
+      <Navigate to="/under-review" replace />
+    );
+  } else {
+    homePageElement = <Register />;
+  }
 
   return (
     <HashRouter>
       <KycCertChecker /> {/* Ensures KYC checking runs in the background */}
       <Header />
       <Routes>
-        <Route
-          path="/"
-          element={
-            accountId ? (
-              kycCert ? (
-                <Navigate to="/dashboard" replace />
-              ) : (
-                <Navigate to="/under-review" replace />
-              )
-            ) : (
-              <Register />
-            )
-          }
-        />
+        <Route path="/" element={homePageElement} />
         <Route path="/otp" element={<OtpPage />} />
         <Route
           path="/dashboard"
