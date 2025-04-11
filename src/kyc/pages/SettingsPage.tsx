@@ -133,7 +133,6 @@ const SettingsPage: React.FC = () => {
               onClick={() => navigate("/inputEmail")}
             />
           </div>
-
         </div>
       </div>
     </div>
