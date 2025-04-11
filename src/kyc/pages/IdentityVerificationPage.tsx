@@ -74,7 +74,7 @@ export default function IdentityVerification() {
     >
       <button
         type="button"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/post-registration")}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
         <FiChevronLeft className="w-6 h-6 text-gray-500 group-hover:text-[#20B2AA] transition-colors" />

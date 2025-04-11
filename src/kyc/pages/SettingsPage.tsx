@@ -1,10 +1,7 @@
 import React from "react";
 import {
   FaLifeRing,
-  FaMapMarkerAlt,
   FaEnvelope,
-  FaIdCard,
-  FaEdit,
   FaChevronRight,
   FaUser,
   FaExclamationCircle,
@@ -118,6 +115,7 @@ const SettingsPage: React.FC = () => {
         </div>
 
         {/* Menu Items */}
+
         <div className="mx-4 bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="group">
             <MenuItem
@@ -135,30 +133,7 @@ const SettingsPage: React.FC = () => {
               onClick={() => navigate("/inputEmail")}
             />
           </div>
-          <div className="group">
-            <MenuItem
-              Icon={FaIdCard}
-              title="Verify my ID (KYC)"
-              description="Complete identity verification process"
-              onClick={() => navigate("/kyc")}
-            />
-          </div>
-          <div className="group">
-            <MenuItem
-              Icon={FaMapMarkerAlt}
-              title="Add your residence"
-              description="Update your location information"
-              onClick={() => navigate("/verification/location")}
-            />
-          </div>
-          <div className="group">
-            <MenuItem
-              Icon={FaEdit}
-              title="Recover Account"
-              description="Access account recovery options"
-              onClick={() => navigate("/recoverAccount")}
-            />
-          </div>
+
         </div>
       </div>
     </div>

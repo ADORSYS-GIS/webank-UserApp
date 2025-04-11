@@ -106,7 +106,7 @@ const MapConfirmation = () => {
             {isSubmitting ? "Verifying..." : "Yes, this is my location"}
           </button>
           <button
-            onClick={() => navigate("/location-verification")}
+            onClick={() => navigate("/verification/location")}
             className="text-gray-600 px-6 py-3 rounded-md hover:bg-gray-100 transition-colors"
           >
             No, this is incorrect
