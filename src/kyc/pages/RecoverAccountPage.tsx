@@ -110,7 +110,7 @@ const RecoverAccountPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate("/settings");
+    navigate("/post-registration");
   };
 
   return (

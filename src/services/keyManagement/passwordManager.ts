@@ -1,3 +1,4 @@
+// passwordManager.ts
 import {
   handleRegister,
   handleAuthenticate,
@@ -7,6 +8,7 @@ import {
 export class PasswordManager {
   private static isRegistering = false;
   private static isAuthenticating = false;
+  private static cachedPassword: string | undefined = undefined;
 
   static async initializeDOMElements() {
     if (!document.querySelector("#messageInput")) {
@@ -25,14 +27,21 @@ export class PasswordManager {
   }
 
   static async getPassword(): Promise<string | undefined> {
+    // Return cached password if it exists
+    if (this.cachedPassword) {
+      return this.cachedPassword;
+    }
+
     await this.initializeDOMElements();
 
     try {
       const messages = JSON.parse(localStorage.getItem("messages") ?? "[]");
       if (messages.length > 0) {
-        return await this.attemptAuthentication();
+        this.cachedPassword = await this.attemptAuthentication();
+      } else {
+        this.cachedPassword = await this.handleNewUserRegistration();
       }
-      return await this.handleNewUserRegistration();
+      return this.cachedPassword;
     } catch (error) {
       console.error("Password retrieval error:", error);
       return undefined;
