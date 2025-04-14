@@ -1,18 +1,8 @@
-import { useState } from "react";
-import {
-  FaUserEdit,
-  FaIdCard,
-  FaCameraRetro,
-  FaFileInvoice,
-} from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaUserEdit, FaCloudUploadAlt, FaCheck } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import FrontId from "./FrontId";
-import SelfieId from "./SelfieId";
-import BackId from "./BackId";
-import TaxpayerId from "./TaxpayerId";
 import VerificationModal from "../components/VerificationModal";
-import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
 import { toast, ToastContainer } from "react-toastify";
@@ -25,126 +15,56 @@ interface VerificationStep {
   onClick: () => void;
 }
 
-type FileOrBlob = File | Blob | null;
-
 export default function IdentityVerification() {
   const navigate = useNavigate();
-  const [showFrontIdPopup, setShowFrontIdPopup] = useState(false);
-  const [showBackIdPopup, setShowBackIdPopup] = useState(false);
-  const [showSelfieIdPopup, setShowSelfieIdPopup] = useState(false);
-  const [showTaxpayerIdPopup, setShowTaxpayerIdPopup] = useState(false);
   const [showVerificationModalPopup, setShowVerificationModalPopup] =
     useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
 
-  // State to store each document file
-  const [frontIdFile, setFrontIdFile] = useState<FileOrBlob>(null);
-  const [backIdFile, setBackIdFile] = useState<FileOrBlob>(null);
-  const [selfieIdFile, setSelfieIdFile] = useState<FileOrBlob>(null);
-  const [taxpayerIdFile, setTaxpayerIdFile] = useState<FileOrBlob>(null);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
+  const status = useSelector((state: RootState) => state.account.status);
+
+  useEffect(() => {
+    if (status === "PENDING") {
+      setPersonalInfoSubmitted(true);
+    }
+  }, [status]);
+
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+
+  const redirectToWhatsApp = () => {
+    const whatsappNumber = "674388690";
+    const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  };
 
   const steps: VerificationStep[] = [
     {
       id: 1,
       title: "Personal Info",
-      description: "Enter your address and ID details and upload",
+      description: "Enter your address and ID details",
       icon: <FaUserEdit className="w-6 h-6 text-[#20B2AA]" />,
       onClick: () => setShowVerificationModalPopup(true),
     },
     {
       id: 2,
-      title: "Upload your Front ID",
-      description:
-        "Take a clear photo of the front of your government-issued ID",
-      icon: <FaIdCard className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowFrontIdPopup(true),
-    },
-    {
-      id: 3,
-      title: "Upload your Back ID",
-      description:
-        "Take a clear photo of the back of your government-issued ID",
-      icon: (
-        <FaIdCard className="w-6 h-6 text-[#20B2AA] transform rotate-180" />
-      ),
-      onClick: () => setShowBackIdPopup(true),
-    },
-    {
-      id: 4,
-      title: "Take a photo with your ID",
-      description:
-        "Take a clear photo of you holding your government-issued ID",
-      icon: <FaCameraRetro className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowSelfieIdPopup(true),
-    },
-    {
-      id: 5,
-      title: "Tax Identifier Document",
-      description: "Upload your government-issued tax identification document.",
-      icon: <FaFileInvoice className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowTaxpayerIdPopup(true),
+      title: "Upload Documents",
+      description: "Upload your ID and verification documents via WhatsApp",
+      icon: <FaCloudUploadAlt className="w-6 h-6 text-[#20B2AA]" />,
+      onClick: redirectToWhatsApp,
     },
   ];
 
-  // Utility function to convert a file to a base64 string
-  const fileToBase64 = (file: File | Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result as string;
-        resolve(dataUrl);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-
-  // Handle submission to the backend
-  const handleSubmit = async () => {
-    // Check if all files are uploaded
-    if (!frontIdFile || !backIdFile || !selfieIdFile || !taxpayerIdFile) {
-      toast.warn("Please upload all required documents");
+  const handleSubmit = () => {
+    if (!accountCert || !accountId) {
+      toast.error("Account information is missing");
       return;
     }
-
-    try {
-      if (!accountCert || !accountId) {
-        console.error("Account certificate or account ID is missing");
-        return;
-      }
-      // Convert files to base64 strings
-      const frontIdBase64 = await fileToBase64(frontIdFile);
-      const backIdBase64 = await fileToBase64(backIdFile);
-      const selfieIdBase64 = await fileToBase64(selfieIdFile);
-      const taxpayerIdBase64 = await fileToBase64(taxpayerIdFile);
-
-      // Call RequestToStoreKycDocument with base64 strings
-      const response = await RequestToStoreKycDocument(
-        frontIdBase64,
-        backIdBase64,
-        selfieIdBase64,
-        taxpayerIdBase64,
-        accountCert,
-        accountId,
-      );
-
-      if (response === "KYC Document sent successfully and saved") {
-        toast.success("KYC Document submitted successfully");
-        setTimeout(() => {
-          navigate("/settings");
-        }, 2000);
-      } else {
-        toast.error("Error submitting KYC, please try again later");
-      }
-    } catch (error) {
-      console.error("Error submitting KYC:", error);
-      toast.error("Error submitting KYC, please try again later");
-    }
+    setShowConfirmationModal(true);
   };
 
   return (
@@ -154,7 +74,7 @@ export default function IdentityVerification() {
     >
       <button
         type="button"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/post-registration")}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
         <FiChevronLeft className="w-6 h-6 text-gray-500 group-hover:text-[#20B2AA] transition-colors" />
@@ -181,32 +101,50 @@ export default function IdentityVerification() {
       </div>
 
       <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
-        {steps.map((step) => (
-          <button
-            key={step.id}
-            type="button"
-            onClick={step.onClick}
-            className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer
-                       flex items-center justify-between
-                       transform hover:scale-[1.005] hover:border-[#20B2AA]
-                       w-full text-left"
-          >
-            <div className="flex items-center space-x-4 flex-1 min-w-0">
-              <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100 flex-shrink-0">
-                {step.icon}
+        {steps.map((step) => {
+          const isPersonalInfoCompleted =
+            step.id === 1 && personalInfoSubmitted;
+          return (
+            <button
+              key={step.id}
+              type="button"
+              onClick={isPersonalInfoCompleted ? undefined : step.onClick}
+              disabled={isPersonalInfoCompleted}
+              className={`group p-4 md:p-6 rounded-xl border transition-all
+                         flex items-center justify-between
+                         w-full text-left ${
+                           isPersonalInfoCompleted
+                             ? "bg-gray-50 cursor-not-allowed opacity-75"
+                             : "cursor-pointer hover:scale-[1.005] hover:border-[#20B2AA]"
+                         }`}
+            >
+              <div className="flex items-center space-x-4 flex-1 min-w-0">
+                <div
+                  className={`p-3 rounded-lg shadow-sm border flex-shrink-0 ${
+                    isPersonalInfoCompleted
+                      ? "border-green-100 bg-green-50"
+                      : "bg-white border-gray-100"
+                  }`}
+                >
+                  {step.icon}
+                </div>
+                <div className="space-y-1 flex-1 min-w-0">
+                  <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
+                    {step.description}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1 flex-1 min-w-0">
-                <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
-                  {step.description}
-                </p>
-              </div>
-            </div>
-            <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
-          </button>
-        ))}
+              {isPersonalInfoCompleted ? (
+                <FaCheck className="w-5 h-5 text-green-500 flex-shrink-0" />
+              ) : (
+                <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div className="pt-4 border-t border-gray-100 bg-white w-full">
@@ -220,35 +158,40 @@ export default function IdentityVerification() {
         </button>
       </div>
 
-      {showFrontIdPopup && (
-        <FrontId
-          onClose={() => setShowFrontIdPopup(false)}
-          onFileCaptured={(file) => setFrontIdFile(file)}
-        />
-      )}
-      {showBackIdPopup && (
-        <BackId
-          onClose={() => setShowBackIdPopup(false)}
-          onFileCaptured={(file) => setBackIdFile(file)}
-        />
-      )}
-      {showSelfieIdPopup && (
-        <SelfieId
-          onClose={() => setShowSelfieIdPopup(false)}
-          onFileCaptured={(file) => setSelfieIdFile(file)}
-        />
-      )}
-      {showTaxpayerIdPopup && (
-        <TaxpayerId
-          onClose={() => setShowTaxpayerIdPopup(false)}
-          onFileCaptured={(file) => setTaxpayerIdFile(file)}
-        />
-      )}
       {showVerificationModalPopup && (
         <VerificationModal
           onClose={() => setShowVerificationModalPopup(false)}
         />
       )}
+
+      {showConfirmationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
+            <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
+              Are you sure you submitted all the required documents via
+              WhatsApp?
+            </p>
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => setShowConfirmationModal(false)}
+                className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg border border-gray-300 hover:border-gray-400 transition-colors"
+              >
+                No
+              </button>
+              <button
+                onClick={() => {
+                  setShowConfirmationModal(false);
+                  navigate("/verification/location");
+                }}
+                className="px-6 py-2 bg-[#20B2AA] hover:bg-[#1C8C8A] text-white font-medium rounded-lg transition-colors"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ToastContainer />
     </div>
   );

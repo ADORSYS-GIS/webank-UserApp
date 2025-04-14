@@ -1,383 +1,305 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
 import { toast, ToastContainer } from "react-toastify";
+import { FiArrowLeft } from "react-icons/fi";
 import {
-  FiUser,
-  FiMail,
-  FiMapPin,
-  FiBriefcase,
-  FiClock,
-  FiCreditCard,
-  FiCalendar,
-  FiMap,
-  FiCheck,
-  FiArrowLeft,
-} from "react-icons/fi";
-import {
-  RequestToGetKycRecords,
+  RequestToGetKycRecordsBySearch,
   RequestToUpdateKycStatus,
-  RequestToGetKycDocuments,
 } from "../../services/keyManagement/requestService";
-
-import { ImageModal } from "../components/ImageModal";
-import { DocumentCard } from "../components/DocumentCard";
-import { InfoRow } from "../components/InfoRow";
-
-interface DocumentSet {
-  FrontID: string;
-  BackID: string;
-  Selfie: string;
-  TaxDocument: string;
-}
-
-interface UserInfo {
-  accountId: string;
-  fullName: string;
-  profession: string;
-  idNumber: string;
-  dob: string;
-  region: string;
-  expirationDate: string;
-  location: string;
-  email: string;
-  status: string;
-}
 
 interface UserKYC {
   id: string;
-  documents: DocumentSet;
-  info: UserInfo;
-  status: "PENDING" | "approved" | "rejected";
-}
-
-interface UserCardProps {
-  user: UserKYC;
-  onSelectUser: (user: UserKYC) => void;
+  accountId: string;
+  docNumber: string;
+  expirationDate: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 const getStatusClass = (status: string) => {
   switch (status.toUpperCase()) {
     case "PENDING":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-amber-100 text-amber-800 ring-amber-300";
     case "APPROVED":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-100 text-emerald-800 ring-emerald-300";
     case "REJECTED":
-      return "bg-red-100 text-red-800";
+      return "bg-rose-100 text-rose-800 ring-rose-300";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-gray-100 text-gray-800 ring-gray-300";
   }
 };
-const UserCard = ({ user, onSelectUser }: UserCardProps) => (
-  <button
-    onClick={() => onSelectUser(user)}
-    className="w-full text-left bg-white rounded-xl shadow-sm p-6 cursor-pointer hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-    aria-label={`View ${user.info.fullName}'s KYC details`}
-    type="button"
-  >
-    <div className="flex justify-between items-center">
-      <div>
-        <h2 className="text-xl font-semibold">{user.info.fullName}</h2>
-        <p className="text-sm text-gray-500 mt-1">{user.info.profession}</p>
-      </div>
-      <span
-        className={`px-3 py-1 rounded-full text-sm ${getStatusClass(user.status)}`}
-      >
-        {user.status}
-      </span>
-    </div>
-  </button>
-);
 
 export default function KYCDashboard() {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
+  const [user, setUser] = useState<UserKYC | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [formData, setFormData] = useState({
+    accountId: "",
+    docNumber: "",
+    expirationDate: "",
+  });
 
-  const [users, setUsers] = useState<UserKYC[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [selectedUser, setSelectedUser] = useState<UserKYC | null>(null);
+  const handleSearch = async () => {
+    try {
+      setLoading(true);
+      setUser(null);
 
-  useEffect(() => {
-    const fetchKYCData = async () => {
-      try {
-        setLoading(true);
-        if (!accountCert) {
-          toast.error("Account authentication missing");
-          setLoading(false);
-          return;
-        }
-
-        const [infoResponse] = await Promise.all([
-          RequestToGetKycRecords(accountCert),
-        ]);
-        const parsedInfo = Array.isArray(infoResponse)
-          ? infoResponse
-          : JSON.parse(infoResponse || "[]");
-
-        const validatedInfo = parsedInfo.map((item: any) => ({
-          id: item.documentUniqueId || "",
-          accountId: item.accountId || "",
-          info: {
-            fullName: item.name || "",
-            profession: item.profession || "",
-            idNumber: item.documentUniqueId || "",
-            dob: item.dateOfBirth || "",
-            region: item.region || "",
-            expirationDate: item.expirationDate || "",
-            location: item.location || "N/A",
-            email: item.email || "N/A",
-            status: item.status || "PENDING",
-          },
-          status: item.status?.toLowerCase() || "pending",
-        }));
-
-        const accountId = validatedInfo[0].accountId;
-        console.log("Raw accountId :", accountId);
-        const docsResponse = await RequestToGetKycDocuments(
-          accountId,
-          accountCert,
-        );
-        console.log("Raw docsResponse:", docsResponse);
-        const parsedDocs =
-          typeof docsResponse === "string"
-            ? JSON.parse(docsResponse)
-            : docsResponse;
-
-        const validatedDocs = {
-          id: parsedDocs.accountId || "",
-          documents: {
-            FrontID: parsedDocs.frontID || "",
-            BackID: parsedDocs.backID || "",
-            Selfie: parsedDocs.selfieID || "",
-            TaxDocument: parsedDocs.taxID || "",
-          },
-          status: parsedDocs.status || "PENDING",
-        };
-
-        const mergedData = validatedInfo.map((infoItem: any) => ({
-          id: infoItem.accountId,
-          info: infoItem.info,
-          documents:
-            validatedDocs.id === infoItem.accountId
-              ? validatedDocs.documents
-              : {
-                  FrontID: "",
-                  BackID: "",
-                  Selfie: "",
-                  TaxDocument: "",
-                },
-          status:
-            validatedDocs.id === infoItem.accountId
-              ? validatedDocs.status
-              : "PENDING",
-        }));
-
-        setUsers(mergedData);
-      } catch (error) {
-        toast.error("Failed to load KYC requests");
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
+      if (!accountCert) {
+        toast.error("Authentication required");
+        return;
       }
-    };
 
-    fetchKYCData();
-  }, [accountCert]);
+      if (!searchTerm.trim()) {
+        toast.error("Please enter a document number");
+        return;
+      }
 
-  const updateKYCStatus = async (
-    userId: string,
-    status: "approved" | "rejected",
-  ) => {
+      const response = await RequestToGetKycRecordsBySearch(
+        searchTerm,
+        accountCert,
+      );
+      const parsedInfo = Array.isArray(response)
+        ? response
+        : JSON.parse(response || "[]");
+
+      if (parsedInfo.length === 0) {
+        toast.info("No records found. Starting new verification");
+        setFormData({ ...formData, docNumber: searchTerm });
+        return;
+      }
+
+      const userInfo = parsedInfo[0];
+      setUser({
+        id: userInfo.id || userInfo.documentUniqueId || "",
+        accountId: userInfo.accountId || "",
+        docNumber: userInfo.documentNumber || userInfo.idNumber || "",
+        expirationDate: userInfo.expirationDate || "",
+        status: (userInfo.status?.toLowerCase() || "pending") as
+          | "PENDING"
+          | "APPROVED"
+          | "REJECTED",
+      });
+
+      setFormData({
+        accountId: userInfo.accountId || "",
+        docNumber: "",
+        expirationDate: "",
+      });
+    } catch (error) {
+      toast.error("Search failed. Please try again");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !formData.accountId ||
+      !formData.docNumber ||
+      !formData.expirationDate
+    ) {
+      toast.error("Please complete all fields");
+      return;
+    }
+
     try {
       if (!accountCert) {
         toast.error("Authentication required");
         return;
       }
 
-      const user = users.find((user) => user.id === userId);
-      if (!user) {
-        toast.error("User not found");
-        return;
+      if (user) {
+        const backendResponse = await RequestToUpdateKycStatus(
+          user.accountId,
+          formData.docNumber,
+          formData.expirationDate,
+          "APPROVED",
+          accountCert,
+        );
+        if (backendResponse.startsWith("Failed")) {
+          toast.error("Verification failed, user identity mismatch");
+          return;
+        }
+        setUser((prev) => (prev ? { ...prev, ...formData } : null));
+        toast.success("KYC updated successfully");
+      } else {
+        const newUser: UserKYC = {
+          id: formData.docNumber,
+          ...formData,
+          status: "PENDING",
+        };
+        setUser(newUser);
+        toast.success("Verification initiated");
       }
-
-      await RequestToUpdateKycStatus(user.id, status, accountCert);
-
-      setUsers(
-        users.map((user) => (user.id === userId ? { ...user, status } : user)),
-      );
-      toast.success(
-        `KYC ${status === "approved" ? "approved" : "rejected"} successfully`,
-      );
     } catch (error) {
-      toast.error(`Failed to ${status} KYC`);
-      console.error("Update error:", error);
+      toast.error("Verification failed");
+      console.error(error);
     }
   };
 
-  if (loading)
-    return <div className="p-8 text-center">Loading verifications...</div>;
+  const resetView = () => {
+    setUser(null);
+    setSearchTerm("");
+    setFormData({ accountId: "", docNumber: "", expirationDate: "" });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <ImageModal
-        selectedImage={selectedImage}
-        onClose={() => setSelectedImage(null)}
-      />
-      <div className="max-w-7xl mx-auto">
-        {!selectedUser ? (
-          <>
-            <h1 className="text-3xl font-bold text-gray-900 mb-8">
-              Pending KYC Verifications
-            </h1>
-            <div className="grid grid-cols-1 gap-4">
-              {users.map((user) => (
-                <UserCard
-                  key={user.id}
-                  user={user}
-                  onSelectUser={setSelectedUser}
-                />
-              ))}
-            </div>
-          </>
-        ) : (
-          <div>
-            <button
-              onClick={() => setSelectedUser(null)}
-              className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-800"
-              aria-label="Return to previous screen"
-            >
-              <FiArrowLeft className="w-5 h-5" />
-              <span>Back to Pending Profiles</span>
-            </button>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
+      <ToastContainer />
+      <div className="max-w-3xl mx-auto">
+        <h1
+          className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent 
+          bg-gradient-to-r from-blue-600 to-cyan-500 mb-8 text-center drop-shadow-sm"
+        >
+          KYC Verification
+        </h1>
 
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    {selectedUser.info.fullName}
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    {selectedUser.info.profession}
-                  </p>
-                </div>
+        {!user && (
+          <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
+              <input
+                type="text"
+                placeholder="Enter Document Number"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-6 py-4 border-2 border-gray-200 rounded-full 
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  placeholder-gray-400 text-lg transition"
+              />
+              <button
+                onClick={handleSearch}
+                disabled={loading}
+                className="w-full md:w-auto px-8 py-4 bg-blue-600 
+                  text-white rounded-full hover:bg-blue-700 
+                  transition-all mt-4 md:mt-0 shadow-md 
+                  disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                {loading ? "Searching..." : "Search"}
+              </button>
+            </div>
+            <p className="text-center text-gray-600 mt-4">
+              Enter a document number to verify or start new verification
+            </p>
+          </div>
+        )}
+
+        {user && (
+          <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  KYC Details
+                </h2>
                 <span
-                  className={`px-3 py-1 rounded-full text-sm ${getStatusClass(selectedUser.status)}`}
+                  className={`px-4 py-2 rounded-full text-sm font-medium 
+      ${getStatusClass(user.status)} transition-all`}
                 >
-                  {selectedUser.status}
+                  {user.status.toUpperCase()}
                 </span>
               </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    📁 Documents
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <DocumentCard
-                      title="Front ID"
-                      url={selectedUser.documents.FrontID}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Back ID"
-                      url={selectedUser.documents.BackID}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Selfie"
-                      url={selectedUser.documents.Selfie}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Tax Document"
-                      url={selectedUser.documents.TaxDocument}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    👤 Personal Information
-                  </h3>
-                  <div className="space-y-4">
-                    <InfoRow
-                      icon={<FiUser />}
-                      label="Full Name"
-                      value={selectedUser.info.fullName}
-                    />
-                    <InfoRow
-                      icon={<FiBriefcase />}
-                      label="Profession"
-                      value={selectedUser.info.profession}
-                    />
-                    <InfoRow
-                      icon={<FiCreditCard />}
-                      label="ID Number"
-                      value={selectedUser.info.idNumber}
-                    />
-                    <InfoRow
-                      icon={<FiCalendar />}
-                      label="Date of Birth"
-                      value={selectedUser.info.dob}
-                    />
-                    <InfoRow
-                      icon={<FiMapPin />}
-                      label="Region"
-                      value={selectedUser.info.region}
-                    />
-                    <InfoRow
-                      icon={<FiClock />}
-                      label="Expiration Date"
-                      value={selectedUser.info.expirationDate}
-                    />
-                    <InfoRow
-                      icon={<FiMap />}
-                      label="Location"
-                      value={selectedUser.info.location}
-                    />
-                    <InfoRow
-                      icon={<FiMail />}
-                      label="Email"
-                      value={selectedUser.info.email}
-                    />
-                    <InfoRow
-                      icon={<FiCheck />}
-                      label="Status"
-                      value={selectedUser.info.status}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8 flex justify-end gap-4">
-                <button
-                  onClick={() => updateKYCStatus(selectedUser.id, "rejected")}
-                  className="px-6 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
-                  disabled={selectedUser.status !== "PENDING"}
-                >
-                  Reject
-                </button>
-                <button
-                  onClick={() => updateKYCStatus(selectedUser.id, "approved")}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
-                  disabled={selectedUser.status !== "PENDING"}
-                >
-                  Approve
-                </button>
-              </div>
+              <button
+                onClick={resetView}
+                className="p-2 rounded-full hover:bg-gray-100 transition"
+                aria-label="Close form"
+              >
+                <FiArrowLeft className="w-6 h-6 text-gray-600" />
+              </button>
             </div>
+
+            <form onSubmit={handleVerification} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="col-span-full md:col-span-1">
+                  <label
+                    htmlFor="accountId"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Account ID
+                  </label>
+                  <input
+                    id="accountId"
+                    value={formData.accountId}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        accountId: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter account ID"
+                    className="w-full px-6 py-4 border-2 border-gray-200 
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
+                      placeholder-gray-400 disabled:bg-gray-100 transition"
+                    disabled
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="docNumber"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Document Number
+                  </label>
+                  <input
+                    id="docNumber"
+                    value={formData.docNumber}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        docNumber: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter document number"
+                    className="w-full px-6 py-4 border-2 border-gray-200 
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
+                      placeholder-gray-400 transition"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="expirationDate"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Expiration Date
+                  </label>
+                  <input
+                    id="expirationDate"
+                    type="date"
+                    value={formData.expirationDate}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        expirationDate: e.target.value,
+                      }))
+                    }
+                    className="w-full px-6 py-4 border-2 border-gray-200 
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
+                      placeholder-gray-400 transition"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="px-10 py-4 bg-blue-600 text-white rounded-full 
+                    hover:bg-blue-700 transition-all shadow-lg 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    focus:ring-offset-2 disabled:bg-gray-300"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
           </div>
         )}
       </div>
-      <ToastContainer />
     </div>
   );
 }

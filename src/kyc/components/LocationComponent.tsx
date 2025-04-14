@@ -1,8 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { RequestToGetUserLocation } from "../../services/keyManagement/requestService";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
 
 interface GeoLocation {
   lat: number;
@@ -15,60 +12,21 @@ const LocationComponent = () => {
   const [location, setLocation] = useState<GeoLocation | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-
-  const sendToBackend = async (coords: GeoLocation): Promise<boolean> => {
-    if (!accountCert) {
-      console.error("Account certificate is missing");
-      return false;
-    }
-
-    const location = `${coords.lat},${coords.lng}`;
-    try {
-      if (!accountCert || !location || !accountId) {
-        console.error(
-          "Account certificate, location, or account ID is missing",
-        );
-        return false;
-      }
-      await RequestToGetUserLocation(accountCert, location, accountId);
-      console.log("Location sent successfully");
-      return true;
-    } catch (error) {
-      console.error("Error sending location to backend:", error);
-      setError("Failed to send location. Please try again.");
-      return false;
-    }
-  };
 
   const handleContinue = () => {
     setIsLoading(true);
     setError(null);
     setSuccessMessage(null);
     // prettier-ignore
-    navigator.geolocation.getCurrentPosition( //NoSONAR
-      async (position) => {
+    navigator.geolocation.getCurrentPosition( //NOSONAR
+      (position) => {
         const coords = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+        navigate("/map-confirmation", { state: { coords } });
+        setIsLoading(false);
         setLocation(coords);
-        try {
-          const success = await sendToBackend(coords);
-          if (success) {
-            setSuccessMessage("Location verified successfully! Redirecting...");
-            setTimeout(() => {
-              navigate("/settings");
-            }, 3000);
-          }
-        } catch (error) {
-          console.error("Unexpected error:", error);
-        } finally {
-          setIsLoading(false);
-        }
       },
       (err) => {
         console.error("Geolocation error:", err);
@@ -137,7 +95,7 @@ const LocationComponent = () => {
               : "Continue with KYC Verification"}
           </button>
           <button
-            onClick={() => navigate("/settings")}
+            onClick={() => navigate("/kyc")}
             className="text-gray-600 px-6 py-3 rounded-md hover:bg-gray-100 transition-colors"
           >
             Cancel
