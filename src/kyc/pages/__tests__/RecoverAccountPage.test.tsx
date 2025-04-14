@@ -35,7 +35,7 @@ describe("RecoverAccountPage", () => {
 
     // Check if the WhatsApp link is opened
     expect(openMock).toHaveBeenCalledWith(
-      expect.stringContaining("https://wa.me/"),
+      expect.stringContaining("https://api.whatsapp.com/"),
       "_blank",
     );
 
