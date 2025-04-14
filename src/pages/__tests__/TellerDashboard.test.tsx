@@ -90,7 +90,7 @@ describe("TellerDashboard Component", () => {
     fireEvent.click(sendButton);
 
     expect(global.open).toHaveBeenCalledWith(
-      "https://wa.me/1234567890?text=Your%20otpCode%20is%20123456",
+      "https://api.whatsapp.com/send?phone=1234567890?text=Your%20otpCode%20is%20123456",
       "_blank",
     );
   });
