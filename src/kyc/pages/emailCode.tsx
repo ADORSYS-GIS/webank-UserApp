@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setStatus } from "../../slices/accountSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setEmailStatus, setStatus } from "../../slices/accountSlice";
 import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
@@ -9,6 +9,7 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import OtpInput from "../../components/OtpInput";
 import useDisableScroll from "../../hooks/useDisableScroll";
+import { RootState } from "../../store/Store";
 
 const EmailCode: React.FC = () => {
   useDisableScroll();
@@ -17,12 +18,13 @@ const EmailCode: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { email, accountCert, accountId } = location.state || {};
+  const { email, accountCert } = location.state || {};
+  const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const resendOTP = async () => {
     if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
       try {
-        RequestToSendEmailOTP;
+        RequestToSendEmailOTP(email, accountCert, accountId!);
         navigate("/emailCode", { state: { email, accountCert } });
       } catch (error) {
         toast.error("Failed to send OTP. Please try again.");
@@ -38,13 +40,14 @@ const EmailCode: React.FC = () => {
       const response = await RequestToVerifyEmailCode(
         email,
         enteredCode,
-        accountId,
+        accountId!,
         accountCert,
       );
 
       if (response === "Webank email verified successfully") {
         dispatch(setStatus("PENDING"));
         setShowSuccess(true);
+        dispatch(setEmailStatus("APPROVED"));
       }
     } catch (error) {
       toast.error("Invalid OTP. Please try again.");

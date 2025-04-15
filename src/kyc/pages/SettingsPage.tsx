@@ -74,7 +74,7 @@ const SettingsPage: React.FC = () => {
 
   const handleSupportClick = () => {
     const customMessage = encodeURIComponent(
-      "Welcome to Webank support center! How can I help you?",
+      "Hello Webank Support, I would like your help concerning...",
     );
     const whatsappLink = `https://api.whatsapp.com/send?phone=${supportPhoneNumber}&text=${customMessage}`;
     window.open(whatsappLink, "_blank");
