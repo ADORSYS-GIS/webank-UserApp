@@ -83,7 +83,7 @@ const InputEmail: React.FC = () => {
 
           {/* Email Input */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label htmlFor="otp-input" className="text-sm font-medium text-gray-700">
               Email address
             </label>
             <div className="relative">

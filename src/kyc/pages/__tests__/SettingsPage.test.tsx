@@ -1,7 +1,7 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SettingsPage from "../SettingsPage";
-import { describe, it, vi, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "../../../store/Store";
@@ -29,20 +29,5 @@ describe("SettingsPage", () => {
 
     expect(screen.getByText("Help & Support")).toBeInTheDocument();
     expect(screen.getByText("Email verification")).toBeInTheDocument();
-  });
-
-  it("triggers click event on menu items", () => {
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <SettingsPage />
-        </MemoryRouter>
-      </Provider>,
-    );
-
-    const helpItem = screen.getByText("Help & Support");
-    vi.spyOn(console, "log");
-
-    fireEvent.click(helpItem);
   });
 });

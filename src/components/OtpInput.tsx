@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { RE_DIGIT } from "../constants";
 
-export type Props = {
+export type Props = Readonly<{
   value: string;
   valueLength: number;
   onChange: (value: string) => void;
   showHeader?: boolean;
-};
+}>;
 
 export default function OtpInput({
   value,

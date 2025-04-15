@@ -22,7 +22,7 @@ const EmailCode: React.FC = () => {
   const resendOTP = async () => {
     if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
       try {
-        await RequestToSendEmailOTP;
+        RequestToSendEmailOTP;
         navigate("/emailCode", { state: { email, accountCert } });
       } catch (error) {
         toast.error("Failed to send OTP. Please try again.");
@@ -38,8 +38,8 @@ const EmailCode: React.FC = () => {
       const response = await RequestToVerifyEmailCode(
         email,
         enteredCode,
-        accountCert,
         accountId,
+        accountCert,
       );
 
       if (response === "Webank email verified successfully") {
