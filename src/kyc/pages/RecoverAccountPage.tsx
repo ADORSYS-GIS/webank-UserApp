@@ -35,7 +35,7 @@ const RecoverAccountPage: React.FC = () => {
     const customMessage = encodeURIComponent(
       `Welcome to KYC Recovery!\n\n` + accountIdText + `My name is : `,
     );
-    const whatsappLink = `https://api.whatsapp.com/send?phone=${supportPhoneNumber}?text=${customMessage}`;
+    const whatsappLink = `https://api.whatsapp.com/send?phone=${supportPhoneNumber}&text=${customMessage}`;
     window.open(whatsappLink, "_blank");
   };
 

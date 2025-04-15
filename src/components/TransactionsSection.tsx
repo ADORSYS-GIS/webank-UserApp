@@ -38,7 +38,7 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
       </>
     );
   } else if (transactionsVisible) {
-    buttonText = "Hide Transactions";
+    buttonText = "Hide";
   } else {
     buttonText = "View All";
   }

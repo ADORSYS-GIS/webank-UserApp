@@ -1,6 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQrcode, faMoneyCheckAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faQrcode,
+  faMoneyCheckAlt,
+  faArrowLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import useDisableScroll from "../hooks/useDisableScroll";
 
 const AgentPage: React.FC = () => {
@@ -10,7 +14,15 @@ const AgentPage: React.FC = () => {
   const { agentAccountId, agentAccountCert } = location.state || {};
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4 relative">
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="fixed top-4 left-4 z-50 p-2 text-gray-700 hover:text-gray-900 focus:outline-none"
+        aria-label="Back to Dashboard"
+      >
+        <FontAwesomeIcon icon={faArrowLeft} className="text-2xl" />
+      </button>
+
       <div className="text-center">
         <h1 className="text-3xl font-bold mb-6 text-gray-800">
           Agent Services

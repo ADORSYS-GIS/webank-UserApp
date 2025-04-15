@@ -37,22 +37,22 @@ const Header1: React.FC<Header1Props> = ({ onHamburgerClick }) => {
           />
         </div>
 
-        {/* → Right: QR / bell / settings */}
+        {/* → Right: barcode / bell / settings */}
         <div className="flex items-center space-x-3 pr-4">
-          {/* Desktop text button */}
+          {/* Barcode Icon - Desktop */}
           <button
-            className="hidden md:inline-flex bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded focus:outline-none transition"
+            className="hidden md:inline-flex p-2 rounded-full hover:bg-gray-100 focus:outline-none transition"
             onClick={() => navigate("/account-qr")}
-            aria-label="My QR Code (desktop)"
+            aria-label="Scan Barcode"
           >
-            My QR code
+            <FontAwesomeIcon icon={faQrcode} className="text-lg" />
           </button>
 
-          {/* Mobile icon button */}
+          {/* Barcode Icon - Mobile */}
           <button
             className="inline-flex md:hidden p-2 rounded-full hover:bg-gray-100 focus:outline-none transition"
             onClick={() => navigate("/account-qr")}
-            aria-label="My QR Code (mobile)"
+            aria-label="Scan Barcode"
           >
             <FontAwesomeIcon icon={faQrcode} className="text-lg" />
           </button>

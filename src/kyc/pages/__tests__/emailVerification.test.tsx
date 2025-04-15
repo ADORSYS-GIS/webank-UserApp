@@ -50,21 +50,23 @@ describe("InputEmail Component", () => {
 
   test("renders email input and proceed button", () => {
     renderWithProviders(<InputEmail />);
-    expect(screen.getByPlaceholderText("Enter your email")).toBeInTheDocument();
-    expect(screen.getAllByText("Proceed").length).toBeGreaterThan(0);
+    expect(screen.getByPlaceholderText("name@example.com")).toBeInTheDocument();
+    expect(
+      screen.getAllByText("Send Verification Code").length,
+    ).toBeGreaterThan(0);
   });
 
   test("navigates to /emailCode for a valid email", async () => {
     renderWithProviders(<InputEmail />);
-    const emailInput = screen.getByPlaceholderText("Enter your email");
-    const proceedButton = screen.getAllByText("Proceed")[0];
+    const emailInput = screen.getByPlaceholderText("name@example.com");
+    const proceedButton = screen.getAllByText("Send Verification Code")[0];
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.change(emailInput, { target: { value: "name@example.com" } });
     fireEvent.click(proceedButton);
 
     await waitFor(() => {
       expect(RequestToSendEmailOTP).toHaveBeenCalledWith(
-        "test@example.com",
+        "name@example.com",
         "mockCert123",
         1,
       );
@@ -72,15 +74,15 @@ describe("InputEmail Component", () => {
 
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith("/emailCode", {
-        state: { email: "test@example.com", accountCert: "mockCert123" },
+        state: { email: "name@example.com", accountCert: "mockCert123" },
       });
     });
   });
 
   test("shows error toast for an invalid email", async () => {
     renderWithProviders(<InputEmail />);
-    const emailInput = screen.getByPlaceholderText("Enter your email");
-    const proceedButton = screen.getAllByText("Proceed")[0];
+    const emailInput = screen.getByPlaceholderText("name@example.com");
+    const proceedButton = screen.getAllByText("Send Verification Code")[0];
 
     fireEvent.change(emailInput, { target: { value: "invalid-email" } });
     fireEvent.click(proceedButton);

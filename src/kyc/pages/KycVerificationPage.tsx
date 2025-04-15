@@ -8,6 +8,7 @@ import {
   RequestToGetKycRecordsBySearch,
   RequestToUpdateKycStatus,
 } from "../../services/keyManagement/requestService";
+import { useNavigate } from "react-router-dom";
 
 interface UserKYC {
   id: string;
@@ -43,6 +44,7 @@ export default function KYCDashboard() {
     expirationDate: "",
   });
 
+  const navigate = useNavigate();
   const handleSearch = async () => {
     try {
       setLoading(true);
@@ -129,6 +131,7 @@ export default function KYCDashboard() {
         }
         setUser((prev) => (prev ? { ...prev, ...formData } : null));
         toast.success("KYC updated successfully");
+        resetView();
       } else {
         const newUser: UserKYC = {
           id: formData.docNumber,
@@ -137,6 +140,7 @@ export default function KYCDashboard() {
         };
         setUser(newUser);
         toast.success("Verification initiated");
+        resetView();
       }
     } catch (error) {
       toast.error("Verification failed");
@@ -152,6 +156,13 @@ export default function KYCDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="p-2 rounded-full hover:bg-gray-100 transition"
+        aria-label="Close form"
+      >
+        <FiArrowLeft className="w-6 h-6 text-gray-600" />
+      </button>
       <ToastContainer />
       <div className="max-w-3xl mx-auto">
         <h1

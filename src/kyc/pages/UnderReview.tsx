@@ -49,10 +49,12 @@ const UnderReview = () => {
 
   const handleActionClick = () => {
     if (kycCert === null) {
-      toast.warning("Please complete the KYC process to proceed.");
+      toast.warning(
+        "Your identity is still under review. We appreciate your patience.",
+      );
       return;
     }
-    toast.success("KYC process completed successfully!");
+    toast.success("Your identity was verified successfully!");
     setTimeout(() => {
       navigate("/dashboard");
     }, 3000);
