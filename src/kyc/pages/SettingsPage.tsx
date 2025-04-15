@@ -70,7 +70,7 @@ const SettingsPage: React.FC = () => {
   );
   const navigate = useNavigate();
 
-  const supportPhoneNumber = "+237654066316";
+  const supportPhoneNumber = "+237674388690";
 
   const handleSupportClick = () => {
     const customMessage = encodeURIComponent(
