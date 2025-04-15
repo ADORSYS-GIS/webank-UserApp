@@ -49,7 +49,7 @@ const UnderReview = () => {
 
   const handleActionClick = () => {
     if (kycCert === null) {
-      toast.warning(
+      toast.info(
         "Your identity is still under review. We appreciate your patience.",
       );
       return;
