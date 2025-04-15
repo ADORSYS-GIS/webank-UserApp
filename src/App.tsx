@@ -37,6 +37,7 @@ import AccountConfirmation from "./kyc/pages/AccountConfirmation";
 import PostRegistration from "./pages/PostRegistration.tsx";
 import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
 import UnderReview from "./kyc/pages/UnderReview.tsx";
+import OnboardingPage from "./pages/HomePage.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -49,7 +50,7 @@ const App: React.FC = () => {
       <Navigate to="/under-review" replace />
     );
   } else {
-    homePageElement = <Register />;
+    homePageElement = <OnboardingPage />;
   }
 
   return (
@@ -63,6 +64,7 @@ const App: React.FC = () => {
           path="/dashboard"
           element={accountId ? <DashboardPage /> : <Navigate to="/" replace />}
         />
+        <Route path="/register" element={<Register />} />
         <Route path="/qr-scan" element={<QRScannerPage />} />
         <Route path="/agent" element={<AgentPage />} />
         <Route path="/qrcode" element={<QRGenerator />} />
