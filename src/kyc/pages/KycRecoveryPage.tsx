@@ -29,19 +29,19 @@ export default function RecoveryDashboard() {
   });
   const navigate = useNavigate();
 
-  // helper to pick badge styles
-  const getStatusStyles = (status: string) => {
+  // Helper to pick badge styles
+  const getStatusClass = (status: string) => {
     switch (status.toUpperCase()) {
       case "APPROVED":
-        return "bg-emerald-100 text-emerald-800";
+        return "bg-emerald-100 text-emerald-800 ring-emerald-300";
       case "PENDING":
-        return "bg-amber-100 text-amber-800";
+        return "bg-amber-100 text-amber-800 ring-amber-300";
       default:
-        return "bg-rose-100 text-rose-800";
+        return "bg-rose-100 text-rose-800 ring-rose-300";
     }
   };
 
-  /** Step1: search by document ID */
+  /** Step 1: Search by document ID */
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
       toast.error("Please enter a document number");
@@ -85,7 +85,7 @@ export default function RecoveryDashboard() {
     }
   };
 
-  /** Step2: validate docNumber + expirationDate only */
+  /** Step 2: Validate docNumber + expirationDate only */
   const handleContinueRecovery = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.docNumber || !formData.expirationDate) {
@@ -108,7 +108,7 @@ export default function RecoveryDashboard() {
         toast.error("Validation failed, details do not match");
         return;
       }
-      navigate("/recovery/getnewid", {
+      navigate("/recovery/recovery-scanne", {
         state: { oldAccountId: foundRecord.oldAccountId },
       });
     } catch (err) {
@@ -128,63 +128,77 @@ export default function RecoveryDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
       <ToastContainer />
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
+        <h1
+          className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent
+          bg-gradient-to-r from-blue-600 to-cyan-500 mb-8 text-center drop-shadow-sm"
+        >
           Recovery Process
         </h1>
 
-        {/* Step1: Search Form */}
+        {/* Step 1: Search Form */}
         {!foundRecord && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
+          <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
               <input
                 type="text"
                 placeholder="Enter Document Number"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-6 py-4 border-2 border-gray-200 rounded-full
+                  focus:outline-none focus:ring-2 focus:ring-blue-500
+                  placeholder-gray-400 text-lg transition"
               />
               <button
                 onClick={handleSearch}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="w-full md:w-auto px-8 py-4 bg-blue-600
+                  text-white rounded-full hover:bg-blue-700
+                  transition-all mt-4 md:mt-0 shadow-md
+                  disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 {loading ? "Searching..." : "Search"}
               </button>
             </div>
+            <p className="text-center text-gray-600 mt-4">
+              Enter a document number to verify or start recovery
+            </p>
           </div>
         )}
 
-        {/* Step2: Validation Form + Display of location, email & status */}
+        {/* Step 2: Validation Form + Display of location, email & status */}
         {foundRecord && (
-          <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8 space-y-6">
-            {/* Header row: Back button on left, Status badge on right */}
+          <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8">
             <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  Recovery Details
+                </h2>
+                <span
+                  className={`px-4 py-2 rounded-full text-sm font-medium 
+                    ${getStatusClass(foundRecord.status)} transition-all`}
+                >
+                  {foundRecord.status.toUpperCase()}
+                </span>
+              </div>
               <button
                 onClick={() => setFoundRecord(null)}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+                className="p-2 rounded-full hover:bg-gray-100 transition"
+                aria-label="Back to search"
               >
-                <FiArrowLeft className="w-5 h-5" />
-                Back to Search
+                <FiArrowLeft className="w-6 h-6 text-gray-600" />
               </button>
-              <span
-                className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusStyles(
-                  foundRecord.status,
-                )}`}
-              >
-                {foundRecord.status.toUpperCase()}
-              </span>
             </div>
-            {/* Instruction */}
+
             <p className="text-gray-700">
               We found the following info for this customer. To proceed, please
-              re‑enter their Document Number and Expiration Date for
+              re-enter their Document Number and Expiration Date for
               verification.
             </p>
 
             {/* Prominent Display Boxes */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-4 border rounded-lg bg-blue-50">
                 <p className="text-sm text-gray-600">Location</p>
                 <p className="mt-1 font-medium text-gray-900">
@@ -220,7 +234,9 @@ export default function RecoveryDashboard() {
                       }))
                     }
                     placeholder="Enter document number"
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-6 py-4 border-2 border-gray-200
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500
+                      placeholder-gray-400 transition"
                     required
                   />
                 </div>
@@ -241,21 +257,25 @@ export default function RecoveryDashboard() {
                         expirationDate: e.target.value,
                       }))
                     }
-                    className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-6 py-4 border-2 border-gray-200
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500
+                      placeholder-gray-400 transition"
                     required
                   />
                 </div>
               </div>
 
-              <div className="flex justify-center sm:justify-end">
+              <div className="flex justify-end">
                 <button
                   type="submit"
                   disabled={foundRecord.status.toUpperCase() !== "APPROVED"}
-                  className={`px-10 py-4 rounded-lg text-white transition-colors ${
-                    foundRecord.status.toUpperCase() === "APPROVED"
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-gray-300 cursor-not-allowed"
-                  }`}
+                  className={`px-10 py-4 rounded-full text-white transition-all shadow-lg 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                    ${
+                      foundRecord.status.toUpperCase() === "APPROVED"
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-gray-300 cursor-not-allowed"
+                    }`}
                 >
                   Continue Recovery Process
                 </button>

@@ -95,7 +95,7 @@ const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
               } transition-colors text-white`}
             >
               <FontAwesomeIcon icon={faUserTie} className="mr-3" />
-              KYC Verificaion
+              KYC Verification
             </button>
           </li>
 

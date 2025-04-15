@@ -5,16 +5,20 @@ import {
   FaChevronRight,
   FaUser,
   FaExclamationCircle,
+  FaCheckCircle,
   FaArrowLeft,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/Store";
 
 interface MenuItemProps {
   title: string;
   description: string;
   Icon: IconType;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({
@@ -22,20 +26,24 @@ const MenuItem: React.FC<MenuItemProps> = ({
   description,
   Icon,
   onClick,
+  disabled = false,
 }) => {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex justify-between items-center py-4 px-4 w-full text-left 
+      disabled={disabled}
+      className={`flex justify-between items-center py-4 px-4 w-full text-left 
                 border-b border-gray-100 last:border-b-0 transition-all duration-200
-                hover:bg-gray-50 active:bg-gray-100 focus:outline-none"
+                ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 active:bg-gray-100"}
+                focus:outline-none`}
     >
       <div className="flex items-center">
         <div
-          className="w-12 h-12 bg-[#20B2AA] rounded-lg flex items-center justify-center 
-                      text-white mr-4 transition-all duration-200
-                      hover:shadow-md group-hover:bg-[#1a9e98]"
+          className={`w-12 h-12 rounded-lg flex items-center justify-center 
+                      mr-4 transition-all duration-200
+                      ${disabled ? "bg-gray-300" : "bg-[#20B2AA] hover:shadow-md group-hover:bg-[#1a9e98]"}
+                      text-white`}
         >
           <Icon size={20} />
         </div>
@@ -44,25 +52,36 @@ const MenuItem: React.FC<MenuItemProps> = ({
           <p className="text-sm text-gray-500 mt-1">{description}</p>
         </div>
       </div>
-      <div
-        className="text-gray-300 transition-transform duration-200 
+      {!disabled && (
+        <div
+          className="text-gray-300 transition-transform duration-200 
                     group-hover:translate-x-1"
-      >
-        <FaChevronRight />
-      </div>
+        >
+          <FaChevronRight />
+        </div>
+      )}
     </button>
   );
 };
 
 const SettingsPage: React.FC = () => {
-  const handleMenuClick = (option: string) => {
-    console.log(`Clicked on: ${option}`);
-  };
-
+  const emailStatus = useSelector(
+    (state: RootState) => state.account.emailStatus,
+  );
   const navigate = useNavigate();
 
+  const supportPhoneNumber = "+237654066316";
+
+  const handleSupportClick = () => {
+    const customMessage = encodeURIComponent(
+      "Hello Webank Support, I would like your help concerning...",
+    );
+    const whatsappLink = `https://api.whatsapp.com/send?phone=${supportPhoneNumber}&text=${customMessage}`;
+    window.open(whatsappLink, "_blank");
+  };
+
   const handleBack = () => {
-    navigate("/dashboard"); // Navigate back to previous page
+    navigate("/dashboard");
   };
 
   return (
@@ -71,7 +90,6 @@ const SettingsPage: React.FC = () => {
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       <div className="max-w-xl mx-auto pb-6">
-        {/* Header with Back Button */}
         <div className="pt-6 px-4 flex items-center">
           <button
             onClick={handleBack}
@@ -88,10 +106,9 @@ const SettingsPage: React.FC = () => {
               Manage your account preferences
             </p>
           </div>
-          <div className="w-8"></div> {/* Spacer for balance */}
+          <div className="w-8"></div>
         </div>
 
-        {/* User Profile Card */}
         <div className="mx-4 my-6">
           <div
             className="bg-white rounded-xl shadow-sm p-4 flex items-center 
@@ -101,20 +118,24 @@ const SettingsPage: React.FC = () => {
               <FaUser size={24} />
             </div>
             <div>
-              <p className="text-xl font-semibold text-gray-800">@USER</p>
               <div className="flex items-center mt-1">
-                <FaExclamationCircle
-                  className="text-amber-500 mr-2"
-                  size={14}
-                />
-                <p className="text-sm text-gray-600">Email Not Verified</p>
+                {emailStatus === "APPROVED" ? (
+                  <FaCheckCircle className="text-green-500 mr-2" size={14} />
+                ) : (
+                  <FaExclamationCircle
+                    className="text-amber-500 mr-2"
+                    size={14}
+                  />
+                )}
+                <p className="text-sm text-gray-600">
+                  {emailStatus === "APPROVED"
+                    ? "Email Verified"
+                    : "Email Not Verified"}
+                </p>
               </div>
-              <p className="text-sm text-gray-600">237---------</p>
             </div>
           </div>
         </div>
-
-        {/* Menu Items */}
 
         <div className="mx-4 bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="group">
@@ -122,15 +143,20 @@ const SettingsPage: React.FC = () => {
               Icon={FaLifeRing}
               title="Help & Support"
               description="Chat with our team for assistance"
-              onClick={() => handleMenuClick("Help & Support")}
+              onClick={handleSupportClick}
             />
           </div>
           <div className="group">
             <MenuItem
               Icon={FaEnvelope}
               title="Email verification"
-              description="Secure your account with email verification"
+              description={
+                emailStatus === "APPROVED"
+                  ? "Email successfully verified"
+                  : "Secure your account with email verification"
+              }
               onClick={() => navigate("/inputEmail")}
+              disabled={emailStatus === "APPROVED"}
             />
           </div>
         </div>
