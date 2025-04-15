@@ -31,7 +31,7 @@ import KycCertChecker from "./kyc/pages/KycCertChecker";
 import RecoverAccountPage from "./kyc/pages/RecoverAccountPage.tsx";
 
 import RecoveryDashboard from "./kyc/pages/KycRecoveryPage";
-import GetNewAccountIdPage from "./kyc/pages/GetNewAccountId";
+import AccountRecoveryScannerPage from "./kyc/pages/AccountRecoveryScannerPage.tsx";
 import RecoveryToken from "./kyc/pages/RecoveryToken";
 import AccountConfirmation from "./kyc/pages/AccountConfirmation";
 import PostRegistration from "./pages/PostRegistration.tsx";
@@ -88,7 +88,10 @@ const App: React.FC = () => {
           <Route path="/teller" element={<TellerDashboard />} />
           <Route path="/agency" element={<KYCPage />} />
           <Route path="/account-recovery" element={<RecoveryDashboard />} />
-          <Route path="/recovery/getnewid" element={<GetNewAccountIdPage />} />
+          <Route
+            path="/recovery/recovery-scanner"
+            element={<AccountRecoveryScannerPage />}
+          />
           <Route
             path="/recovery/account-confirmation"
             element={<AccountConfirmation />}

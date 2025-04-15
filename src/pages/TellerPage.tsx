@@ -47,7 +47,7 @@ export default function TellerDashboard() {
   }, [accountCert]);
 
   const handleSendWhatsApp = (phoneNumber: string, otpCode: string) => {
-    const url = `https://wa.me/${phoneNumber}?text=Your%20otpCode%20is%20${otpCode}`;
+    const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=Your%20otpCode%20is%20${otpCode}`;
     window.open(url, "_blank");
   };
 

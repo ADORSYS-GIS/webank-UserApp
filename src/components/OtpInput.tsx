@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 import { RE_DIGIT } from "../constants";
 
 export type Props = {
-  readonly value: string;
-  readonly valueLength: number;
-  readonly onChange: (value: string) => void;
-  readonly showHeader?: boolean;
+  value: string;
+  valueLength: number;
+  onChange: (value: string) => void;
+  showHeader?: boolean;
 };
 
 export default function OtpInput({
@@ -89,7 +89,7 @@ export default function OtpInput({
         <header className="mb-8">
           <h1 className="text-3xl font-bold mb-2">OTP Verification</h1>
           <p className="text-[15px]">
-            Enter the 5-digit verification code that was sent to your phone
+            Enter the 4-digit verification code that was sent to your phone
             number.
           </p>
         </header>
