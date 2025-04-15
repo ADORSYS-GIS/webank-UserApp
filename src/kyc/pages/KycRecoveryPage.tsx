@@ -29,8 +29,8 @@ export default function RecoveryDashboard() {
   });
   const navigate = useNavigate();
 
-  // Helper to pick badge styles
-  const getStatusClass = (status: string) => {
+  // helper to pick badge styles
+  const getStatusStyles = (status: string) => {
     switch (status.toUpperCase()) {
       case "APPROVED":
         return "bg-emerald-100 text-emerald-800 ring-emerald-300";
@@ -41,7 +41,7 @@ export default function RecoveryDashboard() {
     }
   };
 
-  /** Step 1: Search by document ID */
+  /** Step1: search by document ID */
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
       toast.error("Please enter a document number");
@@ -85,7 +85,7 @@ export default function RecoveryDashboard() {
     }
   };
 
-  /** Step 2: Validate docNumber + expirationDate only */
+  /** Step2: validate docNumber + expirationDate only */
   const handleContinueRecovery = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.docNumber || !formData.expirationDate) {
@@ -108,7 +108,7 @@ export default function RecoveryDashboard() {
         toast.error("Validation failed, details do not match");
         return;
       }
-      navigate("/recovery/recovery-scanne", {
+      navigate("/recovery/getnewid", {
         state: { oldAccountId: foundRecord.oldAccountId },
       });
     } catch (err) {
@@ -133,15 +133,15 @@ export default function RecoveryDashboard() {
       <div className="max-w-3xl mx-auto">
         <h1
           className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent
-          bg-gradient-to-r from-blue-600 to-cyan-500 mb-8 text-center drop-shadow-sm"
+            bg-gradient-to-r from-blue-600 to-cyan-500 mb-8 text-center drop-shadow-sm"
         >
           Recovery Process
         </h1>
 
-        {/* Step 1: Search Form */}
+        {/* Step1: Search Form */}
         {!foundRecord && (
-          <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
+          <div className="bg-white rounded-3xl shadow-lg p-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
               <input
                 type="text"
                 placeholder="Enter Document Number"
@@ -153,52 +153,44 @@ export default function RecoveryDashboard() {
               />
               <button
                 onClick={handleSearch}
-                className="w-full md:w-auto px-8 py-4 bg-blue-600
-                  text-white rounded-full hover:bg-blue-700
-                  transition-all mt-4 md:mt-0 shadow-md
-                  disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="px-8 py-4 bg-blue-600 text-white rounded-full
+                  hover:bg-blue-700 transition-all shadow-md"
               >
                 {loading ? "Searching..." : "Search"}
               </button>
             </div>
-            <p className="text-center text-gray-600 mt-4">
-              Enter a document number to verify or start recovery
-            </p>
           </div>
         )}
 
-        {/* Step 2: Validation Form + Display of location, email & status */}
+        {/* Step2: Validation Form + Display of location, email & status */}
         {foundRecord && (
-          <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8">
+          <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 space-y-6">
+            {/* Header row: Back button on left, Status badge on right */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  Recovery Details
-                </h2>
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-medium 
-                    ${getStatusClass(foundRecord.status)} transition-all`}
-                >
-                  {foundRecord.status.toUpperCase()}
-                </span>
-              </div>
               <button
                 onClick={() => setFoundRecord(null)}
-                className="p-2 rounded-full hover:bg-gray-100 transition"
-                aria-label="Back to search"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800
+                  p-2 rounded-full hover:bg-gray-100 transition"
               >
-                <FiArrowLeft className="w-6 h-6 text-gray-600" />
+                <FiArrowLeft className="w-5 h-5" />
+                Back to Search
               </button>
+              <span
+                className={`px-3 py-1 text-sm font-medium rounded-full 
+                  ${getStatusStyles(foundRecord.status)}`}
+              >
+                {foundRecord.status.toUpperCase()}
+              </span>
             </div>
-
+            {/* Instruction */}
             <p className="text-gray-700">
               We found the following info for this customer. To proceed, please
-              re-enter their Document Number and Expiration Date for
+              re‑enter their Document Number and Expiration Date for
               verification.
             </p>
 
             {/* Prominent Display Boxes */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 border rounded-lg bg-blue-50">
                 <p className="text-sm text-gray-600">Location</p>
                 <p className="mt-1 font-medium text-gray-900">
@@ -265,12 +257,11 @@ export default function RecoveryDashboard() {
                 </div>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-center sm:justify-end">
                 <button
                   type="submit"
                   disabled={foundRecord.status.toUpperCase() !== "APPROVED"}
-                  className={`px-10 py-4 rounded-full text-white transition-all shadow-lg 
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                  className={`px-10 py-4 rounded-full text-white transition-all shadow-md 
                     ${
                       foundRecord.status.toUpperCase() === "APPROVED"
                         ? "bg-blue-600 hover:bg-blue-700"
