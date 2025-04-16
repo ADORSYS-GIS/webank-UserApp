@@ -108,7 +108,7 @@ export default function RecoveryDashboard() {
         toast.error("Validation failed, details do not match");
         return;
       }
-      navigate("/recovery/getnewid", {
+      navigate("/recovery/recovery-scanner", {
         state: { oldAccountId: foundRecord.oldAccountId },
       });
     } catch (err) {
@@ -129,6 +129,13 @@ export default function RecoveryDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="p-2 rounded-full hover:bg-gray-100 transition"
+        aria-label="Close form"
+      >
+        <FiArrowLeft className="w-6 h-6 text-gray-600" />
+      </button>
       <ToastContainer />
       <div className="max-w-3xl mx-auto">
         <h1
