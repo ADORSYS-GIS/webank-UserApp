@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { FaUserEdit, FaCloudUploadAlt, FaCheck } from "react-icons/fa";
+import {FaUserEdit, FaCheck, FaIdCard, FaCameraRetro, FaFileInvoice} from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import VerificationModal from "../components/VerificationModal";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
 import { toast, ToastContainer } from "react-toastify";
+import FrontId from "./FrontId.tsx";
+import BackId from "./BackId.tsx";
+import SelfieId from "./SelfieId.tsx";
+import TaxpayerId from "./TaxpayerId.tsx";
 
 interface VerificationStep {
   id: number;
@@ -21,6 +25,10 @@ export default function IdentityVerification() {
     useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
+  const [showFrontIdPopup, setShowFrontIdPopup] = useState(false);
+  const [showBackIdPopup, setShowBackIdPopup] = useState(false);
+  const [showSelfieIdPopup, setShowSelfieIdPopup] = useState(false);
+  const [showTaxpayerIdPopup, setShowTaxpayerIdPopup] = useState(false);
 
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
@@ -35,12 +43,12 @@ export default function IdentityVerification() {
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
-  const redirectToWhatsApp = () => {
-    const whatsappNumber = "674388690";
-    const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
-  };
+  // const redirectToWhatsApp = () => {
+  //   const whatsappNumber = "674388690";
+  //   const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
+  //   const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+  //   window.open(whatsappUrl, "_blank");
+  // };
 
   const steps: VerificationStep[] = [
     {
@@ -50,12 +58,45 @@ export default function IdentityVerification() {
       icon: <FaUserEdit className="w-6 h-6 text-[#20B2AA]" />,
       onClick: () => setShowVerificationModalPopup(true),
     },
+    // {
+    //   id: 2,
+    //   title: "Upload Documents",
+    //   description: "Upload your ID and verification documents via WhatsApp",
+    //   icon: <FaCloudUploadAlt className="w-6 h-6 text-[#20B2AA]" />,
+    //   onClick: redirectToWhatsApp,
+    // },
     {
       id: 2,
-      title: "Upload Documents",
-      description: "Upload your ID and verification documents via WhatsApp",
-      icon: <FaCloudUploadAlt className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: redirectToWhatsApp,
+      title: "Upload your Front ID",
+      description:
+          "Take a clear photo of the front of your government-issued ID",
+      icon: <FaIdCard className="w-6 h-6 text-[#20B2AA]" />,
+      onClick: () => setShowFrontIdPopup(true),
+    },
+    {
+      id: 3,
+      title: "Upload your Back ID",
+      description:
+          "Take a clear photo of the back of your government-issued ID",
+      icon: (
+          <FaIdCard className="w-6 h-6 text-[#20B2AA] transform rotate-180" />
+      ),
+      onClick: () => setShowBackIdPopup(true),
+    },
+    {
+      id: 4,
+      title: "Take a photo with your ID",
+      description:
+          "Take a clear photo of you holding your government-issued ID",
+      icon: <FaCameraRetro className="w-6 h-6 text-[#20B2AA]" />,
+      onClick: () => setShowSelfieIdPopup(true),
+    },
+    {
+      id: 5,
+      title: "Tax Identifier Document",
+      description: "Upload your government-issued tax identification document.",
+      icon: <FaFileInvoice className="w-6 h-6 text-[#20B2AA]" />,
+        onClick: () => setShowTaxpayerIdPopup(true),
     },
   ];
 
@@ -156,6 +197,30 @@ export default function IdentityVerification() {
           <span>Secure My Account</span>
           <FiChevronRight className="w-5 h-5" />
         </button>
+        {showFrontIdPopup && (
+            <FrontId
+                onClose={() => setShowFrontIdPopup(false)}
+                onFileCaptured={(file) => console.log("Front ID file captured:", file)}
+            />
+        )}
+        {showBackIdPopup && (
+            <BackId
+                onClose={() => setShowBackIdPopup(false)}
+                onFileCaptured={(file) => console.log("Back ID file captured:", file)}
+            />
+        )}
+        {showSelfieIdPopup && (
+            <SelfieId
+                onClose={() => setShowSelfieIdPopup(false)}
+                onFileCaptured={(file) => console.log("Selfie file captured:", file)}
+            />
+        )}
+        {showTaxpayerIdPopup && (
+            <TaxpayerId
+                onClose={() => setShowTaxpayerIdPopup(false)}
+                onFileCaptured={(file) => console.log("Taxpayer ID file captured:", file)}
+            />
+        )}
       </div>
 
       {showVerificationModalPopup && (
@@ -168,8 +233,7 @@ export default function IdentityVerification() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
             <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
-              Are you sure you submitted all the required documents via
-              WhatsApp?
+              Are you sure you submitted all the required documents correctly?
             </p>
             <div className="flex justify-center space-x-4">
               <button

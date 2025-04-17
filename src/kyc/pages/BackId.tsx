@@ -15,7 +15,6 @@ const BackId: React.FC<BackIdProps> = ({ onClose, onFileCaptured }) => {
       title="Back ID"
       description="Please take a clear picture of the back of your ID card or upload from your device."
       sampleImageSrc="/back-id.png"
-      defaultFacingMode="environment"
     />
   );
 };

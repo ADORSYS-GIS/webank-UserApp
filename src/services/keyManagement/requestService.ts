@@ -23,7 +23,7 @@ import {
   recoverAccountCert,
   GetKycRecordsBySearch,
   requestToGetRecoveryToken,
-  verifyRecoveryFields,
+  verifyRecoveryFields, getKycDocuments, storeKycDocument,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -455,6 +455,66 @@ export async function RequestToGetKycRecordsBySearch(
   console.log(jwtToken + "Account Cert!!!");
   return await GetKycRecordsBySearch(docNumber, jwtToken);
 }
+
+
+//Store Kyc doc
+export async function RequestToStoreKycDocument(
+    frontId: string,
+    backId: string,
+    selfieId: string,
+    taxId: string,
+    accountCert: string | null,
+    accountId: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null,
+      null,
+      null,
+      frontId,
+      backId,
+      selfieId,
+      taxId,
+      accountId,
+  );
+  return await storeKycDocument(
+      frontId,
+      backId,
+      selfieId,
+      taxId,
+      accountId,
+      jwtToken,
+  );
+}
+
+export async function RequestToGetKycDocuments(
+    accountId: string,
+    accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null,
+      null,
+      null,
+      accountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getKycDocuments(accountId, jwtToken);
+}
+
 
 export async function RequestToUpdateKycStatus(
   accountId: string,
