@@ -64,17 +64,17 @@ const getSharedContent = async (): Promise<SharedContent | null> => {
   });
 };
 
-const clearSharedContent = async (): Promise<void> => {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORE_NAME], "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.delete("sharedContent");
-    request.onerror = () => reject(new Error("Failed to clear shared content"));
-    request.onsuccess = () => resolve();
-    transaction.oncomplete = () => db.close();
-  });
-};
+// const clearSharedContent = async (): Promise<void> => {
+//   const db = await openDB();
+//   return new Promise((resolve, reject) => {
+//     const transaction = db.transaction([STORE_NAME], "readwrite");
+//     const store = transaction.objectStore(STORE_NAME);
+//     const request = store.delete("sharedContent");
+//     request.onerror = () => reject(new Error("Failed to clear shared content"));
+//     request.onsuccess = () => resolve();
+//     transaction.oncomplete = () => db.close();
+//   });
+// };
 
 export default function ShareHandlerPage() {
   const [sharedData, setSharedData] = useState<SharedContent | null>(null);
