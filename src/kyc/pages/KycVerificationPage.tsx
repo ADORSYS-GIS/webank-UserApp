@@ -12,6 +12,7 @@ import { ImageModal } from "../components/ImageModal";
 import { DocumentCard } from "../components/DocumentCard";
 
 // Updated UserKYC interface to include all fields from UserInfoResponse
+
 interface UserKYC {
   id: string;
   accountId: string;
@@ -19,12 +20,13 @@ interface UserKYC {
   expirationDate: string;
   location: string;
   email: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: KycStatus;
   frontID: string;
   backID: string;
   selfie: string;
   taxDocument: string;
 }
+type KycStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 // Helper function to determine the status class
 const getStatusClass = (status: string) => {
@@ -101,36 +103,40 @@ export default function KYCDashboard() {
   };
 
   // Extract the user data processing logic with proper typing
+  const getOrDefault = (value?: string, fallback: string = "") =>
+    value ?? fallback;
+
+  const normalizeStatus = (status?: string): KycStatus => {
+    return (status?.toUpperCase() ?? "PENDING") as KycStatus;
+  };
+
+  const getDocNumber = (userInfo: KycBackendResponse) =>
+    getOrDefault(userInfo.idNumber, userInfo.documentUniqueId ?? "");
+
   const processUserInfo = (userInfo: KycBackendResponse) => {
-    // Create user object from the response
+    const status = normalizeStatus(userInfo.status);
+
     const processedUser: UserKYC = {
-      id: userInfo.id ?? userInfo.documentUniqueId ?? "",
-      accountId: userInfo.accountId ?? "",
-      docNumber: userInfo.idNumber ?? userInfo.documentUniqueId ?? "",
-      expirationDate: userInfo.expirationDate ?? "",
-      location: userInfo.location ?? "",
-      email: userInfo.email ?? "",
-      status: (userInfo.status?.toLowerCase() ?? "pending") as
-        | "PENDING"
-        | "APPROVED"
-        | "REJECTED",
-      frontID: userInfo.frontID ?? "",
-      backID: userInfo.backID ?? "",
-      selfie: userInfo.selfie ?? "",
-      taxDocument: userInfo.taxDocument ?? "",
+      id: getOrDefault(userInfo.id, userInfo.documentUniqueId),
+      accountId: getOrDefault(userInfo.accountId),
+      docNumber: getDocNumber(userInfo),
+      expirationDate: getOrDefault(userInfo.expirationDate),
+      location: getOrDefault(userInfo.location),
+      email: getOrDefault(userInfo.email),
+      status,
+      frontID: getOrDefault(userInfo.frontID),
+      backID: getOrDefault(userInfo.backID),
+      selfie: getOrDefault(userInfo.selfie),
+      taxDocument: getOrDefault(userInfo.taxDocument),
     };
 
-    // Set user state
     setUser(processedUser);
 
-    // Update form data based on status
-    const isPending = userInfo.status?.toLowerCase() === "pending";
     setFormData({
-      accountId: userInfo.accountId ?? "",
-      docNumber: isPending
-        ? ""
-        : (userInfo.idNumber ?? userInfo.documentUniqueId ?? ""),
-      expirationDate: isPending ? "" : (userInfo.expirationDate ?? ""),
+      accountId: getOrDefault(userInfo.accountId),
+      docNumber: status === "PENDING" ? "" : getDocNumber(userInfo),
+      expirationDate:
+        status === "PENDING" ? "" : getOrDefault(userInfo.expirationDate),
     });
   };
 
@@ -174,7 +180,6 @@ export default function KYCDashboard() {
     }
   };
 
-  // Handle verification/update functionality
   // Handle verification/update functionality
   const handleVerification = async (
     e: React.FormEvent,
