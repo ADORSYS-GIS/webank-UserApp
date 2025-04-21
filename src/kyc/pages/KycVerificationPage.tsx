@@ -71,65 +71,101 @@ export default function KYCDashboard() {
   };
 
   // Handle search functionality
+  // Define an interface for the backend response
+  interface KycBackendResponse {
+    id?: string;
+    documentUniqueId?: string;
+    accountId?: string;
+    idNumber?: string;
+    expirationDate?: string;
+    location?: string;
+    email?: string;
+    status?: string;
+    frontID?: string;
+    backID?: string;
+    selfie?: string;
+    taxDocument?: string;
+  }
+
+  // Extract validation logic to a separate function
+  const validateSearchInput = () => {
+    if (!accountCert) {
+      toast.error("Authentication required");
+      return false;
+    }
+    if (!searchTerm.trim()) {
+      toast.error("Please enter a document number");
+      return false;
+    }
+    return true;
+  };
+
+  // Extract the user data processing logic with proper typing
+  const processUserInfo = (userInfo: KycBackendResponse) => {
+    // Create user object from the response
+    const processedUser: UserKYC = {
+      id: userInfo.id ?? userInfo.documentUniqueId ?? "",
+      accountId: userInfo.accountId ?? "",
+      docNumber: userInfo.idNumber ?? userInfo.documentUniqueId ?? "",
+      expirationDate: userInfo.expirationDate ?? "",
+      location: userInfo.location ?? "",
+      email: userInfo.email ?? "",
+      status: (userInfo.status?.toLowerCase() ?? "pending") as
+        | "PENDING"
+        | "APPROVED"
+        | "REJECTED",
+      frontID: userInfo.frontID ?? "",
+      backID: userInfo.backID ?? "",
+      selfie: userInfo.selfie ?? "",
+      taxDocument: userInfo.taxDocument ?? "",
+    };
+
+    // Set user state
+    setUser(processedUser);
+
+    // Update form data based on status
+    const isPending = userInfo.status?.toLowerCase() === "pending";
+    setFormData({
+      accountId: userInfo.accountId ?? "",
+      docNumber: isPending
+        ? ""
+        : (userInfo.idNumber ?? userInfo.documentUniqueId ?? ""),
+      expirationDate: isPending ? "" : (userInfo.expirationDate ?? ""),
+    });
+  };
+
+  // Handle empty search results
+  const handleEmptyResults = () => {
+    toast.info("No records found. Starting new verification");
+    setFormData({ ...formData, docNumber: searchTerm });
+  };
+
+  // Main search function with reduced complexity
   const handleSearch = async () => {
     try {
       setLoading(true);
       setUser(null);
-      if (!accountCert) {
-        toast.error("Authentication required");
+
+      if (!validateSearchInput()) {
         return;
       }
-      if (!searchTerm.trim()) {
-        toast.error("Please enter a document number");
-        return;
-      }
+
       const response = await RequestToGetKycRecordsBySearch(
         searchTerm,
         accountCert,
       );
       console.log("Backend Response:", response);
+
       const parsedInfo = Array.isArray(response)
-        ? response
-        : JSON.parse(response || "[]");
+        ? (response as KycBackendResponse[])
+        : (JSON.parse(response || "[]") as KycBackendResponse[]);
 
       if (parsedInfo.length === 0) {
-        toast.info("No records found. Starting new verification");
-        setFormData({ ...formData, docNumber: searchTerm });
+        handleEmptyResults();
         return;
       }
-      const userInfo = parsedInfo[0];
-      setUser({
-        id: userInfo.id ?? userInfo.documentUniqueId ?? "",
-        accountId: userInfo.accountId ?? "",
-        docNumber: userInfo.idNumber ?? userInfo.documentUniqueId ?? "",
-        expirationDate: userInfo.expirationDate ?? "",
-        location: userInfo.location ?? "",
-        email: userInfo.email ?? "",
-        status: (userInfo.status?.toLowerCase() ?? "pending") as
-          | "PENDING"
-          | "APPROVED"
-          | "REJECTED",
-        frontID: userInfo.frontID ?? "",
-        backID: userInfo.backID ?? "",
-        selfie: userInfo.selfie ?? "",
-        taxDocument: userInfo.taxDocument ?? "",
-      });
 
-      // If status is pending, keep docNumber and expirationDate blank
-      // If status is approved or rejected, populate with existing values
-      if (userInfo.status?.toLowerCase() === "pending") {
-        setFormData({
-          accountId: userInfo.accountId ?? "",
-          docNumber: "",
-          expirationDate: "",
-        });
-      } else {
-        setFormData({
-          accountId: userInfo.accountId ?? "",
-          docNumber: userInfo.idNumber ?? userInfo.documentUniqueId ?? "",
-          expirationDate: userInfo.expirationDate ?? "",
-        });
-      }
+      processUserInfo(parsedInfo[0]);
     } catch (error) {
       toast.error("Search failed. Please try again");
       console.error(error);
