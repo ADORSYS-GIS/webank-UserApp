@@ -67,6 +67,14 @@ export default function ShareHandlerPage() {
       }
     };
 
+    const setupStorageAccessButton = () => {
+      const button = document.createElement("button");
+      button.textContent = "Grant Storage Access";
+      button.className = "bg-blue-500 text-white p-2 rounded";
+      document.body.appendChild(button);
+      return button;
+    };
+
     const requestStoragePermission = async () => {
       try {
         if (!navigator.storage || !navigator.permissions) {
@@ -80,11 +88,7 @@ export default function ShareHandlerPage() {
 
         if (!hasAccess) {
           setError('Click "Grant Access" to allow storage access.');
-          const button = document.createElement("button");
-          button.textContent = "Grant Storage Access";
-          button.className = "bg-blue-500 text-white p-2 rounded";
-          document.body.appendChild(button);
-
+          const button = setupStorageAccessButton();
           return new Promise((resolve) => {
             button.onclick = () =>
               handleStorageAccessRequest(button).then(resolve);
