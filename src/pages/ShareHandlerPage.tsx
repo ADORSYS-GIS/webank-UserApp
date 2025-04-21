@@ -1,80 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faImage,
-  faFilePdf,
-  faFileLines,
-  faArrowLeft,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-
-interface SharedContent {
-  title: string;
-  text: string;
-  url: string;
-  files: Array<{
-    name: string;
-    type: string;
-    size: number;
-    blob?: Blob;
-    base64?: string;
-  }>;
-}
-
-// IndexedDB setup
-const DB_NAME = "webank-db";
-const STORE_NAME = "shared-content";
-const DB_VERSION = 1;
-
-const openDB = (): Promise<IDBDatabase> => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onerror = () => reject(new Error("Failed to open IndexedDB"));
-    request.onsuccess = () => resolve(request.result);
-    request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      db.createObjectStore(STORE_NAME, { keyPath: "id" });
-    };
-  });
-};
-
-const storeSharedContent = async (data: SharedContent): Promise<void> => {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORE_NAME], "readwrite");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.put({ id: "sharedContent", ...data });
-    request.onerror = () => reject(new Error("Failed to store shared content"));
-    request.onsuccess = () => resolve();
-    transaction.oncomplete = () => db.close();
-  });
-};
-
-const getSharedContent = async (): Promise<SharedContent | null> => {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction([STORE_NAME], "readonly");
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.get("sharedContent");
-    request.onerror = () =>
-      reject(new Error("Failed to retrieve shared content"));
-    request.onsuccess = () => resolve(request.result || null);
-    transaction.oncomplete = () => db.close();
-  });
-};
-
-// const clearSharedContent = async (): Promise<void> => {
-//   const db = await openDB();
-//   return new Promise((resolve, reject) => {
-//     const transaction = db.transaction([STORE_NAME], "readwrite");
-//     const store = transaction.objectStore(STORE_NAME);
-//     const request = store.delete("sharedContent");
-//     request.onerror = () => reject(new Error("Failed to clear shared content"));
-//     request.onsuccess = () => resolve();
-//     transaction.oncomplete = () => db.close();
-//   });
-// };
+  storeSharedContent,
+  getSharedContent,
+  clearSharedContent,
+  openDB,
+  LoadingState,
+  ErrorState,
+  NoContentState,
+  SharedContentDisplay,
+  SharedContent,
+} from "../components/share-handler";
 
 export default function ShareHandlerPage() {
   const [sharedData, setSharedData] = useState<SharedContent | null>(null);
@@ -210,6 +146,7 @@ export default function ShareHandlerPage() {
           );
           console.log("Found shared data:", storedData);
           setSharedData({ ...storedData, files });
+          await clearSharedContent();
           console.log("Cleared shared data from IndexedDB");
         } else if (retryCount < maxRetries) {
           console.warn(
@@ -317,202 +254,21 @@ export default function ShareHandlerPage() {
   };
 
   if (loading) {
-    return (
-      <div className="p-4 text-center">
-        <div className="animate-pulse text-[#20B2AA]">
-          <div className="mb-2">⏳</div>
-          <p>Loading shared content...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (error) {
-    return (
-      <div className="max-w-2xl mx-auto p-4">
-        <div className="text-red-500 text-center">
-          <FontAwesomeIcon
-            icon={faTriangleExclamation}
-            className="text-3xl mb-3"
-          />
-          <h2 className="text-xl font-semibold mb-2">Storage Access Issue</h2>
-          <p className="mb-4">{error}</p>
-
-          <div className="grid gap-3 max-w-sm mx-auto">
-            <button
-              onClick={storeTestData}
-              className="bg-green-100 text-green-800 p-3 rounded-lg hover:bg-green-200"
-            >
-              🧪 Load Test Data
-            </button>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-blue-100 text-blue-800 p-3 rounded-lg hover:bg-blue-200"
-            >
-              🔄 Try Again
-            </button>
-            <button
-              onClick={() => {
-                window.location.href = `chrome://settings/content/siteDetails?site=${encodeURIComponent(window.location.origin)}`;
-              }}
-              className="bg-yellow-100 text-yellow-800 p-3 rounded-lg hover:bg-yellow-200"
-            >
-              ⚙️ Open Browser Settings
-            </button>
-            <button
-              onClick={() => navigate("/")}
-              className="bg-[#20B2AA] text-white p-3 rounded-lg hover:bg-[#1C8C8A]"
-            >
-              ← Return to Home
-            </button>
-          </div>
-
-          <div className="mt-6 p-4 bg-gray-100 rounded-lg text-left">
-            <h3 className="font-bold mb-2">Troubleshooting Steps:</h3>
-            <ul className="list-disc pl-6 space-y-2">
-              <li>Ensure you're not in private/incognito mode.</li>
-              <li>Enable third-party cookies in browser settings.</li>
-              <li>Click "Load Test Data" to simulate shared content.</li>
-              <li>Share a file from your device to this app.</li>
-              <li>Ensure the app is running over HTTPS.</li>
-              <li>Contact support if the issue persists.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} storeTestData={storeTestData} />;
   }
 
   if (!sharedData?.files?.length) {
-    return (
-      <div className="max-w-2xl mx-auto p-4 text-center">
-        <div className="text-gray-500">
-          <h2 className="text-xl font-semibold mb-2">No Content Found</h2>
-          <p className="mb-4">The shared content could not be loaded.</p>
-          <button
-            onClick={storeTestData}
-            className="bg-green-100 text-green-800 px-6 py-2 rounded-lg hover:bg-green-200 mr-4"
-          >
-            Load Test Data
-          </button>
-          <button
-            onClick={() => navigate("/")}
-            className="bg-[#20B2AA] text-white px-6 py-2 rounded-lg hover:bg-[#1C8C8A] transition"
-          >
-            Return to Home
-          </button>
-        </div>
-      </div>
-    );
+    return <NoContentState storeTestData={storeTestData} />;
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <button
-        onClick={() => navigate("/")}
-        className="mb-6 text-[#20B2AA] hover:text-[#1C8C8A] flex items-center"
-      >
-        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
-        Back to Home
-      </button>
-
-      <h1 className="text-2xl font-bold mb-6">Received Shared Content</h1>
-
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Files to Upload</h2>
-        <div className="grid gap-4">
-          {sharedData.files.map((file, index) => (
-            <div
-              key={index}
-              className="p-4 border rounded-lg bg-white shadow-sm"
-            >
-              <div className="flex items-center mb-2">
-                <FontAwesomeIcon
-                  icon={getFileIcon(file.type)}
-                  className="text-[#20B2AA] mr-3 text-xl"
-                />
-                <span className="font-medium break-all">{file.name}</span>
-              </div>
-              <p className="text-sm text-gray-500">
-                {file.type} • {formatFileSize(file.size)}
-              </p>
-              {file.type.startsWith("image/") && file.blob && (
-                <img
-                  src={URL.createObjectURL(file.blob)}
-                  alt="Preview"
-                  className="mt-2 max-h-48 w-auto object-contain border rounded"
-                />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-        <h2 className="text-lg font-semibold mb-4">Select KYC Document Type</h2>
-        <div className="grid gap-3">
-          <button
-            onClick={() => handleDestinationSelect("front-id")}
-            className="p-4 text-left rounded-lg bg-white hover:bg-gray-50 border border-gray-200 transition-all duration-200 hover:shadow-sm"
-          >
-            <span className="block font-medium">🆔 Submit Front ID</span>
-            <span className="text-sm text-gray-500">
-              Upload the front side of your identity document
-            </span>
-          </button>
-
-          <button
-            onClick={() => handleDestinationSelect("back-id")}
-            className="p-4 text-left rounded-lg bg-white hover:bg-gray-50 border border-gray-200 transition-all duration-200 hover:shadow-sm"
-          >
-            <span className="block font-medium">🆔 Submit Back ID</span>
-            <span className="text-sm text-gray-500">
-              Upload the back side of your identity document
-            </span>
-          </button>
-
-          <button
-            onClick={() => handleDestinationSelect("selfie")}
-            className="p-4 text-left rounded-lg bg-white hover:bg-gray-50 border border-gray-200 transition-all duration-200 hover:shadow-sm"
-          >
-            <span className="block font-medium">🤳 Submit Selfie</span>
-            <span className="text-sm text-gray-500">
-              Upload a selfie for identity verification
-            </span>
-          </button>
-
-          <button
-            onClick={() => handleDestinationSelect("tax-id")}
-            className="p-4 text-left rounded-lg bg-white hover:bg-gray-50 border border-gray-200 transition-all duration-200 hover:shadow-sm"
-          >
-            <span className="block font-medium">
-              📄 Submit Tax Identification Document
-            </span>
-            <span className="text-sm text-gray-500">
-              Upload your tax identification document
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <SharedContentDisplay
+      sharedData={sharedData}
+      handleDestinationSelect={handleDestinationSelect}
+    />
   );
-}
-
-function getFileIcon(mimeType: string) {
-  if (mimeType.startsWith("image/")) return faImage;
-  if (mimeType === "application/pdf") return faFilePdf;
-  return faFileLines;
-}
-
-function formatFileSize(bytes: number) {
-  const units = ["B", "KB", "MB", "GB"];
-  let size = bytes;
-  let unitIndex = 0;
-
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024;
-    unitIndex++;
-  }
-
-  return `${size.toFixed(1)} ${units[unitIndex]}`;
 }
