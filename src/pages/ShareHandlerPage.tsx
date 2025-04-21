@@ -75,6 +75,12 @@ export default function ShareHandlerPage() {
       return button;
     };
 
+    const handleStorageAccessPromise = (button: HTMLButtonElement) => {
+      return new Promise<boolean>((resolve) => {
+        button.onclick = () => handleStorageAccessRequest(button).then(resolve);
+      });
+    };
+
     const requestStoragePermission = async () => {
       try {
         if (!navigator.storage || !navigator.permissions) {
@@ -89,10 +95,7 @@ export default function ShareHandlerPage() {
         if (!hasAccess) {
           setError('Click "Grant Access" to allow storage access.');
           const button = setupStorageAccessButton();
-          return new Promise((resolve) => {
-            button.onclick = () =>
-              handleStorageAccessRequest(button).then(resolve);
-          });
+          return handleStorageAccessPromise(button);
         }
 
         const persisted = await navigator.storage.persisted();
