@@ -38,6 +38,7 @@ const GetNewAccountId: React.FC = () => {
           throw new Error("Invalid QR Code: Missing accountId");
         }
       } catch (err) {
+        console.error("Error decoding QR code:", err);
         setError("Failed to read recovery QR code. Please try again.");
         toast.error("Invalid QR code. Try again.");
       }
@@ -67,6 +68,7 @@ const GetNewAccountId: React.FC = () => {
             handleScanError,
           );
         } catch (err) {
+          console.error("Error starting scanner:", err);
           setError("Unable to access camera. Please allow camera permissions.");
           toast.error("Camera access denied. Enable permissions.");
         }
@@ -98,6 +100,7 @@ const GetNewAccountId: React.FC = () => {
         const result = await qrScanner.scanFile(file, false);
         handleDecodedText(result);
       } catch (err) {
+        console.error("Error reading QR code from image:", err);
         setError("Failed to read QR code from image. Please try again.");
         toast.error("QR code scanning failed. Try another image.");
       }

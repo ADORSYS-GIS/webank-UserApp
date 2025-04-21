@@ -449,7 +449,7 @@ export const GetKycRecordsBySearch = async (
 
   try {
     const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/findId/${docNumber}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/findById/${docNumber}`,
       { headers },
     );
     return response.data;
