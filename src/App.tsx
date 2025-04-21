@@ -38,6 +38,7 @@ import PostRegistration from "./pages/PostRegistration.tsx";
 import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
 import UnderReview from "./kyc/pages/UnderReview.tsx";
 import OnboardingPage from "./pages/HomePage.tsx";
+import DocumentImages from "./kyc/pages/DocumentImages.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -103,6 +104,7 @@ const App: React.FC = () => {
         <Route path="/post-registration" element={<PostRegistration />} />
         <Route path="/map-confirmation" element={<MapConfirmation />} />
         <Route path="/under-review" element={<UnderReview />} />
+        <Route path="/kyc/imgs" element={<DocumentImages />} />
       </Routes>
     </HashRouter>
   );
