@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
@@ -9,15 +8,27 @@ import {
   RequestToUpdateKycStatus,
 } from "../../services/keyManagement/requestService";
 import { useNavigate } from "react-router-dom";
+import { ImageModal } from "../components/ImageModal";
+import { DocumentCard } from "../components/DocumentCard";
+
+// Updated UserKYC interface to include all fields from UserInfoResponse
 
 interface UserKYC {
   id: string;
   accountId: string;
   docNumber: string;
   expirationDate: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  location: string;
+  email: string;
+  status: KycStatus;
+  frontID: string;
+  backID: string;
+  selfie: string;
+  taxDocument: string;
 }
+type KycStatus = "PENDING" | "APPROVED" | "REJECTED";
 
+// Helper function to determine the status class
 const getStatusClass = (status: string) => {
   switch (status.toUpperCase()) {
     case "PENDING":
@@ -43,20 +54,105 @@ export default function KYCDashboard() {
     docNumber: "",
     expirationDate: "",
   });
-
   const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const isVerificationAllowed = () => {
+    return !user || user.status.toUpperCase() === "PENDING";
+  };
+
+  const getStatusMessage = () => {
+    if (user) {
+      if (user.status.toUpperCase() === "APPROVED") {
+        return "Already Approved";
+      } else if (user.status.toUpperCase() === "REJECTED") {
+        return "Cannot Modify Rejected KYC";
+      }
+    }
+    return "Not Available";
+  };
+
+  // Handle search functionality
+  // Define an interface for the backend response
+  interface KycBackendResponse {
+    id?: string;
+    documentUniqueId?: string;
+    accountId?: string;
+    idNumber?: string;
+    expirationDate?: string;
+    location?: string;
+    email?: string;
+    status?: string;
+    frontID?: string;
+    backID?: string;
+    selfie?: string;
+    taxDocument?: string;
+  }
+
+  // Extract validation logic to a separate function
+  const validateSearchInput = () => {
+    if (!accountCert) {
+      toast.error("Authentication required");
+      return false;
+    }
+    if (!searchTerm.trim()) {
+      toast.error("Please enter a document number");
+      return false;
+    }
+    return true;
+  };
+
+  // Extract the user data processing logic with proper typing
+  const getOrDefault = (value?: string, fallback: string = "") =>
+    value ?? fallback;
+
+  const normalizeStatus = (status?: string): KycStatus => {
+    return (status?.toUpperCase() ?? "PENDING") as KycStatus;
+  };
+
+  const getDocNumber = (userInfo: KycBackendResponse) =>
+    getOrDefault(userInfo.idNumber, userInfo.documentUniqueId ?? "");
+
+  const processUserInfo = (userInfo: KycBackendResponse) => {
+    const status = normalizeStatus(userInfo.status);
+
+    const processedUser: UserKYC = {
+      id: getOrDefault(userInfo.id, userInfo.documentUniqueId),
+      accountId: getOrDefault(userInfo.accountId),
+      docNumber: getDocNumber(userInfo),
+      expirationDate: getOrDefault(userInfo.expirationDate),
+      location: getOrDefault(userInfo.location),
+      email: getOrDefault(userInfo.email),
+      status,
+      frontID: getOrDefault(userInfo.frontID),
+      backID: getOrDefault(userInfo.backID),
+      selfie: getOrDefault(userInfo.selfie),
+      taxDocument: getOrDefault(userInfo.taxDocument),
+    };
+
+    setUser(processedUser);
+
+    setFormData({
+      accountId: getOrDefault(userInfo.accountId),
+      docNumber: status === "PENDING" ? "" : getDocNumber(userInfo),
+      expirationDate:
+        status === "PENDING" ? "" : getOrDefault(userInfo.expirationDate),
+    });
+  };
+
+  // Handle empty search results
+  const handleEmptyResults = () => {
+    toast.info("No records found. Starting new verification");
+    setFormData({ ...formData, docNumber: searchTerm });
+  };
+
+  // Main search function with reduced complexity
   const handleSearch = async () => {
     try {
       setLoading(true);
       setUser(null);
 
-      if (!accountCert) {
-        toast.error("Authentication required");
-        return;
-      }
-
-      if (!searchTerm.trim()) {
-        toast.error("Please enter a document number");
+      if (!validateSearchInput()) {
         return;
       }
 
@@ -64,33 +160,18 @@ export default function KYCDashboard() {
         searchTerm,
         accountCert,
       );
+      console.log("Backend Response:", response);
+
       const parsedInfo = Array.isArray(response)
-        ? response
-        : JSON.parse(response || "[]");
+        ? (response as KycBackendResponse[])
+        : (JSON.parse(response || "[]") as KycBackendResponse[]);
 
       if (parsedInfo.length === 0) {
-        toast.info("No records found. Starting new verification");
-        setFormData({ ...formData, docNumber: searchTerm });
+        handleEmptyResults();
         return;
       }
 
-      const userInfo = parsedInfo[0];
-      setUser({
-        id: userInfo.id || userInfo.documentUniqueId || "",
-        accountId: userInfo.accountId || "",
-        docNumber: userInfo.documentNumber || userInfo.idNumber || "",
-        expirationDate: userInfo.expirationDate || "",
-        status: (userInfo.status?.toLowerCase() || "pending") as
-          | "PENDING"
-          | "APPROVED"
-          | "REJECTED",
-      });
-
-      setFormData({
-        accountId: userInfo.accountId || "",
-        docNumber: "",
-        expirationDate: "",
-      });
+      processUserInfo(parsedInfo[0]);
     } catch (error) {
       toast.error("Search failed. Please try again");
       console.error(error);
@@ -99,59 +180,110 @@ export default function KYCDashboard() {
     }
   };
 
-  const handleVerification = async (e: React.FormEvent) => {
+  // Handle verification/update functionality
+  const handleVerification = async (
+    e: React.FormEvent,
+    status: "APPROVED" | "REJECTED",
+  ) => {
     e.preventDefault();
 
-    if (
-      !formData.accountId ||
-      !formData.docNumber ||
-      !formData.expirationDate
-    ) {
-      toast.error("Please complete all fields");
-      return;
-    }
+    if (!isFormValid(status)) return;
+    if (!accountCert) return showAuthError();
 
     try {
-      if (!accountCert) {
-        toast.error("Authentication required");
-        return;
-      }
-
       if (user) {
-        const backendResponse = await RequestToUpdateKycStatus(
-          user.accountId,
-          formData.docNumber,
-          formData.expirationDate,
-          "APPROVED",
-          accountCert,
-        );
-        if (backendResponse.startsWith("Failed")) {
-          toast.error("Verification failed, user identity mismatch");
-          return;
-        }
-        setUser((prev) => (prev ? { ...prev, ...formData } : null));
-        toast.success("KYC updated successfully");
-        resetView();
+        const backendResponse = await updateKyc(user, status);
+        if (backendResponse.startsWith("Failed"))
+          return showMismatchError(status);
+
+        updateUserState(status);
+        toast.success(`KYC ${status.toLowerCase()} successfully`);
       } else {
-        const newUser: UserKYC = {
-          id: formData.docNumber,
-          ...formData,
-          status: "PENDING",
-        };
-        setUser(newUser);
+        initializeNewUser();
         toast.success("Verification initiated");
-        resetView();
       }
+      resetView();
     } catch (error) {
-      toast.error("Verification failed");
+      toast.error(
+        `${status === "APPROVED" ? "Verification" : "Rejection"} failed`,
+      );
       console.error(error);
     }
   };
 
+  const isFormValid = (status: "APPROVED" | "REJECTED") => {
+    if (status === "APPROVED") {
+      const isValid =
+        formData.accountId && formData.docNumber && formData.expirationDate;
+      if (!isValid) {
+        toast.error("Please complete all fields for approval");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const showAuthError = () => {
+    toast.error("Authentication required");
+  };
+
+  const updateKyc = async (user: UserKYC, status: "APPROVED" | "REJECTED") => {
+    return await RequestToUpdateKycStatus(
+      user.accountId,
+      formData.docNumber || user.docNumber,
+      formData.expirationDate || user.expirationDate,
+      status,
+      accountCert,
+    );
+  };
+
+  const showMismatchError = (status: "APPROVED" | "REJECTED") => {
+    toast.error(
+      `${status === "APPROVED" ? "Verification" : "Rejection"} failed, user identity mismatch`,
+    );
+  };
+
+  const updateUserState = (status: "APPROVED" | "REJECTED") => {
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            docNumber:
+              status === "APPROVED" ? formData.docNumber : prev.docNumber,
+            expirationDate:
+              status === "APPROVED"
+                ? formData.expirationDate
+                : prev.expirationDate,
+            status: status,
+          }
+        : null,
+    );
+  };
+
+  const initializeNewUser = () => {
+    const newUser: UserKYC = {
+      id: formData.docNumber,
+      ...formData,
+      location: "",
+      email: "",
+      status: "PENDING",
+      frontID: "",
+      backID: "",
+      selfie: "",
+      taxDocument: "",
+    };
+    setUser(newUser);
+  };
+
+  // Reset the form and view
   const resetView = () => {
     setUser(null);
     setSearchTerm("");
-    setFormData({ accountId: "", docNumber: "", expirationDate: "" });
+    setFormData({
+      accountId: "",
+      docNumber: "",
+      expirationDate: "",
+    });
   };
 
   return (
@@ -172,6 +304,7 @@ export default function KYCDashboard() {
           KYC Verification
         </h1>
 
+        {/* Search Section */}
         {!user && (
           <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mb-8">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
@@ -201,6 +334,7 @@ export default function KYCDashboard() {
           </div>
         )}
 
+        {/* User Details and Form Section */}
         {user && (
           <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8">
             <div className="flex items-center justify-between">
@@ -224,7 +358,11 @@ export default function KYCDashboard() {
               </button>
             </div>
 
-            <form onSubmit={handleVerification} className="space-y-6">
+            {/* Display User Information */}
+            <form
+              onSubmit={(e) => handleVerification(e, "APPROVED")}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-full md:col-span-1">
                   <label
@@ -270,6 +408,7 @@ export default function KYCDashboard() {
                       rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
                       placeholder-gray-400 transition"
                     required
+                    disabled={!isVerificationAllowed()}
                   />
                 </div>
                 <div>
@@ -293,24 +432,107 @@ export default function KYCDashboard() {
                       rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
                       placeholder-gray-400 transition"
                     required
+                    disabled={!isVerificationAllowed()}
                   />
                 </div>
               </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  className="px-10 py-4 bg-blue-600 text-white rounded-full 
-                    hover:bg-blue-700 transition-all shadow-lg 
-                    focus:outline-none focus:ring-2 focus:ring-blue-500 
-                    focus:ring-offset-2 disabled:bg-gray-300"
-                >
-                  Continue
-                </button>
+
+              {/* Display Email and Location */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-800">
+                  Additional Information
+                </h3>
+                <div>
+                  <div className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </div>
+                  <p className="text-gray-800">
+                    {user.email || "Not provided"}
+                  </p>
+                </div>
+                <div>
+                  <div className="block text-sm font-medium text-gray-700 mb-2">
+                    Location
+                  </div>
+                  <p className="text-gray-800">
+                    {user.location || "Not provided"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Display Documents */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-800">Documents</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <DocumentCard
+                    title="Front ID"
+                    url={user.frontID}
+                    type="image"
+                    onImageClick={setSelectedImage}
+                  />
+                  <DocumentCard
+                    title="Back ID"
+                    url={user.backID}
+                    type="image"
+                    onImageClick={setSelectedImage}
+                  />
+                  <DocumentCard
+                    title="Selfie"
+                    url={user.selfie}
+                    type="image"
+                    onImageClick={setSelectedImage}
+                  />
+                  <DocumentCard
+                    title="Tax Document"
+                    url={user.taxDocument}
+                    type="image"
+                    onImageClick={setSelectedImage}
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end space-x-4">
+                {isVerificationAllowed() ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => handleVerification(e, "REJECTED")}
+                      className="px-10 py-4 bg-rose-600 text-white rounded-full 
+                        hover:bg-rose-700 transition-all shadow-lg 
+                        focus:outline-none focus:ring-2 focus:ring-rose-500 
+                        focus:ring-offset-2"
+                    >
+                      Reject
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => handleVerification(e, "APPROVED")}
+                      className="px-10 py-4 bg-blue-600 text-white rounded-full 
+                        hover:bg-blue-700 transition-all shadow-lg 
+                        focus:outline-none focus:ring-2 focus:ring-blue-500 
+                        focus:ring-offset-2"
+                    >
+                      Approve
+                    </button>
+                  </>
+                ) : (
+                  <div
+                    className="px-10 py-4 bg-gray-300 text-white rounded-full 
+                    shadow-lg cursor-not-allowed"
+                  >
+                    {getStatusMessage()}
+                  </div>
+                )}
               </div>
             </form>
           </div>
         )}
       </div>
+      <ImageModal
+        selectedImage={selectedImage}
+        onClose={() => setSelectedImage(null)}
+      />
     </div>
   );
 }
