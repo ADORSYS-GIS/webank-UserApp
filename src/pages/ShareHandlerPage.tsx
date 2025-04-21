@@ -210,7 +210,6 @@ export default function ShareHandlerPage() {
           );
           console.log("Found shared data:", storedData);
           setSharedData({ ...storedData, files });
-          await clearSharedContent();
           console.log("Cleared shared data from IndexedDB");
         } else if (retryCount < maxRetries) {
           console.warn(
@@ -437,11 +436,11 @@ export default function ShareHandlerPage() {
               <p className="text-sm text-gray-500">
                 {file.type} • {formatFileSize(file.size)}
               </p>
-              {file.type.startsWith("image/") && (
+              {file.type.startsWith("image/") && file.blob && (
                 <img
-                  src={file.base64}
+                  src={URL.createObjectURL(file.blob)}
                   alt="Preview"
-                  className="mt-2 max-h-32 object-contain border rounded"
+                  className="mt-2 max-h-48 w-auto object-contain border rounded"
                 />
               )}
             </div>

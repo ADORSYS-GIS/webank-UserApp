@@ -111,7 +111,6 @@ export default defineConfig({
     }),
   ],
   server: {
-    // Remove proxy for /share-handler to let the service worker handle it
     proxy: {
       '/share-handler': {
         target: 'http://localhost:5173',
