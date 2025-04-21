@@ -175,80 +175,99 @@ export default function KYCDashboard() {
   };
 
   // Handle verification/update functionality
+  // Handle verification/update functionality
   const handleVerification = async (
     e: React.FormEvent,
     status: "APPROVED" | "REJECTED",
   ) => {
     e.preventDefault();
 
-    // Only validate required fields for APPROVAL, not for REJECTION
-    if (
-      status === "APPROVED" &&
-      (!formData.accountId || !formData.docNumber || !formData.expirationDate)
-    ) {
-      toast.error("Please complete all fields for approval");
-      return;
-    }
+    if (!isFormValid(status)) return;
+    if (!accountCert) return showAuthError();
 
     try {
-      if (!accountCert) {
-        toast.error("Authentication required");
-        return;
-      }
       if (user) {
-        const backendResponse = await RequestToUpdateKycStatus(
-          user.accountId,
-          formData.docNumber || user.docNumber, // Use existing docNumber if not provided
-          formData.expirationDate || user.expirationDate, // Use existing expirationDate if not provided
-          status,
-          accountCert,
-        );
-        if (backendResponse.startsWith("Failed")) {
-          toast.error(
-            `${status === "APPROVED" ? "Verification" : "Rejection"} failed, user identity mismatch`,
-          );
-          return;
-        }
-        setUser((prev) =>
-          prev
-            ? {
-                ...prev,
-                docNumber:
-                  status === "APPROVED" ? formData.docNumber : prev.docNumber,
-                expirationDate:
-                  status === "APPROVED"
-                    ? formData.expirationDate
-                    : prev.expirationDate,
-                status: status,
-              }
-            : null,
-        );
-        toast.success(
-          `KYC ${status === "APPROVED" ? "approved" : "rejected"} successfully`,
-        );
-        resetView();
+        const backendResponse = await updateKyc(user, status);
+        if (backendResponse.startsWith("Failed"))
+          return showMismatchError(status);
+
+        updateUserState(status);
+        toast.success(`KYC ${status.toLowerCase()} successfully`);
       } else {
-        const newUser: UserKYC = {
-          id: formData.docNumber,
-          ...formData,
-          location: "",
-          email: "",
-          status: "PENDING",
-          frontID: "",
-          backID: "",
-          selfie: "",
-          taxDocument: "",
-        };
-        setUser(newUser);
+        initializeNewUser();
         toast.success("Verification initiated");
-        resetView();
       }
+      resetView();
     } catch (error) {
       toast.error(
         `${status === "APPROVED" ? "Verification" : "Rejection"} failed`,
       );
       console.error(error);
     }
+  };
+
+  const isFormValid = (status: "APPROVED" | "REJECTED") => {
+    if (status === "APPROVED") {
+      const isValid =
+        formData.accountId && formData.docNumber && formData.expirationDate;
+      if (!isValid) {
+        toast.error("Please complete all fields for approval");
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const showAuthError = () => {
+    toast.error("Authentication required");
+  };
+
+  const updateKyc = async (user: UserKYC, status: "APPROVED" | "REJECTED") => {
+    return await RequestToUpdateKycStatus(
+      user.accountId,
+      formData.docNumber || user.docNumber,
+      formData.expirationDate || user.expirationDate,
+      status,
+      accountCert,
+    );
+  };
+
+  const showMismatchError = (status: "APPROVED" | "REJECTED") => {
+    toast.error(
+      `${status === "APPROVED" ? "Verification" : "Rejection"} failed, user identity mismatch`,
+    );
+  };
+
+  const updateUserState = (status: "APPROVED" | "REJECTED") => {
+    setUser((prev) =>
+      prev
+        ? {
+            ...prev,
+            docNumber:
+              status === "APPROVED" ? formData.docNumber : prev.docNumber,
+            expirationDate:
+              status === "APPROVED"
+                ? formData.expirationDate
+                : prev.expirationDate,
+            status: status,
+          }
+        : null,
+    );
+  };
+
+  const initializeNewUser = () => {
+    const newUser: UserKYC = {
+      id: formData.docNumber,
+      ...formData,
+      location: "",
+      email: "",
+      status: "PENDING",
+      frontID: "",
+      backID: "",
+      selfie: "",
+      taxDocument: "",
+    };
+    setUser(newUser);
   };
 
   // Reset the form and view
