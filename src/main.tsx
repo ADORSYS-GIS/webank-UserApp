@@ -19,7 +19,7 @@ if ("serviceWorker" in navigator) {
     try {
       // Check /sw.js response before registration
       const response = await fetch("/sw.js", { cache: "no-store" });
-      const contentType = response.headers.get("Content-Type") || "";
+      const contentType = response.headers.get("Content-Type") ?? "";
       console.log("Pre-check /sw.js:", response.status, contentType);
 
       if (!response.ok) {

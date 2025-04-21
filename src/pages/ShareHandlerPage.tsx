@@ -54,6 +54,19 @@ export default function ShareHandlerPage() {
       }
     };
 
+    const handleStorageAccessRequest = async (
+      button: HTMLButtonElement,
+    ): Promise<boolean> => {
+      try {
+        await document.requestStorageAccess();
+        button.remove();
+        return true;
+      } catch (err) {
+        setError("Storage access denied. Check browser settings.");
+        return false;
+      }
+    };
+
     const requestStoragePermission = async () => {
       try {
         if (!navigator.storage || !navigator.permissions) {
@@ -67,21 +80,14 @@ export default function ShareHandlerPage() {
 
         if (!hasAccess) {
           setError('Click "Grant Access" to allow storage access.');
+          const button = document.createElement("button");
+          button.textContent = "Grant Storage Access";
+          button.className = "bg-blue-500 text-white p-2 rounded";
+          document.body.appendChild(button);
+
           return new Promise((resolve) => {
-            const button = document.createElement("button");
-            button.textContent = "Grant Storage Access";
-            button.className = "bg-blue-500 text-white p-2 rounded";
-            button.onclick = async () => {
-              try {
-                await document.requestStorageAccess();
-                button.remove();
-                resolve(true);
-              } catch (err) {
-                setError("Storage access denied. Check browser settings.");
-                resolve(false);
-              }
-            };
-            document.body.appendChild(button);
+            button.onclick = () =>
+              handleStorageAccessRequest(button).then(resolve);
           });
         }
 

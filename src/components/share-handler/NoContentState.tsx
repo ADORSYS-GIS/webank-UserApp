@@ -4,7 +4,9 @@ interface NoContentStateProps {
   storeTestData: () => void;
 }
 
-export default function NoContentState({ storeTestData }: NoContentStateProps) {
+export default function NoContentState({
+  storeTestData,
+}: Readonly<NoContentStateProps>) {
   const navigate = useNavigate();
 
   return (

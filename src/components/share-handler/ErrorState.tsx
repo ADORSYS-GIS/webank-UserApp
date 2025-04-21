@@ -7,7 +7,10 @@ interface ErrorStateProps {
   storeTestData: () => void;
 }
 
-export default function ErrorState({ error, storeTestData }: ErrorStateProps) {
+export default function ErrorState({
+  error,
+  storeTestData,
+}: Readonly<ErrorStateProps>) {
   const navigate = useNavigate();
 
   return (

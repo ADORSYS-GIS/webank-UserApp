@@ -128,7 +128,12 @@ registerRoute(
       const tx = db.transaction(STORE_NAME, "readwrite");
       const store = tx.objectStore(STORE_NAME);
       console.log("[SW] Storing data in IndexedDB");
-      await store.put({ id: "sharedContent", ...sharedContent });
+      await new Promise<void>((resolve, reject) => {
+        const request = store.put({ id: "sharedContent", ...sharedContent });
+        request.onsuccess = () => resolve();
+        request.onerror = () =>
+          reject(new Error("Failed to store shared content"));
+      });
       console.log("[SW] Data stored successfully");
 
       // Notify clients

@@ -47,7 +47,7 @@ function formatFileSize(bytes: number) {
 export default function SharedContentDisplay({
   sharedData,
   handleDestinationSelect,
-}: SharedContentDisplayProps) {
+}: Readonly<SharedContentDisplayProps>) {
   const navigate = useNavigate();
 
   return (
@@ -65,9 +65,9 @@ export default function SharedContentDisplay({
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Files to Upload</h2>
         <div className="grid gap-4">
-          {sharedData.files.map((file, index) => (
+          {sharedData.files.map((file) => (
             <div
-              key={index}
+              key={file.name}
               className="p-4 border rounded-lg bg-white shadow-sm"
             >
               <div className="flex items-center mb-2">
