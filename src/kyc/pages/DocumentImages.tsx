@@ -77,22 +77,6 @@ const DocumentImages = () => {
     loadImagesFromDB();
   }, []);
 
-  const handleFileCaptured =
-    (type: DocumentType) => async (file: File | Blob) => {
-      try {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-          const base64Data = reader.result as string;
-          setImages((prev) => ({ ...prev, [type]: base64Data }));
-          // Save to IndexedDB
-          localStorage.setItem(type, base64Data);
-        };
-      } catch (error) {
-        console.error("Error handling captured file:", error);
-      }
-    };
-
   const getDocumentLabel = (type: DocumentType): string => {
     switch (type) {
       case "frontID":
@@ -176,28 +160,16 @@ const DocumentImages = () => {
 
       {/* Popups */}
       {activePopup === "frontID" && (
-        <FrontId
-          onClose={() => setActivePopup(null)}
-          onFileCaptured={handleFileCaptured("frontID")}
-        />
+        <FrontId onClose={() => setActivePopup(null)} />
       )}
       {activePopup === "backID" && (
-        <BackId
-          onClose={() => setActivePopup(null)}
-          onFileCaptured={handleFileCaptured("backID")}
-        />
+        <BackId onClose={() => setActivePopup(null)} />
       )}
       {activePopup === "selfieID" && (
-        <SelfieId
-          onClose={() => setActivePopup(null)}
-          onFileCaptured={handleFileCaptured("selfieID")}
-        />
+        <SelfieId onClose={() => setActivePopup(null)} />
       )}
       {activePopup === "taxDoc" && (
-        <TaxpayerId
-          onClose={() => setActivePopup(null)}
-          onFileCaptured={handleFileCaptured("taxDoc")}
-        />
+        <TaxpayerId onClose={() => setActivePopup(null)} />
       )}
 
       {/* Submit Button */}
