@@ -4,14 +4,13 @@ import { useNavigate } from "react-router-dom";
 import {
   storeSharedContent,
   getSharedContent,
-  clearSharedContent,
+  //clearSharedContent,
   openDB,
   LoadingState,
   ErrorState,
   NoContentState,
   SharedContentDisplay,
   SharedContent,
-  storeKycImage,
 } from "../components/share-handler";
 
 export default function ShareHandlerPage() {
@@ -123,6 +122,15 @@ export default function ShareHandlerPage() {
       }
     };
 
+    const base64ToBlob = async (
+      base64: string,
+      type: string,
+    ): Promise<Blob> => {
+      const response = await fetch(base64);
+      const blob = await response.blob();
+      return new Blob([blob], { type });
+    };
+
     const loadSharedData = async () => {
       try {
         setLoading(true);
@@ -140,8 +148,20 @@ export default function ShareHandlerPage() {
         console.log("IndexedDB contents:", storedData);
 
         if (storedData) {
-          setSharedData(storedData);
-          await clearSharedContent();
+          const files = await Promise.all(
+            storedData.files.map(async (file) => ({
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              base64: file.base64,
+              blob: file.base64
+                ? await base64ToBlob(file.base64, file.type)
+                : file.blob,
+            })),
+          );
+          console.log("Found shared data:", storedData);
+          setSharedData({ ...storedData, files });
+          //await clearSharedContent();
           console.log("Cleared shared data from IndexedDB");
         } else if (retryCount < maxRetries) {
           console.warn(
@@ -234,17 +254,25 @@ export default function ShareHandlerPage() {
     }
   };
 
-  const handleDestinationSelect = async (docType: string) => {
-    if (sharedData?.files?.length && sharedData.files[0].base64) {
-      try {
-        await storeKycImage(docType, sharedData.files[0].base64);
+  const docTypeMap: Record<string, string> = {
+    "front-id": "frontID",
+    "back-id": "backID",
+    selfie: "selfieID",
+    "tax-id": "taxDoc",
+  };
+
+  const handleDestinationSelect = (selectedDocType: string) => {
+    const docType = docTypeMap[selectedDocType];
+    if (docType && sharedData?.files?.length) {
+      const file = sharedData.files[0];
+      if (file.base64) {
+        localStorage.setItem(docType, file.base64);
         navigate("/kyc/imgs");
-      } catch (error) {
-        console.error("Error storing KYC image:", error);
-        setError("Failed to store image.");
+      } else {
+        setError("No base64 data available for the file");
       }
     } else {
-      setError("No files available to upload");
+      setError("Invalid document type or no files available");
     }
   };
 
