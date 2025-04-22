@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import {
   storeSharedContent,
   getSharedContent,
-  clearSharedContent,
+  //clearSharedContent,
   openDB,
   LoadingState,
   ErrorState,
   NoContentState,
   SharedContentDisplay,
   SharedContent,
+  storeDocumentImage,
 } from "../components/share-handler";
 
 export default function ShareHandlerPage() {
@@ -25,18 +26,9 @@ export default function ShareHandlerPage() {
     const maxRetries = 3;
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === "STORE_SHARED_CONTENT") {
-        console.log("Received shared content from SW:", event.data.data);
-        storeSharedContent(event.data.data)
-          .then(() => {
-            console.log("Stored shared content in IndexedDB");
-            loadSharedData();
-          })
-          .catch((err) => {
-            console.error("Failed to store shared content in IndexedDB:", err);
-            setError("Failed to store shared content.");
-            setLoading(false);
-          });
+      if (event.data.type === "RELOAD_CONTENT") {
+        console.log("Received RELOAD_CONTENT from SW:", event.data.data);
+        loadSharedData();
       }
     };
 
@@ -153,6 +145,7 @@ export default function ShareHandlerPage() {
               name: file.name,
               type: file.type,
               size: file.size,
+              base64: file.base64,
               blob: file.base64
                 ? await base64ToBlob(file.base64, file.type)
                 : file.blob,
@@ -160,8 +153,7 @@ export default function ShareHandlerPage() {
           );
           console.log("Found shared data:", storedData);
           setSharedData({ ...storedData, files });
-          await clearSharedContent();
-          console.log("Cleared shared data from IndexedDB");
+          // Removed clearSharedContent() here to keep data until processed
         } else if (retryCount < maxRetries) {
           console.warn(
             `No shared data found, retrying (${retryCount + 1}/${maxRetries})`,
@@ -253,15 +245,18 @@ export default function ShareHandlerPage() {
     }
   };
 
-  const handleDestinationSelect = (docType: string) => {
+  const handleDestinationSelect = async (docType: string) => {
     if (sharedData?.files?.length) {
-      navigate("/kyc", {
-        state: {
-          sharedFiles: sharedData.files,
-          source: "share-handler",
-          docType,
-        },
-      });
+      try {
+        const base64 = sharedData.files[0].base64;
+        if (!base64) throw new Error("No base64 data available for the file");
+        await storeDocumentImage(docType, base64);
+        //await clearSharedContent();
+        navigate("/kyc/imgs");
+      } catch (error) {
+        console.error("Error storing document image:", error);
+        setError("Failed to store document image");
+      }
     } else {
       setError("No files available to upload");
     }

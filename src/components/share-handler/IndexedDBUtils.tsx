@@ -53,4 +53,41 @@ const clearSharedContent = async (): Promise<void> => {
   });
 };
 
-export { openDB, storeSharedContent, getSharedContent, clearSharedContent };
+const storeDocumentImage = async (
+  docType: string,
+  imageData: string,
+): Promise<void> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], "readwrite");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.put({ id: docType, imageData });
+    request.onerror = () => reject(new Error(`Failed to store ${docType}`));
+    request.onsuccess = () => resolve();
+    transaction.oncomplete = () => db.close();
+  });
+};
+
+const getDocumentImage = async (docType: string): Promise<string | null> => {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], "readonly");
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.get(docType);
+    request.onerror = () => reject(new Error(`Failed to retrieve ${docType}`));
+    request.onsuccess = () => {
+      const result = request.result;
+      resolve(result ? result.imageData : null);
+    };
+    transaction.oncomplete = () => db.close();
+  });
+};
+
+export {
+  openDB,
+  storeSharedContent,
+  getSharedContent,
+  clearSharedContent,
+  storeDocumentImage,
+  getDocumentImage,
+};

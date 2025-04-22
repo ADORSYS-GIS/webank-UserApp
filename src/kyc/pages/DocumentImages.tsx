@@ -4,14 +4,18 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
+import {
+  getDocumentImage,
+  storeDocumentImage,
+} from "../../components/share-handler/IndexedDBUtils";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
 
-interface DocumentImage {
-  type: DocumentType;
-  url: string;
-}
+// interface DocumentImage {
+//   type: DocumentType;
+//   url: string;
+// }
 
 const DocumentImages = () => {
   const [images, setImages] = useState<Record<DocumentType, string | null>>({
@@ -25,20 +29,22 @@ const DocumentImages = () => {
   useEffect(() => {
     const loadImagesFromDB = async () => {
       try {
-        // Replace with actual IndexedDB implementation
-        const mockDB: Record<DocumentType, string> = {
-          frontID: localStorage.getItem("frontID") || "",
-          backID: localStorage.getItem("backID") || "",
-          selfieID: localStorage.getItem("selfieID") || "",
-          taxDoc: localStorage.getItem("taxDoc") || "",
+        const documentTypes: DocumentType[] = [
+          "frontID",
+          "backID",
+          "selfieID",
+          "taxDoc",
+        ];
+        const loadedImages: Record<DocumentType, string | null> = {
+          frontID: null,
+          backID: null,
+          selfieID: null,
+          taxDoc: null,
         };
-
-        setImages({
-          frontID: mockDB.frontID || null,
-          backID: mockDB.backID || null,
-          selfieID: mockDB.selfieID || null,
-          taxDoc: mockDB.taxDoc || null,
-        });
+        for (const type of documentTypes) {
+          loadedImages[type] = await getDocumentImage(type);
+        }
+        setImages(loadedImages);
       } catch (error) {
         console.error("Error loading images from DB:", error);
       }
@@ -52,11 +58,10 @@ const DocumentImages = () => {
       try {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onloadend = () => {
+        reader.onloadend = async () => {
           const base64Data = reader.result as string;
+          await storeDocumentImage(type, base64Data);
           setImages((prev) => ({ ...prev, [type]: base64Data }));
-          // Save to IndexedDB
-          localStorage.setItem(type, base64Data);
         };
       } catch (error) {
         console.error("Error handling captured file:", error);
