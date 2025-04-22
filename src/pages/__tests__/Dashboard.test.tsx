@@ -40,6 +40,7 @@ const mockStore = createStore(rootReducer, {
     accountId: "12345", // Mock accountId
     accountCert: "cert123", // Mock accountCert
     status: null, // KYC Status
+    documentStatus: null,
     kycCert: null,
     emailStatus: null,
   },
