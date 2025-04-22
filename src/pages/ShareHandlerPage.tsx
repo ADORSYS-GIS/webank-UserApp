@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import {
   storeSharedContent,
   getSharedContent,
-  //clearSharedContent,
+  clearSharedContent,
   openDB,
   LoadingState,
   ErrorState,
   NoContentState,
   SharedContentDisplay,
   SharedContent,
-  storeDocumentImage,
+  storeKycImage,
 } from "../components/share-handler";
 
 export default function ShareHandlerPage() {
@@ -26,9 +26,18 @@ export default function ShareHandlerPage() {
     const maxRetries = 3;
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === "RELOAD_CONTENT") {
-        console.log("Received RELOAD_CONTENT from SW:", event.data.data);
-        loadSharedData();
+      if (event.data.type === "STORE_SHARED_CONTENT") {
+        console.log("Received shared content from SW:", event.data.data);
+        storeSharedContent(event.data.data)
+          .then(() => {
+            console.log("Stored shared content in IndexedDB");
+            loadSharedData();
+          })
+          .catch((err) => {
+            console.error("Failed to store shared content in IndexedDB:", err);
+            setError("Failed to store shared content.");
+            setLoading(false);
+          });
       }
     };
 
@@ -114,15 +123,6 @@ export default function ShareHandlerPage() {
       }
     };
 
-    const base64ToBlob = async (
-      base64: string,
-      type: string,
-    ): Promise<Blob> => {
-      const response = await fetch(base64);
-      const blob = await response.blob();
-      return new Blob([blob], { type });
-    };
-
     const loadSharedData = async () => {
       try {
         setLoading(true);
@@ -140,20 +140,9 @@ export default function ShareHandlerPage() {
         console.log("IndexedDB contents:", storedData);
 
         if (storedData) {
-          const files = await Promise.all(
-            storedData.files.map(async (file) => ({
-              name: file.name,
-              type: file.type,
-              size: file.size,
-              base64: file.base64,
-              blob: file.base64
-                ? await base64ToBlob(file.base64, file.type)
-                : file.blob,
-            })),
-          );
-          console.log("Found shared data:", storedData);
-          setSharedData({ ...storedData, files });
-          // Removed clearSharedContent() here to keep data until processed
+          setSharedData(storedData);
+          await clearSharedContent();
+          console.log("Cleared shared data from IndexedDB");
         } else if (retryCount < maxRetries) {
           console.warn(
             `No shared data found, retrying (${retryCount + 1}/${maxRetries})`,
@@ -246,16 +235,13 @@ export default function ShareHandlerPage() {
   };
 
   const handleDestinationSelect = async (docType: string) => {
-    if (sharedData?.files?.length) {
+    if (sharedData?.files?.length && sharedData.files[0].base64) {
       try {
-        const base64 = sharedData.files[0].base64;
-        if (!base64) throw new Error("No base64 data available for the file");
-        await storeDocumentImage(docType, base64);
-        //await clearSharedContent();
+        await storeKycImage(docType, sharedData.files[0].base64);
         navigate("/kyc/imgs");
       } catch (error) {
-        console.error("Error storing document image:", error);
-        setError("Failed to store document image");
+        console.error("Error storing KYC image:", error);
+        setError("Failed to store image.");
       }
     } else {
       setError("No files available to upload");

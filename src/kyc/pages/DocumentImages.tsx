@@ -4,18 +4,10 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
-import {
-  getDocumentImage,
-  storeDocumentImage,
-} from "../../components/share-handler/IndexedDBUtils";
+import { getAllKycImages, storeKycImage } from "../../components/share-handler";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
-
-// interface DocumentImage {
-//   type: DocumentType;
-//   url: string;
-// }
 
 const DocumentImages = () => {
   const [images, setImages] = useState<Record<DocumentType, string | null>>({
@@ -29,22 +21,8 @@ const DocumentImages = () => {
   useEffect(() => {
     const loadImagesFromDB = async () => {
       try {
-        const documentTypes: DocumentType[] = [
-          "frontID",
-          "backID",
-          "selfieID",
-          "taxDoc",
-        ];
-        const loadedImages: Record<DocumentType, string | null> = {
-          frontID: null,
-          backID: null,
-          selfieID: null,
-          taxDoc: null,
-        };
-        for (const type of documentTypes) {
-          loadedImages[type] = await getDocumentImage(type);
-        }
-        setImages(loadedImages);
+        const images = await getAllKycImages();
+        setImages(images as Record<DocumentType, string | null>);
       } catch (error) {
         console.error("Error loading images from DB:", error);
       }
@@ -60,8 +38,8 @@ const DocumentImages = () => {
         reader.readAsDataURL(file);
         reader.onloadend = async () => {
           const base64Data = reader.result as string;
-          await storeDocumentImage(type, base64Data);
           setImages((prev) => ({ ...prev, [type]: base64Data }));
+          await storeKycImage(type, base64Data);
         };
       } catch (error) {
         console.error("Error handling captured file:", error);
