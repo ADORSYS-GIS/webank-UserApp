@@ -116,18 +116,18 @@ const DocumentImages = () => {
       {/* Documents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 mb-8">
         {(Object.keys(images) as DocumentType[]).map((type) => (
-          <div
+          <button
             key={type}
             onClick={() => !images[type] && setActivePopup(type)}
             className={`relative group bg-white rounded-xl border-2 ${
               !images[type]
                 ? "border-dashed cursor-pointer hover:border-green-600"
                 : "border-solid"
-            } border-gray-300 transition-colors p-6 flex flex-col items-center justify-center min-h-[300px]`}
+            } border-gray-300 transition-colors p-6 flex flex-col items-center justify-center min-h-[300px] w-full text-left`}
           >
             {images[type] ? (
               <img
-                src={images[type]!}
+                src={images[type]}
                 alt={getDocumentLabel(type)}
                 className="max-w-full h-48 object-contain mb-4"
               />
@@ -154,7 +154,7 @@ const DocumentImages = () => {
                 </span>
               </div>
             )}
-          </div>
+          </button>
         ))}
       </div>
 
