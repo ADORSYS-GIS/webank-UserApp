@@ -33,10 +33,10 @@ const DocumentImages = () => {
   const handleSubmitDocuments = async () => {
     try {
       const response = await RequestToStoreKycDocument(
-        images.frontID || "",
-        images.backID || "",
-        images.selfieID || "",
-        images.taxDoc || "",
+        images.frontID ?? "",
+        images.backID ?? "",
+        images.selfieID ?? "",
+        images.taxDoc ?? "",
         accountCert,
         accountId!,
       );
@@ -57,10 +57,10 @@ const DocumentImages = () => {
       try {
         // Replace with actual IndexedDB implementation
         const mockDB: Record<DocumentType, string> = {
-          frontID: localStorage.getItem("frontID") || "",
-          backID: localStorage.getItem("backID") || "",
-          selfieID: localStorage.getItem("selfieID") || "",
-          taxDoc: localStorage.getItem("taxDoc") || "",
+          frontID: localStorage.getItem("frontID") ?? "",
+          backID: localStorage.getItem("backID") ?? "",
+          selfieID: localStorage.getItem("selfieID") ?? "",
+          taxDoc: localStorage.getItem("taxDoc") ?? "",
         };
 
         setImages({
