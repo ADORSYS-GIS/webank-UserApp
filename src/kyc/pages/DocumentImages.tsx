@@ -32,13 +32,18 @@ const DocumentImages = () => {
 
   const handleSubmitDocuments = async () => {
     try {
+     if (!accountCert || !accountId) {
+        toast.error("Account information is missing.");
+        navigate("/guidelines");
+        return;
+      }
       const response = await RequestToStoreKycDocument(
         images.frontID ?? "",
         images.backID ?? "",
         images.selfieID ?? "",
         images.taxDoc ?? "",
         accountCert,
-        accountId!,
+        accountId,
       );
 
       console.log(response);
