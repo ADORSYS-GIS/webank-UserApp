@@ -4,6 +4,7 @@ interface AccountState {
   accountId: string | null;
   accountCert: string | null;
   status: "PENDING" | "APPROVED" | "REJECTED" | null;
+  documentStatus: "PENDING" | null;
   kycCert: string | null;
   emailStatus: "APPROVED" | null; // Add email status
 }
@@ -14,6 +15,7 @@ const persistedState = localStorage.getItem("accountState")
       accountId: null,
       accountCert: null,
       status: null,
+      documentStatus: null,
       kycCert: null,
       emailStatus: null,
     };
@@ -39,6 +41,10 @@ const accountSlice = createSlice({
       state.status = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },
+    setDocumentStatus: (state, action: PayloadAction<"PENDING">) => {
+      state.documentStatus = action.payload;
+      localStorage.setItem("accountState", JSON.stringify(state));
+    },
     setKycCert: (state, action: PayloadAction<string>) => {
       state.kycCert = action.payload;
       state.status = "APPROVED";
@@ -52,6 +58,7 @@ const accountSlice = createSlice({
       state.accountId = null;
       state.accountCert = null;
       state.status = null;
+      state.documentStatus = null;
       state.kycCert = null;
       state.emailStatus = null;
       localStorage.removeItem("accountState");
@@ -63,6 +70,7 @@ export const {
   setAccountId,
   setAccountCert,
   setStatus,
+  setDocumentStatus,
   setKycCert,
   clearAccount,
   setEmailStatus, // Export new action

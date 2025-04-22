@@ -4,14 +4,15 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
+import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../store/Store";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { setDocumentStatus } from "../../slices/accountSlice";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
-
-// interface DocumentImage {
-//   type: DocumentType;
-//   url: string;
-// }
 
 const DocumentImages = () => {
   const [images, setImages] = useState<Record<DocumentType, string | null>>({
@@ -22,6 +23,35 @@ const DocumentImages = () => {
   });
   const [activePopup, setActivePopup] = useState<ActivePopup>(null);
 
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSubmitDocuments = async () => {
+    try {
+      const response = await RequestToStoreKycDocument(
+        images.frontID || "",
+        images.backID || "",
+        images.selfieID || "",
+        images.taxDoc || "",
+        accountCert,
+        accountId!,
+      );
+
+      console.log(response);
+      if (response.includes("saved")) {
+        dispatch(setDocumentStatus("PENDING"));
+        toast.success("Documents submitted successfully");
+
+        navigate("/kyc");
+      }
+    } catch (error) {
+      console.error("Error submitting documents:", error);
+    }
+  };
   useEffect(() => {
     const loadImagesFromDB = async () => {
       try {
@@ -84,7 +114,16 @@ const DocumentImages = () => {
       <div className="text-right mb-8">
         <a
           href="/instructions"
-          className="text-gray-700 hover:text-blue-600 transition-colors text-sm font-medium"
+          className="text-gray-700 hover:text-blueconst handleSubmitDocuments = () => {
+    try {
+        response = RequestToStoreKycDocument(
+            
+        )
+
+    } catch(error) {
+        console.error('Error submitting documents:', error);
+    }
+}-600 transition-colors text-sm font-medium"
         >
           View detailed instructions →
         </a>
@@ -162,9 +201,13 @@ const DocumentImages = () => {
       )}
 
       {/* Submit Button */}
-      <button className="self-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 transform hover:scale-105">
+      <button
+        onClick={handleSubmitDocuments}
+        className="self-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 transform hover:scale-105"
+      >
         Submit Documents
       </button>
+      <ToastContainer />
     </div>
   );
 };

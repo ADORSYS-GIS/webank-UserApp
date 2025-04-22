@@ -21,17 +21,24 @@ export default function IdentityVerification() {
     useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
+  const [documentsSubmitted, setDocumentsSubmitted] = useState(false);
 
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
   const status = useSelector((state: RootState) => state.account.status);
+  const documentStatus = useSelector(
+    (state: RootState) => state.account.documentStatus,
+  );
 
   useEffect(() => {
     if (status === "PENDING") {
       setPersonalInfoSubmitted(true);
     }
-  }, [status]);
+    if (documentStatus === "PENDING") {
+      setDocumentsSubmitted(true);
+    }
+  }, [documentStatus, status]);
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
@@ -96,14 +103,16 @@ export default function IdentityVerification() {
 
       <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
         {steps.map((step) => {
-          const isPersonalInfoCompleted =
-            step.id === 1 && personalInfoSubmitted;
+          const isPersonalInfoCompleted = personalInfoSubmitted;
+          const areDocumentsSubmitted = documentsSubmitted;
           return (
             <button
               key={step.id}
               type="button"
               onClick={isPersonalInfoCompleted ? undefined : step.onClick}
-              disabled={isPersonalInfoCompleted}
+              disabled={
+                step.id === 1 ? isPersonalInfoCompleted : areDocumentsSubmitted
+              }
               className={`group p-4 md:p-6 rounded-xl border transition-all
                          flex items-center justify-between
                          w-full text-left ${

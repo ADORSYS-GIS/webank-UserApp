@@ -64,7 +64,7 @@ const GuidelinesPage: React.FC = () => {
     `;
 
   const handleAdvance = () => {
-    navigate("/view-instructions");
+    navigate("/kyc/imgs");
   };
 
   const handleBack = () => {
