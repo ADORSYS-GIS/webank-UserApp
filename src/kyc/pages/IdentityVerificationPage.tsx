@@ -35,13 +35,6 @@ export default function IdentityVerification() {
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
-  const redirectToWhatsApp = () => {
-    const whatsappNumber = "674388690";
-    const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
-  };
-
   const steps: VerificationStep[] = [
     {
       id: 1,
@@ -53,9 +46,10 @@ export default function IdentityVerification() {
     {
       id: 2,
       title: "Upload Documents",
-      description: "Upload your ID and verification documents via WhatsApp",
+      description:
+        "Follow instructions to upload your ID and verification documents",
       icon: <FaCloudUploadAlt className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: redirectToWhatsApp,
+      onClick: () => navigate("/guidelines"),
     },
   ];
 
@@ -74,7 +68,7 @@ export default function IdentityVerification() {
     >
       <button
         type="button"
-        onClick={() => navigate("/post-registration")}
+        onClick={() => navigate("/kyc")}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
         <FiChevronLeft className="w-6 h-6 text-gray-500 group-hover:text-[#20B2AA] transition-colors" />
@@ -166,10 +160,9 @@ export default function IdentityVerification() {
 
       {showConfirmationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-4">
+          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-auto">
             <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
-              Are you sure you submitted all the required documents via
-              WhatsApp?
+              Are you sure you submitted all the required documents?
             </p>
             <div className="flex justify-center space-x-4">
               <button

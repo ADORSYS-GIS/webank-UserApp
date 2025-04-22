@@ -38,6 +38,7 @@ import PostRegistration from "./pages/PostRegistration.tsx";
 import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
 import UnderReview from "./kyc/pages/UnderReview.tsx";
 import OnboardingPage from "./pages/HomePage.tsx";
+import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -81,6 +82,7 @@ const App: React.FC = () => {
         <Route path="/verification/location" element={<LocationComponent />} />
         <Route path="/verification/passport" element={<PassportForm />} />
         <Route path="/recoverAccount" element={<RecoverAccountPage />} />
+        <Route path="/guidelines" element={<GuidelinesPage />} />
         <Route
           path="/verification/driving-license"
           element={<DriverLicenseForm />}
