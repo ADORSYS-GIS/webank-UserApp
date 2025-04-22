@@ -36,6 +36,7 @@ import PostRegistration from "./pages/PostRegistration.tsx";
 import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
 import UnderReview from "./kyc/pages/UnderReview.tsx";
 import OnboardingPage from "./pages/HomePage.tsx";
+import DocumentImages from "./kyc/pages/DocumentImages.tsx";
 import ShareHandlerPage from "./pages/ShareHandlerPage.tsx";
 import { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
@@ -95,6 +96,14 @@ const App: React.FC = () => {
             path="/verification/driving-license"
             element={<DriverLicenseForm />}
           />
+          <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
+        </Route>
+        <Route path="/post-registration" element={<PostRegistration />} />
+        <Route path="/map-confirmation" element={<MapConfirmation />} />
+        <Route path="/under-review" element={<UnderReview />} />
+        <Route path="/kyc/imgs" element={<DocumentImages />} />
+      </Routes>
+    </HashRouter>
           <Route path="/login" element={<Login />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/teller" element={<TellerDashboard />} />
