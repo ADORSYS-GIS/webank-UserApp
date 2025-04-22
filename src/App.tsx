@@ -39,6 +39,7 @@ import OnboardingPage from "./pages/HomePage.tsx";
 import DocumentImages from "./kyc/pages/DocumentImages.tsx";
 import ShareHandlerPage from "./pages/ShareHandlerPage.tsx";
 import { ToastContainer } from "react-toastify";
+import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -85,6 +86,7 @@ const App: React.FC = () => {
         <Route path="/verification/location" element={<LocationComponent />} />
         <Route path="/verification/passport" element={<PassportForm />} />
         <Route path="/recoverAccount" element={<RecoverAccountPage />} />
+        <Route path="/guidelines" element={<GuidelinesPage />} />
         <Route
           path="/verification/driving-license"
           element={<DriverLicenseForm />}

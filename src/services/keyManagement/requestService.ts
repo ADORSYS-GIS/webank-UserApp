@@ -24,6 +24,8 @@ import {
   GetKycRecordsBySearch,
   requestToGetRecoveryToken,
   verifyRecoveryFields,
+  storeKycDocument,
+  getKycDocuments,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -411,6 +413,64 @@ export async function RequestToStoreKYCInfo( // NOSONAR
     accountId,
     jwtToken,
   );
+}
+
+//Store Kyc doc
+export async function RequestToStoreKycDocument(
+  frontId: string,
+  backId: string,
+  selfieId: string,
+  taxId: string,
+  accountCert: string | null,
+  accountId: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    frontId,
+    backId,
+    selfieId,
+    taxId,
+    accountId,
+  );
+  return await storeKycDocument(
+    frontId,
+    backId,
+    selfieId,
+    taxId,
+    accountId,
+    jwtToken,
+  );
+}
+
+export async function RequestToGetKycDocuments(
+  accountId: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    accountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getKycDocuments(accountId, jwtToken);
 }
 
 // Function to get otps for phonenumbers
