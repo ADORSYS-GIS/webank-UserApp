@@ -36,8 +36,8 @@ import PostRegistration from "./pages/PostRegistration.tsx";
 import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
 import UnderReview from "./kyc/pages/UnderReview.tsx";
 import OnboardingPage from "./pages/HomePage.tsx";
+import DocumentImages from "./kyc/pages/DocumentImages.tsx";
 import ShareHandlerPage from "./pages/ShareHandlerPage.tsx";
-import { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
 
 const App: React.FC = () => {
@@ -60,61 +60,59 @@ const App: React.FC = () => {
       <KycCertChecker />
       <Header />
       <ToastContainer position="top-right" autoClose={3000} />
-      <Suspense fallback={<div className="p-4">Loading...</div>}>
-        <Routes>
-          <Route path="/" element={homePageElement} />
-          <Route path="/otp" element={<OtpPage />} />
+      <Routes>
+        <Route path="/" element={homePageElement} />
+        <Route path="/otp" element={<OtpPage />} />
+        <Route
+          path="/dashboard"
+          element={accountId ? <DashboardPage /> : <Navigate to="/" replace />}
+        />
+        <Route path="/register" element={<Register />} />
+        <Route path="/qr-scan" element={<QRScannerPage />} />
+        <Route path="/agent" element={<AgentPage />} />
+        <Route path="/share-handler" element={<ShareHandlerPage />} />
+        <Route path="/qrcode" element={<QRGenerator />} />
+        <Route path="/top-up" element={<TopUpPage />} />
+        <Route path="/confirmation" element={<ConfirmationPage />} />
+        <Route path="/success" element={<SuccessPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/account-qr" element={<AccountQR />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/inputEmail" element={<EmailVerification />} />
+        <Route path="/emailCode" element={<EmailCode />} />
+        <Route path="/kyc" element={<IdentityVerificationPage />} />
+        <Route path="/verification/id-card" element={<IDCardForm />} />
+        <Route path="/verification/location" element={<LocationComponent />} />
+        <Route path="/verification/passport" element={<PassportForm />} />
+        <Route path="/recoverAccount" element={<RecoverAccountPage />} />
+        <Route
+          path="/verification/driving-license"
+          element={<DriverLicenseForm />}
+        />
+        <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
+        <Route path="/post-registration" element={<PostRegistration />} />
+        <Route path="/map-confirmation" element={<MapConfirmation />} />
+        <Route path="/under-review" element={<UnderReview />} />
+        <Route path="/kyc/imgs" element={<DocumentImages />} />
+        <Route path="/login" element={<Login />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/teller" element={<TellerDashboard />} />
+          <Route path="/agency" element={<KYCPage />} />
+          <Route path="/account-recovery" element={<RecoveryDashboard />} />
           <Route
-            path="/dashboard"
-            element={
-              accountId ? <DashboardPage /> : <Navigate to="/" replace />
-            }
+            path="/recovery/recovery-scanner"
+            element={<AccountRecoveryScannerPage />}
           />
-          <Route path="/register" element={<Register />} />
-          <Route path="/qr-scan" element={<QRScannerPage />} />
-          <Route path="/agent" element={<AgentPage />} />
-          <Route path="/share-handler" element={<ShareHandlerPage />} />
-          <Route path="/qrcode" element={<QRGenerator />} />
-          <Route path="/top-up" element={<TopUpPage />} />
-          <Route path="/confirmation" element={<ConfirmationPage />} />
-          <Route path="/success" element={<SuccessPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-          <Route path="/account-qr" element={<AccountQR />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/inputEmail" element={<EmailVerification />} />
-          <Route path="/emailCode" element={<EmailCode />} />
-          <Route path="/kyc" element={<IdentityVerificationPage />} />
-          <Route path="/verification/id-card" element={<IDCardForm />} />
           <Route
-            path="/verification/location"
-            element={<LocationComponent />}
+            path="/recovery/account-confirmation"
+            element={<AccountConfirmation />}
           />
-          <Route path="/verification/passport" element={<PassportForm />} />
-          <Route path="/recoverAccount" element={<RecoverAccountPage />} />
-          <Route
-            path="/verification/driving-license"
-            element={<DriverLicenseForm />}
-          />
-          <Route path="/login" element={<Login />} />
-          <Route element={<ProtectedRoute />}>
-            <Route path="/teller" element={<TellerDashboard />} />
-            <Route path="/agency" element={<KYCPage />} />
-            <Route path="/account-recovery" element={<RecoveryDashboard />} />
-            <Route
-              path="/recovery/recovery-scanner"
-              element={<AccountRecoveryScannerPage />}
-            />
-            <Route
-              path="/recovery/account-confirmation"
-              element={<AccountConfirmation />}
-            />
-            <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
-          </Route>
-          <Route path="/post-registration" element={<PostRegistration />} />
-          <Route path="/map-confirmation" element={<MapConfirmation />} />
-          <Route path="/under-review" element={<UnderReview />} />
-        </Routes>
-      </Suspense>
+          <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
+        </Route>
+        <Route path="/post-registration" element={<PostRegistration />} />
+        <Route path="/map-confirmation" element={<MapConfirmation />} />
+        <Route path="/under-review" element={<UnderReview />} />
+      </Routes>
     </BrowserRouter>
   );
 };
