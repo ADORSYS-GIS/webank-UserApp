@@ -4,7 +4,6 @@ import IdCapture from "../components/IdCapture";
 
 interface TaxpayerProps {
   onClose: () => void;
-  onFileCaptured: (file: File | Blob) => void;
 }
 
 const TaxpayerId: React.FC<TaxpayerProps> = ({ onClose }) => {

@@ -80,10 +80,8 @@ describe("Dashboard", () => {
 
     // Ensure the RequestToGetBalance was called 0 times as per the original logic
     await waitFor(() => {
-      expect(RequestToGetBalance).toHaveBeenCalledTimes(0); // Expecting 0 calls
+      expect(RequestToGetBalance).toHaveBeenCalledTimes(0);
     });
-
-    // Ensure the error toast was shown
   });
 
   it("renders transaction items correctly", async () => {

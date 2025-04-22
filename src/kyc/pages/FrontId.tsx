@@ -4,7 +4,6 @@ import IdCapture from "../components/IdCapture";
 
 interface FrontIdProps {
   onClose: () => void;
-  onFileCaptured: (file: File | Blob) => void;
 }
 
 const FrontId: React.FC<FrontIdProps> = ({ onClose }) => {
