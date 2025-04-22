@@ -32,7 +32,7 @@ const DocumentImages = () => {
 
   const handleSubmitDocuments = async () => {
     try {
-     if (!accountCert || !accountId) {
+      if (!accountCert || !accountId) {
         toast.error("Account information is missing.");
         navigate("/guidelines");
         return;
