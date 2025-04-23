@@ -9,18 +9,28 @@ import {
   RequestToGetKycRecordsBySearch,
   RequestToValidateRecoveryDetails,
 } from "../../services/keyManagement/requestService";
+import { ImageModal } from "../components/ImageModal";
+import { DocumentCard } from "../components/DocumentCard";
+
+interface UserKYC {
+  id: string;
+  oldAccountId: string;
+  docNumber?: string;
+  expirationDate?: string;
+  location: string;
+  email: string;
+  status: string;
+  frontID?: string;
+  backID?: string;
+  selfie?: string;
+  taxDocument?: string;
+}
 
 export default function RecoveryDashboard() {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  const [foundRecord, setFoundRecord] = useState<{
-    id: string;
-    oldAccountId: string;
-    location: string;
-    email: string;
-    status: string;
-  } | null>(null);
+  const [foundRecord, setFoundRecord] = useState<UserKYC | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [formData, setFormData] = useState({
@@ -28,8 +38,9 @@ export default function RecoveryDashboard() {
     expirationDate: "",
   });
   const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // helper to pick badge styles
+  // Helper to pick badge styles
   const getStatusStyles = (status: string) => {
     switch (status.toUpperCase()) {
       case "APPROVED":
@@ -39,6 +50,23 @@ export default function RecoveryDashboard() {
       default:
         return "bg-rose-100 text-rose-800 ring-rose-300";
     }
+  };
+
+  // Check if recovery is allowed based on status
+  const isRecoveryAllowed = () => {
+    return foundRecord && foundRecord.status.toUpperCase() === "APPROVED";
+  };
+
+  // Get status message for disabled button
+  const getStatusMessage = () => {
+    if (foundRecord) {
+      if (foundRecord.status.toUpperCase() === "PENDING") {
+        return "Recovery not available for pending records";
+      } else if (foundRecord.status.toUpperCase() === "REJECTED") {
+        return "Recovery not available for rejected records";
+      }
+    }
+    return "Not Available";
   };
 
   /** Step1: search by document ID */
@@ -70,11 +98,17 @@ export default function RecoveryDashboard() {
 
       const info = parsed[0];
       setFoundRecord({
-        id: info.id,
+        id: info.id ?? info.documentUniqueId,
         oldAccountId: info.accountId,
-        location: info.location || "N/A",
-        email: info.email || "N/A",
-        status: info.status || "PENDING",
+        docNumber: info.idNumber ?? info.documentUniqueId,
+        expirationDate: info.expirationDate,
+        location: info.location ?? "N/A",
+        email: info.email ?? "N/A",
+        status: info.status ?? "PENDING",
+        frontID: info.frontID ?? "",
+        backID: info.backID ?? "",
+        selfie: info.selfie ?? "",
+        taxDocument: info.taxDocument ?? "",
       });
       setFormData({ docNumber: "", expirationDate: "" });
     } catch (err) {
@@ -169,7 +203,7 @@ export default function RecoveryDashboard() {
           </div>
         )}
 
-        {/* Step2: Validation Form + Display of location, email & status */}
+        {/* Step2: Validation Form + Display of document details */}
         {foundRecord && (
           <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 space-y-6">
             {/* Header row: Back button on left, Status badge on right */}
@@ -209,6 +243,37 @@ export default function RecoveryDashboard() {
                 <p className="mt-1 font-medium text-gray-900">
                   {foundRecord.email}
                 </p>
+              </div>
+            </div>
+
+            {/* Display Documents */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-800">Documents</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <DocumentCard
+                  title="Front ID"
+                  url={foundRecord.frontID ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  title="Back ID"
+                  url={foundRecord.backID ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  title="Selfie"
+                  url={foundRecord.selfie ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  title="Tax Document"
+                  url={foundRecord.taxDocument ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
               </div>
             </div>
 
@@ -265,23 +330,32 @@ export default function RecoveryDashboard() {
               </div>
 
               <div className="flex justify-center sm:justify-end">
-                <button
-                  type="submit"
-                  disabled={foundRecord.status.toUpperCase() !== "APPROVED"}
-                  className={`px-10 py-4 rounded-full text-white transition-all shadow-md 
-                    ${
-                      foundRecord.status.toUpperCase() === "APPROVED"
-                        ? "bg-blue-600 hover:bg-blue-700"
-                        : "bg-gray-300 cursor-not-allowed"
-                    }`}
-                >
-                  Continue Recovery Process
-                </button>
+                {isRecoveryAllowed() ? (
+                  <button
+                    type="submit"
+                    className="px-10 py-4 bg-blue-600 text-white rounded-full 
+                      hover:bg-blue-700 transition-all shadow-md"
+                  >
+                    Continue Recovery Process
+                  </button>
+                ) : (
+                  <div
+                    className="px-10 py-4 bg-gray-300 text-white rounded-full 
+                      shadow-lg cursor-not-allowed"
+                  >
+                    {getStatusMessage()}
+                  </div>
+                )}
               </div>
             </form>
           </div>
         )}
       </div>
+      {/* Image Modal Component */}
+      <ImageModal
+        selectedImage={selectedImage}
+        onClose={() => setSelectedImage(null)}
+      />
     </div>
   );
 }
