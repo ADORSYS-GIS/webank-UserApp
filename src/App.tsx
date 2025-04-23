@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/Store";
 import Register from "./pages/RegisterPage";
@@ -27,9 +27,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LocationComponent from "./kyc/components/LocationComponent";
 import KYCPage from "./kyc/pages/KycVerificationPage";
 import KycCertChecker from "./kyc/pages/KycCertChecker";
-
 import RecoverAccountPage from "./kyc/pages/RecoverAccountPage.tsx";
-
 import RecoveryDashboard from "./kyc/pages/KycRecoveryPage";
 import AccountRecoveryScannerPage from "./kyc/pages/AccountRecoveryScannerPage.tsx";
 import RecoveryToken from "./kyc/pages/RecoveryToken";
@@ -38,11 +36,16 @@ import PostRegistration from "./pages/PostRegistration.tsx";
 import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
 import UnderReview from "./kyc/pages/UnderReview.tsx";
 import OnboardingPage from "./pages/HomePage.tsx";
+import DocumentImages from "./kyc/pages/DocumentImages.tsx";
+import ShareHandlerPage from "./pages/ShareHandlerPage.tsx";
+import { ToastContainer } from "react-toastify";
+import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
   let homePageElement;
+
   if (accountId) {
     homePageElement = kycCert ? (
       <Navigate to="/dashboard" replace />
@@ -54,9 +57,10 @@ const App: React.FC = () => {
   }
 
   return (
-    <HashRouter>
-      <KycCertChecker /> {/* Ensures KYC checking runs in the background */}
+    <BrowserRouter>
+      <KycCertChecker />
       <Header />
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={homePageElement} />
         <Route path="/otp" element={<OtpPage />} />
@@ -67,6 +71,7 @@ const App: React.FC = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/qr-scan" element={<QRScannerPage />} />
         <Route path="/agent" element={<AgentPage />} />
+        <Route path="/share-handler" element={<ShareHandlerPage />} />
         <Route path="/qrcode" element={<QRGenerator />} />
         <Route path="/top-up" element={<TopUpPage />} />
         <Route path="/confirmation" element={<ConfirmationPage />} />
@@ -81,10 +86,16 @@ const App: React.FC = () => {
         <Route path="/verification/location" element={<LocationComponent />} />
         <Route path="/verification/passport" element={<PassportForm />} />
         <Route path="/recoverAccount" element={<RecoverAccountPage />} />
+        <Route path="/guidelines" element={<GuidelinesPage />} />
         <Route
           path="/verification/driving-license"
           element={<DriverLicenseForm />}
         />
+        <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
+        <Route path="/post-registration" element={<PostRegistration />} />
+        <Route path="/map-confirmation" element={<MapConfirmation />} />
+        <Route path="/under-review" element={<UnderReview />} />
+        <Route path="/kyc/imgs" element={<DocumentImages />} />
         <Route path="/login" element={<Login />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/teller" element={<TellerDashboard />} />
@@ -104,7 +115,7 @@ const App: React.FC = () => {
         <Route path="/map-confirmation" element={<MapConfirmation />} />
         <Route path="/under-review" element={<UnderReview />} />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 
