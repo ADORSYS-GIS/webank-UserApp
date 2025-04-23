@@ -1,5 +1,7 @@
 // src/kyc/components/IdCapture.tsx
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/Store";
 
 interface IdCaptureProps {
   title: string;
@@ -17,9 +19,14 @@ const IdCapture: React.FC<IdCaptureProps> = ({
   const closePopup = () => {
     onClose();
   };
+  const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const handleWhatsappUpload = () => {
     // Placeholder function for WhatsApp upload logic
+    const whatsappNumber = "674388690";
+    const message = `Hello, I'd like to upload my KYC documents for account ID: ${accountId}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
     console.log("Upload from WhatsApp clicked");
   };
 
