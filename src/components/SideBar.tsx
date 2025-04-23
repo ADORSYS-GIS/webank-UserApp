@@ -1,129 +1,118 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserTie,
-  faHome,
   faMoneyCheckAlt,
+  faShieldAlt,
+  faIdCard,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 
-interface SideBarProps {
+interface BottomSheetProps {
+  isOpen: boolean;
+  onClose: () => void;
   accountId: string | undefined;
   accountCert: string | undefined;
 }
 
-const Sidebar: React.FC<SideBarProps> = ({ accountId, accountCert }) => {
-  const location = useLocation();
+const BottomSheet: React.FC<BottomSheetProps> = ({
+  isOpen,
+  onClose,
+  accountId,
+  accountCert,
+}) => {
   const navigate = useNavigate();
 
-  return (
-    <div className="w-64 h-full bg-gradient-to-b from-purple-500 to-blue-600 p-4 shadow-lg">
-      <nav>
-        <ul className="space-y-2">
-          <li>
-            <button
-              onClick={() =>
-                navigate("/dashboard", { state: { accountId, accountCert } })
-              }
-              className={`flex items-center w-full text-left p-3 rounded-lg ${
-                location.pathname === "/dashboard"
-                  ? "bg-blue-700"
-                  : "hover:bg-blue-700"
-              } transition-colors text-white`}
-            >
-              <FontAwesomeIcon icon={faHome} className="mr-3" />
-              Dashboard
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() =>
-                navigate("/agent", {
-                  state: {
-                    agentAccountId: accountId,
-                    agentAccountCert: accountCert,
-                  },
-                })
-              }
-              className={`flex items-center w-full text-left p-3 rounded-lg ${
-                location.pathname === "/agent"
-                  ? "bg-blue-700"
-                  : "hover:bg-blue-700"
-              } transition-colors text-white`}
-            >
-              <FontAwesomeIcon icon={faUserTie} className="mr-3" />
-              Agent Services
-            </button>
-          </li>
-          {/*  Teller Menu */}
-          <li>
-            <button
-              onClick={() =>
-                navigate("/login", {
-                  state: {
-                    tellerAccountId: accountId,
-                    tellerAccountCert: accountCert,
-                    redirectTo: "/teller",
-                  },
-                })
-              }
-              className={`flex items-center w-full text-left p-3 rounded-lg ${
-                location.pathname === "/teller"
-                  ? "bg-blue-700"
-                  : "hover:bg-blue-700"
-              } transition-colors text-white`}
-            >
-              <FontAwesomeIcon icon={faMoneyCheckAlt} className="mr-3" />
-              Teller Services
-            </button>
-          </li>
-          {/*  Agency Menu */}
-          <li>
-            <button
-              onClick={() =>
-                navigate("/login", {
-                  state: {
-                    tellerAccountId: accountId,
-                    tellerAccountCert: accountCert,
-                    redirectTo: "/agency",
-                  },
-                })
-              }
-              className={`flex items-center w-full text-left p-3 rounded-lg ${
-                location.pathname === "/agency"
-                  ? "bg-blue-700"
-                  : "hover:bg-blue-700"
-              } transition-colors text-white`}
-            >
-              <FontAwesomeIcon icon={faUserTie} className="mr-3" />
-              KYC Verification
-            </button>
-          </li>
+  if (!isOpen) return null;
 
-          <li>
+  const menuItems = [
+    {
+      icon: faUserTie,
+      label: "Agent Services",
+      onClick: () =>
+        navigate("/agent", {
+          state: {
+            agentAccountId: accountId,
+            agentAccountCert: accountCert,
+          },
+        }),
+    },
+    {
+      icon: faMoneyCheckAlt,
+      label: "Teller Services",
+      onClick: () =>
+        navigate("/login", {
+          state: {
+            tellerAccountId: accountId,
+            tellerAccountCert: accountCert,
+            redirectTo: "/teller",
+          },
+        }),
+    },
+    {
+      icon: faShieldAlt,
+      label: "KYC Verification",
+      onClick: () =>
+        navigate("/login", {
+          state: {
+            tellerAccountId: accountId,
+            tellerAccountCert: accountCert,
+            redirectTo: "/agency",
+          },
+        }),
+    },
+    {
+      icon: faIdCard,
+      label: "KYC Recovery Agency",
+      onClick: () =>
+        navigate("/login", {
+          state: {
+            tellerAccountId: accountId,
+            tellerAccountCert: accountCert,
+            redirectTo: "/account-recovery",
+          },
+        }),
+    },
+  ];
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        onClick={onClose}
+      />
+      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out transform">
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold">Services</h3>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+        </div>
+        <div className="p-4 max-h-96 overflow-y-auto">
+          {menuItems.map((item, index) => (
             <button
-              onClick={() =>
-                navigate("/login", {
-                  state: {
-                    tellerAccountId: accountId,
-                    tellerAccountCert: accountCert,
-                    redirectTo: "/account-recovery",
-                  },
-                })
-              }
-              className={`flex items-center w-full text-left p-3 rounded-lg ${
-                location.pathname === "/account-recovery"
-                  ? "bg-blue-700"
-                  : "hover:bg-blue-700"
-              } transition-colors text-white`}
+              key={index}
+              onClick={() => {
+                item.onClick();
+                onClose();
+              }}
+              className="flex items-center w-full p-4 text-left hover:bg-gray-100 rounded-lg transition-colors mb-2"
             >
-              <FontAwesomeIcon icon={faUserTie} className="mr-3" />
-              KYC recovery agency
+              <div className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-500 rounded-full mr-4">
+                <FontAwesomeIcon icon={item.icon} />
+              </div>
+              <span className="text-gray-800">{item.label}</span>
             </button>
-          </li>
-        </ul>
-      </nav>
-    </div>
+          ))}
+        </div>
+        <div className="h-16"></div> {/* Spacer for bottom navigation */}
+      </div>
+    </>
   );
 };
 
-export default Sidebar;
+export default BottomSheet;

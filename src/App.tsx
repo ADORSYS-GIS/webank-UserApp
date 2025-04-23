@@ -66,7 +66,7 @@ const App: React.FC = () => {
         <Route path="/otp" element={<OtpPage />} />
         <Route
           path="/dashboard"
-          element={accountId ? <DashboardPage /> : <Navigate to="/" replace />}
+          element={<DashboardPage />}
         />
         <Route path="/register" element={<Register />} />
         <Route path="/qr-scan" element={<QRScannerPage />} />

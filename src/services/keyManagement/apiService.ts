@@ -1,7 +1,7 @@
 import axios from "axios";
-// import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
+import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
 
-// const { envVariables } = getProjectEnvVariables();
+const { envVariables } = getProjectEnvVariables();
 export const initiateRegistration = async (
   timeStamp: string,
   jwtToken: string,
@@ -18,7 +18,7 @@ export const initiateRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/dev/init`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/dev/init`,
       requestBody,
       { headers },
     );
@@ -50,7 +50,7 @@ export const validateDeviceRegistration = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/dev/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/dev/validate`,
       requestBody,
       { headers },
     );
@@ -80,7 +80,7 @@ export const sendOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/otp/send`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/otp/send`,
       requestBody,
       { headers },
     );
@@ -110,7 +110,7 @@ export const validateOTP = async (
   try {
     // Send the post request to the backend
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/otp/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/otp/validate`,
       requestBody,
       { headers },
     );
@@ -141,7 +141,7 @@ export const createBankAccount = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8081.uks1.devtunnels.ms/api/registration`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/registration`,
       requestBody,
       { headers },
     );
@@ -170,7 +170,7 @@ export const getTransactionHistory = async (
   try {
     // Send the POST request to the backend
     const response = await axios.post(
-      `https://56z5x2sk-8081.uks1.devtunnels.ms/api/accounts/transactions`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/transactions`,
       requestBody,
       { headers },
     );
@@ -197,7 +197,7 @@ export const getAccountBalance = async (
   try {
     // Send the POST request to retrieve account balance
     const response = await axios.post(
-      `https://56z5x2sk-8081.uks1.devtunnels.ms/api/accounts/balance`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/balance`,
       requestBody,
       { headers },
     );
@@ -229,7 +229,7 @@ export const TopupAccount = async (
   try {
     // Send the POST request to retrieve account balance
     const response = await axios.post(
-      `https://56z5x2sk-8081.uks1.devtunnels.ms/api/accounts/payout`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/payout`,
       requestBody,
       { headers },
     );
@@ -262,7 +262,7 @@ export const WithdrawOffline = async (
   try {
     // Send the POST request to retrieve account balance
     const response = await axios.post(
-      `https://56z5x2sk-8081.uks1.devtunnels.ms/api/accounts/withdraw`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/withdraw`,
       requestBody,
       { headers },
     );
@@ -284,7 +284,7 @@ export const getOtps = async (jwtToken: string) => {
   try {
     // Send the GET request to retrieve OTPs
     const response = await axios.get(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/otp/pending`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/otp/pending`,
       { headers },
     );
 
@@ -315,7 +315,7 @@ export const sendEmailOTP = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/email-otp/send`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/email-otp/send`,
       requestBody,
       { headers },
     );
@@ -345,7 +345,7 @@ export const verifyEmailCode = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/email-otp/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/email-otp/validate`,
       requestBody,
       { headers },
     );
@@ -373,7 +373,7 @@ export const getUserLocation = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/location`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/location`,
       requestBody,
       { headers },
     );
@@ -406,7 +406,7 @@ export const storeKYCInfo = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/info`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/info`,
       requestBody,
       { headers },
     );
@@ -440,7 +440,7 @@ export const storeKycDocument = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/documents`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/documents`,
       requestBody,
       { headers },
     );
@@ -463,7 +463,7 @@ export const getKycDocuments = async (accountId: string, jwtToken: string) => {
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/record`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/record`,
       requestBody,
       { headers },
     );
@@ -483,7 +483,7 @@ export const getKycRecords = async (jwtToken: string) => {
   try {
     // get the kyc records
     const response = await axios.get(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/infos`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/infos`,
       { headers },
     );
 
@@ -506,7 +506,7 @@ export const GetKycRecordsBySearch = async (
 
   try {
     const response = await axios.get(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/findById/${docNumber}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/findById/${docNumber}`,
       { headers },
     );
     return response.data;
@@ -537,14 +537,14 @@ export const UpdateKycStatus = async (
 
   try {
     const response = await axios.patch(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/${accountId}/${status}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${accountId}/${status}`,
       requestBody,
       { headers },
     );
 
     console.log(response.data);
     console.log(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/${accountId}/${status}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${accountId}/${status}`,
       "url",
     );
 
@@ -564,7 +564,7 @@ export const getKycCert = async (accountId: string, jwtToken: string) => {
   try {
     // get the kyc Cert
     const response = await axios.get(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/cert/${accountId}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/cert/${accountId}`,
       { headers },
     );
 
@@ -593,7 +593,7 @@ export const requestToGetRecoveryToken = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/recovery/token`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/token`,
       requestBody,
       { headers },
     );
@@ -625,7 +625,7 @@ export const submitRecoveryToken = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/recovery/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/validate`,
       requestBody,
       { headers },
     );
@@ -654,7 +654,7 @@ export const recoverAccountCert = async (
 
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8081.uks1.devtunnels.ms/api/accounts/recovery`,
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/recovery`,
       requestBody,
       { headers },
     );
@@ -682,7 +682,7 @@ export const verifyRecoveryFields = async (
   };
   try {
     const response = await axios.post(
-      `https://56z5x2sk-8080.uks1.devtunnels.ms/api/prs/kyc/recovery/${accountId}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/recovery/${accountId}`,
       requestBody,
       { headers },
     );

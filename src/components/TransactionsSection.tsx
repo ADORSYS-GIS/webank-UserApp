@@ -2,8 +2,10 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSpinner,
-  faMoneyBillWave,
-  faHandHoldingDollar,
+  faArrowDown,
+  faArrowUp,
+  faChevronRight,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Transaction {
@@ -28,79 +30,121 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
   setTransactionsVisible,
   loadingTransactions,
 }) => {
-  // Determine the button text based on loading state and visibility
-  let buttonText: string | JSX.Element;
-  if (loadingTransactions) {
-    buttonText = (
-      <>
-        <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
-        Loading...
-      </>
-    );
-  } else if (transactionsVisible) {
-    buttonText = "Hide";
-  } else {
-    buttonText = "View All";
-  }
+  const buttonText = loadingTransactions ? (
+    <>
+      <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+      Loading...
+    </>
+) : transactionsVisible ? (
+  <span className="flex items-center text-blue-500">
+    <FontAwesomeIcon icon={faEyeSlash} className="mr-2" />
+    Hide
+  </span>
+) : (
+  <span className="flex items-center text-blue-500">
+    View All
+    <FontAwesomeIcon icon={faChevronRight} className="ml-1" />
+  </span>
+);
+
+  const formatDateTime = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const formatAmount = (amount: string) => {
+    const isNegative = amount.startsWith("-");
+    const numericValue = amount.replace(/[^0-9.]/g, "");
+    return `${isNegative ? "-" : ""}XAF ${numericValue}`;
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mt-6 transition-all duration-300">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Last Transactions</h3>
+    <div className="bg-white rounded-lg p-4 shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-gray-700 font-medium text-lg">Payment History</h3>
         <button
-          onClick={
-            transactionsVisible
-              ? () => setTransactionsVisible(false)
-              : fetchTransactions
-          }
-          className="text-blue-500 hover:underline bg-transparent border-none p-0 cursor-pointer"
+          onClick={() => {
+            if (transactionsVisible) {
+              setTransactionsVisible(false);
+            } else {
+              fetchTransactions();
+              setTransactionsVisible(true);
+            }
+          }}
+          className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
           disabled={loadingTransactions}
         >
           {buttonText}
         </button>
       </div>
-      {transactionsVisible && (
-        <div className="mt-4 space-y-4">
+
+      {transactionsVisible ? (
+        <div className="space-y-4">
           {transactionsData.length > 0 ? (
             transactionsData.map((transaction) => (
               <div
                 key={transaction.id}
-                className="flex items-center justify-between py-2 border-b border-gray-300"
+                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
               >
-                <div className="flex items-center">
-                  <div className="bg-blue-500 rounded-full h-10 w-10 flex items-center justify-center mr-3">
+                <div className="flex items-center flex-1">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                      transaction.amount.startsWith("-")
+                        ? "bg-red-50"
+                        : "bg-blue-100"
+                    }`}
+                  >
                     <FontAwesomeIcon
-                      icon={
+                      icon={transaction.amount.startsWith("-") ? faArrowUp : faArrowDown}
+                      className={`text-sm ${
                         transaction.amount.startsWith("-")
-                          ? faMoneyBillWave
-                          : faHandHoldingDollar
-                      }
-                      className="text-white"
+                          ? "text-red-500"
+                          : "text-teal-500"
+                      }`}
                     />
                   </div>
-                  <div>
-                    <span className="text-gray-800">{transaction.title}</span>
-                    <span className="text-gray-500 text-sm block">
-                      {new Date(transaction.date).toLocaleDateString("en-US", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                  <div className="flex-1">
+                    <span className="text-gray-800 font-medium text-sm block">
+                      {transaction.title}
+                    </span>
+                    <span className="text-gray-700 text-xs block mt-1">
+                      {formatDateTime(transaction.date)}
                     </span>
                   </div>
                 </div>
                 <span
-                  className={`text-lg ${transaction.amount.startsWith("-") ? "text-red-500" : "text-green-500"}`}
+                  className={`text-sm min-w-[100px] text-right ${
+                    transaction.amount.startsWith("-")
+                      ? "text-red-500"
+                      : "text-teal-500"
+                  }`}
                 >
-                  {transaction.amount}
+                  {formatAmount(transaction.amount)}
                 </span>
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-4">
-              No transactions found.
-            </p>
+            <div className="text-center py-6 text-gray-500">
+              {loadingTransactions ? (
+                <FontAwesomeIcon icon={faSpinner} spin className="text-2xl" />
+              ) : (
+                "No transactions found."
+              )}
+            </div>
           )}
+        </div>
+      ) : (
+        <div className="w-full h-64 rounded-lg overflow-hidden">
+          <img
+            src="/trans.jpg"
+            alt="Transaction illustration"
+            className="w-full h-full object-contain p-4"
+          />
         </div>
       )}
     </div>

@@ -3,9 +3,16 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../store/Store";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faExchangeAlt,
+  faDownload,
+  faWallet,
+  faArrowUp,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface ActionButtonsProps {
-  accountId: string | undefined; // Ensure it's correctly typed
+  accountId: string | undefined;
   accountCert: string | undefined;
 }
 
@@ -17,10 +24,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
 
   const handleActionClick = (callback: () => void) => {
-    if (kycCert === null) {
-      toast.warning("Please complete the KYC process to proceed.");
-      return;
-    }
+    // if (kycCert === null) {
+    //   toast.warning("Please complete the KYC process to proceed.");
+    //   return;
+    // }
     callback();
   };
 
@@ -69,39 +76,53 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
       console.log("Payment", accountId);
     });
 
+  const actions = [
+    {
+      icon: faArrowUp,
+      label: "Top Up",
+      color: "bg-blue-100",
+      textColor: "text-blue-500",
+      onClick: handleTopUpClick,
+    },
+    {
+      icon: faExchangeAlt,
+      label: "Transfer",
+      color: "bg-blue-100",
+      textColor: "text-blue-500",
+      onClick: handleTransferClick,
+    },
+    {
+      icon: faDownload,
+      label: "Withdraw",
+      color: "bg-blue-100",
+      textColor: "text-blue-500",
+      onClick: handleWithdrawClick,
+    },
+    {
+      icon: faWallet,
+      label: "Pay",
+      color: "bg-blue-100",
+      textColor: "text-blue-500",
+      onClick: handlePayClick,
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {[
-        {
-          icon: "https://cdn-icons-png.flaticon.com/512/1041/1041888.png",
-          label: "Top Up",
-          onClick: handleTopUpClick,
-        },
-        {
-          icon: "https://cdn-icons-png.flaticon.com/512/4475/4475436.png",
-          label: "Transfer",
-          onClick: handleTransferClick, // Placeholder for other actions
-        },
-        {
-          icon: "https://cdn-icons-png.flaticon.com/512/736/736948.png",
-          label: "Withdraw",
-          onClick: handleWithdrawClick, // Placeholder for other actions
-        },
-        {
-          icon: "https://cdn-icons-png.flaticon.com/512/1235/1235446.png",
-          label: "Pay",
-          onClick: handlePayClick,
-        },
-      ].map((action) => (
-        <button
-          key={action.label}
-          className="flex flex-col items-center bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg shadow-md transition duration-300"
-          onClick={action.onClick}
-        >
-          <img src={action.icon} alt={action.label} className="h-10 w-10" />
-          <span className="mt-2 text-sm">{action.label}</span>
-        </button>
-      ))}
+    <div className="mb-6">
+      <div className="grid grid-cols-4 gap-2">
+        {actions.map((action) => (
+          <button
+            key={action.label}
+            className="flex flex-col items-center justify-center"
+            onClick={action.onClick}
+          >
+            <div className={`w-12 h-12 rounded-lg ${action.color} ${action.textColor} flex items-center justify-center mb-2`}>
+              <FontAwesomeIcon icon={action.icon} />
+            </div>
+            <span className="text-xs text-gray-600">{action.label}</span>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
