@@ -84,6 +84,14 @@ const SettingsPage: React.FC = () => {
     navigate("/dashboard");
   };
 
+  const handleSecureAccount = () => {
+    navigate("/kyc");
+  };
+
+  const handleRecoverAccount = () => {
+    navigate("/recoverAccount");
+  };
+
   return (
     <div
       className="bg-[#f8fcfc] min-h-screen"
@@ -141,11 +149,21 @@ const SettingsPage: React.FC = () => {
           <div className="group">
             <MenuItem
               Icon={FaLifeRing}
+              title="Secure your account"
+              description="Chat with our team for assistance"
+              onClick={handleSecureAccount}
+            />
+          </div>
+
+          <div className="group">
+            <MenuItem
+              Icon={FaLifeRing}
               title="Help & Support"
               description="Chat with our team for assistance"
               onClick={handleSupportClick}
             />
           </div>
+
           <div className="group">
             <MenuItem
               Icon={FaEnvelope}
@@ -157,6 +175,15 @@ const SettingsPage: React.FC = () => {
               }
               onClick={() => navigate("/inputEmail")}
               disabled={emailStatus === "APPROVED"}
+            />
+          </div>
+
+          <div className="group">
+            <MenuItem
+              Icon={FaLifeRing}
+              title="Recover your account"
+              description="Chat with our team for assistance"
+              onClick={handleRecoverAccount}
             />
           </div>
         </div>

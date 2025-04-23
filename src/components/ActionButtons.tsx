@@ -1,8 +1,5 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { RootState } from "../store/Store";
-import { toast } from "react-toastify";
 
 interface ActionButtonsProps {
   accountId: string | undefined; // Ensure it's correctly typed
@@ -14,13 +11,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   accountCert,
 }) => {
   const navigate = useNavigate();
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
 
   const handleActionClick = (callback: () => void) => {
-    if (kycCert === null) {
-      toast.warning("Please complete the KYC process to proceed.");
-      return;
-    }
     callback();
   };
 

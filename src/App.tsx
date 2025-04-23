@@ -32,9 +32,7 @@ import RecoveryDashboard from "./kyc/pages/KycRecoveryPage";
 import AccountRecoveryScannerPage from "./kyc/pages/AccountRecoveryScannerPage.tsx";
 import RecoveryToken from "./kyc/pages/RecoveryToken";
 import AccountConfirmation from "./kyc/pages/AccountConfirmation";
-import PostRegistration from "./pages/PostRegistration.tsx";
 import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
-import UnderReview from "./kyc/pages/UnderReview.tsx";
 import OnboardingPage from "./pages/HomePage.tsx";
 import DocumentImages from "./kyc/pages/DocumentImages.tsx";
 import ShareHandlerPage from "./pages/ShareHandlerPage.tsx";
@@ -43,15 +41,10 @@ import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
   let homePageElement;
 
   if (accountId) {
-    homePageElement = kycCert ? (
-      <Navigate to="/dashboard" replace />
-    ) : (
-      <Navigate to="/under-review" replace />
-    );
+    homePageElement = <DashboardPage />;
   } else {
     homePageElement = <OnboardingPage />;
   }
@@ -92,9 +85,7 @@ const App: React.FC = () => {
           element={<DriverLicenseForm />}
         />
         <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
-        <Route path="/post-registration" element={<PostRegistration />} />
         <Route path="/map-confirmation" element={<MapConfirmation />} />
-        <Route path="/under-review" element={<UnderReview />} />
         <Route path="/kyc/imgs" element={<DocumentImages />} />
         <Route path="/login" element={<Login />} />
         <Route element={<ProtectedRoute />}>
@@ -111,9 +102,7 @@ const App: React.FC = () => {
           />
           <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
         </Route>
-        <Route path="/post-registration" element={<PostRegistration />} />
         <Route path="/map-confirmation" element={<MapConfirmation />} />
-        <Route path="/under-review" element={<UnderReview />} />
       </Routes>
     </BrowserRouter>
   );
