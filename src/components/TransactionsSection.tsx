@@ -47,15 +47,15 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
     </span>
   );
 
-  const formatDateTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString("en-US", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  // const formatDateTime = (timestamp: number) => {
+  //   return new Date(timestamp).toLocaleString("en-US", {
+  //     day: "numeric",
+  //     month: "short",
+  //     year: "numeric",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   });
+  // };
 
   const formatAmount = (amount: string) => {
     const isNegative = amount.startsWith("-");
@@ -117,7 +117,7 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
                       {transaction.title}
                     </span>
                     <span className="text-gray-700 text-xs block mt-1">
-                      {formatDateTime(transaction.date)}
+                      {transaction.date}
                     </span>
                   </div>
                 </div>

@@ -174,6 +174,12 @@ const DocumentImages = () => {
       {/* Submit Button */}
       <button
         onClick={handleSubmitDocuments}
+        disabled={
+          !images.frontID ||
+          !images.backID ||
+          !images.selfieID ||
+          !images.taxDoc
+        }
         className="self-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
       >
         Submit Documents

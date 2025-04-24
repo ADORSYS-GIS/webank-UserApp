@@ -28,7 +28,6 @@ export default function IdentityVerification() {
   const navigate = useNavigate();
   const [showVerificationModalPopup, setShowVerificationModalPopup] =
     useState(false);
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
   const [documentsSubmitted, setDocumentsSubmitted] = useState(false);
 
@@ -77,7 +76,7 @@ export default function IdentityVerification() {
       toast.error("Account information is missing");
       return;
     }
-    setShowConfirmationModal(true);
+    navigate("/verification/location");
   };
 
   return (
@@ -188,33 +187,6 @@ export default function IdentityVerification() {
         <VerificationModal
           onClose={() => setShowVerificationModalPopup(false)}
         />
-      )}
-
-      {showConfirmationModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl max-w-md w-full mx-auto">
-            <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
-              re you submitted all the required documents?
-            </p>
-            <div className="flex justify-center space-x-4">
-              <button
-                onClick={() => setShowConfirmationModal(false)}
-                className="px-6 py-2 text-gray-600 hover:text-gray-800 font-medium rounded-lg border border-gray-300 hover:border-gray-400 transition-colors"
-              >
-                No
-              </button>
-              <button
-                onClick={() => {
-                  setShowConfirmationModal(false);
-                  navigate("/verification/location");
-                }}
-                className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
-              >
-                Yes
-              </button>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );

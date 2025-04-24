@@ -6,7 +6,6 @@ import OtpPage from "./pages/OtpPage";
 import DashboardPage from "./pages/DashboardPage";
 import Header from "./components/Header";
 import "./App.css";
-import "react-toastify/dist/ReactToastify.css";
 import QRScannerPage from "./pages/QRScannerPage";
 import AgentPage from "./pages/AgentPage";
 import QRGenerator from "./pages/Qrcode";

@@ -36,8 +36,8 @@ const TopUpPage: React.FC = () => {
       return;
     }
 
-    if (numericAmount > 10000 && kycCert == null && status !== "APPROVED") {
-      toast.info("KYC is required for transfers over 10,000 XAF.");
+    if (numericAmount > 1000 && kycCert == null && status !== "APPROVED") {
+      toast.info("KYC is required for transfers over 1000 XAF.");
       return;
     }
 
