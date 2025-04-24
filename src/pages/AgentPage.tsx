@@ -16,9 +16,17 @@ const AgentPage: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4 relative">
       <button
-        onClick={() => navigate("/dashboard")}
+        onClick={() => {
+          navigate("/dashboard", {
+            state: {
+              reopenBottomSheet: true,
+              accountId: agentAccountId,
+              accountCert: agentAccountCert,
+            },
+          });
+        }}
         className="fixed top-4 left-4 z-50 p-2 text-gray-700 hover:text-gray-900 focus:outline-none"
-        aria-label="Back to Dashboard"
+        aria-label="Back"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="text-2xl" />
       </button>

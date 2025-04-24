@@ -1,7 +1,6 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-import "react-toastify/dist/ReactToastify.css"; // Make sure to import the CSS
 import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
@@ -14,6 +13,7 @@ import BottomNavigation from "../components/BottomNavigation";
 import BottomSheet from "../components/SideBar";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
+import { useLocation } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
   // Bottom sheet state
@@ -28,6 +28,7 @@ const Dashboard: React.FC = () => {
   const [loadingTransactions, setLoadingTransactions] = useState(false);
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const location = useLocation();
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
@@ -36,6 +37,13 @@ const Dashboard: React.FC = () => {
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    // Check if we're returning from AgentPage with instructions to reopen the BottomSheet
+    if (location.state?.reopenBottomSheet) {
+      setIsMenuOpen(true);
+    }
+  }, [location]);
 
   // View balance function
   const viewBalance = async () => {
