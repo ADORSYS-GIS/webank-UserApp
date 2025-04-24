@@ -28,6 +28,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const menuItems = [
     {
+      id: "agent services",
       icon: faUserTie,
       label: "Agent Services",
       onClick: () =>
@@ -39,6 +40,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }),
     },
     {
+      id: "teller services",
       icon: faMoneyCheckAlt,
       label: "Teller Services",
       onClick: () =>
@@ -51,6 +53,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }),
     },
     {
+      id: "kyc verification",
       icon: faShieldAlt,
       label: "KYC Verification",
       onClick: () =>
@@ -63,6 +66,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }),
     },
     {
+      id: "account recovery",
       icon: faIdCard,
       label: "KYC Recovery Agency",
       onClick: () =>
@@ -78,9 +82,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   return (
     <>
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+      {/* Replaced <div> with <button> for better accessibility */}
+      <button
+        className="fixed inset-0 bg-black bg-opacity-50 z-40 cursor-default"
         onClick={onClose}
+        style={{ border: "none", padding: 0 }} // Remove default button styling
       />
       <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out transform">
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
@@ -93,9 +99,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           </button>
         </div>
         <div className="p-4 max-h-96 overflow-y-auto">
-          {menuItems.map((item, index) => (
+          {menuItems.map((item) => (
             <button
-              key={index}
+              key={item.id}
               onClick={() => {
                 item.onClick();
                 onClose();

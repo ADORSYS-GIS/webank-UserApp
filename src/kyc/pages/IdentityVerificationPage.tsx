@@ -134,13 +134,7 @@ export default function IdentityVerification() {
                          }`}
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div
-                  className={`w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center ${
-                    isCompleted
-                      ? "bg-blue-100 text-blue-500"
-                      : "bg-blue-100 text-blue-500"
-                  }`}
-                >
+                <div className="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-500">
                   <FontAwesomeIcon icon={step.icon} className="text-xl" />
                 </div>
                 <div className="space-y-1 flex-1 min-w-0">

@@ -11,7 +11,7 @@ const AgentPage: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
-  const { agentAccountId, agentAccountCert } = location.state || {};
+  const { agentAccountId, agentAccountCert } = location.state ?? {};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4 relative">
