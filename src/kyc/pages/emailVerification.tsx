@@ -4,7 +4,7 @@ import useDisableScroll from "../../hooks/useDisableScroll";
 import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
@@ -105,8 +105,6 @@ const InputEmail: React.FC = () => {
           </button>
         </div>
       </main>
-
-      <ToastContainer />
     </div>
   );
 };

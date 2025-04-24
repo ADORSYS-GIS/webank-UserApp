@@ -35,7 +35,7 @@ import MapConfirmation from "./kyc/components/MapConfirmation.tsx";
 import OnboardingPage from "./pages/HomePage.tsx";
 import DocumentImages from "./kyc/pages/DocumentImages.tsx";
 import ShareHandlerPage from "./pages/ShareHandlerPage.tsx";
-import { ToastContainer } from "react-toastify";
+import { Toaster } from "sonner";
 import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 import BottomNavigation from "./components/BottomNavigation";
 import { useState } from "react";
@@ -64,8 +64,6 @@ const App: React.FC = () => {
     <BrowserRouter>
       <KycCertChecker />
       <Header />
-      <ToastContainer position="top-right" autoClose={3000} />
-
       {/* Content wrapper with bottom padding when navigation is visible */}
       <div className={`${accountId ? "pb-16" : ""}`}>
         {/* Main Content Routes */}
@@ -134,6 +132,15 @@ const App: React.FC = () => {
         onClose={() => setIsMenuOpen(false)}
         accountId={accountId || ""}
         accountCert={accountCert || ""}
+      />
+      <Toaster
+        position="top-center"
+        richColors
+        toastOptions={{
+          duration: 2000,
+          className:
+            "px-4 py-3 rounded-lg text-sm shadow-sm w-full animation-slideDown",
+        }}
       />
     </BrowserRouter>
   );

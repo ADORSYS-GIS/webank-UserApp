@@ -5,7 +5,7 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import useInitialization from "../hooks/useInitialization.ts";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
 
@@ -192,7 +192,6 @@ const Register = ({ initialShowSpinner = true }) => {
           {isLoading ? "Sending..." : "Verify phone number"}
         </button>
       </div>
-      <ToastContainer />
     </div>
   );
 };

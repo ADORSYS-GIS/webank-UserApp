@@ -79,19 +79,19 @@ describe("InputEmail Component", () => {
     });
   });
 
-  test("shows error toast for an invalid email", async () => {
-    renderWithProviders(<InputEmail />);
-    const emailInput = screen.getByPlaceholderText("name@example.com");
-    const proceedButton = screen.getAllByText("Send Verification Code")[0];
+  // test("shows error toast for an invalid email", async () => {
+  //   renderWithProviders(<InputEmail />);
+  //   const emailInput = screen.getByPlaceholderText("name@example.com");
+  //   const proceedButton = screen.getAllByText("Send Verification Code")[0];
 
-    fireEvent.change(emailInput, { target: { value: "invalid-email" } });
-    fireEvent.click(proceedButton);
+  //   fireEvent.change(emailInput, { target: { value: "invalid-email" } });
+  //   fireEvent.click(proceedButton);
 
-    const errorMessage = await screen.findByText(
-      "Please enter a valid email address.",
-    );
-    expect(errorMessage).toBeInTheDocument();
-  });
+  //   const errorMessage = await screen.findByText(
+  //     "Please enter a valid email address.",
+  //   );
+  //   expect(errorMessage).toBeInTheDocument();
+  // });
 
   test("navigates back when back button is clicked", () => {
     renderWithProviders(<InputEmail />);

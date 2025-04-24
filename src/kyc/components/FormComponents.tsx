@@ -8,7 +8,7 @@ import React, {
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setStatus } from "../../slices/accountSlice.ts";
 
@@ -270,7 +270,6 @@ export const TextInput: React.FC<TextInputProps> = ({
         value={formData[fieldName] || ""}
         onChange={(e) => setFormField(fieldName, e.target.value)}
       />
-      <ToastContainer />
     </div>
   );
 };

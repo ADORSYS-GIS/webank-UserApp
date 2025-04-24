@@ -4,9 +4,7 @@ import { calculateTransactionFee } from "../services/computation/transactionFeeC
 import useDisableScroll from "../hooks/useDisableScroll";
 import { RootState } from "../store/Store";
 import { useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { toast } from "sonner";
 
 const TopUpPage: React.FC = () => {
   useDisableScroll();
@@ -87,13 +85,14 @@ const TopUpPage: React.FC = () => {
               Enter {show} Amount (XAF)
             </label>
             <input
-              type="number"
+              type="text" // not "number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               id="amount"
               placeholder="0"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
-              inputMode="numeric"
               autoComplete="off"
               autoFocus
             />
@@ -117,9 +116,8 @@ const TopUpPage: React.FC = () => {
           <div className="flex justify-between gap-3 mt-2">
             <button
               onClick={handleCancel}
-              className="px-6 py-3 bg-red-100 rounded-lg text-gray-800 font-medium hover:bg-gray-200 transition duration-300 flex items-center justify-center flex-1"
+              className="px-6 py-3 bg-gray-200 rounded-lg text-gray-800 font-medium transition duration-300 flex items-center justify-center flex-1"
             >
-              <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
               Cancel
             </button>
             <button
@@ -127,12 +125,10 @@ const TopUpPage: React.FC = () => {
               className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 font-medium flex items-center justify-center flex-1"
             >
               Continue
-              <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
             </button>
           </div>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

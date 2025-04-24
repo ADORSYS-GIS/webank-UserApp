@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import {
   setAccountCert,
   setAccountId,
@@ -252,8 +252,6 @@ const RecoverAccountPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      <ToastContainer />
     </div>
   );
 };

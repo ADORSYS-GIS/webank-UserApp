@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { getProjectEnvVariables } from "../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
@@ -61,7 +61,6 @@ export default function Login() {
           </button>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
 }

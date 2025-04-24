@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { RootState } from "../../store/Store.ts";
 import VerificationModal from "../components/VerificationModal";
 
@@ -194,7 +194,7 @@ export default function IdentityVerification() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl max-w-md w-full mx-auto">
             <p className="text-gray-800 mb-6 text-center text-sm md:text-base">
-              Are you sure you submitted all the required documents?
+              re you submitted all the required documents?
             </p>
             <div className="flex justify-center space-x-4">
               <button
@@ -216,8 +216,6 @@ export default function IdentityVerification() {
           </div>
         </div>
       )}
-
-      <ToastContainer />
     </div>
   );
 }

@@ -7,7 +7,7 @@ import TaxpayerId from "./TaxpayerId";
 import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setDocumentStatus } from "../../slices/accountSlice";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
@@ -178,8 +178,6 @@ const DocumentImages = () => {
       >
         Submit Documents
       </button>
-
-      <ToastContainer position="bottom-center" />
     </div>
   );
 };

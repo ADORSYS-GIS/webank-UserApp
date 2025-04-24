@@ -1,6 +1,6 @@
 // src/pages/Dashboard.tsx
 import React, { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css"; // Make sure to import the CSS
 import {
   RequestToGetBalance,
@@ -148,8 +148,6 @@ const Dashboard: React.FC = () => {
         accountId={accountId || ""}
         accountCert={accountCert || ""}
       />
-
-      <ToastContainer position="bottom-center" />
     </div>
   );
 };

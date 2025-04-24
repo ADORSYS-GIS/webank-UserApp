@@ -6,7 +6,7 @@ import {
   RequestToValidateOTP,
   RequestToSendOTP,
 } from "../services/keyManagement/requestService.ts";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
 import { useDispatch } from "react-redux";
 import { setAccountId, setAccountCert } from "../slices/accountSlice";
@@ -50,7 +50,7 @@ const Otp = () => {
   const handleverifyClick = async () => {
     try {
       if (!otpHash || !fullPhoneNumber) {
-        alert("Required data is missing!");
+        toast.info("Required data is missing!");
         return;
       }
 
@@ -95,11 +95,11 @@ const Otp = () => {
           toast.error("Account registration failed");
         }
       } else {
-        toast.error("Phone number registration failed");
+        toast.error("Invalid OTP");
       }
     } catch (error) {
       console.error("Error during OTP validation:", error);
-      toast.error("Invalid OTP");
+      toast.error("Phone number registration failed");
     }
   };
 
@@ -136,7 +136,6 @@ const Otp = () => {
               {seconds.toString().padStart(2, "0")}
             </span>
           </p>
-
           <p className="text-xs sm:text-sm text-gray-700">
             Didn't receive the OTP?{" "}
             <button
@@ -156,7 +155,6 @@ const Otp = () => {
           </p>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

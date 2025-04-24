@@ -32,11 +32,6 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
             </button>
           </div>
         </div>
-        <div className="flex items-center">
-          <div className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
-            <span className="text-white text-xs font-medium">Saving</span>
-          </div>
-        </div>
       </div>
     </div>
   );

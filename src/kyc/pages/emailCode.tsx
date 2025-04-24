@@ -6,7 +6,7 @@ import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
 } from "../../services/keyManagement/requestService";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import OtpInput from "../../components/OtpInput";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RootState } from "../../store/Store";
@@ -143,8 +143,6 @@ const EmailCode: React.FC = () => {
           </div>
         </div>
       )}
-
-      <ToastContainer />
     </div>
   );
 };

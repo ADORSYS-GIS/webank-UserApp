@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { RequestToGetUserLocation } from "../../services/keyManagement/requestService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 
 interface GeoLocation {
   lat: number;
@@ -113,7 +113,6 @@ const MapConfirmation = () => {
           </button>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };

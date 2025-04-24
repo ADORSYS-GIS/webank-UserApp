@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { ClipboardCopy, Home } from "lucide-react";
 import useDisableScroll from "../../hooks/useDisableScroll";
 
@@ -54,7 +54,6 @@ const RecoveryToken: React.FC = () => {
         </button>
 
         {/* Toast Notification */}
-        <ToastContainer />
       </div>
     </div>
   );

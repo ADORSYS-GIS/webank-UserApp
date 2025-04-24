@@ -12,7 +12,7 @@ import {
   afterEach,
   afterAll,
 } from "vitest";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 
 // Mock global objects and methods
 global.alert = vi.fn();
@@ -46,12 +46,7 @@ describe("Register component", () => {
   });
 
   const renderWithRouter = (component: React.ReactNode) => {
-    return render(
-      <MemoryRouter>
-        {component}
-        <ToastContainer />
-      </MemoryRouter>,
-    );
+    return render(<MemoryRouter>{component}</MemoryRouter>);
   };
 
   it("sends OTP on button click", async () => {

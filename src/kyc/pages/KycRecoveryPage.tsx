@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import {
@@ -170,7 +170,7 @@ export default function RecoveryDashboard() {
       >
         <FiArrowLeft className="w-6 h-6 text-gray-600" />
       </button>
-      <ToastContainer />
+
       <div className="max-w-3xl mx-auto">
         <h1
           className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent
