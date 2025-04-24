@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import WebankLogo from "../assets/Webank.png";
+import WebankLogo from "/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
