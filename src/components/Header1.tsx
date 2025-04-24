@@ -36,14 +36,13 @@ const Header1: React.FC<HeaderProps> = ({
     <div className="flex justify-between items-center p-4 bg-white shadow-sm">
       {/* Left: Logo and Username */}
       <div className="flex items-center space-x-4">
-        <img 
-          src="/src/assets/Webank.png" 
-          alt="WeBank Logo" 
-          className="w-16 h-auto" 
+        <img
+          src="/src/assets/Webank.png"
+          alt="WeBank Logo"
+          className="w-16 h-auto"
         />
-
       </div>
-      
+
       {/* Right: Icons */}
       <div className="flex items-center space-x-4">
         <button
@@ -53,7 +52,7 @@ const Header1: React.FC<HeaderProps> = ({
         >
           <FontAwesomeIcon icon={faBell} className="text-gray-600" />
         </button>
-        
+
         <button
           onClick={handleAboutClick}
           className="p-2 rounded-full hover:bg-gray-100"

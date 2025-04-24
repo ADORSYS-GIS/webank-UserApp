@@ -138,7 +138,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
           {children}
           <button
             type="submit"
-            className="w-full bg-[#20B2AA] text-white py-4 rounded-3xl
+            className="w-full bg-blue-600 text-white py-4 rounded-3xl
                      font-semibold transition duration-300 ease-in-out shadow-lg mt-2"
           >
             Submit

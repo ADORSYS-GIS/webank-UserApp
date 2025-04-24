@@ -76,6 +76,7 @@ const ConfirmationPage: React.FC = () => {
           clientAccountId,
           amount,
           agentAccountId,
+          accountCert,
           kycCert,
         );
         if (response?.includes("Success")) {
@@ -140,7 +141,7 @@ const ConfirmationPage: React.FC = () => {
             Account ID
           </p>
           <p className="text-xl font-semibold text-gray-800 break-all">
-            {clientAccountId || "Default Account ID"}
+            {clientAccountId ?? "Default Account ID"}
           </p>
         </div>
 

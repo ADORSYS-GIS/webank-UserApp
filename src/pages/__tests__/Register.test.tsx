@@ -64,7 +64,7 @@ describe("Register component", () => {
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
-    fireEvent.click(getByText("Send OTP"));
+    fireEvent.click(getByText("Verify phone number"));
 
     await waitFor(() => {
       expect(RequestToSendOTP).toHaveBeenCalledWith(
@@ -87,7 +87,7 @@ describe("Register component", () => {
     fireEvent.change(phoneNumberInput, {
       target: { value: "788475847587458" },
     });
-    fireEvent.click(getByText("Send OTP"));
+    fireEvent.click(getByText("Verify phone number"));
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
@@ -106,7 +106,7 @@ describe("Register component", () => {
     fireEvent.change(getByPlaceholderText("Phone number"), {
       target: { value: "657040277" },
     });
-    fireEvent.click(getByText("Send OTP"));
+    fireEvent.click(getByText("Verify phone number"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(

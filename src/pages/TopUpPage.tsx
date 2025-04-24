@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { calculateTransactionFee } from "../services/computation/transactionFeeCalculator";
 import useDisableScroll from "../hooks/useDisableScroll";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { RootState } from "../store/Store";
+import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const TopUpPage: React.FC = () => {
   useDisableScroll();
@@ -16,6 +19,8 @@ const TopUpPage: React.FC = () => {
   const isClientOnline = location.state?.isClientOnline;
   const agentAccountCert = location.state?.agentAccountCert;
   const agentAccountId = location.state?.agentAccountId;
+  const kycCert = useSelector((state: RootState) => state.account.kycCert);
+  const status = useSelector((state: RootState) => state.account.status);
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
@@ -29,12 +34,17 @@ const TopUpPage: React.FC = () => {
   const handleContinue = () => {
     const numericAmount = Number(amount);
     if (numericAmount <= 0) {
-      alert("Please enter a valid top-up amount.");
+      toast.info("Please enter a valid amount.");
+      return;
+    }
+
+    if (numericAmount > 10000 && kycCert == null && status !== "APPROVED") {
+      toast.info("KYC is required for transfers over 10,000 XAF.");
       return;
     }
 
     if (numericAmount > 500000) {
-      alert("The maximum amount for a single transfer is 500,000 XAF.");
+      toast.info("Maximum top-up amount is 500,000 XAF.");
       return;
     }
 
@@ -68,7 +78,7 @@ const TopUpPage: React.FC = () => {
           <div className="text-center mb-4">
             <h1 className="text-xl font-semibold text-gray-800">{show}</h1>
           </div>
-          
+
           <div className="mb-4">
             <label
               htmlFor="amount"
@@ -98,7 +108,9 @@ const TopUpPage: React.FC = () => {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Total Amount:</span>
-              <span className="font-medium text-gray-800">{totalAmount} XAF</span>
+              <span className="font-medium text-gray-800">
+                {totalAmount} XAF
+              </span>
             </div>
           </div>
 
@@ -120,6 +132,7 @@ const TopUpPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

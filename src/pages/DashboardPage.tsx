@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
   const [transactionsData, setTransactionsData] = useState<any[]>([]);
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
-  
+
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
@@ -105,12 +105,12 @@ const Dashboard: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* Header placement */}
-      <Header 
-        username="We-Users" 
+      <Header
+        username="We-Users"
         onNotificationClick={handleNotificationClick}
         onAboutClick={handleAboutClick}
       />
-      
+
       {/* Main content */}
       <div className="flex-1 overflow-auto pb-16 ">
         <div className="p-4">
@@ -120,9 +120,9 @@ const Dashboard: React.FC = () => {
             viewBalance={viewBalance}
             accountId={accountId || ""}
           />
-          <ActionButtons 
-            accountId={accountId || ""} 
-            accountCert={accountCert || ""} 
+          <ActionButtons
+            accountId={accountId || ""}
+            accountCert={accountCert || ""}
           />
           <TransactionsSection
             transactionsData={transactionsData}
@@ -135,10 +135,10 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation 
-        accountId={accountId || ""} 
-        accountCert={accountCert || ""} 
-        toggleMenu={toggleMenu} 
+      <BottomNavigation
+        accountId={accountId || ""}
+        accountCert={accountCert || ""}
+        toggleMenu={toggleMenu}
       />
 
       {/* Bottom Sheet Menu */}

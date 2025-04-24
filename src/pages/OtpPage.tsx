@@ -86,7 +86,7 @@ const Otp = () => {
 
           setTimeout(
             () =>
-              navigate("/post-registration", {
+              navigate("/dashboard", {
                 state: { accountId, accountCert },
               }),
             2000,

@@ -85,7 +85,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out transform">
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold">Services</h3>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
           >

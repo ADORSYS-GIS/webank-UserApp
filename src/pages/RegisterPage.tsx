@@ -142,7 +142,7 @@ const Register = ({ initialShowSpinner = true }) => {
                 />
                 <span>{selectedCountry?.value}</span>
               </div>
-              <span className="material-icons">arrow_drop_down</span>
+              <span className="material-icons"></span>
             </div>
 
             {isOpen && (
@@ -189,7 +189,7 @@ const Register = ({ initialShowSpinner = true }) => {
           className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] lg:text-lg hover:bg-[#1433FF] transition duration-300"
           disabled={isLoading}
         >
-          {isLoading ? "Sending..." : "Send OTP"}
+          {isLoading ? "Sending..." : "Verify phone number"}
         </button>
       </div>
       <ToastContainer />

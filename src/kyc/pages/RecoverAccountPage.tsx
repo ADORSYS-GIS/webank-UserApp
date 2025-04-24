@@ -1,10 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTimes } from "react-icons/fa";
-import {
-  RequestToSubmitRecoveryToken,
-  RequestToRecoverAccountCert,
-} from "../../services/keyManagement/requestService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
 import { toast, ToastContainer } from "react-toastify";
@@ -13,6 +8,17 @@ import {
   setAccountId,
   setKycCert,
 } from "../../slices/accountSlice.ts";
+import {
+  RequestToSubmitRecoveryToken,
+  RequestToRecoverAccountCert,
+} from "../../services/keyManagement/requestService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faKey,
+  faIdCard,
+  faCheck,
+  faArrowLeft,
+} from "@fortawesome/free-solid-svg-icons";
 
 const RecoverAccountPage: React.FC = () => {
   const [showTokenInput, setShowTokenInput] = useState(false);
@@ -64,141 +70,189 @@ const RecoverAccountPage: React.FC = () => {
       dispatch(setAccountId(oldAccountId));
 
       if (data) {
+        setShowTokenInput(false);
         setShowConfirmation(true);
       } else {
-        alert("Invalid token. Please try again.");
+        toast.error("Invalid token. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting token:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     }
   };
 
   const handleYesClick = async () => {
-    console.log(accountId, "oldAccountId");
     try {
-      console.log(accountId, "oldAccountId2");
-
       if (!accountId) {
         toast.error("Account information is missing.");
         return;
       }
 
       const certResponse = await RequestToRecoverAccountCert(accountId);
-      console.log(certResponse, "response");
       if (certResponse) {
         localStorage.setItem("accountCert", certResponse);
-        console.log(certResponse, "certResponse");
         dispatch(setAccountCert(certResponse));
-        alert("Account recovery successful. Redirecting to your dashboard...");
-        navigate("/dashboard");
+        toast.success("Account recovery successful!");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1500);
       } else {
-        alert("Failed to recover account certificate. Please try again.");
+        toast.error("Failed to recover account certificate. Please try again.");
       }
     } catch (error) {
       console.error("Error recovering account certificate:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setShowConfirmation(false);
     }
   };
 
-  const handleCloseOverlay = () => {
-    setShowTokenInput(false);
-    setShowConfirmation(false);
-    setToken("");
-  };
-
   const handleCancel = () => {
-    navigate("/post-registration");
+    navigate("/settings");
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-        <button
-          className="text-gray-500 hover:text-gray-700"
-          onClick={handleCancel}
-        >
-          <FaTimes size={20} />
-        </button>
-        <h1 className="text-2xl font-bold mb-6 text-center">Recover Account</h1>
-        <button
-          onClick={handleKYCRecovery}
-          className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200 mb-4"
-        >
-          Initiate KYC Recovery
-        </button>
-        <button
-          onClick={() => setShowTokenInput(true)}
-          className="w-full bg-blue-500 text-white font-bold py-2 rounded-xl hover:bg-blue-600 transition duration-200 mb-4"
-        >
-          Input Recovery Token
-        </button>
-      </div>
-      {showTokenInput && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <header className="bg-white p-4 shadow-sm">
+        <div className="max-w-md mx-auto flex items-center">
           <button
-            className="absolute inset-0 w-full h-full bg-transparent cursor-default"
-            onClick={handleCloseOverlay}
-            aria-label="Close token input overlay"
-          />
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative z-10">
-            <div className="flex justify-end">
-              <button
-                className="text-gray-500 hover:text-gray-700"
-                onClick={handleCloseOverlay}
-              >
-                <FaTimes size={20} />
-              </button>
-            </div>
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Enter Recovery Token
-            </h2>
-            <input
-              type="text"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg mb-4"
-              placeholder="Recovery Token"
+            onClick={handleCancel}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Go Back"
+          >
+            <FontAwesomeIcon
+              icon={faArrowLeft}
+              className="h-5 w-5 text-gray-600"
             />
-            <button
-              onClick={handleTokenSubmit}
-              className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-600 transition duration-200"
-            >
-              Submit
-            </button>
+          </button>
+          <h1 className="text-xl font-semibold mx-auto pr-10">
+            Account Recovery
+          </h1>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 p-4 max-w-md mx-auto w-full">
+        <div className="mb-6 text-center">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FontAwesomeIcon icon={faKey} className="text-blue-500 text-2xl" />
+          </div>
+          <h2 className="text-xl font-bold mb-2">Recover Your Account</h2>
+          <p className="text-gray-600 text-sm">
+            Choose one of the options below to recover your account access
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <button
+            onClick={handleKYCRecovery}
+            className="w-full p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center hover:border-blue-500 transition-colors"
+          >
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+              <FontAwesomeIcon icon={faIdCard} className="text-blue-500" />
+            </div>
+            <div className="text-left">
+              <h3 className="font-semibold">Initiate KYC Recovery</h3>
+              <p className="text-sm text-gray-600">
+                Contact support through WhatsApp
+              </p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setShowTokenInput(true)}
+            className="w-full p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center hover:border-blue-500 transition-colors"
+          >
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+              <FontAwesomeIcon icon={faKey} className="text-blue-500" />
+            </div>
+            <div className="text-left">
+              <h3 className="font-semibold">Input Recovery Token</h3>
+              <p className="text-sm text-gray-600">
+                Enter the token sent to you
+              </p>
+            </div>
+          </button>
+        </div>
+      </main>
+
+      {/* Token Input Bottom Sheet */}
+      {showTokenInput && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex flex-col items-end justify-end transition-opacity duration-300">
+          <div className="w-full bg-white rounded-t-2xl p-6 shadow-lg z-50 transform transition-transform duration-300 animate-slide-up">
+            <div className="flex justify-center mb-2">
+              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-bold">Enter Recovery Token</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={token}
+                  onChange={(e) => setToken(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="Recovery Token"
+                />
+              </div>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowTokenInput(false)}
+                  className="flex-1 py-3 bg-gray-200 text-gray-800 font-medium rounded-xl hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleTokenSubmit}
+                  className="flex-1 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Confirmation Bottom Sheet */}
       {showConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <button
-            className="absolute inset-0 w-full h-full bg-transparent cursor-default"
-            onClick={handleCloseOverlay}
-            aria-label="Close confirmation overlay"
-          />
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative z-10">
-            <h2 className="text-xl font-bold mb-4 text-center">
-              Are you sure you want to proceed?
-            </h2>
-            <div className="flex justify-between">
-              <button
-                onClick={handleYesClick}
-                className="bg-green-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-green-600 transition duration-200"
-              >
-                Yes
-              </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex flex-col items-end justify-end transition-opacity duration-300">
+          <div className="w-full bg-white rounded-t-2xl p-6 shadow-lg z-50 transform transition-transform duration-300 animate-slide-up">
+            <div className="flex justify-center mb-2">
+              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  className="text-blue-500 text-2xl"
+                />
+              </div>
+              <h2 className="text-xl font-bold">Confirm Recovery</h2>
+              <p className="text-gray-600 mt-2">
+                Are you sure you want to recover this account?
+              </p>
+            </div>
+            <div className="flex space-x-3">
               <button
                 onClick={() => setShowConfirmation(false)}
-                className="bg-red-500 text-white font-bold py-2 px-4 rounded-xl hover:bg-red-600 transition duration-200"
+                className="flex-1 py-3 bg-gray-200 text-gray-800 font-medium rounded-xl hover:bg-gray-300 transition-colors"
               >
-                No
+                Cancel
+              </button>
+              <button
+                onClick={handleYesClick}
+                className="flex-1 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
+              >
+                Confirm
               </button>
             </div>
           </div>
         </div>
       )}
+
       <ToastContainer />
     </div>
   );

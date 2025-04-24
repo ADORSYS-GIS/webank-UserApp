@@ -35,17 +35,17 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
       <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
       Loading...
     </>
-) : transactionsVisible ? (
-  <span className="flex items-center text-blue-500">
-    <FontAwesomeIcon icon={faEyeSlash} className="mr-2" />
-    Hide
-  </span>
-) : (
-  <span className="flex items-center text-blue-500">
-    View All
-    <FontAwesomeIcon icon={faChevronRight} className="ml-1" />
-  </span>
-);
+  ) : transactionsVisible ? (
+    <span className="flex items-center text-blue-500">
+      <FontAwesomeIcon icon={faEyeSlash} className="mr-2" />
+      Hide
+    </span>
+  ) : (
+    <span className="flex items-center text-blue-500">
+      View All
+      <FontAwesomeIcon icon={faChevronRight} className="ml-1" />
+    </span>
+  );
 
   const formatDateTime = (timestamp: number) => {
     return new Date(timestamp).toLocaleString("en-US", {
@@ -64,7 +64,7 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm">
+    <div className="bg-white rounded-lg p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-gray-700 font-medium text-lg">Payment History</h3>
         <button
@@ -100,7 +100,11 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
                     }`}
                   >
                     <FontAwesomeIcon
-                      icon={transaction.amount.startsWith("-") ? faArrowUp : faArrowDown}
+                      icon={
+                        transaction.amount.startsWith("-")
+                          ? faArrowUp
+                          : faArrowDown
+                      }
                       className={`text-sm ${
                         transaction.amount.startsWith("-")
                           ? "text-red-500"

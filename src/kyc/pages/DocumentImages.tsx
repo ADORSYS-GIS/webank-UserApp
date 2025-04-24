@@ -10,6 +10,7 @@ import { RootState } from "../../store/Store";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { setDocumentStatus } from "../../slices/accountSlice";
+import { FaArrowLeft, FaUpload } from "react-icons/fa";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
@@ -46,21 +47,19 @@ const DocumentImages = () => {
         accountId,
       );
 
-      console.log(response);
       if (response.includes("saved")) {
         dispatch(setDocumentStatus("PENDING"));
         toast.success("Documents submitted successfully");
-
         navigate("/kyc");
       }
     } catch (error) {
       console.error("Error submitting documents:", error);
     }
   };
+
   useEffect(() => {
     const loadImagesFromDB = async () => {
       try {
-        // Replace with actual IndexedDB implementation
         const mockDB: Record<DocumentType, string> = {
           frontID: localStorage.getItem("frontID") ?? "",
           backID: localStorage.getItem("backID") ?? "",
@@ -99,67 +98,62 @@ const DocumentImages = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex flex-col">
-      {/* Instructions Link */}
-      <div className="text-right mb-8">
-        <a
-          href="/instructions"
-          className="text-gray-700 hover:text-blueconst handleSubmitDocuments = () => {
-    try {
-        response = RequestToStoreKycDocument(
-            
-        )
-
-    } catch(error) {
-        console.error('Error submitting documents:', error);
-    }
-}-600 transition-colors text-sm font-medium"
+      {/* Header Section */}
+      <div className="flex items-center justify-between mb-8">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
         >
-          View detailed instructions →
+          <FaArrowLeft className="mr-2" />
+          Back
+        </button>
+        <a
+          href="/guidelines"
+          className="text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium flex items-center"
+        >
+          View detailed instructions
+          <FaArrowLeft className="ml-2 rotate-180" />
         </a>
       </div>
 
       {/* Documents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 mb-8">
         {(Object.keys(images) as DocumentType[]).map((type) => (
-          <button
-            key={type}
-            onClick={() => !images[type] && setActivePopup(type)}
-            className={`relative group bg-white rounded-xl border-2 ${
-              !images[type]
-                ? "border-dashed cursor-pointer hover:border-green-600"
-                : "border-solid"
-            } border-gray-300 transition-colors p-6 flex flex-col items-center justify-center min-h-[300px] w-full text-left`}
-          >
-            {images[type] ? (
-              <img
-                src={images[type]}
-                alt={getDocumentLabel(type)}
-                className="max-w-full h-48 object-contain mb-4"
-              />
-            ) : (
-              <div className="text-gray-500 text-center">
-                <svg
-                  className="w-12 h-12 mx-auto mb-4 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="block text-sm font-medium">
-                  {getDocumentLabel(type)}
-                </span>
-                <span className="block text-xs mt-1">
-                  Click to add document
-                </span>
-              </div>
-            )}
-          </button>
+          <div key={type} className="space-y-2">
+            <h3 className="text-gray-800 font-medium text-sm">
+              {getDocumentLabel(type)}
+            </h3>
+            <button
+              onClick={() => !images[type] && setActivePopup(type)}
+              className={`relative group w-full h-64 bg-white rounded-xl border-2 ${
+                !images[type]
+                  ? "border-dashed cursor-pointer hover:border-blue-500"
+                  : "border-solid border-blue-100"
+              } transition-all duration-200 p-4 flex flex-col items-center justify-center`}
+            >
+              {images[type] ? (
+                <img
+                  src={images[type]}
+                  alt={getDocumentLabel(type)}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="text-gray-500 text-center space-y-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600">
+                    <FaUpload size={24} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">
+                      Upload Document
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Supported formats: JPEG, PNG
+                    </p>
+                  </div>
+                </div>
+              )}
+            </button>
+          </div>
         ))}
       </div>
 
@@ -180,11 +174,12 @@ const DocumentImages = () => {
       {/* Submit Button */}
       <button
         onClick={handleSubmitDocuments}
-        className="self-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 transform hover:scale-105"
+        className="self-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
       >
         Submit Documents
       </button>
-      <ToastContainer />
+
+      <ToastContainer position="bottom-center" />
     </div>
   );
 };

@@ -1,14 +1,24 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
-import useDisableScroll from "../hooks/useDisableScroll";
 
-const AccountQR: React.FC = () => {
-  useDisableScroll();
+interface AccountQRModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const AccountQRModal: React.FC<AccountQRModalProps> = ({ isOpen, onClose }) => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const qrRef = useRef<HTMLCanvasElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
+  // Generate QR Code content with predefined values
+  const qrValue = JSON.stringify({
+    accountId: accountId,
+  });
+
+  // Function to download QR code
   const downloadQRCode = () => {
     const canvas = qrRef.current;
     if (canvas) {
@@ -22,41 +32,75 @@ const AccountQR: React.FC = () => {
     }
   };
 
-  const qrValue = JSON.stringify({
-    accountId: accountId,
-  });
+  // Handle click outside to close modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      // Prevent scrolling when modal is open
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.body.style.overflow = "auto";
+      };
+    }
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center">
-      {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" onClick={() => window.history.back()} />
-      
-      {/* Bottom Sheet (Mobile) / Modal (Desktop) */}
-      <div className="relative z-10 w-full max-w-md md:rounded-2xl bg-white shadow-xl md:max-w-lg transition-transform duration-300">
-        <div className="p-6 md:p-8 flex flex-col items-center gap-6">
-          <h2 className="text-2xl font-bold text-gray-800">Account QR</h2>
-          
-          <div className="p-4 bg-white rounded-xl shadow-md border border-gray-200 w-[270px] h-[270px]">
-            <div className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-300 w-[250px] h-[250px]">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-60 animate-fadeIn">
+      <div
+        className={`bg-white rounded-t-2xl w-full max-w-md mx-auto transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-y-0" : "translate-y-full"}`}
+        style={{ maxHeight: "85vh", overflowY: "auto" }}
+        ref={modalRef}
+      >
+        {/* Pull indicator for mobile */}
+        <div className="pt-3 pb-1 flex justify-center">
+          <div className="w-10 h-1 bg-gray-200 rounded-full"></div>
+        </div>
+
+        <div className="px-6 pt-4 pb-8 md:px-8 flex flex-col items-center">
+          {/* Title */}
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Your QR Code
+          </h2>
+
+          {/* QR Code Frame - Improved styling */}
+          <div className="mb-8 p-3 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center">
+            <div className="p-3 bg-white rounded-xl flex items-center justify-center">
               <QRCodeCanvas
                 value={qrValue || "No Account ID"}
-                size={250}
+                size={230}
                 ref={qrRef}
                 level="L"
+                bgColor="#FFFFFF"
+                fgColor="#000000"
               />
             </div>
           </div>
 
-          <div className="w-full flex flex-col gap-3">
+          {/* Buttons - More elegant styling */}
+          <div className="w-full space-y-3 mt-2">
             <button
               onClick={downloadQRCode}
-              className="w-full px-6 py-3 text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors"
+              className="w-full py-3 text-white text-sm font-medium bg-blue-500 rounded-xl shadow-sm transition hover:bg-blue-600 active:scale-98 flex items-center justify-center"
             >
-              Download QR
+              Download QR Code
             </button>
+
             <button
-              onClick={() => window.history.back()}
-              className="w-full px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors md:hidden"
+              onClick={onClose}
+              className="w-full py-3 text-gray-700 text-sm font-medium bg-gray-100 rounded-xl transition hover:bg-gray-200 active:scale-98 flex items-center justify-center"
             >
               Close
             </button>
@@ -66,4 +110,5 @@ const AccountQR: React.FC = () => {
     </div>
   );
 };
-export default AccountQR;
+
+export default AccountQRModal;

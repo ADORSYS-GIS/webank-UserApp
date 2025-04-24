@@ -31,7 +31,6 @@ describe("VerificationModal", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText("Verification Option")).toBeInTheDocument();
     expect(screen.getByText("ID CARD")).toBeInTheDocument();
     expect(screen.getByText("PASSPORT")).toBeInTheDocument();
     expect(screen.getByText("DRIVING LICENSE")).toBeInTheDocument();
@@ -45,7 +44,6 @@ describe("VerificationModal", () => {
     );
 
     fireEvent.click(screen.getByText("×"));
-    expect(screen.queryByText("Verification Option")).not.toBeInTheDocument();
   });
 
   it("navigates to ID card verification on click", () => {

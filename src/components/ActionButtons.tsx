@@ -1,8 +1,6 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { RootState } from "../store/Store";
-import { toast } from "react-toastify";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faExchangeAlt,
@@ -21,13 +19,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   accountCert,
 }) => {
   const navigate = useNavigate();
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
 
   const handleActionClick = (callback: () => void) => {
-    // if (kycCert === null) {
-    //   toast.warning("Please complete the KYC process to proceed.");
-    //   return;
-    // }
     callback();
   };
 
@@ -116,7 +109,9 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
             className="flex flex-col items-center justify-center"
             onClick={action.onClick}
           >
-            <div className={`w-12 h-12 rounded-lg ${action.color} ${action.textColor} flex items-center justify-center mb-2`}>
+            <div
+              className={`w-12 h-12 rounded-lg ${action.color} ${action.textColor} flex items-center justify-center mb-2`}
+            >
               <FontAwesomeIcon icon={action.icon} />
             </div>
             <span className="text-xs text-gray-600">{action.label}</span>
