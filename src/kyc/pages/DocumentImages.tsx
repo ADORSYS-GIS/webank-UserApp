@@ -172,7 +172,7 @@ const DocumentImages = () => {
       )}
 
       {/* Submit Button */}
-      <div
+      <button
         onClick={() => {
           if (
             !images.frontID ||
@@ -192,7 +192,7 @@ const DocumentImages = () => {
         <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
           Submit Documents
         </button>
-      </div>
+      </button>
     </div>
   );
 };
