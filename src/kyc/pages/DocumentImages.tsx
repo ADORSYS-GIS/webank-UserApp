@@ -172,18 +172,27 @@ const DocumentImages = () => {
       )}
 
       {/* Submit Button */}
-      <button
-        onClick={handleSubmitDocuments}
-        disabled={
-          !images.frontID ||
-          !images.backID ||
-          !images.selfieID ||
-          !images.taxDoc
-        }
-        className="self-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
+      <div
+        onClick={() => {
+          if (
+            !images.frontID ||
+            !images.backID ||
+            !images.selfieID ||
+            !images.taxDoc
+          ) {
+            toast.warning(
+              "Please upload all required documents before submitting.",
+            );
+            return;
+          }
+          handleSubmitDocuments();
+        }}
+        className="self-center"
       >
-        Submit Documents
-      </button>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+          Submit Documents
+        </button>
+      </div>
     </div>
   );
 };
