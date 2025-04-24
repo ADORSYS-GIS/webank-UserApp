@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import WebankLogo from "../assets/Webank.png";
+import WebankLogo from "/Webank.png";
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
@@ -68,6 +68,8 @@ const Register = ({ initialShowSpinner = true }) => {
       return;
     }
 
+    localStorage.setItem("phoneNumber", phoneNumber);
+
     setIsLoading(true);
     try {
       const otpHash = await RequestToSendOTP(fullPhoneNumber, devCert);
@@ -119,7 +121,7 @@ const Register = ({ initialShowSpinner = true }) => {
           Register for a bank account
         </h1>
         <p className="text-gray-500 lg:text-lg">
-          Please enter your phone number
+          Please enter your whatsapp phone number
         </p>
       </div>
 

@@ -32,14 +32,10 @@ const Header1: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-center p-4 bg-white shadow-sm">
+    <div className="flex justify-between items-center bg-white shadow-sm">
       {/* Left: Logo and Username */}
       <div className="flex items-center space-x-4">
-        <img
-          src="/src/assets/Webank.png"
-          alt="WeBank Logo"
-          className="w-16 h-auto"
-        />
+        <img src="/Webank.png" alt="WeBank Logo" className="w-16 h-auto" />
       </div>
 
       {/* Right: Icons */}
