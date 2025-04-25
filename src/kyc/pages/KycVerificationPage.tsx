@@ -196,10 +196,7 @@ export default function KYCDashboard(): JSX.Element {
       <div className="space-y-4">
         {pendingUsers.map((user) => (
           <div
-            key={
-              user.id ||
-              `user-${user.accountId}-${Math.random().toString(36).substring(2, 9)}`
-            }
+            key={user.id || `user-${user.accountId}`}
             className="flex justify-between items-center p-4
               border rounded-lg hover:bg-gray-50 transition-colors"
           >
