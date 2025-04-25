@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
 import { toast } from "sonner";
 import { FiArrowLeft } from "react-icons/fi";
 import {
-  RequestToGetKycRecordsBySearch,
+  RequestToGetPendingKycRecords,
   RequestToUpdateKycStatus,
 } from "../../services/keyManagement/requestService";
 import { useNavigate } from "react-router-dom";
 import { ImageModal } from "../components/ImageModal";
 import { DocumentCard } from "../components/DocumentCard";
 
-// Updated UserKYC interface to include all fields from UserInfoResponse
+type KycStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 interface UserKYC {
   id: string;
@@ -26,10 +26,23 @@ interface UserKYC {
   selfie: string;
   taxDocument: string;
 }
-type KycStatus = "PENDING" | "APPROVED" | "REJECTED";
 
-// Helper function to determine the status class
-const getStatusClass = (status: string) => {
+interface KycBackendResponse {
+  id?: string;
+  documentUniqueId?: string;
+  accountId?: string;
+  idNumber?: string;
+  expirationDate?: string;
+  location?: string;
+  email?: string;
+  status?: string;
+  frontID?: string;
+  backID?: string;
+  selfie?: string;
+  taxDocument?: string;
+}
+
+const getStatusClass = (status: string): string => {
   switch (status.toUpperCase()) {
     case "PENDING":
       return "bg-amber-100 text-amber-800 ring-amber-300";
@@ -42,13 +55,13 @@ const getStatusClass = (status: string) => {
   }
 };
 
-export default function KYCDashboard() {
+export default function KYCDashboard(): JSX.Element {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
   const [user, setUser] = useState<UserKYC | null>(null);
+  const [pendingUsers, setPendingUsers] = useState<UserKYC[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [formData, setFormData] = useState({
     accountId: "",
     docNumber: "",
@@ -57,233 +70,156 @@ export default function KYCDashboard() {
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const isVerificationAllowed = () => {
-    return !user || user.status.toUpperCase() === "PENDING";
-  };
+  // Modified to ensure non-empty IDs
+  const convertToUserKYC = useCallback(
+    (userInfo: KycBackendResponse, index: number): UserKYC => {
+      const getOrDefault = (value?: string, fallback = ""): string =>
+        value ?? fallback;
+      const normalizeStatus = (status?: string): KycStatus =>
+        (status?.toUpperCase() ?? "PENDING") as KycStatus;
 
-  const getStatusMessage = () => {
-    if (user) {
-      if (user.status.toUpperCase() === "APPROVED") {
-        return "Already Approved";
-      } else if (user.status.toUpperCase() === "REJECTED") {
-        return "Cannot Modify Rejected KYC";
-      }
-    }
-    return "Not Available";
-  };
+      // Ensure ID is never empty
+      const id =
+        userInfo.id ??
+        userInfo.documentUniqueId ??
+        `user-${index}-${Date.now()}`;
 
-  // Handle search functionality
-  // Define an interface for the backend response
-  interface KycBackendResponse {
-    id?: string;
-    documentUniqueId?: string;
-    accountId?: string;
-    idNumber?: string;
-    expirationDate?: string;
-    location?: string;
-    email?: string;
-    status?: string;
-    frontID?: string;
-    backID?: string;
-    selfie?: string;
-    taxDocument?: string;
-  }
+      return {
+        id,
+        accountId: getOrDefault(userInfo.accountId),
+        docNumber: getOrDefault(userInfo.idNumber, userInfo.documentUniqueId),
+        expirationDate: getOrDefault(userInfo.expirationDate),
+        location: getOrDefault(userInfo.location),
+        email: getOrDefault(userInfo.email),
+        status: normalizeStatus(userInfo.status),
+        frontID: getOrDefault(userInfo.frontID),
+        backID: getOrDefault(userInfo.backID),
+        selfie: getOrDefault(userInfo.selfie),
+        taxDocument: getOrDefault(userInfo.taxDocument),
+      };
+    },
+    [],
+  );
 
-  // Extract validation logic to a separate function
-  const validateSearchInput = () => {
-    if (!accountCert) {
-      toast.error("Authentication required");
-      return false;
-    }
-    if (!searchTerm.trim()) {
-      toast.error("Please enter a document number");
-      return false;
-    }
-    return true;
-  };
+  const fetchPendingUsers = useCallback(async () => {
+    if (!accountCert) return;
 
-  // Extract the user data processing logic with proper typing
-  const getOrDefault = (value?: string, fallback: string = "") =>
-    value ?? fallback;
-
-  const normalizeStatus = (status?: string): KycStatus => {
-    return (status?.toUpperCase() ?? "PENDING") as KycStatus;
-  };
-
-  const getDocNumber = (userInfo: KycBackendResponse) =>
-    getOrDefault(userInfo.idNumber, userInfo.documentUniqueId ?? "");
-
-  const processUserInfo = (userInfo: KycBackendResponse) => {
-    const status = normalizeStatus(userInfo.status);
-
-    const processedUser: UserKYC = {
-      id: getOrDefault(userInfo.id, userInfo.documentUniqueId),
-      accountId: getOrDefault(userInfo.accountId),
-      docNumber: getDocNumber(userInfo),
-      expirationDate: getOrDefault(userInfo.expirationDate),
-      location: getOrDefault(userInfo.location),
-      email: getOrDefault(userInfo.email),
-      status,
-      frontID: getOrDefault(userInfo.frontID),
-      backID: getOrDefault(userInfo.backID),
-      selfie: getOrDefault(userInfo.selfie),
-      taxDocument: getOrDefault(userInfo.taxDocument),
-    };
-
-    setUser(processedUser);
-
-    setFormData({
-      accountId: getOrDefault(userInfo.accountId),
-      docNumber: status === "PENDING" ? "" : getDocNumber(userInfo),
-      expirationDate:
-        status === "PENDING" ? "" : getOrDefault(userInfo.expirationDate),
-    });
-  };
-
-  // Handle empty search results
-  const handleEmptyResults = () => {
-    toast.info("No records found. Starting new verification");
-    setFormData({ ...formData, docNumber: searchTerm });
-  };
-
-  // Main search function with reduced complexity
-  const handleSearch = async () => {
     try {
       setLoading(true);
-      setUser(null);
-
-      if (!validateSearchInput()) {
-        return;
-      }
-
-      const response = await RequestToGetKycRecordsBySearch(
-        searchTerm,
-        accountCert,
-      );
-      console.log("Backend Response:", response);
-
+      const response = await RequestToGetPendingKycRecords(accountCert);
       const parsedInfo = Array.isArray(response)
         ? (response as KycBackendResponse[])
         : (JSON.parse(response || "[]") as KycBackendResponse[]);
 
-      if (parsedInfo.length === 0) {
-        handleEmptyResults();
-        return;
-      }
-
-      processUserInfo(parsedInfo[0]);
+      // Added index parameter for unique key generation
+      setPendingUsers(
+        parsedInfo.map((info, index) => convertToUserKYC(info, index)),
+      );
     } catch (error) {
-      toast.error("Search failed. Please try again");
-      console.error(error);
+      toast.error("Failed to load pending KYC records");
+      console.error("Error fetching KYC records:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [accountCert, convertToUserKYC]);
 
-  // Handle verification/update functionality
+  useEffect(() => {
+    if (accountCert) {
+      fetchPendingUsers();
+    }
+  }, [accountCert, fetchPendingUsers]);
+
   const handleVerification = async (
     e: React.FormEvent,
-    status: "APPROVED" | "REJECTED",
-  ) => {
+    status: KycStatus,
+  ): Promise<void> => {
     e.preventDefault();
 
-    if (!isFormValid(status)) return;
-    if (!accountCert) return showAuthError();
+    if (!user || !accountCert) {
+      toast.error("Invalid verification request");
+      return;
+    }
 
     try {
-      if (user) {
-        const backendResponse = await updateKyc(user, status);
-        if (backendResponse.startsWith("Failed"))
-          return showMismatchError(status);
-
-        updateUserState(status);
-        toast.success(`KYC ${status.toLowerCase()} successfully`);
-      } else {
-        initializeNewUser();
-        toast.success("Verification initiated");
-      }
-      resetView();
-    } catch (error) {
-      toast.error(
-        `${status === "APPROVED" ? "Verification" : "Rejection"} failed`,
+      const response = await RequestToUpdateKycStatus(
+        user.accountId,
+        formData.docNumber || user.docNumber,
+        formData.expirationDate || user.expirationDate,
+        status,
+        accountCert,
       );
-      console.error(error);
-    }
-  };
 
-  const isFormValid = (status: "APPROVED" | "REJECTED") => {
-    if (status === "APPROVED") {
-      const isValid =
-        formData.accountId && formData.docNumber && formData.expirationDate;
-      if (!isValid) {
-        toast.error("Please complete all fields for approval");
-        return false;
+      if (
+        response &&
+        typeof response === "string" &&
+        response.startsWith("Failed")
+      ) {
+        toast.error(`${status} failed: User identity mismatch`);
+        return;
       }
+
+      await fetchPendingUsers();
+      setUser(null);
+      toast.success(`KYC ${status.toLowerCase()} successfully`);
+    } catch (error) {
+      toast.error(`${status} failed: Server error`);
+      console.error("Verification error:", error);
     }
-    return true;
   };
 
-  const showAuthError = () => {
-    toast.error("Authentication required");
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
   };
 
-  const updateKyc = async (user: UserKYC, status: "APPROVED" | "REJECTED") => {
-    return await RequestToUpdateKycStatus(
-      user.accountId,
-      formData.docNumber || user.docNumber,
-      formData.expirationDate || user.expirationDate,
-      status,
-      accountCert,
+  const renderPendingList = (): JSX.Element => {
+    if (loading) {
+      return (
+        <div className="text-center text-gray-500">
+          Loading pending requests...
+        </div>
+      );
+    }
+
+    if (pendingUsers.length === 0) {
+      return (
+        <div className="text-center text-gray-500">
+          No pending verifications
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        {pendingUsers.map((user) => (
+          <div
+            key={
+              user.id ||
+              `user-${user.accountId}-${Math.random().toString(36).substring(2, 9)}`
+            }
+            className="flex justify-between items-center p-4
+              border rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <div>
+              <p className="text-sm text-gray-600">
+                AccountId: {user.accountId}
+              </p>
+            </div>
+            <button
+              onClick={() => setUser(user)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-full
+                hover:bg-blue-700 transition-colors"
+              type="button"
+            >
+              Review
+            </button>
+          </div>
+        ))}
+      </div>
     );
-  };
-
-  const showMismatchError = (status: "APPROVED" | "REJECTED") => {
-    toast.error(
-      `${status === "APPROVED" ? "Verification" : "Rejection"} failed, user identity mismatch`,
-    );
-  };
-
-  const updateUserState = (status: "APPROVED" | "REJECTED") => {
-    setUser((prev) =>
-      prev
-        ? {
-            ...prev,
-            docNumber:
-              status === "APPROVED" ? formData.docNumber : prev.docNumber,
-            expirationDate:
-              status === "APPROVED"
-                ? formData.expirationDate
-                : prev.expirationDate,
-            status: status,
-          }
-        : null,
-    );
-  };
-
-  const initializeNewUser = () => {
-    const newUser: UserKYC = {
-      id: formData.docNumber,
-      ...formData,
-      location: "",
-      email: "",
-      status: "PENDING",
-      frontID: "",
-      backID: "",
-      selfie: "",
-      taxDocument: "",
-    };
-    setUser(newUser);
-  };
-
-  // Reset the form and view
-  const resetView = () => {
-    setUser(null);
-    setSearchTerm("");
-    setFormData({
-      accountId: "",
-      docNumber: "",
-      expirationDate: "",
-    });
   };
 
   return (
@@ -291,7 +227,8 @@ export default function KYCDashboard() {
       <button
         onClick={() => navigate("/dashboard")}
         className="p-2 rounded-full hover:bg-gray-100 transition"
-        aria-label="Close form"
+        aria-label="Back to dashboard"
+        type="button"
       >
         <FiArrowLeft className="w-6 h-6 text-gray-600" />
       </button>
@@ -304,38 +241,14 @@ export default function KYCDashboard() {
           KYC Verification
         </h1>
 
-        {/* Search Section */}
-        {!user && (
+        {!user ? (
           <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
-              <input
-                type="text"
-                placeholder="Enter Document Number"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-6 py-4 border-2 border-gray-200 rounded-full 
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 
-                  placeholder-gray-400 text-lg transition"
-              />
-              <button
-                onClick={handleSearch}
-                disabled={loading}
-                className="w-full md:w-auto px-8 py-4 bg-blue-600 
-                  text-white rounded-full hover:bg-blue-700 
-                  transition-all mt-4 md:mt-0 shadow-md 
-                  disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                {loading ? "Searching..." : "Search"}
-              </button>
-            </div>
-            <p className="text-center text-gray-600 mt-4">
-              Enter a document number to verify or start new verification
-            </p>
+            <h2 className="text-xl font-semibold mb-6">
+              Pending Verifications
+            </h2>
+            {renderPendingList()}
           </div>
-        )}
-
-        {/* User Details and Form Section */}
-        {user && (
+        ) : (
           <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -344,49 +257,45 @@ export default function KYCDashboard() {
                 </h2>
                 <span
                   className={`px-4 py-2 rounded-full text-sm font-medium 
-      ${getStatusClass(user.status)} transition-all`}
+                  ${getStatusClass(user.status)}`}
                 >
-                  {user.status.toUpperCase()}
+                  {user.status}
                 </span>
               </div>
               <button
-                onClick={resetView}
+                onClick={() => setUser(null)}
                 className="p-2 rounded-full hover:bg-gray-100 transition"
-                aria-label="Close form"
+                type="button"
+                aria-label="Back to list"
               >
                 <FiArrowLeft className="w-6 h-6 text-gray-600" />
               </button>
             </div>
 
-            {/* Display User Information */}
+            <p className="text-gray-700">
+              We found the following info for this customer. To proceed, please
+              re‑enter their Document Number and Expiration Date for
+              verification.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 border rounded-lg bg-blue-50">
+                <p className="text-sm text-gray-600">Location</p>
+                <p className="mt-1 font-medium text-gray-900">
+                  {user.location}
+                </p>
+              </div>
+              <div className="p-4 border rounded-lg bg-blue-50">
+                <p className="text-sm text-gray-600">Email</p>
+                <p className="mt-1 font-medium text-gray-900">{user.email}</p>
+              </div>
+            </div>
+
             <form
               onSubmit={(e) => handleVerification(e, "APPROVED")}
               className="space-y-6"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="col-span-full md:col-span-1">
-                  <label
-                    htmlFor="accountId"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Account ID
-                  </label>
-                  <input
-                    id="accountId"
-                    value={formData.accountId}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        accountId: e.target.value,
-                      }))
-                    }
-                    placeholder="Enter account ID"
-                    className="w-full px-6 py-4 border-2 border-gray-200 
-                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
-                      placeholder-gray-400 disabled:bg-gray-100 transition"
-                    disabled
-                  />
-                </div>
                 <div>
                   <label
                     htmlFor="docNumber"
@@ -396,19 +305,14 @@ export default function KYCDashboard() {
                   </label>
                   <input
                     id="docNumber"
+                    type="text"
                     value={formData.docNumber}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        docNumber: e.target.value,
-                      }))
-                    }
+                    onChange={handleInputChange}
                     placeholder="Enter document number"
-                    className="w-full px-6 py-4 border-2 border-gray-200 
-                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    className="w-full px-6 py-4 border-2 border-gray-200
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500
                       placeholder-gray-400 transition"
                     required
-                    disabled={!isVerificationAllowed()}
                   />
                 </div>
                 <div>
@@ -422,117 +326,79 @@ export default function KYCDashboard() {
                     id="expirationDate"
                     type="date"
                     value={formData.expirationDate}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        expirationDate: e.target.value,
-                      }))
-                    }
-                    className="w-full px-6 py-4 border-2 border-gray-200 
-                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    onChange={handleInputChange}
+                    className="w-full px-6 py-4 border-2 border-gray-200
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500
                       placeholder-gray-400 transition"
                     required
-                    disabled={!isVerificationAllowed()}
                   />
                 </div>
               </div>
 
-              {/* Display Email and Location */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800">
-                  Additional Information
-                </h3>
-                <div>
-                  <div className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                  </div>
-                  <p className="text-gray-800">
-                    {user.email || "Not provided"}
-                  </p>
-                </div>
-                <div>
-                  <div className="block text-sm font-medium text-gray-700 mb-2">
-                    Location
-                  </div>
-                  <p className="text-gray-800">
-                    {user.location || "Not provided"}
-                  </p>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Add unique keys to documents grid elements */}
+                <DocumentCard
+                  key="front-id"
+                  title="Front ID"
+                  url={user.frontID}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  key="back-id"
+                  title="Back ID"
+                  url={user.backID}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  key="selfie"
+                  title="Selfie"
+                  url={user.selfie}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  key="tax-doc"
+                  title="Tax Document"
+                  url={user.taxDocument}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
               </div>
 
-              {/* Display Documents */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800">Documents</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <DocumentCard
-                    title="Front ID"
-                    url={user.frontID}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                  <DocumentCard
-                    title="Back ID"
-                    url={user.backID}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                  <DocumentCard
-                    title="Selfie"
-                    url={user.selfie}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                  <DocumentCard
-                    title="Tax Document"
-                    url={user.taxDocument}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                </div>
-              </div>
-
-              {/* Action Buttons */}
               <div className="flex justify-end space-x-4">
-                {isVerificationAllowed() ? (
+                {user.status === "PENDING" ? (
                   <>
                     <button
                       type="button"
                       onClick={(e) => handleVerification(e, "REJECTED")}
                       className="px-10 py-4 bg-rose-600 text-white rounded-full 
-                        hover:bg-rose-700 transition-all shadow-lg 
-                        focus:outline-none focus:ring-2 focus:ring-rose-500 
-                        focus:ring-offset-2"
+                        hover:bg-rose-700 transition-colors"
                     >
                       Reject
                     </button>
                     <button
-                      type="button"
-                      onClick={(e) => handleVerification(e, "APPROVED")}
+                      type="submit"
                       className="px-10 py-4 bg-blue-600 text-white rounded-full 
-                        hover:bg-blue-700 transition-all shadow-lg 
-                        focus:outline-none focus:ring-2 focus:ring-blue-500 
-                        focus:ring-offset-2"
+                        hover:bg-blue-700 transition-colors"
                     >
                       Approve
                     </button>
                   </>
                 ) : (
-                  <div
-                    className="px-10 py-4 bg-gray-300 text-white rounded-full 
-                    shadow-lg cursor-not-allowed"
-                  >
-                    {getStatusMessage()}
-                  </div>
+                  <div className="px-10 py-4 bg-gray-300 text-white rounded-full"></div>
                 )}
               </div>
             </form>
           </div>
         )}
+
+        <ImageModal
+          selectedImage={selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
       </div>
-      <ImageModal
-        selectedImage={selectedImage}
-        onClose={() => setSelectedImage(null)}
-      />
     </div>
   );
 }
