@@ -113,7 +113,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
               icon={faEllipsisVertical}
               className="text-lg text-gray-500"
             />
-            <span className="text-xs mt-1 text-gray-500">Menu</span>
+            <span className="text-xs mt-1 text-gray-500">Services</span>
           </button>
         </div>
       </div>

@@ -87,10 +87,10 @@ export default function OtpInput({
     <div className="max-w-md  bg-white px-4 sm:px-8 py-10 ">
       {showHeader && (
         <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">OTP Verification</h1>
+          <h1 className="text-3xl font-bold mb-2">Verify code</h1>
           <p className="text-[15px]">
-            Enter the 4-digit verification code that was sent to your phone
-            number.
+            Enter the 5-digit verification code that was sent to you via
+            whatsapp.
           </p>
         </header>
       )}

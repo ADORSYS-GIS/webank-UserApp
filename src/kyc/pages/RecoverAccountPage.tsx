@@ -47,15 +47,26 @@ const RecoverAccountPage: React.FC = () => {
 
   const handleTokenSubmit = async () => {
     try {
+      // Validate token input
+      if (!token.trim()) {
+        toast.error("Please enter a valid recovery token.");
+        return;
+      }
+
       if (!accountId || !accountCert) {
         toast.error("Account information is missing.");
         return;
       }
+
+      // Call the API to submit the recovery token
       data = await RequestToSubmitRecoveryToken(accountId, token, accountCert);
       console.log(data, "response");
-      oldAccountId = data.split(" ")[0];
-      kycCert = data.split(" ")[1];
 
+      // Parse the response
+      oldAccountId = data?.split(" ")[0];
+      kycCert = data?.split(" ")[1];
+
+      // Check for invalid or missing response values
       const isInvalidToken = (value: string | null | undefined): boolean =>
         value === "null" || !value;
 
@@ -64,17 +75,15 @@ const RecoverAccountPage: React.FC = () => {
         return;
       }
 
+      // Update state and localStorage with valid data
       localStorage.setItem("accountId", oldAccountId);
       localStorage.setItem("kycCert", kycCert);
       dispatch(setKycCert(kycCert));
       dispatch(setAccountId(oldAccountId));
 
-      if (data) {
-        setShowTokenInput(false);
-        setShowConfirmation(true);
-      } else {
-        toast.error("Invalid token. Please try again.");
-      }
+      // Proceed to the next step
+      setShowTokenInput(false);
+      setShowConfirmation(true);
     } catch (error) {
       console.error("Error submitting token:", error);
       toast.error("An error occurred. Please try again.");

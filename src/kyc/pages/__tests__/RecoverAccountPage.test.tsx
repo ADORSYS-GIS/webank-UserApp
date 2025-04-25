@@ -11,9 +11,7 @@ describe("RecoverAccountPage", () => {
   test("renders Recover Account page and handles KYC recovery", () => {
     render(
       <Provider store={store}>
-        <Router
-          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-        >
+        <Router>
           <RecoverAccountPage />
         </Router>
       </Provider>,
@@ -46,9 +44,7 @@ describe("RecoverAccountPage", () => {
   test("handles token submission", async () => {
     render(
       <Provider store={store}>
-        <Router
-          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-        >
+        <Router>
           <RecoverAccountPage />
         </Router>
       </Provider>,

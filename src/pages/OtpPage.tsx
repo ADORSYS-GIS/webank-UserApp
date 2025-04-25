@@ -47,7 +47,7 @@ const Otp = () => {
     }
   };
 
-  const handleverifyClick = async () => {
+  const handleVerifyClick = async () => {
     try {
       if (!otpHash || !fullPhoneNumber) {
         toast.info("Required data is missing!");
@@ -95,7 +95,7 @@ const Otp = () => {
           toast.error("Account registration failed");
         }
       } else {
-        toast.error("Invalid OTP");
+        toast.error("The code is invalid", { duration: 5000 });
       }
     } catch (error) {
       console.error("Error during OTP validation:", error);
@@ -122,22 +122,22 @@ const Otp = () => {
         <OtpInput value={otp} valueLength={5} onChange={setOtp} />
 
         <button
-          onClick={handleverifyClick}
+          onClick={handleVerifyClick}
           className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md..."
         >
-          Verify Account
+          Verify code
         </button>
 
         <div className="flex flex-col items-center space-y-3">
-          <p className="text-xs sm:text-sm font-normal text-gray-700 text-center">
-            Resend OTP in{" "}
+          <p className="text-xs sm:text-sm font-normal text-gray-700 text-center mt-4">
+            Resend code in{" "}
             <span className="font-semibold">
               {minutes.toString().padStart(2, "0")}:
               {seconds.toString().padStart(2, "0")}
             </span>
           </p>
           <p className="text-xs sm:text-sm text-gray-700">
-            Didn't receive the OTP?{" "}
+            Didn't receive the code?{" "}
             <button
               type="button"
               disabled={minutes > 0 || seconds > 0}
@@ -150,7 +150,7 @@ const Otp = () => {
                 if (minutes === 0 && seconds === 0) handleResendOTP();
               }}
             >
-              Resend OTP
+              Resend
             </button>
           </p>
         </div>
