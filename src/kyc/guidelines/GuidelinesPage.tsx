@@ -6,6 +6,7 @@ import {
   FaShareAlt,
   FaCheckCircle,
   FaArrowLeft,
+  FaLightbulb,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -24,10 +25,15 @@ interface MarkdownListProps extends React.HTMLAttributes<HTMLUListElement> {
   children?: ReactNode;
 }
 
+interface MarkdownParagraphProps
+  extends React.HTMLAttributes<HTMLParagraphElement> {
+  children?: ReactNode;
+}
+
 // Custom Heading Components with Accessibility Fixes
 const MarkdownH1: React.FC<MarkdownHeadingProps> = ({ children, ...props }) => (
   <h1
-    className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 text-center"
+    className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center font-inter tracking-tight"
     {...props}
   >
     {children || "Untitled"} {/* Fallback content for accessibility */}
@@ -40,17 +46,32 @@ const MarkdownH2: React.FC<MarkdownHeadingProps> = ({ children, ...props }) => {
 
   return (
     <h2
-      className="text-xl md:text-2xl font-semibold text-gray-800 mt-8 mb-4 flex items-center"
+      className="text-xl md:text-2xl font-semibold text-gray-800 mt-10 mb-5 flex items-center font-inter tracking-tight"
       {...props}
     >
       {typeof firstChild === "string" && firstChild.startsWith("Step 1") && (
-        <FaCamera className="mr-2 text-teal-600" aria-hidden="true" />
+        <FaCamera
+          className="mr-3 text-blue-600 text-xl flex-shrink-0"
+          aria-hidden="true"
+        />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Step 2") && (
-        <FaShareAlt className="mr-2 text-teal-600" aria-hidden="true" />
+        <FaShareAlt
+          className="mr-3 text-blue-600 text-xl flex-shrink-0"
+          aria-hidden="true"
+        />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Step 3") && (
-        <FaCheckCircle className="mr-2 text-teal-600" aria-hidden="true" />
+        <FaCheckCircle
+          className="mr-3 text-blue-600 text-xl flex-shrink-0"
+          aria-hidden="true"
+        />
+      )}
+      {typeof firstChild === "string" && firstChild.startsWith("Pro Tips") && (
+        <FaLightbulb
+          className="mr-3 text-amber-500 text-xl flex-shrink-0"
+          aria-hidden="true"
+        />
       )}
       {children || "Untitled"} {/* Fallback content for accessibility */}
     </h2>
@@ -58,18 +79,38 @@ const MarkdownH2: React.FC<MarkdownHeadingProps> = ({ children, ...props }) => {
 };
 
 const MarkdownUl: React.FC<MarkdownListProps> = (props) => (
-  <ul className="list-disc list-inside space-y-3 text-gray-700" {...props} />
+  <ul
+    className="list-disc list-outside pl-6 space-y-3 text-gray-700 font-inter"
+    {...props}
+  />
+);
+
+const MarkdownP: React.FC<MarkdownParagraphProps> = ({
+  children,
+  ...props
+}) => (
+  <p
+    className="text-base md:text-lg text-gray-700 mb-4 font-inter leading-relaxed"
+    {...props}
+  >
+    {children}
+  </p>
 );
 
 const MarkdownImg: React.FC<MarkdownImageProps> = (props) => (
   <div className="flex justify-center my-6">
     <img
       {...props}
-      className="rounded-lg shadow-md"
+      className="rounded-xl shadow-md"
       style={{ maxWidth: "100%", height: "auto", width: "70%" }}
       alt={props.alt ?? "Instruction Image"}
+      loading="lazy"
     />
   </div>
+);
+
+const MarkdownHr: React.FC = () => (
+  <hr className="my-8 border-t border-gray-200" />
 );
 
 const GuidelinesPage: React.FC = () => {
@@ -140,43 +181,51 @@ const GuidelinesPage: React.FC = () => {
     h2: MarkdownH2,
     ul: MarkdownUl,
     img: MarkdownImg,
+    p: MarkdownP,
+    hr: MarkdownHr,
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-8 px-4 md:px-6">
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-2xl p-8 md:p-12 transition-all duration-300">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center py-6 px-4 md:px-6 font-inter">
+      <div className="w-full max-w-3xl bg-white shadow-xl rounded-2xl p-6 md:p-10 transition-all duration-300">
         <button
           onClick={handleBack}
-          className="flex items-center space-x-2 text-gray-700 hover:text-teal-600 transition duration-200 mb-6"
+          className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition duration-200 mb-6"
           aria-label="Go back"
         >
-          <FaArrowLeft className="h-5 w-5" aria-hidden="true" />
-          <span className="text-lg font-medium">Back</span>
+          <FaArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <span className="text-base font-medium">Back</span>
         </button>
 
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 flex items-center justify-center">
-            <FaCheckCircle className="mr-3 text-teal-600" aria-hidden="true" />{" "}
-            Upload Guide
+        <div className="text-center mb-8 md:mb-10">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center justify-center mb-4 tracking-tight">
+            <FaCheckCircle
+              className="mr-3 text-blue-600 flex-shrink-0"
+              aria-hidden="true"
+            />{" "}
+            Document Upload Guide
           </h1>
-          <p className="mt-4 text-gray-600 text-lg md:text-xl">
+          <div className="w-16 h-1 bg-blue-600 mx-auto mb-6 rounded-full"></div>
+          <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
             Welcome! This guide will help you upload your documents securely and
-            efficiently. Follow these steps for a smooth process.
+            efficiently. Follow these steps for a smooth verification process.
           </p>
         </div>
 
-        <div className="prose prose-md text-gray-800 space-y-8 mx-auto">
+        <div className="prose prose-md max-w-none text-gray-800 space-y-6 mx-auto">
           <ReactMarkdown components={markdownComponents}>
             {guidelines}
           </ReactMarkdown>
         </div>
 
-        <button
-          onClick={handleAdvance}
-          className="mt-10 w-full bg-teal-600 text-white text-lg font-bold py-4 rounded-xl hover:bg-teal-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-        >
-          Advance
-        </button>
+        <div className="mt-10 md:mt-12 flex justify-center">
+          <button
+            onClick={handleAdvance}
+            className="w-full max-w-sm bg-blue-600 text-white text-base font-semibold py-4 rounded-xl hover:bg-blue-700 transition duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center"
+          >
+            <span>Continue to Document Upload</span>
+          </button>
+        </div>
       </div>
     </div>
   );

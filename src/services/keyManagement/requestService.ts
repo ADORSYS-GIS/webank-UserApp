@@ -229,6 +229,7 @@ export async function RequestToTopup(
   clientAccountId: string,
   amount: number,
   agentAccountId: string,
+  accountCert: string | null,
   kycCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
@@ -240,7 +241,7 @@ export async function RequestToTopup(
     publicKey,
     null,
     null,
-    null,
+    accountCert,
     null,
     kycCert,
     null,

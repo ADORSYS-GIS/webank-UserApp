@@ -1,21 +1,23 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
 } from "../services/keyManagement/requestService";
-import Header from "../components/Header1";
+import Header from "../components/Header1"; // Import the new Header component
 import BalanceCard from "../components/BalanceCard";
 import TransactionsSection from "../components/TransactionsSection";
 import ActionButtons from "../components/ActionButtons";
-import Sidebar from "../components/SideBar";
+import BottomNavigation from "../components/BottomNavigation";
+import BottomSheet from "../components/SideBar";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
+import { useLocation } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
-  // Sidebar toggle state
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Bottom sheet state
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Other states
   const [balanceVisible, setBalanceVisible] = useState(false);
@@ -24,17 +26,24 @@ const Dashboard: React.FC = () => {
   const [transactionsData, setTransactionsData] = useState<any[]>([]);
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
+
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const location = useLocation();
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
 
-  // const accountCert = location.state?.accountCert;
-
-  // Toggle sidebar
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
+  // Toggle menu
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    // Check if we're returning from AgentPage with instructions to reopen the BottomSheet
+    if (location.state?.reopenBottomSheet) {
+      setIsMenuOpen(true);
+    }
+  }, [location]);
 
   // View balance function
   const viewBalance = async () => {
@@ -51,6 +60,7 @@ const Dashboard: React.FC = () => {
       setBalance(fetchedBalance);
       setBalanceVisible(true);
     } catch (error) {
+      console.error("Error retrieving balance:", error);
       toast.error("Failed to retrieve balance. Please try again.");
     }
   };
@@ -85,44 +95,44 @@ const Dashboard: React.FC = () => {
       setTransactionsData(transactions);
       setTransactionsVisible(true);
     } catch (error) {
+      console.error("Error loading transactions:", error);
       toast.error("Failed to load transactions.");
     } finally {
       setLoadingTransactions(false);
     }
   };
 
-  return (
-    <div className="relative flex h-screen overflow-hidden">
-      {/* Sidebar overlay using a native button for accessibility */}
-      {isSidebarOpen && (
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          className="fixed inset-0 z-30 bg-black opacity-50 focus:outline-none"
-          aria-label="Close sidebar overlay"
-        />
-      )}
+  // Handler for notification clicks
+  const handleNotificationClick = () => {
+    toast.info("Notifications feature coming soon!");
+  };
 
-      {/* Sidebar panel */}
-      <div
-        className={`fixed z-40 inset-y-0 left-0 transform transition-transform duration-300 
-          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-          md:translate-x-0 md:static md:inset-auto md:transform-none`}
-      >
-        <Sidebar accountCert={accountCert!} accountId={accountId!} />
-      </div>
+  // Handler for about clicks
+  const handleAboutClick = () => {
+    toast.info("About page coming soon!");
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-white">
+      {/* Header placement */}
+      <Header
+        onNotificationClick={handleNotificationClick}
+        onAboutClick={handleAboutClick}
+      />
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        <Header onHamburgerClick={toggleSidebar} />
-        <main className="flex-1 p-6 bg-gray-50 text-gray-800 overflow-auto">
+      <div className="flex-1 overflow-auto pb-16 ">
+        <div className="p-4">
           <BalanceCard
             balanceVisible={balanceVisible}
             balance={balance}
             viewBalance={viewBalance}
-            accountId={accountId!}
+            accountId={accountId ?? ""}
           />
-          <ActionButtons accountId={accountId!} accountCert={accountCert!} />
+          <ActionButtons
+            accountId={accountId ?? ""}
+            accountCert={accountCert ?? ""}
+          />
           <TransactionsSection
             transactionsData={transactionsData}
             transactionsVisible={transactionsVisible}
@@ -130,9 +140,23 @@ const Dashboard: React.FC = () => {
             fetchTransactions={fetchTransactions}
             loadingTransactions={loadingTransactions}
           />
-        </main>
+        </div>
       </div>
-      <ToastContainer />
+
+      {/* Bottom Navigation */}
+      <BottomNavigation
+        accountId={accountId ?? ""}
+        accountCert={accountCert ?? ""}
+        toggleMenu={toggleMenu}
+      />
+
+      {/* Bottom Sheet Menu */}
+      <BottomSheet
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        accountId={accountId ?? ""}
+        accountCert={accountCert ?? ""}
+      />
     </div>
   );
 };

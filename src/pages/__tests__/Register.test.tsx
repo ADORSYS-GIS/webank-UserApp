@@ -12,7 +12,7 @@ import {
   afterEach,
   afterAll,
 } from "vitest";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 
 // Mock global objects and methods
 global.alert = vi.fn();
@@ -46,12 +46,7 @@ describe("Register component", () => {
   });
 
   const renderWithRouter = (component: React.ReactNode) => {
-    return render(
-      <MemoryRouter>
-        {component}
-        <ToastContainer />
-      </MemoryRouter>,
-    );
+    return render(<MemoryRouter>{component}</MemoryRouter>);
   };
 
   it("sends OTP on button click", async () => {
@@ -64,7 +59,7 @@ describe("Register component", () => {
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
-    fireEvent.click(getByText("Send OTP"));
+    fireEvent.click(getByText("Verify phone number"));
 
     await waitFor(() => {
       expect(RequestToSendOTP).toHaveBeenCalledWith(
@@ -87,7 +82,7 @@ describe("Register component", () => {
     fireEvent.change(phoneNumberInput, {
       target: { value: "788475847587458" },
     });
-    fireEvent.click(getByText("Send OTP"));
+    fireEvent.click(getByText("Verify phone number"));
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
@@ -106,7 +101,7 @@ describe("Register component", () => {
     fireEvent.change(getByPlaceholderText("Phone number"), {
       target: { value: "657040277" },
     });
-    fireEvent.click(getByText("Send OTP"));
+    fireEvent.click(getByText("Verify phone number"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(

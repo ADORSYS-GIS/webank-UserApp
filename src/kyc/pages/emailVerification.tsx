@@ -4,7 +4,9 @@ import useDisableScroll from "../../hooks/useDisableScroll";
 import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const InputEmail: React.FC = () => {
   useDisableScroll();
@@ -47,20 +49,10 @@ const InputEmail: React.FC = () => {
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Go Back"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
+            <FontAwesomeIcon
+              icon={faArrowLeft}
               className="h-6 w-6 text-gray-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
+            />
           </button>
           <h2 className="text-lg font-semibold text-gray-800">
             Email Verification
@@ -93,37 +85,26 @@ const InputEmail: React.FC = () => {
               <input
                 type="email"
                 placeholder="name@example.com"
-                className="w-full p-3 pl-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] focus:outline-none transition-all"
+                className="w-full p-3 pl-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <svg
+              <FontAwesomeIcon
+                icon={faEnvelope}
                 className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
+              />
             </div>
           </div>
 
           {/* Proceed Button */}
           <button
-            className="w-full py-3.5 bg-gradient-to-r from-[#20B2AA] to-[#1C8C8A] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-95"
+            className="w-full py-3.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-95"
             onClick={handleProceed}
           >
             Send Verification Code
           </button>
         </div>
       </main>
-
-      <ToastContainer />
     </div>
   );
 };

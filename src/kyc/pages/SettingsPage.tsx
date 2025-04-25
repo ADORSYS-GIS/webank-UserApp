@@ -1,14 +1,15 @@
 import React from "react";
+import { FaArrowLeft, FaUser } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  FaLifeRing,
-  FaEnvelope,
-  FaChevronRight,
-  FaUser,
-  FaExclamationCircle,
-  FaCheckCircle,
-  FaArrowLeft,
-} from "react-icons/fa";
-import { IconType } from "react-icons";
+  faLifeRing,
+  faEnvelope,
+  faChevronRight,
+  faExclamationCircle,
+  faCheckCircle,
+  faShieldAlt,
+  faKey,
+} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
@@ -16,17 +17,20 @@ import { RootState } from "../../store/Store";
 interface MenuItemProps {
   title: string;
   description: string;
-  Icon: IconType;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: any;
   onClick: () => void;
   disabled?: boolean;
+  iconType?: "fa" | "react"; // To determine icon type
 }
 
 const MenuItem: React.FC<MenuItemProps> = ({
   title,
   description,
-  Icon,
+  icon,
   onClick,
   disabled = false,
+  iconType = "fa",
 }) => {
   return (
     <button
@@ -34,30 +38,31 @@ const MenuItem: React.FC<MenuItemProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={`flex justify-between items-center py-4 px-4 w-full text-left 
-                border-b border-gray-100 last:border-b-0 transition-all duration-200
-                ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 active:bg-gray-100"}
+                border-b border-black-100 last:border-b-0 transition-all duration-200
+                ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-black-50 active:bg-black-100"}
                 focus:outline-none`}
     >
       <div className="flex items-center">
         <div
           className={`w-12 h-12 rounded-lg flex items-center justify-center 
-                      mr-4 transition-all duration-200
-                      ${disabled ? "bg-gray-300" : "bg-[#20B2AA] hover:shadow-md group-hover:bg-[#1a9e98]"}
-                      text-white`}
+                    mr-4 transition-all duration-200
+                    ${disabled ? "bg-blue-200 text-blue-500" : "bg-blue-100 text-blue-500"}
+                    `}
         >
-          <Icon size={20} />
+          {iconType === "fa" ? (
+            <FontAwesomeIcon icon={icon} size="lg" />
+          ) : (
+            icon({ size: 20 })
+          )}
         </div>
         <div>
-          <p className="font-medium text-gray-800">{title}</p>
-          <p className="text-sm text-gray-500 mt-1">{description}</p>
+          <p className="font-medium text-black-800">{title}</p>
+          <p className="text-sm text-black-500 mt-1">{description}</p>
         </div>
       </div>
       {!disabled && (
-        <div
-          className="text-gray-300 transition-transform duration-200 
-                    group-hover:translate-x-1"
-        >
-          <FaChevronRight />
+        <div className="text-black-400">
+          <FontAwesomeIcon icon={faChevronRight} />
         </div>
       )}
     </button>
@@ -84,25 +89,30 @@ const SettingsPage: React.FC = () => {
     navigate("/dashboard");
   };
 
+  const handleSecureAccount = () => {
+    navigate("/kyc");
+  };
+
+  const handleRecoverAccount = () => {
+    navigate("/recoverAccount");
+  };
+
   return (
-    <div
-      className="bg-[#f8fcfc] min-h-screen"
-      style={{ fontFamily: "'Poppins', sans-serif" }}
-    >
+    <div className="bg-black-50 min-h-screen">
       <div className="max-w-xl mx-auto pb-6">
-        <div className="pt-6 px-4 flex items-center">
+        <div className="pt-6 px-4 flex items-center mb-4">
           <button
             onClick={handleBack}
-            className="p-2 rounded-full hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200"
+            className="p-2 rounded-full hover:bg-black-200 active:bg-black-300 transition-colors duration-200"
             aria-label="Go back"
           >
-            <FaArrowLeft className="text-gray-700" />
+            <FaArrowLeft className="text-black-700" />
           </button>
           <div className="flex-1 ml-2">
-            <h1 className="text-2xl font-bold text-center text-gray-800 mb-1">
-              <span className="border-b-2 border-[#20B2AA] pb-1">Settings</span>
+            <h1 className="text-xl font-semibold text-center text-black-800">
+              Settings
             </h1>
-            <p className="text-center text-[#20B2AA]">
+            <p className="text-center text-sm text-black-500">
               Manage your account preferences
             </p>
           </div>
@@ -110,24 +120,33 @@ const SettingsPage: React.FC = () => {
         </div>
 
         <div className="mx-4 my-6">
-          <div
-            className="bg-white rounded-xl shadow-sm p-4 flex items-center 
-                        hover:shadow-md transition-shadow duration-200"
-          >
-            <div className="w-16 h-16 bg-[#20B2AA] rounded-lg flex items-center justify-center text-white mr-4">
+          <div className="bg-white rounded-lg shadow-sm p-4 flex items-center">
+            <div className="w-16 h-16 bg-blue-100 text-blue-500 rounded-lg flex items-center justify-center mr-4">
               <FaUser size={24} />
             </div>
             <div>
+              <h2 className="font-medium text-black-800">Your Account</h2>
               <div className="flex items-center mt-1">
                 {emailStatus === "APPROVED" ? (
-                  <FaCheckCircle className="text-green-500 mr-2" size={14} />
+                  <FontAwesomeIcon
+                    icon={faCheckCircle}
+                    className="text-blue-500 mr-2"
+                    size="sm"
+                  />
                 ) : (
-                  <FaExclamationCircle
+                  <FontAwesomeIcon
+                    icon={faExclamationCircle}
                     className="text-amber-500 mr-2"
-                    size={14}
+                    size="sm"
                   />
                 )}
-                <p className="text-sm text-gray-600">
+                <p
+                  className={`text-sm ${
+                    emailStatus === "APPROVED"
+                      ? "text-blue-500"
+                      : "text-gray-600"
+                  }`}
+                >
                   {emailStatus === "APPROVED"
                     ? "Email Verified"
                     : "Email Not Verified"}
@@ -137,18 +156,30 @@ const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mx-4 bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="mx-4 bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="group">
             <MenuItem
-              Icon={FaLifeRing}
+              icon={faShieldAlt}
+              title="Secure your account"
+              description="Complete your account verification"
+              onClick={handleSecureAccount}
+              iconType="fa"
+            />
+          </div>
+
+          <div className="group">
+            <MenuItem
+              icon={faLifeRing}
               title="Help & Support"
               description="Chat with our team for assistance"
               onClick={handleSupportClick}
+              iconType="fa"
             />
           </div>
+
           <div className="group">
             <MenuItem
-              Icon={FaEnvelope}
+              icon={faEnvelope}
               title="Email verification"
               description={
                 emailStatus === "APPROVED"
@@ -157,6 +188,17 @@ const SettingsPage: React.FC = () => {
               }
               onClick={() => navigate("/inputEmail")}
               disabled={emailStatus === "APPROVED"}
+              iconType="fa"
+            />
+          </div>
+
+          <div className="group">
+            <MenuItem
+              icon={faKey}
+              title="Recover your account"
+              description="Restore access to your account"
+              onClick={handleRecoverAccount}
+              iconType="fa"
             />
           </div>
         </div>

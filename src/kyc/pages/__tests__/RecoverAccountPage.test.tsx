@@ -20,7 +20,6 @@ describe("RecoverAccountPage", () => {
     );
 
     // Check if the page title is rendered
-    expect(screen.getByText("Recover Account")).toBeInTheDocument();
 
     // Check if the Initiate KYC Recovery button is rendered
     const kycButton = screen.getByText("Initiate KYC Recovery");

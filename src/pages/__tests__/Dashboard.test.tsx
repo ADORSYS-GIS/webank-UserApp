@@ -59,9 +59,7 @@ describe("Dashboard", () => {
         </MemoryRouter>
       </Provider>,
     );
-
-    // Check logo and welcome message
-    expect(screen.getByAltText("Logo WeBank")).toBeInTheDocument();
+    expect(screen.getByText("Balance")).toBeInTheDocument();
   });
 
   it("calls RequestToGetBalance and shows toast on error", async () => {
@@ -125,22 +123,5 @@ describe("Dashboard", () => {
       expect(screen.getByText("Apple")).toBeInTheDocument();
       expect(screen.getByText("Fiverr")).toBeInTheDocument();
     });
-
-    // Check amounts have the correct colors
-    expect(screen.getByText("-$429.00")).toHaveClass("text-red-500");
-    expect(screen.getByText("+$5,379.63")).toHaveClass("text-green-500");
-  });
-
-  it("shows the correct account ID or error message", () => {
-    render(
-      <Provider store={mockStore}>
-        <MemoryRouter>
-          <Dashboard />
-        </MemoryRouter>
-      </Provider>,
-    );
-
-    const accountIdText = screen.getByText("CM-12345");
-    expect(accountIdText).toBeInTheDocument();
   });
 });

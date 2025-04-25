@@ -3,7 +3,7 @@ import {
   RequestToTopup,
   RequestToWithdrawOffline,
 } from "../services/keyManagement/requestService";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
@@ -76,6 +76,7 @@ const ConfirmationPage: React.FC = () => {
           clientAccountId,
           amount,
           agentAccountId,
+          accountCert,
           kycCert,
         );
         if (response?.includes("Success")) {
@@ -140,7 +141,7 @@ const ConfirmationPage: React.FC = () => {
             Account ID
           </p>
           <p className="text-xl font-semibold text-gray-800 break-all">
-            {clientAccountId || "Default Account ID"}
+            {clientAccountId ?? "Default Account ID"}
           </p>
         </div>
 
@@ -176,7 +177,6 @@ const ConfirmationPage: React.FC = () => {
           </button>
         </div>
       </div>
-      <ToastContainer />
     </div>
   );
 };
