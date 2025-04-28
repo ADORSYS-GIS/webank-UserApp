@@ -38,6 +38,7 @@ import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 import BottomNavigation from "./components/BottomNavigation";
 import { useEffect, useState } from "react";
 import BottomSheet from "./components/SideBar.tsx";
+import AccountLoadingPage from "./pages/AccountLoadingPage";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -72,6 +73,7 @@ const App: React.FC = () => {
         {/* Main Content Routes */}
         <Routes>
           <Route path="/" element={homePageElement} />
+          <Route path="/loading" element={<AccountLoadingPage />} />
           <Route path="/otp" element={<OtpPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/register" element={<Register />} />

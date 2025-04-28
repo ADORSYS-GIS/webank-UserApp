@@ -7,6 +7,7 @@ interface AccountState {
   documentStatus: "PENDING" | null;
   kycCert: string | null;
   emailStatus: "APPROVED" | null; // Add email status
+  phoneStatus: "APPROVED" | null;
 }
 
 const persistedState = localStorage.getItem("accountState")
@@ -18,6 +19,7 @@ const persistedState = localStorage.getItem("accountState")
       documentStatus: null,
       kycCert: null,
       emailStatus: null,
+      phoneStatus: null,
     };
 
 const initialState: AccountState = persistedState;
@@ -54,6 +56,10 @@ const accountSlice = createSlice({
       state.emailStatus = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },
+    setPhoneStatus: (state, action: PayloadAction<"APPROVED">) => {
+      state.phoneStatus = action.payload;
+      localStorage.setItem("accountState", JSON.stringify(state));
+    },
     clearAccount: (state) => {
       state.accountId = null;
       state.accountCert = null;
@@ -61,6 +67,7 @@ const accountSlice = createSlice({
       state.documentStatus = null;
       state.kycCert = null;
       state.emailStatus = null;
+      state.phoneStatus = null;
       localStorage.removeItem("accountState");
     },
   },
@@ -73,7 +80,8 @@ export const {
   setDocumentStatus,
   setKycCert,
   clearAccount,
-  setEmailStatus, // Export new action
+  setEmailStatus,
+  setPhoneStatus,
 } = accountSlice.actions;
 
 export default accountSlice.reducer;
