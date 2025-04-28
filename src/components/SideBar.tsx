@@ -29,6 +29,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const menuItems = [
     {
+      id: "teller services",
       icon: faMoneyCheckAlt,
       label: "Teller Services",
       onClick: () =>
@@ -41,6 +42,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }),
     },
     {
+      id: "kyc verification",
       icon: faShieldAlt,
       label: "KYC Verification",
       onClick: () =>
@@ -53,6 +55,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }),
     },
     {
+      id: "account recovery",
       icon: faIdCard,
       label: "KYC Recovery Agency",
       onClick: () =>
@@ -72,10 +75,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   return (
     <>
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+      {/* Replaced <div> with <button> for better accessibility */}
+      <button
+        className="fixed inset-0 bg-black bg-opacity-50 z-40 cursor-default"
         onClick={onClose}
-      ></div>
+      ></button>
       <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-lg shadow-lg z-50 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold">Services</h2>

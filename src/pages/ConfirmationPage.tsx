@@ -158,15 +158,15 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 z-50">
-      <div 
-        className={`bg-white w-full rounded-t-3xl transform transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}
-        style={{ maxHeight: '85vh' }}
+      <div
+        className={`bg-white w-full rounded-t-3xl transform transition-transform duration-300 ease-in-out ${isVisible ? "translate-y-0" : "translate-y-full"}`}
+        style={{ maxHeight: "85vh" }}
       >
         {/* Pull indicator */}
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
         </div>
-        
+
         <div className="px-6 pt-4 pb-8">
           <div className="flex flex-col items-center mb-6">
             <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center mb-4">

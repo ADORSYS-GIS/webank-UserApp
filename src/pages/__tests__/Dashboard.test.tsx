@@ -59,8 +59,7 @@ describe("Dashboard", () => {
         </MemoryRouter>
       </Provider>,
     );
-
-    // Check logo and welcome message
+    expect(screen.getByText("Balance")).toBeInTheDocument();
   });
 
   it("calls RequestToGetBalance and shows toast on error", async () => {

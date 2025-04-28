@@ -11,12 +11,11 @@ import {
   SharedContentDisplay,
   SharedContent,
 } from "../components/share-handler";
-import KYCSubmissionCompleted from "../components/share-handler/KYCSubmissionCompleted"; 
+import KYCSubmissionCompleted from "../components/share-handler/KYCSubmissionCompleted";
 
 import jsQR from "jsqr";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../store/Store";
-
 
 export default function ShareHandlerPage() {
   const [sharedData, setSharedData] = useState<SharedContent | null>(null);
@@ -24,7 +23,9 @@ export default function ShareHandlerPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   // Get documentStatus from Redux store
-  const documentStatus = useSelector((state: RootState) => state.account.documentStatus);
+  const documentStatus = useSelector(
+    (state: RootState) => state.account.documentStatus,
+  );
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | undefined = undefined;
@@ -138,7 +139,10 @@ export default function ShareHandlerPage() {
       return new Blob([blob], { type });
     };
 
-    const isQRCode = async (file: { base64?: string; type: string }): Promise<boolean> => {
+    const isQRCode = async (file: {
+      base64?: string;
+      type: string;
+    }): Promise<boolean> => {
       try {
         if (!file.base64 || !file.type.startsWith("image/")) {
           return false;
@@ -147,9 +151,9 @@ export default function ShareHandlerPage() {
         // Load the image
         const img = new Image();
         const loadPromise = new Promise((resolve, reject) => {
-          img.onload = resolve;
+          img.onload = () => resolve(undefined);
           img.onerror = reject;
-          img.src = file.base64;
+          img.src = file.base64 || "";
         });
         await loadPromise;
 
@@ -210,9 +214,9 @@ export default function ShareHandlerPage() {
             if (isQR) {
               console.log("QR code detected, redirecting to /qr-scan");
               navigate("/qr-scan", {
-                state: { 
+                state: {
                   sharedImage: files[0].base64,
-                  show: "Transfer" // or "Payment" depending on the context
+                  show: "Transfer", // or "Payment" depending on the context
                 },
               });
               return;
@@ -251,7 +255,7 @@ export default function ShareHandlerPage() {
       if (timeoutId) clearTimeout(timeoutId);
       navigator.serviceWorker?.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [navigate]);
 
   const blobToBase64 = (blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {

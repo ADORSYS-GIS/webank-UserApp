@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import WebankLogo from "../assets/Webank.png";
+// prettier-ignore
+import WebankLogo from "/Webank.png"; //NOSONAR
 import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
@@ -68,6 +69,8 @@ const Register = ({ initialShowSpinner = true }) => {
       return;
     }
 
+    localStorage.setItem("phoneNumber", phoneNumber);
+
     setIsLoading(true);
     try {
       const otpHash = await RequestToSendOTP(fullPhoneNumber, devCert);
@@ -119,7 +122,7 @@ const Register = ({ initialShowSpinner = true }) => {
           Register for a bank account
         </h1>
         <p className="text-gray-500 lg:text-lg">
-          Please enter your phone number
+          Please enter your whatsapp phone number
         </p>
       </div>
 
@@ -129,7 +132,7 @@ const Register = ({ initialShowSpinner = true }) => {
         </label>
         <div className="flex mt-2 items-center">
           <div className="relative w-1/3">
-            <div
+            <button
               className="flex items-center justify-between cursor-pointer border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={toggleDropdown}
               style={{ height: "48px" }}
@@ -143,7 +146,7 @@ const Register = ({ initialShowSpinner = true }) => {
                 <span>{selectedCountry?.value}</span>
               </div>
               <span className="material-icons"></span>
-            </div>
+            </button>
 
             {isOpen && (
               <div className="absolute z-10 w-full bg-white border rounded-lg shadow-lg mt-1 max-h-64 overflow-auto">
@@ -155,7 +158,7 @@ const Register = ({ initialShowSpinner = true }) => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {countryOptions.map((option) => (
-                  <div
+                  <button
                     key={option.value}
                     className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
                     onClick={() => handleCountryChange(option)}
@@ -164,7 +167,7 @@ const Register = ({ initialShowSpinner = true }) => {
                     <span>
                       {option.label} ({option.value})
                     </span>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}

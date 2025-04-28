@@ -30,32 +30,33 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
   setTransactionsVisible,
   loadingTransactions,
 }) => {
-  const buttonText = loadingTransactions ? (
-    <>
-      <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
-      Loading...
-    </>
-  ) : transactionsVisible ? (
-    <span className="flex items-center text-blue-500">
-      <FontAwesomeIcon icon={faEyeSlash} className="mr-2" />
-      Hide
-    </span>
-  ) : (
-    <span className="flex items-center text-blue-500">
-      View All
-      <FontAwesomeIcon icon={faChevronRight} className="ml-1" />
-    </span>
-  );
+  const getButtonText = () => {
+    if (loadingTransactions) {
+      return (
+        <>
+          <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />
+          Loading...
+        </>
+      );
+    }
 
-  // const formatDateTime = (timestamp: number) => {
-  //   return new Date(timestamp).toLocaleString("en-US", {
-  //     day: "numeric",
-  //     month: "short",
-  //     year: "numeric",
-  //     hour: "2-digit",
-  //     minute: "2-digit",
-  //   });
-  // };
+    if (transactionsVisible) {
+      return (
+        <span className="flex items-center text-blue-500">
+          <FontAwesomeIcon icon={faEyeSlash} className="mr-2" />
+          Hide
+        </span>
+      );
+    }
+
+    return (
+      <span className="flex items-center text-blue-500">
+        View All
+        <FontAwesomeIcon icon={faChevronRight} className="ml-1" />
+      </span>
+    );
+  };
+  const buttonText = getButtonText();
 
   const formatAmount = (amount: string) => {
     const isNegative = amount.startsWith("-");
@@ -63,19 +64,20 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
     return `${isNegative ? "-" : ""}XAF ${numericValue}`;
   };
 
+  // Function to handle toggling visibility
+  const toggleVisibility = () => {
+    if (!transactionsVisible) {
+      fetchTransactions(); // Fetch transactions only when showing the list
+    }
+    setTransactionsVisible(!transactionsVisible); // Toggle visibility
+  };
+
   return (
     <div className="bg-white rounded-lg p-4 ">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-gray-700 font-medium text-lg">Payment History</h3>
         <button
-          onClick={() => {
-            if (transactionsVisible) {
-              setTransactionsVisible(false);
-            } else {
-              fetchTransactions();
-              setTransactionsVisible(true);
-            }
-          }}
+          onClick={toggleVisibility} // Use the toggleVisibility function
           className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
           disabled={loadingTransactions}
         >

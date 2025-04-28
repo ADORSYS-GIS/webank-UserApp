@@ -140,7 +140,7 @@ const TopUpPage: React.FC = () => {
 
       {/* Conditionally render the confirmation bottom sheet */}
       {showConfirmation && (
-        <ConfirmationBottomSheet 
+        <ConfirmationBottomSheet
           data={confirmationData}
           onDismiss={handleConfirmationDismiss}
         />

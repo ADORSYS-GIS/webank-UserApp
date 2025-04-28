@@ -8,7 +8,7 @@ const app = express();
 
 // Polyfill for dirname in ES modules
 const filename = fileURLToPath(import.meta.url);
-const dirname = dirname(filename);
+const currentDir = dirname(filename);
 
 // Use compression for better performance
 app.use(compression());
@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Serve static files from "dist"
-app.use(express.static(path.resolve(dirname, 'dist')));
+app.use(express.static(path.resolve(currentDir, 'dist')));
 
 // POST handler for Web Share Target API
 app.post('/share-handler', (req, res) => {
@@ -33,11 +33,11 @@ app.post('/share-handler', (req, res) => {
 
 // Handle SPA routes
 app.get('*', (req, res) => {
-  res.sendFile(path.resolve(dirname, 'dist', 'index.html'));
+  res.sendFile(path.resolve(currentDir, 'dist', 'index.html'));
 });
 
 // Start server
 const PORT = process.env.PORT || 5173;
 app.listen(PORT, () => {
-  console.log(✅ Server running at http://localhost:${PORT});
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });

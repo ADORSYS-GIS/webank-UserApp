@@ -161,8 +161,12 @@ const QRScannerPage: React.FC = () => {
           const result = await qrScanner.scanFile(file, false);
           handleDecodedText(result);
         } catch (err) {
-          setError("Failed to read QR code from shared image. Please try again.");
-          toast.error("Invalid QR code in shared image. Try scanning manually.");
+          setError(
+            "Failed to read QR code from shared image. Please try again.",
+          );
+          toast.error(
+            "Invalid QR code in shared image. Try scanning manually.",
+          );
         }
       };
 

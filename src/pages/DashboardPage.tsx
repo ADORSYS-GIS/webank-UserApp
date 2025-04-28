@@ -5,7 +5,7 @@ import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
 } from "../services/keyManagement/requestService";
-import Header1 from "../components/Header1"; 
+import Header1 from "../components/Header1";
 import BalanceCard from "../components/BalanceCard";
 import TransactionsSection from "../components/TransactionsSection";
 import ActionButtons from "../components/ActionButtons";
@@ -49,6 +49,7 @@ const Dashboard: React.FC = () => {
       setBalance(fetchedBalance);
       setBalanceVisible(true);
     } catch (error) {
+      console.error("Error retrieving balance:", error);
       toast.error("Failed to retrieve balance. Please try again.");
     }
   };
@@ -83,6 +84,7 @@ const Dashboard: React.FC = () => {
       setTransactionsData(transactions);
       setTransactionsVisible(true);
     } catch (error) {
+      console.error("Error loading transactions:", error);
       toast.error("Failed to load transactions.");
     } finally {
       setLoadingTransactions(false);
@@ -103,7 +105,6 @@ const Dashboard: React.FC = () => {
     <div className="flex flex-col h-screen bg-white">
       {/* Header placement - Pass the toggleMenu function as onServiceMenuClick */}
       <Header1
-        username="We-Users"
         onNotificationClick={handleNotificationClick}
         onAboutClick={handleAboutClick}
         onServiceMenuClick={toggleMenu} // Add this line to connect header user icon to the sidebar
@@ -116,11 +117,11 @@ const Dashboard: React.FC = () => {
             balanceVisible={balanceVisible}
             balance={balance}
             viewBalance={viewBalance}
-            accountId={accountId || ""}
+            accountId={accountId ?? ""}
           />
           <ActionButtons
-            accountId={accountId || ""}
-            accountCert={accountCert || ""}
+            accountId={accountId ?? ""}
+            accountCert={accountCert ?? ""}
           />
           <TransactionsSection
             transactionsData={transactionsData}
@@ -134,8 +135,8 @@ const Dashboard: React.FC = () => {
 
       {/* Bottom Navigation */}
       <BottomNavigation
-        accountId={accountId || ""}
-        accountCert={accountCert || ""}
+        accountId={accountId ?? ""}
+        accountCert={accountCert ?? ""}
         toggleMenu={toggleMenu}
       />
 
@@ -143,8 +144,8 @@ const Dashboard: React.FC = () => {
       <BottomSheet
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
-        accountId={accountId || ""}
-        accountCert={accountCert || ""}
+        accountId={accountId ?? ""}
+        accountCert={accountCert ?? ""}
       />
     </div>
   );

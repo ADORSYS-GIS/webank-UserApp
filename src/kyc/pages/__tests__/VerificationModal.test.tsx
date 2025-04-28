@@ -43,7 +43,11 @@ describe("VerificationModal", () => {
       </MemoryRouter>,
     );
 
+    // Simulate a click on the close button
     fireEvent.click(screen.getByText("×"));
+
+    // Assert that the onCloseMock function was called
+    expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 
   it("navigates to ID card verification on click", () => {
