@@ -64,8 +64,8 @@ const Otp = () => {
         const phoneCert = response.split("generated: ")[1];
 
         const accountCreationResponse = await RequestToCreateBankAccount(
-          fullPhoneNumber,
-          devCert,
+          //fullPhoneNumber,
+          //devCert,
           phoneCert,
         );
 
