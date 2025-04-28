@@ -38,6 +38,7 @@ import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 import BottomNavigation from "./components/BottomNavigation";
 import { useEffect, useState } from "react";
 import BottomSheet from "./components/SideBar.tsx";
+import Layout from "./components/Layout";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -64,7 +65,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <>
+    <Layout>
       <KycCertChecker />
       <Header />
       {/* Content wrapper with bottom padding when navigation is visible */}
@@ -144,7 +145,7 @@ const App: React.FC = () => {
             "px-4 py-3 rounded-lg text-sm shadow-sm w-full animation-slideDown",
         }}
       />
-    </>
+    </Layout>
   );
 };
 

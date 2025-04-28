@@ -75,12 +75,15 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 
   return (
     <>
-      {/* Replaced <div> with <button> for better accessibility */}
+      {/* Backdrop */}
       <button
         className="fixed inset-0 bg-black bg-opacity-50 z-40 cursor-default"
         onClick={onClose}
-      ></button>
-      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-lg shadow-lg z-50 max-h-[90vh] overflow-y-auto">
+        style={{ border: "none", padding: 0 }}
+      />
+
+      {/* Sidebar Content */}
+      <div className="fixed bottom-0 left-0 right-0 md:left-auto md:right-auto md:w-[750px] md:mx-auto bg-white rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out transform">
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold">Services</h2>
           <button

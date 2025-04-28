@@ -37,7 +37,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-end justify-center">
       <div
-        className={`bg-white rounded-t-2xl w-full max-w-md transform transition-transform duration-300 ease-in-out ${
+        className={`bg-white rounded-t-2xl w-full md:w-[550px] md:mx-auto transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-y-0" : "translate-y-full"
         }`}
         style={{ maxHeight: "90vh" }}
