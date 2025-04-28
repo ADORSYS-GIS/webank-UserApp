@@ -16,16 +16,15 @@ import {
   verifyEmailCode,
   storeKYCInfo,
   getUserLocation,
-  getKycRecords,
   UpdateKycStatus,
   getKycCert,
   submitRecoveryToken,
   recoverAccountCert,
-  GetKycRecordsBySearch,
+  GetKycRecordsByStatusPending,
   requestToGetRecoveryToken,
   verifyRecoveryFields,
   storeKycDocument,
-  getKycDocuments,
+  GetKycRecordsBySearch,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -451,14 +450,11 @@ export async function RequestToStoreKycDocument(
   );
 }
 
-export async function RequestToGetKycDocuments(
-  accountId: string,
-  accountCert?: string | null,
+export async function RequestToGetPendingKycRecords(
+  accountCert: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
-
   Key = JSON.stringify(publicKey);
-
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
@@ -467,33 +463,10 @@ export async function RequestToGetKycDocuments(
     accountCert,
     null,
     null,
-    null,
-    accountId,
   );
+
   console.log(jwtToken + "Account Cert!!!");
-  return await getKycDocuments(accountId, jwtToken);
-}
-
-// Function to get otps for phonenumbers
-export async function RequestToGetKycRecords(
-  accountCert?: string | null,
-): Promise<string> {
-  const { publicKey, privateKey } = await KeyManagement();
-
-  Key = JSON.stringify(publicKey);
-
-  const jwtToken = await generateJWT(
-    privateKey,
-    publicKey,
-    null,
-    null,
-    accountCert,
-    null,
-    null,
-    null,
-  );
-  console.log(jwtToken + "Account Cert!!!");
-  return await getKycRecords(jwtToken);
+  return await GetKycRecordsByStatusPending(jwtToken);
 }
 
 export async function RequestToGetKycRecordsBySearch(
@@ -508,6 +481,7 @@ export async function RequestToGetKycRecordsBySearch(
     null,
     null,
     accountCert,
+    null,
     null,
     null,
     docNumber,
