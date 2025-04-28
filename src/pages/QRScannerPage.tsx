@@ -5,11 +5,24 @@ import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
+import ConfirmationBottomSheet from "./ConfirmationPage";
+
+interface ConfirmationData {
+  amount: number;
+  clientAccountId: string;
+  agentAccountId: string;
+  agentAccountCert: string;
+  transactionJwt?: string;
+  show: string;
+}
 
 const QRScannerPage: React.FC = () => {
   useDisableScroll();
   const [amount, setAmount] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationData, setConfirmationData] =
+    useState<ConfirmationData | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,6 +48,10 @@ const QRScannerPage: React.FC = () => {
         console.error("Error stopping scanner:", err);
       }
     }
+  };
+
+  const handleConfirmationDismiss = () => {
+    setShowConfirmation(false);
   };
 
   // Process the decoded QR code immediately
@@ -63,16 +80,20 @@ const QRScannerPage: React.FC = () => {
           const isOfflineTransaction = "signature" in data;
           const signature = data.signature;
 
-          navigate("/confirmation", {
-            state: {
+          // Instead of navigating, show the confirmation bottom sheet
+          if (agentAccountId && agentAccountCert) {
+            setConfirmationData({
               amount: data.amount,
               clientAccountId: data.accountId,
               agentAccountId,
               agentAccountCert,
               ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
-              show,
-            },
-          });
+              show: show || "",
+            });
+            setShowConfirmation(true);
+          } else {
+            toast.error("Missing account information. Please try again.");
+          }
         } else if (show === "Transfer" || show === "Payment") {
           setError(null);
           stopScanner();
@@ -236,6 +257,14 @@ const QRScannerPage: React.FC = () => {
         )}
         {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
+
+      {/* Confirmation Bottom Sheet */}
+      {showConfirmation && confirmationData && (
+        <ConfirmationBottomSheet
+          data={confirmationData}
+          onDismiss={handleConfirmationDismiss}
+        />
+      )}
     </div>
   );
 };
