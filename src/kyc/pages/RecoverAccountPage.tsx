@@ -189,36 +189,38 @@ const RecoverAccountPage: React.FC = () => {
       {/* Token Input Bottom Sheet */}
       {showTokenInput && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex flex-col items-end justify-end transition-opacity duration-300">
-          <div className="w-full bg-white rounded-t-2xl p-6 shadow-lg z-50 transform transition-transform duration-300 animate-slide-up">
-            <div className="flex justify-center mb-2">
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
-            </div>
-            <div className="text-center mb-6">
-              <h2 className="text-xl font-bold">Enter Recovery Token</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                  placeholder="Recovery Token"
-                />
+          <div className="w-full md:max-w-[650px] md:mx-auto">
+            <div className="w-full bg-white rounded-t-2xl p-6 shadow-lg z-50 transform transition-transform duration-300 animate-slide-up">
+              <div className="flex justify-center mb-2">
+                <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
               </div>
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => setShowTokenInput(false)}
-                  className="flex-1 py-3 bg-gray-200 text-gray-800 font-medium rounded-xl hover:bg-gray-300 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleTokenSubmit}
-                  className="flex-1 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
-                >
-                  Submit
-                </button>
+              <div className="text-center mb-6">
+                <h2 className="text-xl font-bold">Enter Recovery Token</h2>
+              </div>
+              <div className="space-y-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={token}
+                    onChange={(e) => setToken(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    placeholder="Recovery Token"
+                  />
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setShowTokenInput(false)}
+                    className="flex-1 py-3 bg-gray-200 text-gray-800 font-medium rounded-xl hover:bg-gray-300 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleTokenSubmit}
+                    className="flex-1 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
+                  >
+                    Submit
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -228,35 +230,37 @@ const RecoverAccountPage: React.FC = () => {
       {/* Confirmation Bottom Sheet */}
       {showConfirmation && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex flex-col items-end justify-end transition-opacity duration-300">
-          <div className="w-full bg-white rounded-t-2xl p-6 shadow-lg z-50 transform transition-transform duration-300 animate-slide-up">
-            <div className="flex justify-center mb-2">
-              <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
-            </div>
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FontAwesomeIcon
-                  icon={faCheck}
-                  className="text-blue-500 text-2xl"
-                />
+          <div className="w-full md:max-w-[650px] md:mx-auto">
+            <div className="w-full bg-white rounded-t-2xl p-6 shadow-lg z-50 transform transition-transform duration-300 animate-slide-up">
+              <div className="flex justify-center mb-2">
+                <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
               </div>
-              <h2 className="text-xl font-bold">Confirm Recovery</h2>
-              <p className="text-gray-600 mt-2">
-                Are you sure you want to recover this account?
-              </p>
-            </div>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => setShowConfirmation(false)}
-                className="flex-1 py-3 bg-gray-200 text-gray-800 font-medium rounded-xl hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleYesClick}
-                className="flex-1 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
-              >
-                Confirm
-              </button>
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FontAwesomeIcon
+                    icon={faCheck}
+                    className="text-blue-500 text-2xl"
+                  />
+                </div>
+                <h2 className="text-xl font-bold">Confirm Recovery</h2>
+                <p className="text-gray-600 mt-2">
+                  Are you sure you want to recover this account?
+                </p>
+              </div>
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowConfirmation(false)}
+                  className="flex-1 py-3 bg-gray-200 text-gray-800 font-medium rounded-xl hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleYesClick}
+                  className="flex-1 py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
+                >
+                  Confirm
+                </button>
+              </div>
             </div>
           </div>
         </div>
