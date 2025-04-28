@@ -123,10 +123,10 @@ describe("API Functions", () => {
   it("should call createBankAccount API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { accountCreated: true } });
 
-    const result = await createBankAccount("publicKeyXYZ", mockJwt);
+    const result = await createBankAccount(mockJwt);
     expect(mockPost).toHaveBeenCalledWith(
       expect.stringContaining("/registration"),
-      { publicKey: "publicKeyXYZ" },
+      {},
       {
         headers: expect.objectContaining({
           Authorization: `Bearer ${mockJwt}`,
@@ -139,9 +139,7 @@ describe("API Functions", () => {
   it("should handle createBankAccount API failure", async () => {
     mockPost.mockRejectedValueOnce(new Error("API Error"));
 
-    await expect(createBankAccount("publicKeyXYZ", mockJwt)).rejects.toThrow(
-      "Incorrect OTP",
-    );
+    await expect(createBankAccount(mockJwt)).rejects.toThrow("Incorrect OTP");
   });
 
   it("should call getTransactionHistory API correctly", async () => {

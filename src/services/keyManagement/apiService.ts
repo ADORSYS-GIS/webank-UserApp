@@ -124,14 +124,10 @@ export const validateOTP = async (
   }
 };
 
-export const createBankAccount = async (
-  publicKey: string,
-  jwtToken: string,
-) => {
+export const createBankAccount = async (jwtToken: string) => {
   // Create the request object with both phone number and public key
-  const requestBody = {
-    publicKey: publicKey,
-  };
+  const requestBody = {};
+
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,

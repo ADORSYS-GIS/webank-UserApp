@@ -165,10 +165,9 @@ export async function RequestToCreateBankAccount(
     null,
     null,
     null,
-    Key,
   );
 
-  return await createBankAccount(Key, jwtToken);
+  return await createBankAccount(jwtToken);
 }
 
 export async function RequestToGetBalance(
