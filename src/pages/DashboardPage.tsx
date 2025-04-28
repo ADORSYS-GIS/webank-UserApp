@@ -13,8 +13,10 @@ import BottomNavigation from "../components/BottomNavigation";
 import BottomSheet from "../components/SideBar";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   // Bottom sheet state
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -98,7 +100,7 @@ const Dashboard: React.FC = () => {
 
   // Handler for about clicks
   const handleAboutClick = () => {
-    toast.info("About page coming soon!");
+    navigate("/about");
   };
 
   return (

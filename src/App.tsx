@@ -4,6 +4,7 @@ import { RootState } from "./store/Store";
 import Register from "./pages/RegisterPage";
 import OtpPage from "./pages/OtpPage";
 import DashboardPage from "./pages/DashboardPage";
+import AboutPage from "./pages/AboutPage";
 import Header from "./components/Header";
 import "./App.css";
 import QRScannerPage from "./pages/QRScannerPage";
@@ -72,6 +73,7 @@ const App: React.FC = () => {
         {/* Main Content Routes */}
         <Routes>
           <Route path="/" element={homePageElement} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/otp" element={<OtpPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/register" element={<Register />} />
