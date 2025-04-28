@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
       <Header1
         onNotificationClick={handleNotificationClick}
         onAboutClick={handleAboutClick}
-        onServiceMenuClick={toggleMenu} // Add this line to connect header user icon to the sidebar
+        onServiceMenuClick={toggleMenu} 
       />
 
       {/* Main content */}

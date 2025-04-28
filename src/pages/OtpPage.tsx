@@ -86,7 +86,7 @@ const Otp = () => {
 
           setTimeout(
             () =>
-              navigate("/dashboard", {
+              navigate("/onboarding", {
                 state: { accountId, accountCert },
               }),
             2000,

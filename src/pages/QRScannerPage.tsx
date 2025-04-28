@@ -41,9 +41,14 @@ const QRScannerPage: React.FC = () => {
   const handleDecodedText = useCallback(
     (decodedText: string) => {
       try {
+        console.log("Decoded QR data:", decodedText);
         const data = JSON.parse(decodedText);
+        console.log("Parsed QR data:", data);
+        console.log("Current show value:", show);
+
         if (data.accountId && data.amount && data.timeGenerated) {
-          setAmount(data.amount.toString());
+          console.log("Processing payment/transfer QR code");
+          setAmount((data.amount).toString());
           setError(null);
           stopScanner();
 
@@ -74,6 +79,7 @@ const QRScannerPage: React.FC = () => {
             },
           });
         } else if (show === "Transfer" || show === "Payment") {
+          console.log("Processing top-up QR code");
           setError(null);
           stopScanner();
           if (data.accountId === agentAccountId) {
@@ -89,9 +95,11 @@ const QRScannerPage: React.FC = () => {
             },
           });
         } else {
+          console.log("Invalid QR code format");
           throw new Error("Invalid QR Code format.");
         }
       } catch (err) {
+        console.error("Error processing QR code:", err);
         setError("Failed to read QR code. Please try again.");
         toast.error("Invalid QR code. Try again.");
       }
@@ -161,12 +169,8 @@ const QRScannerPage: React.FC = () => {
           const result = await qrScanner.scanFile(file, false);
           handleDecodedText(result);
         } catch (err) {
-          setError(
-            "Failed to read QR code from shared image. Please try again.",
-          );
-          toast.error(
-            "Invalid QR code in shared image. Try scanning manually.",
-          );
+          setError("Failed to read QR code from shared image. Please try again.");
+          toast.error("Invalid QR code in shared image. Try scanning manually.");
         }
       };
 

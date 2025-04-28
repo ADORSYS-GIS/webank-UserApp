@@ -38,6 +38,7 @@ import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 import BottomNavigation from "./components/BottomNavigation";
 import { useEffect, useState } from "react";
 import BottomSheet from "./components/SideBar.tsx";
+import OnboardingFlow from './components/OnboardingFlow';
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -75,6 +76,7 @@ const App: React.FC = () => {
           <Route path="/otp" element={<OtpPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/qr-scan" element={<QRScannerPage />} />
           <Route path="/agent" element={<AgentPage />} />
           <Route path="/share-handler" element={<ShareHandlerPage />} />
@@ -120,8 +122,8 @@ const App: React.FC = () => {
         </Routes>
       </div>
 
-      {/* Bottom Navigation */}
-      {accountId && (
+      {/* Bottom Navigation - Only show on dashboard and related pages */}
+      {accountId && !['/onboarding', '/register', '/otp'].includes(location.pathname) && (
         <BottomNavigation
           accountId={accountId || ""}
           accountCert={accountCert || ""}
