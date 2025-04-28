@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useInitialization from "../hooks/useInitialization.ts";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
+import AccountLoadingPage from "./AccountLoadingPage";
 
 type CountryOption = {
   value: string;
@@ -26,14 +27,13 @@ const Register = ({ initialShowSpinner = true }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner); // Start with spinner active
+  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner);
 
-  // ✅ Call the hook at the top level
   const { devCert, error } = useInitialization();
 
   useEffect(() => {
     if (devCert || error) {
-      setShowSpinner(false); // Hide spinner after initialization completes
+      setShowSpinner(false);
     }
   }, [devCert, error]);
 
@@ -90,23 +90,9 @@ const Register = ({ initialShowSpinner = true }) => {
       setIsLoading(false);
     }
   };
+
   if (showSpinner) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">
-        <h1 className="text-2xl lg:text-3xl font-bold text-gray-700 text-center px-4">
-          Please wait while we initiate the bank account process. <br />
-          This might take some time...
-        </h1>
-        <div className="relative flex items-center justify-center">
-          <div className="animate-spin rounded-full h-40 w-40 border-t-4 border-b-4 border-purple-500"></div>
-          <img
-            src="https://www.svgrepo.com/show/509001/avatar-thinking-9.svg"
-            alt="Thinking Avatar"
-            className="absolute rounded-full h-28 w-28"
-          />
-        </div>
-      </div>
-    );
+    return <AccountLoadingPage />;
   }
 
   return (
