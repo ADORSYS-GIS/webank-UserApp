@@ -5,7 +5,7 @@ const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    navigate("/register");
+    navigate("/loading");
   };
 
   return (
