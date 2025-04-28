@@ -174,17 +174,17 @@ const DocumentImages = () => {
       {/* Submit Button */}
       <button
         onClick={() => {
-          // if (
-          //   !images.frontID ||
-          //   !images.backID ||
-          //   !images.selfieID ||
-          //   !images.taxDoc
-          // ) {
-          //   toast.warning(
-          //     "Please upload all required documents before submitting.",
-          //   );
-          //   return;
-          // }
+          if (
+            !images.frontID ||
+            !images.backID ||
+            !images.selfieID ||
+            !images.taxDoc
+          ) {
+            toast.warning(
+              "Please upload all required documents before submitting.",
+            );
+            return;
+          }
           handleSubmitDocuments();
         }}
         className="self-center"

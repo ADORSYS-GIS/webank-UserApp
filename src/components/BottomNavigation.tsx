@@ -1,3 +1,4 @@
+//NO
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -5,24 +6,25 @@ import {
   faHome,
   faQrcode,
   faCog,
-  faEllipsisVertical,
+  faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
 import AccountQRModal from "../pages/AccountQr";
+import AgentPage from "../pages/AgentPage";
 
 interface BottomNavigationProps {
   accountId: string | undefined;
   accountCert: string | undefined;
-  toggleMenu: () => void;
+  toggleMenu: () => void; // NOSONAR
 }
 
 const BottomNavigation: React.FC<BottomNavigationProps> = ({
   accountId,
   accountCert,
-  toggleMenu,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const openQRModal = () => {
     setIsQRModalOpen(true);
@@ -30,6 +32,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
   const closeQRModal = () => {
     setIsQRModalOpen(false);
+  };
+
+  const openAgentModal = () => {
+    setIsAgentModalOpen(true);
+  };
+
+  const closeAgentModal = () => {
+    setIsAgentModalOpen(false);
   };
 
   return (
@@ -40,7 +50,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate("/dashboard", { state: { accountId, accountCert } })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate("/dashboard", { state: { accountId, accountCert } });
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={location.pathname === "/dashboard"}
+            tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faHome}
@@ -63,7 +81,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
           <button
             onClick={openQRModal}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                openQRModal();
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={isQRModalOpen}
+            tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faQrcode}
@@ -84,7 +110,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate("/settings", { state: { accountId, accountCert } })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate("/settings", { state: { accountId, accountCert } });
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={location.pathname === "/settings"}
+            tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faCog}
@@ -106,20 +140,39 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </button>
 
           <button
-            onClick={toggleMenu}
+            onClick={openAgentModal}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                openAgentModal();
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={isAgentModalOpen}
+            tabIndex={0}
           >
             <FontAwesomeIcon
-              icon={faEllipsisVertical}
-              className="text-lg text-gray-500"
+              icon={faUserTie}
+              className={`text-lg ${
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+              }`}
             />
-            <span className="text-xs mt-1 text-gray-500">Services</span>
+            <span
+              className={`text-xs mt-1 ${
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+              }`}
+            >
+              Agent
+            </span>
           </button>
         </div>
       </div>
 
       {/* QR Code Modal */}
       <AccountQRModal isOpen={isQRModalOpen} onClose={closeQRModal} />
+
+      {/* Agent Modal - Pass the onClose prop */}
+      {isAgentModalOpen && <AgentPage onClose={closeAgentModal} />}
     </>
   );
 };

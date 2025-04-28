@@ -1,17 +1,22 @@
-// src/components/Header.tsx
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBell,
+  faInfoCircle,
+  faUserTie,
+} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   onNotificationClick?: () => void;
   onAboutClick?: () => void;
+  onServiceMenuClick?: () => void; // Added new prop for service menu
 }
 
 const Header1: React.FC<HeaderProps> = ({
   onNotificationClick,
   onAboutClick,
+  onServiceMenuClick, // New prop for toggling the bottom sheet
 }) => {
   const navigate = useNavigate();
 
@@ -31,6 +36,12 @@ const Header1: React.FC<HeaderProps> = ({
     }
   };
 
+  const handleServiceMenuClick = () => {
+    if (onServiceMenuClick) {
+      onServiceMenuClick();
+    }
+  };
+
   return (
     <div className="flex justify-between items-center bg-white shadow-sm">
       {/* Left: Logo and Username */}
@@ -40,6 +51,14 @@ const Header1: React.FC<HeaderProps> = ({
 
       {/* Right: Icons */}
       <div className="flex items-center space-x-4">
+        <button
+          onClick={handleServiceMenuClick}
+          className="p-2 rounded-full hover:bg-blue-50 text-blue-500"
+          aria-label="Service Menu"
+        >
+          <FontAwesomeIcon icon={faUserTie} className="text-blue-500" />
+        </button>
+
         <button
           onClick={handleNotificationClick}
           className="p-2 rounded-full hover:bg-gray-100"

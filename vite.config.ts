@@ -29,8 +29,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: false,
       manifest: {
-        name: 'Webank',
-        short_name: 'Webank',
+        name: 'ariel',
+        short_name: 'ariel',
         description: 'For regular users of Webank!',
         theme_color: 'white',
         background_color: 'white',

@@ -1,6 +1,5 @@
-//NOSONAR
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   storeSharedContent,
   getSharedContent,
@@ -12,12 +11,21 @@ import {
   SharedContentDisplay,
   SharedContent,
 } from "../components/share-handler";
+import KYCSubmissionCompleted from "../components/share-handler/KYCSubmissionCompleted";
+
+import jsQR from "jsqr";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../store/Store";
 
 export default function ShareHandlerPage() {
   const [sharedData, setSharedData] = useState<SharedContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  // Get documentStatus from Redux store
+  const documentStatus = useSelector(
+    (state: RootState) => state.account.documentStatus,
+  );
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | undefined = undefined;
@@ -131,6 +139,45 @@ export default function ShareHandlerPage() {
       return new Blob([blob], { type });
     };
 
+    const isQRCode = async (file: {
+      base64?: string;
+      type: string;
+    }): Promise<boolean> => {
+      try {
+        if (!file.base64 || !file.type.startsWith("image/")) {
+          return false;
+        }
+
+        // Load the image
+        const img = new Image();
+        const loadPromise = new Promise((resolve, reject) => {
+          img.onload = () => resolve(undefined);
+          img.onerror = reject;
+          img.src = file.base64 || "";
+        });
+        await loadPromise;
+
+        // Create a canvas to draw the image
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return false;
+        }
+        ctx.drawImage(img, 0, 0);
+
+        // Get image data
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        // Use jsQR to detect QR code
+        const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
+        return !!qrCode; // Returns true if QR code is detected
+      } catch (err) {
+        console.error("Error detecting QR code:", err);
+        return false;
+      }
+    };
+
     const loadSharedData = async () => {
       try {
         setLoading(true);
@@ -160,6 +207,21 @@ export default function ShareHandlerPage() {
             })),
           );
           console.log("Found shared data:", storedData);
+
+          // Check if the first file is a QR code
+          if (files.length > 0) {
+            const isQR = await isQRCode(files[0]);
+            if (isQR) {
+              console.log("QR code detected, redirecting to /qr-scan");
+              navigate("/qr-scan", {
+                state: {
+                  sharedImage: files[0].base64,
+                  show: "Transfer", // or "Payment" depending on the context
+                },
+              });
+              return;
+            }
+          }
           setSharedData({ ...storedData, files });
           //await clearSharedContent();
           console.log("Cleared shared data from IndexedDB");
@@ -193,7 +255,7 @@ export default function ShareHandlerPage() {
       if (timeoutId) clearTimeout(timeoutId);
       navigator.serviceWorker?.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [navigate]);
 
   const blobToBase64 = (blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -275,6 +337,10 @@ export default function ShareHandlerPage() {
       setError("Invalid document type or no files available");
     }
   };
+
+  if (documentStatus === "PENDING") {
+    return <KYCSubmissionCompleted />;
+  }
 
   if (loading) {
     return <LoadingState />;
