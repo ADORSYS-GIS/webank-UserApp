@@ -5,10 +5,12 @@ import useDisableScroll from "../hooks/useDisableScroll";
 import { RootState } from "../store/Store";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import ConfirmationBottomSheet from "../pages/ConfirmationPage";
 
 const TopUpPage: React.FC = () => {
   useDisableScroll();
   const [amount, setAmount] = useState<number | string>("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const clientAccountId = location.state?.clientAccountId;
@@ -29,6 +31,10 @@ const TopUpPage: React.FC = () => {
     }); // Go back to the previous page
   };
 
+  const handleConfirmationDismiss = () => {
+    setShowConfirmation(false);
+  };
+
   const handleContinue = () => {
     const numericAmount = Number(amount);
     if (numericAmount <= 0) {
@@ -47,15 +53,8 @@ const TopUpPage: React.FC = () => {
     }
 
     if (show === "Transfer" || show === "Payment") {
-      navigate("/confirmation", {
-        state: {
-          amount: totalAmount,
-          clientAccountId,
-          agentAccountId,
-          agentAccountCert,
-          show,
-        },
-      });
+      // Instead of navigating to the confirmation page, show the bottom sheet
+      setShowConfirmation(true);
     } else {
       navigate("/qrcode", {
         state: {
@@ -67,6 +66,15 @@ const TopUpPage: React.FC = () => {
         },
       });
     }
+  };
+
+  // Prepare the confirmation data that would have been passed via location state
+  const confirmationData = {
+    amount: totalAmount,
+    clientAccountId,
+    agentAccountId,
+    agentAccountCert,
+    show,
   };
 
   return (
@@ -129,6 +137,14 @@ const TopUpPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Conditionally render the confirmation bottom sheet */}
+      {showConfirmation && (
+        <ConfirmationBottomSheet 
+          data={confirmationData}
+          onDismiss={handleConfirmationDismiss}
+        />
+      )}
     </div>
   );
 };

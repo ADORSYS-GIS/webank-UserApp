@@ -344,7 +344,7 @@ export default function KYCDashboard() {
                 </h2>
                 <span
                   className={`px-4 py-2 rounded-full text-sm font-medium 
-      ${getStatusClass(user.status)} transition-all`}
+                  ${getStatusClass(user.status)} transition-all`}
                 >
                   {user.status.toUpperCase()}
                 </span>

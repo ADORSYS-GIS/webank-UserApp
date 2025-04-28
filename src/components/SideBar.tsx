@@ -2,11 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faUserTie,
   faMoneyCheckAlt,
   faShieldAlt,
   faIdCard,
   faTimes,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface BottomSheetProps {
@@ -23,21 +23,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   accountCert,
 }) => {
   const navigate = useNavigate();
+  const [acknowledgedAdmin, setAcknowledgedAdmin] = React.useState(false);
 
   if (!isOpen) return null;
 
   const menuItems = [
-    {
-      icon: faUserTie,
-      label: "Agent Services",
-      onClick: () =>
-        navigate("/agent", {
-          state: {
-            agentAccountId: accountId,
-            agentAccountCert: accountCert,
-          },
-        }),
-    },
     {
       icon: faMoneyCheckAlt,
       label: "Teller Services",
@@ -76,39 +66,83 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     },
   ];
 
+  const handleContinue = () => {
+    setAcknowledgedAdmin(true);
+  };
+
   return (
     <>
       <div
         className="fixed inset-0 bg-black bg-opacity-50 z-40"
         onClick={onClose}
-      />
-      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg z-50 transition-transform duration-300 ease-in-out transform">
+      ></div>
+      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-lg shadow-lg z-50 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold">Services</h3>
+          <h2 className="text-xl font-semibold">Services</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="p-1 rounded-full hover:bg-gray-100"
           >
-            <FontAwesomeIcon icon={faTimes} />
+            <FontAwesomeIcon icon={faTimes} className="text-gray-600" />
           </button>
         </div>
-        <div className="p-4 max-h-96 overflow-y-auto">
-          {menuItems.map((item, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                item.onClick();
-                onClose();
-              }}
-              className="flex items-center w-full p-4 text-left hover:bg-gray-100 rounded-lg transition-colors mb-2"
-            >
-              <div className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-500 rounded-full mr-4">
-                <FontAwesomeIcon icon={item.icon} />
+        {!acknowledgedAdmin ? (
+          <div className="p-4">
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <FontAwesomeIcon
+                    icon={faExclamationTriangle}
+                    className="text-yellow-500"
+                  />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-lg font-medium text-yellow-800">
+                    Administrator Notice
+                  </h3>
+                  <p className="text-yellow-700 mt-2">
+                    This section is not for normal users. It is for
+                    administration services only. If you are not authorized to
+                    access these features, please close this panel.
+                  </p>
+                  <div className="mt-4">
+                    <button
+                      onClick={handleContinue}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2"
+                    >
+                      I am an administrator
+                    </button>
+                    <button
+                      onClick={onClose}
+                      className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
               </div>
-              <span className="text-gray-800">{item.label}</span>
-            </button>
-          ))}
-        </div>
+            </div>
+          </div>
+        ) : (
+          <div className="p-4">
+            {menuItems.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  item.onClick();
+                  onClose();
+                }}
+                className="flex items-center w-full p-4 text-left hover:bg-gray-100 rounded-lg transition-colors mb-2"
+              >
+                <FontAwesomeIcon
+                  icon={item.icon}
+                  className="text-blue-500 mr-3"
+                />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <div className="h-16"></div> {/* Spacer for bottom navigation */}
       </div>
     </>

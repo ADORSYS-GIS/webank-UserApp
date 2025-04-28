@@ -142,6 +142,34 @@ const QRScannerPage: React.FC = () => {
     };
   }, [handleScanDecodedText, handleScanError]);
 
+  // Handle shared image from navigation state
+  useEffect(() => {
+    const sharedImage = location.state?.sharedImage;
+    if (sharedImage) {
+      const processSharedImage = async () => {
+        try {
+          // Convert base64 to File
+          const response = await fetch(sharedImage);
+          const blob = await response.blob();
+          const file = new File([blob], "shared-qr.png", { type: blob.type });
+
+          // Stop camera scanner to avoid conflicts
+          await stopScanner();
+
+          // Scan the shared image
+          const qrScanner = new Html5Qrcode("qr-reader");
+          const result = await qrScanner.scanFile(file, false);
+          handleDecodedText(result);
+        } catch (err) {
+          setError("Failed to read QR code from shared image. Please try again.");
+          toast.error("Invalid QR code in shared image. Try scanning manually.");
+        }
+      };
+
+      processSharedImage();
+    }
+  }, [location.state, handleDecodedText]);
+
   // Handle file upload for QR code scanning
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,

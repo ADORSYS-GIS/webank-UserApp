@@ -38,6 +38,7 @@
     "html5-qrcode": "^2.2.7",
     "jose": "^5.9.6",
     "json-canonicalize": "^1.0.6",
+    "jsqr": "^1.4.0",
     "jwt-decode": "^4.0.0",
     "libphonenumber-js": "^1.11.12",
     "lucide-react": "^0.475.0",

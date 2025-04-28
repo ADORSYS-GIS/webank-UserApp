@@ -1,73 +1,102 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faQrcode,
   faMoneyCheckAlt,
   faArrowLeft,
+  faTimes
 } from "@fortawesome/free-solid-svg-icons";
-import useDisableScroll from "../hooks/useDisableScroll";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/Store";
 
-const AgentPage: React.FC = () => {
-  useDisableScroll();
+interface AgentPageProps {
+  onClose?: () => void;
+}
+
+const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { agentAccountId, agentAccountCert } = location.state || {};
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountCert = useSelector((state: RootState) => state.account.accountCert);
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleClose = (callback?: () => void) => {
+    setIsOpen(false);
+    setTimeout(() => {
+      onClose?.();
+      callback?.();
+    }, 300);
+  };
+
+  useEffect(() => {
+    setIsOpen(true);
+  }, []);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4 relative">
-      <button
-        onClick={() => {
-          navigate("/dashboard", {
-            state: {
-              reopenBottomSheet: true,
-              accountId: agentAccountId,
-              accountCert: agentAccountCert,
-            },
-          });
-        }}
-        className="fixed top-4 left-4 z-50 p-2 text-gray-700 hover:text-gray-900 focus:outline-none"
-        aria-label="Back"
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-end justify-center">
+      <div 
+        className={`bg-white rounded-t-2xl w-full max-w-md transform transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+        style={{ maxHeight: '90vh' }}
       >
-        <FontAwesomeIcon icon={faArrowLeft} className="text-2xl" />
-      </button>
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <button
+            onClick={() => handleClose()}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            aria-label="Back to Dashboard"
+          >
+            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+          </button>
+          <h1 className="text-xl font-semibold text-gray-800">Agent Services</h1>
+          <button
+            onClick={() => handleClose()}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            aria-label="Close"
+          >
+            <FontAwesomeIcon icon={faTimes} size="lg" />
+          </button>
+        </div>
 
-      <div className="text-center">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">
-          Agent Services
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-lg mx-auto">
-          {/* Cash-In Button */}
-          <div className="relative flex flex-col items-center bg-gradient-to-r from-purple-500 to-blue-500 text-white p-6 rounded-2xl shadow-lg transition-all hover:shadow-xl hover:scale-105">
-            <FontAwesomeIcon icon={faQrcode} className="text-5xl mb-3" />
-            <button
-              className="text-xl font-semibold bg-white text-purple-600 px-4 py-2 rounded-lg mt-3 shadow-md hover:bg-gray-200 transition"
-              onClick={() =>
+        <div className="p-6 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 70px)' }}>
+          <div className="grid grid-cols-2 gap-4">
+            <div 
+              onClick={() => handleClose(() => 
                 navigate("/qr-scan", {
-                  state: { agentAccountId, agentAccountCert, show: "Top up" },
+                  state: { 
+                    agentAccountId: accountId, 
+                    agentAccountCert: accountCert, 
+                    show: "Top up" 
+                  },
                 })
-              }
+              )}
+              className="flex flex-col items-center cursor-pointer group"
             >
-              Cash-In
-            </button>
-            <p className="text-sm opacity-90 mt-2">
-              Scan QR code to receive payments
-            </p>
-          </div>
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors mb-2">
+                <FontAwesomeIcon icon={faQrcode} className="text-blue-500 text-xl" />
+              </div>
+              <span className="font-medium text-gray-800">Cash-In</span>
+              <span className="text-xs text-center text-gray-500 mt-1">Scan QR code to receive payments</span>
+            </div>
 
-          {/* Withdraw Button */}
-          <div className="relative flex flex-col items-center bg-gradient-to-r from-blue-400 to-purple-400 text-white p-6 rounded-2xl shadow-lg transition-all hover:shadow-xl hover:scale-105">
-            <FontAwesomeIcon icon={faMoneyCheckAlt} className="text-5xl mb-3" />
-            <button
-              className="text-xl font-semibold bg-white text-blue-600 px-4 py-2 rounded-lg mt-3 shadow-md hover:bg-gray-200 transition"
-              onClick={() =>
+            <div 
+              onClick={() => handleClose(() => 
                 navigate("/top-up", {
-                  state: { show: "Pay out", agentAccountId, agentAccountCert },
+                  state: { 
+                    show: "Pay out", 
+                    agentAccountId: accountId, 
+                    agentAccountCert: accountCert 
+                  },
                 })
-              }
+              )}
+              className="flex flex-col items-center cursor-pointer group"
             >
-              Pay-out
-            </button>
-            <p className="text-sm opacity-90 mt-2">Payout cash to customers</p>
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-50 group-hover:bg-green-100 transition-colors mb-2">
+                <FontAwesomeIcon icon={faMoneyCheckAlt} className="text-green-500 text-xl" />
+              </div>
+              <span className="font-medium text-gray-800">Pay-out</span>
+              <span className="text-xs text-center text-gray-500 mt-1">Payout cash to customers</span>
+            </div>
           </div>
         </div>
       </div>

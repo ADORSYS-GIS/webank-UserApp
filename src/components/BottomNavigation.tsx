@@ -5,9 +5,10 @@ import {
   faHome,
   faQrcode,
   faCog,
-  faEllipsisVertical,
+  faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
 import AccountQRModal from "../pages/AccountQr";
+import AgentPage from "../pages/AgentPage";
 
 interface BottomNavigationProps {
   accountId: string | undefined;
@@ -18,11 +19,11 @@ interface BottomNavigationProps {
 const BottomNavigation: React.FC<BottomNavigationProps> = ({
   accountId,
   accountCert,
-  toggleMenu,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const openQRModal = () => {
     setIsQRModalOpen(true);
@@ -30,6 +31,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
   const closeQRModal = () => {
     setIsQRModalOpen(false);
+  };
+
+  const openAgentModal = () => {
+    setIsAgentModalOpen(true);
+  };
+
+  const closeAgentModal = () => {
+    setIsAgentModalOpen(false);
   };
 
   return (
@@ -106,20 +115,31 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </button>
 
           <button
-            onClick={toggleMenu}
+            onClick={openAgentModal} // Changed from toggle to open
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
           >
             <FontAwesomeIcon
-              icon={faEllipsisVertical}
-              className="text-lg text-gray-500"
+              icon={faUserTie}
+              className={`text-lg ${
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+              }`}
             />
-            <span className="text-xs mt-1 text-gray-500">Menu</span>
+            <span
+              className={`text-xs mt-1 ${
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+              }`}
+            >
+              Agent
+            </span>
           </button>
         </div>
       </div>
 
       {/* QR Code Modal */}
       <AccountQRModal isOpen={isQRModalOpen} onClose={closeQRModal} />
+
+      {/* Agent Modal - Pass the onClose prop */}
+      {isAgentModalOpen && <AgentPage onClose={closeAgentModal} />}
     </>
   );
 };

@@ -11,7 +11,6 @@ import AgentPage from "./pages/AgentPage";
 import QRGenerator from "./pages/Qrcode";
 import TopUpPage from "./pages/TopUpPage";
 import SuccessPage from "./pages/SuccessPage";
-import ConfirmationPage from "./pages/ConfirmationPage";
 import SettingsPage from "./kyc/pages/SettingsPage";
 import EmailVerification from "./kyc/pages/emailVerification";
 import EmailCode from "./kyc/pages/emailCode";
@@ -76,7 +75,6 @@ const App: React.FC = () => {
           <Route path="/share-handler" element={<ShareHandlerPage />} />
           <Route path="/qrcode" element={<QRGenerator />} />
           <Route path="/top-up" element={<TopUpPage />} />
-          <Route path="/confirmation" element={<ConfirmationPage />} />
           <Route path="/success" element={<SuccessPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/settings" element={<SettingsPage />} />
