@@ -129,9 +129,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           </div>
         ) : (
           <div className="p-4">
-            {menuItems.map((item, index) => (
+            {menuItems.map((item) => (
               <button
-                key={index}
+                key={item.id}
                 onClick={() => {
                   item.onClick();
                   onClose();
