@@ -78,7 +78,9 @@ const Register = ({ initialShowSpinner = true }) => {
       if (otpHash.includes("exists")) {
         toast.error("Phone number already registered.");
       } else {
-        toast.success("OTP sent!");
+        toast.info("One-time code sent. Please check your whatsapp.", {
+          duration: 5000,
+        });
         navigate("/otp", { state: { otpHash, fullPhoneNumber, devCert } });
       }
     } catch (error) {

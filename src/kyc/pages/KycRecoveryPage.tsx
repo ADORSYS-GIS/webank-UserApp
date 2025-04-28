@@ -89,7 +89,7 @@ export default function RecoveryDashboard() {
       );
       const parsed = Array.isArray(response)
         ? response
-        : JSON.parse(response || "[]");
+        : JSON.parse(response ?? "[]");
 
       if (!parsed.length) {
         toast.info("No user found with the provided document number");

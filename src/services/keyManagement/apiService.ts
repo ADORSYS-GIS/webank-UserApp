@@ -474,24 +474,21 @@ export const getKycDocuments = async (accountId: string, jwtToken: string) => {
   }
 };
 
-export const getKycRecords = async (jwtToken: string) => {
+export const GetKycRecordsByStatusPending = async (jwtToken: string) => {
   const headers = {
+    "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
-  console.log(headers, "headers");
 
   try {
-    // get the kyc records
     const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/infos`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/pending`,
       { headers },
     );
-
-    console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error retrieving kyc records:", error);
-    throw new Error("Failed to retrieve kyc records");
+    console.error("Error retrieving KYC records:", error);
+    throw new Error("Failed to retrieve KYC records");
   }
 };
 

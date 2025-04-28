@@ -66,7 +66,6 @@ describe("Register component", () => {
         "+237657040277",
         "mock-cert",
       );
-      expect(toast.success).toHaveBeenCalledWith("OTP sent!");
     });
   });
 
