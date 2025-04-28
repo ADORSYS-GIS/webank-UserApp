@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/Store";
 import Register from "./pages/RegisterPage";
@@ -37,7 +37,7 @@ import ShareHandlerPage from "./pages/ShareHandlerPage.tsx";
 import { Toaster } from "sonner";
 import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 import BottomNavigation from "./components/BottomNavigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BottomSheet from "./components/SideBar.tsx";
 
 const App: React.FC = () => {
@@ -46,7 +46,12 @@ const App: React.FC = () => {
     (state: RootState) => state.account.accountCert,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation(); // Get current location
 
+  // Close menu whenever route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]); // Triggered when location changes
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
@@ -60,7 +65,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <BrowserRouter>
+    <>
       <KycCertChecker />
       <Header />
       {/* Content wrapper with bottom padding when navigation is visible */}
@@ -141,7 +146,7 @@ const App: React.FC = () => {
             "px-4 py-3 rounded-lg text-sm shadow-sm w-full animation-slideDown",
         }}
       />
-    </BrowserRouter>
+    </>
   );
 };
 
