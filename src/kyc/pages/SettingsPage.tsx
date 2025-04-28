@@ -9,6 +9,7 @@ import {
   faCheckCircle,
   faShieldAlt,
   faKey,
+  faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -72,6 +73,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
 const SettingsPage: React.FC = () => {
   const emailStatus = useSelector(
     (state: RootState) => state.account.emailStatus,
+  );
+  const phoneStatus = useSelector(
+    (state: RootState) => state.account.phoneStatus,
   );
   const navigate = useNavigate();
 
@@ -188,6 +192,20 @@ const SettingsPage: React.FC = () => {
               }
               onClick={() => navigate("/inputEmail")}
               disabled={emailStatus === "APPROVED"}
+              iconType="fa"
+            />
+          </div>
+          <div className="group">
+            <MenuItem
+              icon={faPhone}
+              title="Phone number verification"
+              description={
+                phoneStatus === "APPROVED"
+                  ? "Phone number successfully verified"
+                  : "Secure your account with phone verification"
+              }
+              onClick={() => navigate("/register")}
+              disabled={phoneStatus === "APPROVED"}
               iconType="fa"
             />
           </div>

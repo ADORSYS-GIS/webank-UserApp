@@ -2,20 +2,20 @@ import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  RequestToCreateBankAccount,
-  RequestToValidateOTP,
   RequestToSendOTP,
+  RequestToValidateOTP,
 } from "../services/keyManagement/requestService.ts";
 import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
 import { useDispatch } from "react-redux";
-import { setAccountId, setAccountCert } from "../slices/accountSlice";
+import { setPhoneStatus } from "../slices/accountSlice";
 
 const Otp = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useDispatch();
+  
   // Initialize state from location
   const {
     otpHash: initialOtpHash,
@@ -26,7 +26,6 @@ const Otp = () => {
   const [otp, setOtp] = useState("");
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(30);
-  const dispatch = useDispatch();
 
   const handleResendOTP = async () => {
     if (!fullPhoneNumber || !devCert) {
@@ -60,46 +59,16 @@ const Otp = () => {
         devCert,
       );
 
-      if (response.startsWith("Certificate generated:")) {
-        const phoneCert = response.split("generated: ")[1];
-
-        const accountCreationResponse = await RequestToCreateBankAccount(
-          //fullPhoneNumber,
-          //devCert,
-          phoneCert,
-        );
-
-        if (
-          accountCreationResponse.startsWith(
-            "Bank account successfully created.",
-          )
-        ) {
-          toast.success("Registration successful");
-
-          const accountId = accountCreationResponse.split("\n")[2];
-          const accountCert = accountCreationResponse.split("\n")[4];
-
-          localStorage.setItem("accountId", accountId);
-          localStorage.setItem("accountCert", accountCert);
-          dispatch(setAccountId(accountId));
-          dispatch(setAccountCert(accountCert));
-
-          setTimeout(
-            () =>
-              navigate("/dashboard", {
-                state: { accountId, accountCert },
-              }),
-            2000,
-          );
-        } else {
-          toast.error("Account registration failed");
-        }
+      if (response.startsWith("Otp Validated Successfully")) {
+        toast.success("Phone number successfully verified!");
+        dispatch(setPhoneStatus("APPROVED"));
+        setTimeout(() => navigate("/settings"), 2000);
       } else {
         toast.error("The code is invalid", { duration: 5000 });
       }
     } catch (error) {
       console.error("Error during OTP validation:", error);
-      toast.error("Phone number registration failed");
+      toast.error("Phone number verification failed");
     }
   };
 
@@ -123,7 +92,7 @@ const Otp = () => {
 
         <button
           onClick={handleVerifyClick}
-          className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md..."
+          className="w-full py-3 bg-gradient-to-r from-[#4960F9] to-[#1433FF] text-white font-semibold rounded-3xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4960F9] hover:bg-[#1433FF] transition duration-300"
         >
           Verify code
         </button>

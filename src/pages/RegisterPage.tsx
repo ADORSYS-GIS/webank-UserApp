@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // prettier-ignore
 import WebankLogo from "/Webank.png"; //NOSONAR
 import countryOptions from "../assets/countries.json";
@@ -9,7 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useInitialization from "../hooks/useInitialization.ts";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
-import AccountLoadingPage from "./AccountLoadingPage";
+import { useDispatch } from "react-redux";
+import { setPhoneStatus } from "../slices/accountSlice";
 
 type CountryOption = {
   value: string;
@@ -17,9 +18,10 @@ type CountryOption = {
   flag: string;
 };
 
-const Register = ({ initialShowSpinner = true }) => {
+const Register = () => {
   useDisableScroll();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
   );
@@ -27,15 +29,8 @@ const Register = ({ initialShowSpinner = true }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showSpinner, setShowSpinner] = useState<boolean>(initialShowSpinner);
 
-  const { devCert, error } = useInitialization();
-
-  useEffect(() => {
-    if (devCert || error) {
-      setShowSpinner(false);
-    }
-  }, [devCert, error]);
+  const { devCert } = useInitialization();
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
@@ -81,6 +76,7 @@ const Register = ({ initialShowSpinner = true }) => {
         toast.info("One-time code sent. Please check your whatsapp.", {
           duration: 5000,
         });
+        dispatch(setPhoneStatus("APPROVED"));
         navigate("/otp", { state: { otpHash, fullPhoneNumber, devCert } });
       }
     } catch (error) {
@@ -90,10 +86,6 @@ const Register = ({ initialShowSpinner = true }) => {
       setIsLoading(false);
     }
   };
-
-  if (showSpinner) {
-    return <AccountLoadingPage />;
-  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white px-6 lg:px-20 lg:py-10">
@@ -107,10 +99,10 @@ const Register = ({ initialShowSpinner = true }) => {
 
       <div className="text-center mt-6">
         <h1 className="text-xl font-bold lg:text-2xl">
-          Register for a bank account
+          Verify your phone number
         </h1>
         <p className="text-gray-500 lg:text-lg">
-          Please enter your whatsapp phone number
+          Please enter your whatsapp phone number for verification
         </p>
       </div>
 
