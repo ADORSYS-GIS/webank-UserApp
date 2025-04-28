@@ -147,7 +147,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             ))}
           </div>
         )}
-        <div className="h-16"></div> {/* Spacer for bottom navigation */}
+        <div className="h-16"></div>
       </div>
     </>
   );
