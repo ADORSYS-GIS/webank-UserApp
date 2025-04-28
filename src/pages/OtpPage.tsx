@@ -15,7 +15,7 @@ const Otp = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  
+
   // Initialize state from location
   const {
     otpHash: initialOtpHash,
