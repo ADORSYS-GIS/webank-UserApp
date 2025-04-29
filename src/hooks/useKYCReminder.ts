@@ -4,9 +4,7 @@ import { RootState } from "../store/Store";
 import { useLocation } from "react-router-dom";
 
 // Routes where KYC reminder should appear
-const INCLUDED_ROUTES = [
-  "/dashboard",
-];
+const INCLUDED_ROUTES = ["/dashboard"];
 
 export const useKYCReminder = () => {
   const [showReminder, setShowReminder] = useState(false);
