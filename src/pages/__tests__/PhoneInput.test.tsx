@@ -1,5 +1,5 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import Register from "../RegisterPage";
+import Register from "../PhoneInput";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import { RequestToSendOTP } from "../../services/keyManagement/requestService";
@@ -26,16 +26,19 @@ const createMockStore = () => {
     reducer: {
       account: accountReducer,
     },
+    preloadedState: {
+      account: {
+        accountId: "mock-account-id",
+        accountCert: "mock-cert",
+        status: null,
+        documentStatus: null,
+        kycCert: null,
+        emailStatus: null,
+        phoneStatus: null,
+      },
+    },
   });
 };
-
-// Corrected mock for useInitialization (default export)
-vi.mock("../../hooks/useInitialization.ts", () => ({
-  default: vi.fn(() => ({
-    devCert: "mock-cert",
-    error: null,
-  })),
-}));
 
 // Mock the service directly
 vi.mock("../../services/keyManagement/requestService", () => ({
@@ -76,7 +79,7 @@ describe("Register component", () => {
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
-    fireEvent.click(getByText("Verify phone number"));
+    fireEvent.click(getByText("Send Verification Code"));
 
     await waitFor(() => {
       expect(RequestToSendOTP).toHaveBeenCalledWith(
@@ -96,7 +99,7 @@ describe("Register component", () => {
     fireEvent.change(phoneNumberInput, {
       target: { value: "788475847587458" },
     });
-    fireEvent.click(getByText("Verify phone number"));
+    fireEvent.click(getByText("Send Verification Code"));
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
@@ -113,7 +116,7 @@ describe("Register component", () => {
     fireEvent.change(getByPlaceholderText("Phone number"), {
       target: { value: "657040277" },
     });
-    fireEvent.click(getByText("Verify phone number"));
+    fireEvent.click(getByText("Send Verification Code"));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(

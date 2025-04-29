@@ -201,16 +201,6 @@ const SettingsPage: React.FC = () => {
 
           <div className="group">
             <MenuItem
-              icon={faLifeRing}
-              title="Help & Support"
-              description="Chat with our team for assistance"
-              onClick={handleSupportClick}
-              iconType="fa"
-            />
-          </div>
-
-          <div className="group">
-            <MenuItem
               icon={faEnvelope}
               title="Email verification"
               description={
@@ -223,6 +213,7 @@ const SettingsPage: React.FC = () => {
               iconType="fa"
             />
           </div>
+
           <div className="group">
             <MenuItem
               icon={faPhone}
@@ -232,7 +223,7 @@ const SettingsPage: React.FC = () => {
                   ? "Phone number successfully verified"
                   : "Secure your account with phone verification"
               }
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/phone")}
               disabled={phoneStatus === "APPROVED"}
               iconType="fa"
             />
@@ -244,6 +235,16 @@ const SettingsPage: React.FC = () => {
               title="Recover your account"
               description="Restore access to your account"
               onClick={handleRecoverAccount}
+              iconType="fa"
+            />
+          </div>
+
+          <div className="group">
+            <MenuItem
+              icon={faLifeRing}
+              title="Help & Support"
+              description="Chat with our team for assistance"
+              onClick={handleSupportClick}
               iconType="fa"
             />
           </div>
