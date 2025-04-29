@@ -7,11 +7,11 @@ import {
 } from "../services/keyManagement/requestService.ts";
 import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setPhoneStatus } from "../slices/accountSlice.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
+import { RootState } from "../store/Store.ts";
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
@@ -19,24 +19,24 @@ const PhoneVerification: React.FC = () => {
   const dispatch = useDispatch();
 
   // Initialize state from location
-  const {
-    otpHash: initialOtpHash,
-    fullPhoneNumber,
-    devCert,
-  } = location.state ?? {};
+  const { otpHash: initialOtpHash, fullPhoneNumber } = location.state ?? {};
   const [otpHash, setOtpHash] = useState(initialOtpHash);
   const [otp, setOtp] = useState("");
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(30);
 
+  const accountJwt = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
+
   const handleResendOTP = async () => {
-    if (!fullPhoneNumber || !devCert) {
+    if (!fullPhoneNumber) {
       toast.error("Required data is missing. Please try again.");
       return;
     }
 
     try {
-      const newOtpHash = await RequestToSendOTP(fullPhoneNumber, devCert);
+      const newOtpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt!);
       setOtpHash(newOtpHash);
       setOtp(""); // Clear current OTP input
       setMinutes(1); // Reset timer
@@ -58,7 +58,7 @@ const PhoneVerification: React.FC = () => {
       const response = await RequestToValidateOTP(
         fullPhoneNumber,
         otp,
-        devCert,
+        accountJwt!,
       );
 
       if (response.startsWith("Otp Validated Successfully")) {

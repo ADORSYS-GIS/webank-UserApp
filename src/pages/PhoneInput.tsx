@@ -5,12 +5,11 @@ import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import useInitialization from "../hooks/useInitialization.ts";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
-import { useDispatch } from "react-redux";
-import { setPhoneStatus } from "../slices/accountSlice.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { RootState } from "../store/Store.ts";
+import { useSelector } from "react-redux";
 
 type CountryOption = {
   value: string;
@@ -21,7 +20,6 @@ type CountryOption = {
 const PhoneInput: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
   );
@@ -30,8 +28,9 @@ const PhoneInput: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { devCert } = useInitialization();
-
+  const accountJwt = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
     setIsOpen(false);
@@ -68,7 +67,7 @@ const PhoneInput: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const otpHash = await RequestToSendOTP(fullPhoneNumber, devCert);
+      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt!);
 
       if (otpHash.includes("exists")) {
         toast.error("Phone number already registered.");
@@ -76,9 +75,8 @@ const PhoneInput: React.FC = () => {
         toast.info("One-time code sent. Please check your whatsapp.", {
           duration: 5000,
         });
-        dispatch(setPhoneStatus("APPROVED"));
         navigate("/phone/verification", {
-          state: { otpHash, fullPhoneNumber, devCert },
+          state: { otpHash, fullPhoneNumber },
         });
       }
     } catch (error) {

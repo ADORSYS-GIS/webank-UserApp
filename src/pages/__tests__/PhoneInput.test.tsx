@@ -26,16 +26,19 @@ const createMockStore = () => {
     reducer: {
       account: accountReducer,
     },
+    preloadedState: {
+      account: {
+        accountId: "mock-account-id",
+        accountCert: "mock-cert",
+        status: null,
+        documentStatus: null,
+        kycCert: null,
+        emailStatus: null,
+        phoneStatus: null,
+      },
+    },
   });
 };
-
-// Corrected mock for useInitialization (default export)
-vi.mock("../../hooks/useInitialization.ts", () => ({
-  default: vi.fn(() => ({
-    devCert: "mock-cert",
-    error: null,
-  })),
-}));
 
 // Mock the service directly
 vi.mock("../../services/keyManagement/requestService", () => ({

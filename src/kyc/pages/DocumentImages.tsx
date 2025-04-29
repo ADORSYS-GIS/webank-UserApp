@@ -10,7 +10,7 @@ import { RootState } from "../../store/Store";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setDocumentStatus } from "../../slices/accountSlice";
-import { FaArrowLeft, FaUpload, FaTrash } from "react-icons/fa";
+import { FaArrowLeft, FaUpload } from "react-icons/fa";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
@@ -55,14 +55,6 @@ const DocumentImages = () => {
     } catch (error) {
       console.error("Error submitting documents:", error);
     }
-  };
-
-  const handleDeleteImage = (type: DocumentType) => {
-    setImages((prev) => ({
-      ...prev,
-      [type]: null,
-    }));
-    localStorage.removeItem(type);
   };
 
   useEffect(() => {
@@ -131,47 +123,36 @@ const DocumentImages = () => {
             <h3 className="text-gray-800 font-medium text-sm">
               {getDocumentLabel(type)}
             </h3>
-            <div className="relative">
-              <button
-                onClick={() => !images[type] && setActivePopup(type)}
-                className={`relative group w-full h-64 bg-white rounded-xl border-2 ${
-                  !images[type]
-                    ? "border-dashed cursor-pointer hover:border-blue-500"
-                    : "border-solid border-blue-100"
-                } transition-all duration-200 p-4 flex flex-col items-center justify-center`}
-              >
-                {images[type] ? (
-                  <img
-                    src={images[type]}
-                    alt={getDocumentLabel(type)}
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <div className="text-gray-500 text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600">
-                      <FaUpload size={24} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-700">
-                        Upload Document
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Supported formats: JPEG, PNG
-                      </p>
-                    </div>
+            <button
+              onClick={() => !images[type] && setActivePopup(type)}
+              className={`relative group w-full h-64 bg-white rounded-xl border-2 ${
+                !images[type]
+                  ? "border-dashed cursor-pointer hover:border-blue-500"
+                  : "border-solid border-blue-100"
+              } transition-all duration-200 p-4 flex flex-col items-center justify-center`}
+            >
+              {images[type] ? (
+                <img
+                  src={images[type]}
+                  alt={getDocumentLabel(type)}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="text-gray-500 text-center space-y-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600">
+                    <FaUpload size={24} />
                   </div>
-                )}
-              </button>
-              {images[type] && (
-                <button
-                  onClick={() => handleDeleteImage(type)}
-                  className="absolute top-0 left-72 p-1 text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                  aria-label="Delete image"
-                >
-                  <FaTrash size={16} />
-                </button>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">
+                      Upload Document
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Supported formats: JPEG, PNG
+                    </p>
+                  </div>
+                </div>
               )}
-            </div>
+            </button>
           </div>
         ))}
       </div>
