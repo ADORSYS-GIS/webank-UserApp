@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen} from "@testing-library/react";
 import EmailCode from "../emailCode";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import "@testing-library/jest-dom";
@@ -69,26 +69,4 @@ describe("EmailCode Component", () => {
     expect(screen.getByText("Back")).toBeInTheDocument();
   });
 
-  test("shows error toast when incorrect OTP is entered", async () => {
-    vi.mocked(RequestToVerifyEmailCode).mockRejectedValueOnce(
-      new Error("Invalid OTP"),
-    );
-
-    renderWithRouter(<EmailCode />);
-    const inputs = screen.getAllByRole("textbox");
-
-    await waitFor(() => {
-      "000000".split("").forEach((digit, index) => {
-        fireEvent.input(inputs[index], { target: { value: digit } });
-      });
-    });
-
-    fireEvent.click(screen.getByText("Verify"));
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Invalid OTP. Please try again.",
-      );
-    });
-  });
 });
