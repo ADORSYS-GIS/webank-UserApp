@@ -6,6 +6,7 @@ interface IdCaptureProps {
   description: string;
   sampleImageSrc: string;
   onClose: () => void;
+  sampleImageStyle?: React.CSSProperties;
 }
 
 const IdCapture: React.FC<IdCaptureProps> = ({
@@ -13,6 +14,7 @@ const IdCapture: React.FC<IdCaptureProps> = ({
   description,
   sampleImageSrc,
   onClose,
+  sampleImageStyle = {},
 }) => {
   const closePopup = () => {
     onClose();
@@ -49,7 +51,7 @@ const IdCapture: React.FC<IdCaptureProps> = ({
           </button>
         </div>
         <h2 className="text-lg font-semibold text-center mb-2">
-          Let’s Verify Your Identity
+          Let's Verify Your Identity
         </h2>
         <p className="text-gray-600 text-center mb-4">
           Follow these steps to complete your identity verification securely.
@@ -59,6 +61,7 @@ const IdCapture: React.FC<IdCaptureProps> = ({
             className="w-full h-auto rounded-lg"
             src={sampleImageSrc}
             alt={`Example of a ${title}`}
+            style={sampleImageStyle}
           />
         </div>
         <h3 className="text-lg font-medium text-center mb-2">{title}</h3>
