@@ -47,7 +47,7 @@ export async function KeyManagement() {
 
 export async function RequestToSendOTP(
   phoneNumber: string,
-  deviceCert: string | null,
+  accountJwt: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -56,16 +56,15 @@ export async function RequestToSendOTP(
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
-    deviceCert,
     null,
     null,
+    accountJwt,
     null,
     null,
     null,
     phoneNumber,
   );
   console.log(jwtToken, "jwt token");
-  console.log(deviceCert, "device cert");
 
   return await sendOTP(phoneNumber, jwtToken, Key);
 }
@@ -127,7 +126,7 @@ export const RequestToSendPowJWT = async (
 export async function RequestToValidateOTP(
   phoneNumber: string,
   otp: string,
-  deviceCert: string | null,
+  accountJwt: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -136,9 +135,9 @@ export async function RequestToValidateOTP(
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
-    deviceCert,
     null,
     null,
+    accountJwt,
     null,
     null,
     null,
