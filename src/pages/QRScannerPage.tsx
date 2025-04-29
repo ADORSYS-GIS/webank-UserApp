@@ -275,14 +275,12 @@ const QRScannerPage: React.FC = () => {
           />
         </label>
 
-        {!show && (
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Cancel
-          </button>
-        )}
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Cancel
+        </button>
         {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
 
