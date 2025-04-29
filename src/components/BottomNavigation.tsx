@@ -44,7 +44,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 z-10">
+      <div className="fixed bottom-0 left-0 right-0 md:left-auto md:right-auto md:w-[750px] md:mx-auto bg-white shadow-lg border-t border-gray-200 z-10">
         <div className="flex justify-around items-center h-16">
           <button
             onClick={() =>
