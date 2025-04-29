@@ -7,6 +7,7 @@ import { RootState } from "../../store/Store";
 import { toast } from "sonner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 const InputEmail: React.FC = () => {
   useDisableScroll();
@@ -17,22 +18,64 @@ const InputEmail: React.FC = () => {
   );
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
-  const handleProceed = async () => {
+  // Validate email format
+  const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-    if (emailRegex.test(email)) {
-      try {
-        if (!accountId || !accountCert) {
-          navigate("/dashboard");
-          toast.error("Account information is missing.");
-          return;
-        }
-        await RequestToSendEmailOTP(email, accountCert, accountId);
-        navigate("/emailCode", { state: { email, accountCert } });
-      } catch (error) {
-        toast.error("Failed to send OTP. Please try again.");
+    return emailRegex.test(email);
+  };
+
+  // Validate account information
+  const hasValidAccountInfo = (): boolean => {
+    if (!accountId || !accountCert) {
+      navigate("/dashboard");
+      toast.error("Account information is missing.");
+      return false;
+    }
+    return true;
+  };
+
+  // Handle errors from OTP request
+  const handleOtpError = (error: unknown): void => {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        toast.error(
+          "This email is not associated with any existing account. Please complete your registration first.",
+        );
+      } else {
+        toast.error("Something went wrong. Please try again later.");
       }
     } else {
+      toast.error("An unexpected error occurred.");
+    }
+  };
+
+  const handleProceed = async (): Promise<void> => {
+    if (!isValidEmail(email)) {
       toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (!hasValidAccountInfo()) {
+      return;
+    }
+
+    try {
+      if (!accountId || !accountCert) {
+        toast.error("Account information is missing.");
+        navigate("/dashboard");
+        return;
+      }
+      const response = await RequestToSendEmailOTP(
+        email,
+        accountCert,
+        accountId,
+      );
+      if (response.startsWith("OTP sent successfully")) {
+        toast.success("OTP sent, please check your email.", { duration: 5000 });
+      }
+      navigate("/emailCode", { state: { email, accountCert } });
+    } catch (error: unknown) {
+      handleOtpError(error);
     }
   };
 
