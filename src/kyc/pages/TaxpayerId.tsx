@@ -16,7 +16,7 @@ const TaxpayerId: React.FC<TaxpayerProps> = ({ onClose }) => {
       sampleImageStyle={{
         maxWidth: "350px",
         maxHeight: "300px",
-        objectFit: "contain"
+        objectFit: "contain",
       }}
     />
   );

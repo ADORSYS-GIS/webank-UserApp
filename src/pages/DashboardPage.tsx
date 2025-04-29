@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
       <Header1
         onNotificationClick={handleNotificationClick}
         onAboutClick={handleAboutClick}
-        onServiceMenuClick={toggleMenu} 
+        onServiceMenuClick={toggleMenu}
       />
 
       {/* Main content */}

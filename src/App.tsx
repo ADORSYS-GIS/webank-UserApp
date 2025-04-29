@@ -1,4 +1,10 @@
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/Store";
 import Register from "./pages/RegisterPage";
@@ -38,7 +44,8 @@ import GuidelinesPage from "./kyc/guidelines/GuidelinesPage.tsx";
 import BottomNavigation from "./components/BottomNavigation";
 import { useEffect, useState } from "react";
 import BottomSheet from "./components/SideBar.tsx";
-import OnboardingFlow from './components/OnboardingFlow';
+import AccountLoadingPage from "./pages/AccountLoadingPage";
+import OnboardingFlow from "./components/OnboardingFlow";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -46,12 +53,22 @@ const App: React.FC = () => {
     (state: RootState) => state.account.accountCert,
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation(); // Get current location
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Check if onboarding is completed
+  useEffect(() => {
+    const onboardingCompleted = localStorage.getItem("onboardingCompleted");
+    if (onboardingCompleted === "true" && location.pathname === "/onboarding") {
+      navigate("/dashboard");
+    }
+  }, [location.pathname, navigate]);
 
   // Close menu whenever route changes
   useEffect(() => {
     setIsMenuOpen(false);
-  }, [location]); // Triggered when location changes
+  }, [location]);
+
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
@@ -73,6 +90,7 @@ const App: React.FC = () => {
         {/* Main Content Routes */}
         <Routes>
           <Route path="/" element={homePageElement} />
+          <Route path="/loading" element={<AccountLoadingPage />} />
           <Route path="/otp" element={<OtpPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/register" element={<Register />} />
@@ -123,13 +141,14 @@ const App: React.FC = () => {
       </div>
 
       {/* Bottom Navigation - Only show on dashboard and related pages */}
-      {accountId && !['/onboarding', '/register', '/otp'].includes(location.pathname) && (
-        <BottomNavigation
-          accountId={accountId || ""}
-          accountCert={accountCert || ""}
-          toggleMenu={toggleMenu}
-        />
-      )}
+      {accountId &&
+        !["/onboarding", "/register", "/otp"].includes(location.pathname) && (
+          <BottomNavigation
+            accountId={accountId || ""}
+            accountCert={accountCert || ""}
+            toggleMenu={toggleMenu}
+          />
+        )}
 
       <BottomSheet
         isOpen={isMenuOpen}

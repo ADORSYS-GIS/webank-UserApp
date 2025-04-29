@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { LucideProps } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LucideProps } from "lucide-react";
 import {
   Shield,
   Zap,
@@ -8,9 +8,10 @@ import {
   LineChart,
   Wallet,
   ArrowRight,
-  ArrowLeft
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+  ArrowLeft,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 interface Slide {
   icon: React.ComponentType<LucideProps>;
@@ -21,29 +22,38 @@ interface Slide {
 const slides: Slide[] = [
   {
     icon: Wallet,
-    topic: 'Your <span class="text-blue-600 font-semibold">Digital</span> Wallet',
-    description: 'Access your secure banking wallet anytime, anywhere with just a few taps.'
+    topic:
+      'Your <span class="text-blue-600 font-semibold">Digital</span> Wallet',
+    description:
+      "Access your secure banking wallet anytime, anywhere with just a few taps.",
   },
   {
     icon: Shield,
-    topic: 'Bank-Grade <span class="text-blue-600 font-semibold">Security</span>',
-    description: 'Your funds and transactions are protected with advanced encryption and security measures.'
+    topic:
+      'Bank-Grade <span class="text-blue-600 font-semibold">Security</span>',
+    description:
+      "Your funds and transactions are protected with advanced encryption and security measures.",
   },
   {
     icon: Zap,
     topic: 'Instant <span class="text-blue-600 font-semibold">Access</span>',
-    description: 'Send, receive, and manage your money instantly, 24/7 from anywhere in the world.'
+    description:
+      "Send, receive, and manage your money instantly, 24/7 from anywhere in the world.",
   },
   {
     icon: Handshake,
-    topic: 'Trusted by <span class="text-blue-600 font-semibold">Millions</span>',
-    description: 'Join our global community of users who trust Webank for their daily banking needs.'
+    topic:
+      'Trusted by <span class="text-blue-600 font-semibold">Millions</span>',
+    description:
+      "Join our global community of users who trust Webank for their daily banking needs.",
   },
   {
     icon: LineChart,
-    topic: 'Smart <span class="text-blue-600 font-semibold">Financial</span> Growth',
-    description: 'Track your spending, manage savings, and grow your wealth with intelligent features.'
-  }
+    topic:
+      'Smart <span class="text-blue-600 font-semibold">Financial</span> Growth',
+    description:
+      "Track your spending, manage savings, and grow your wealth with intelligent features.",
+  },
 ];
 
 const OnboardingFlow: React.FC = () => {
@@ -56,7 +66,11 @@ const OnboardingFlow: React.FC = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      navigate('/dashboard');
+      // Set onboarding as completed in localStorage
+      localStorage.setItem("onboardingCompleted", "true");
+      // Show success toast
+      toast.success("Account creation successful");
+      navigate("/dashboard");
     }
   };
 
@@ -73,24 +87,24 @@ const OnboardingFlow: React.FC = () => {
     enter: (direction: number) => ({
       x: direction > 0 ? 1000 : -1000,
       opacity: 0,
-      position: 'absolute' as const,
+      position: "absolute" as const,
       top: 0,
       left: 0,
-      right: 0
+      right: 0,
     }),
     center: {
       x: 0,
       opacity: 1,
-      position: 'relative' as const
+      position: "relative" as const,
     },
     exit: (direction: number) => ({
       x: direction < 0 ? 1000 : -1000,
       opacity: 0,
-      position: 'absolute' as const,
+      position: "absolute" as const,
       top: 0,
       left: 0,
-      right: 0
-    })
+      right: 0,
+    }),
   };
 
   return (
@@ -101,7 +115,7 @@ const OnboardingFlow: React.FC = () => {
           <div
             key={index}
             className={`h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide ? 'bg-blue-600 w-8' : 'bg-blue-200 w-3'
+              index === currentSlide ? "bg-blue-600 w-8" : "bg-blue-200 w-3"
             }`}
           />
         ))}
@@ -119,18 +133,14 @@ const OnboardingFlow: React.FC = () => {
             exit="exit"
             transition={{
               x: { type: "tween", duration: 0.1 },
-              opacity: { duration: 0.1 }
+              opacity: { duration: 0.1 },
             }}
             className="flex flex-col items-center justify-center w-full"
           >
             <div className="mb-12">
-              <Icon 
-                size={100}
-                className="text-blue-600"
-                strokeWidth={1.5}
-              />
+              <Icon size={100} className="text-blue-600" strokeWidth={1.5} />
             </div>
-            <h2 
+            <h2
               className="text-3xl font-bold text-center mb-3 text-gray-800 tracking-tight"
               dangerouslySetInnerHTML={{ __html: slides[currentSlide].topic }}
             />
@@ -146,9 +156,7 @@ const OnboardingFlow: React.FC = () => {
         <button
           onClick={handlePrevious}
           className={`px-8 py-3 bg-gray-600 rounded-xl font-semibold flex items-center space-x-3 transition-all duration-300 ${
-            currentSlide === 0 
-              ? 'invisible' 
-              : 'text-white'
+            currentSlide === 0 ? "invisible" : "text-white"
           }`}
         >
           <ArrowLeft size={20} />
@@ -159,7 +167,7 @@ const OnboardingFlow: React.FC = () => {
           onClick={handleNext}
           className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold flex items-center space-x-3 transition-all duration-300 shadow-lg hover:shadow-xl"
         >
-          <span>{currentSlide === slides.length - 1 ? 'Finish' : 'Next'}</span>
+          <span>{currentSlide === slides.length - 1 ? "Finish" : "Next"}</span>
           <ArrowRight size={20} />
         </button>
       </div>
@@ -167,4 +175,4 @@ const OnboardingFlow: React.FC = () => {
   );
 };
 
-export default OnboardingFlow; 
+export default OnboardingFlow;

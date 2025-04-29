@@ -45,8 +45,14 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
           <button
             onClick={() => handleClose()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleClose();
+              }
+            }}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
             aria-label="Back to Dashboard"
+            tabIndex={0}
           >
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </button>
@@ -55,8 +61,14 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
           </h1>
           <button
             onClick={() => handleClose()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleClose();
+              }
+            }}
             className="text-gray-500 hover:text-gray-700 focus:outline-none"
             aria-label="Close"
+            tabIndex={0}
           >
             <FontAwesomeIcon icon={faTimes} size="lg" />
           </button>
@@ -67,7 +79,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
           style={{ maxHeight: "calc(90vh - 70px)" }}
         >
           <div className="grid grid-cols-2 gap-4">
-            <div
+            <button
               onClick={() =>
                 handleClose(() =>
                   navigate("/qr-scan", {
@@ -79,7 +91,21 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                   }),
                 )
               }
-              className="flex flex-col items-center cursor-pointer group"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleClose(() =>
+                    navigate("/qr-scan", {
+                      state: {
+                        agentAccountId: accountId,
+                        agentAccountCert: accountCert,
+                        show: "Top up",
+                      },
+                    }),
+                  );
+                }
+              }}
+              className="flex flex-col items-center cursor-pointer group p-4 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              tabIndex={0}
             >
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors mb-2">
                 <FontAwesomeIcon
@@ -91,9 +117,9 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               <span className="text-xs text-center text-gray-500 mt-1">
                 Scan QR code to receive payments
               </span>
-            </div>
+            </button>
 
-            <div
+            <button
               onClick={() =>
                 handleClose(() =>
                   navigate("/top-up", {
@@ -105,7 +131,21 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                   }),
                 )
               }
-              className="flex flex-col items-center cursor-pointer group"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleClose(() =>
+                    navigate("/top-up", {
+                      state: {
+                        show: "Pay out",
+                        agentAccountId: accountId,
+                        agentAccountCert: accountCert,
+                      },
+                    }),
+                  );
+                }
+              }}
+              className="flex flex-col items-center cursor-pointer group p-4 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              tabIndex={0}
             >
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-50 group-hover:bg-green-100 transition-colors mb-2">
                 <FontAwesomeIcon
@@ -117,7 +157,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               <span className="text-xs text-center text-gray-500 mt-1">
                 Payout cash to customers
               </span>
-            </div>
+            </button>
           </div>
         </div>
       </div>

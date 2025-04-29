@@ -5,11 +5,30 @@ import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
+import ConfirmationBottomSheet from "./ConfirmationPage";
+
+interface ConfirmationData {
+  amount: number;
+  clientAccountId: string;
+  agentAccountId: string;
+  agentAccountCert: string;
+  transactionJwt?: string;
+  show: string;
+}
+
+interface QRData {
+  accountId: string;
+  amount: number;
+  timeGenerated: number;
+  signature?: string;
+}
 
 const QRScannerPage: React.FC = () => {
   useDisableScroll();
-  const [amount, setAmount] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationData, setConfirmationData] =
+    useState<ConfirmationData | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,74 +56,96 @@ const QRScannerPage: React.FC = () => {
     }
   };
 
-  // Process the decoded QR code immediately
+  const handleConfirmationDismiss = () => {
+    setShowConfirmation(false);
+  };
+
+  const handleTransferOrPayment = useCallback(
+    (data: QRData) => {
+      setError(null);
+      stopScanner();
+      if (data.accountId === agentAccountId) {
+        toast.error("Self-transfer not allowed.");
+        window.location.reload();
+        return;
+      }
+      navigate("/top-up", {
+        state: {
+          clientAccountId: data.accountId,
+          agentAccountId,
+          agentAccountCert,
+          show,
+        },
+      });
+    },
+    [agentAccountId, agentAccountCert, navigate, show],
+  );
+
+  const showConfirmationSheet = useCallback(
+    (data: QRData, isOfflineTransaction: boolean, signature?: string) => {
+      if (!agentAccountId || !agentAccountCert) {
+        toast.error("Missing account information. Please try again.");
+        return;
+      }
+
+      setConfirmationData({
+        amount: data.amount,
+        clientAccountId: data.accountId,
+        agentAccountId,
+        agentAccountCert,
+        ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
+        show: show || "",
+      });
+      setShowConfirmation(true);
+    },
+    [agentAccountId, agentAccountCert, show],
+  );
+
   const handleDecodedText = useCallback(
     (decodedText: string) => {
+      const validateQRCode = (data: QRData) => {
+        if (!data.accountId || !data.amount || !data.timeGenerated) {
+          throw new Error("Invalid QR Code format.");
+        }
+
+        const isExpired = Date.now() - data.timeGenerated > 15 * 60000;
+        if (isExpired) {
+          toast.error("QR Code expired. Please try again.");
+          window.location.reload();
+          return false;
+        }
+
+        if (data.accountId === agentAccountId) {
+          toast.error("Self-transfer not allowed.");
+          window.location.reload();
+          return false;
+        }
+
+        return true;
+      };
+
       try {
-        console.log("Decoded QR data:", decodedText);
-        const data = JSON.parse(decodedText);
-        console.log("Parsed QR data:", data);
-        console.log("Current show value:", show);
+        const data = JSON.parse(decodedText) as QRData;
 
         if (data.accountId && data.amount && data.timeGenerated) {
-          console.log("Processing payment/transfer QR code");
-          setAmount((data.amount).toString());
-          setError(null);
-          stopScanner();
-
-          // Validate QR code time (expires after 15 minutes)
-          const isExpired = Date.now() - data.timeGenerated > 15 * 60000;
-          if (isExpired) {
-            toast.error("QR Code expired. Please try again.");
-            return window.location.reload();
-          }
-
-          // Prevent self-transfers
-          if (data.accountId === agentAccountId) {
-            toast.error("Self-transfer not allowed.");
-            return window.location.reload();
-          }
+          if (!validateQRCode(data)) return;
 
           const isOfflineTransaction = "signature" in data;
           const signature = data.signature;
 
-          navigate("/confirmation", {
-            state: {
-              amount: data.amount,
-              clientAccountId: data.accountId,
-              agentAccountId,
-              agentAccountCert,
-              ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
-              show,
-            },
-          });
-        } else if (show === "Transfer" || show === "Payment") {
-          console.log("Processing top-up QR code");
-          setError(null);
           stopScanner();
-          if (data.accountId === agentAccountId) {
-            toast.error("Self-transfer not allowed.");
-            return window.location.reload();
-          }
-          navigate("/top-up", {
-            state: {
-              clientAccountId: data.accountId,
-              agentAccountId,
-              agentAccountCert,
-              show,
-            },
-          });
+          showConfirmationSheet(data, isOfflineTransaction, signature);
+        } else if (show === "Transfer" || show === "Payment") {
+          handleTransferOrPayment(data);
         } else {
-          console.log("Invalid QR code format");
           throw new Error("Invalid QR Code format.");
         }
       } catch (err) {
-        console.error("Error processing QR code:", err);
         setError("Failed to read QR code. Please try again.");
         toast.error("Invalid QR code. Try again.");
       }
     },
-    [agentAccountId, navigate, agentAccountCert, show],
+    [agentAccountId, showConfirmationSheet, handleTransferOrPayment, show],
   );
 
   // Process decoded text immediately without delay
@@ -169,8 +210,12 @@ const QRScannerPage: React.FC = () => {
           const result = await qrScanner.scanFile(file, false);
           handleDecodedText(result);
         } catch (err) {
-          setError("Failed to read QR code from shared image. Please try again.");
-          toast.error("Invalid QR code in shared image. Try scanning manually.");
+          setError(
+            "Failed to read QR code from shared image. Please try again.",
+          );
+          toast.error(
+            "Invalid QR code in shared image. Try scanning manually.",
+          );
         }
       };
 
@@ -230,16 +275,22 @@ const QRScannerPage: React.FC = () => {
           />
         </label>
 
-        {!amount && (
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Cancel
-          </button>
-        )}
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Cancel
+        </button>
         {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
+
+      {/* Confirmation Bottom Sheet */}
+      {showConfirmation && confirmationData && (
+        <ConfirmationBottomSheet
+          data={confirmationData}
+          onDismiss={handleConfirmationDismiss}
+        />
+      )}
     </div>
   );
 };

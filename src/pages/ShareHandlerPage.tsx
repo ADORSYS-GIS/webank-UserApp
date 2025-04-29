@@ -197,9 +197,13 @@ export default function ShareHandlerPage() {
         if (storedData) {
           // Check file sizes before processing
           const MAX_FILE_SIZE = 100 * 1024; // 100KB in bytes
-          const oversizedFiles = storedData.files.filter(file => file.size > MAX_FILE_SIZE);
+          const oversizedFiles = storedData.files.filter(
+            (file) => file.size > MAX_FILE_SIZE,
+          );
           if (oversizedFiles.length > 0) {
-            setError(`File size exceeds 100KB limit: ${oversizedFiles.map(f => f.name).join(', ')}`);
+            setError(
+              `File size exceeds 100KB limit: ${oversizedFiles.map((f) => f.name).join(", ")}`,
+            );
             setLoading(false);
             return;
           }

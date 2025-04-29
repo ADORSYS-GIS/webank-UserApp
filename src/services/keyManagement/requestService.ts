@@ -150,9 +150,7 @@ export async function RequestToValidateOTP(
 }
 
 export async function RequestToCreateBankAccount(
-  phoneNumber: string,
   deviceCert?: string | null,
-  phoneNumberCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -162,16 +160,14 @@ export async function RequestToCreateBankAccount(
     privateKey,
     publicKey,
     deviceCert,
-    phoneNumberCert,
     null,
     null,
     null,
     null,
-    phoneNumber,
-    Key,
+    null,
   );
 
-  return await createBankAccount(phoneNumber, Key, jwtToken);
+  return await createBankAccount(jwtToken);
 }
 
 export async function RequestToGetBalance(

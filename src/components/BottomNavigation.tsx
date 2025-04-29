@@ -1,3 +1,4 @@
+//NO
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,7 +14,7 @@ import AgentPage from "../pages/AgentPage";
 interface BottomNavigationProps {
   accountId: string | undefined;
   accountCert: string | undefined;
-  toggleMenu: () => void;
+  toggleMenu: () => void; // NOSONAR
 }
 
 const BottomNavigation: React.FC<BottomNavigationProps> = ({
@@ -49,7 +50,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate("/dashboard", { state: { accountId, accountCert } })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate("/dashboard", { state: { accountId, accountCert } });
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={location.pathname === "/dashboard"}
+            tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faHome}
@@ -72,7 +81,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
           <button
             onClick={openQRModal}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                openQRModal();
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={isQRModalOpen}
+            tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faQrcode}
@@ -93,7 +110,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate("/settings", { state: { accountId, accountCert } })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate("/settings", { state: { accountId, accountCert } });
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={location.pathname === "/settings"}
+            tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faCog}
@@ -115,8 +140,16 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </button>
 
           <button
-            onClick={openAgentModal} // Changed from toggle to open
+            onClick={openAgentModal}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                openAgentModal();
+              }
+            }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={isAgentModalOpen}
+            tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faUserTie}
