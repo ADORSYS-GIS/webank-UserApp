@@ -47,6 +47,8 @@ import BottomSheet from "./components/SideBar.tsx";
 import AccountLoadingPage from "./pages/AccountLoadingPage";
 import OnboardingFlow from "./components/OnboardingFlow";
 import Layout from "./components/Layout";
+import KYCReminderPopup from "./components/KYCReminderPopup";
+import { useKYCReminder } from "./hooks/useKYCReminder";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -56,6 +58,7 @@ const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { showReminder, handleClose } = useKYCReminder();
 
   // Check if onboarding is completed
   useEffect(() => {
@@ -157,6 +160,10 @@ const App: React.FC = () => {
         accountId={accountId || ""}
         accountCert={accountCert || ""}
       />
+
+      {/* KYC Reminder Popup */}
+      {showReminder && <KYCReminderPopup onClose={handleClose} />}
+
       <Toaster
         position="top-center"
         richColors

@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ClipboardCopy, Home } from "lucide-react";
+import { ClipboardCopy } from "lucide-react";
 import useDisableScroll from "../../hooks/useDisableScroll";
 
 const RecoveryToken: React.FC = () => {
@@ -20,40 +20,44 @@ const RecoveryToken: React.FC = () => {
   };
 
   const goToDashboard = () => {
-    navigate("/dashboard");
+    navigate("/account-recovery");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-6">
-      <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-md text-center">
-        <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">
-          Account Recovery Token
-        </h2>
-
-        {/* Token Display */}
-        <div className="relative bg-gray-100 p-4 rounded-lg border border-gray-300 flex justify-between items-center overflow-x-auto">
-          <span className="text-gray-700 font-mono text-sm sm:text-lg truncate">
-            {recoveryToken}
-          </span>
-          <button
-            onClick={handleCopy}
-            className="ml-2 p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            aria-label="Copy token"
-          >
-            <ClipboardCopy size={20} />
-          </button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-3">
+            Account Recovery Token
+          </h2>
+          <p className="text-gray-600">
+            Copy this token and send it to the client to recover their account
+          </p>
         </div>
 
-        {/* Back to Dashboard Button */}
+        {/* Token Display */}
+        <div className="mb-8">
+          <div className="relative bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center gap-4">
+            <span className="text-gray-700 font-mono text-sm break-all flex-1">
+              {recoveryToken}
+            </span>
+            <button
+              onClick={handleCopy}
+              className="shrink-0 p-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+              aria-label="Copy token"
+            >
+              <ClipboardCopy size={16} />
+            </button>
+          </div>
+        </div>
+
+        {/* Back to Recovery Dashboard */}
         <button
           onClick={goToDashboard}
-          className="mt-6 w-full flex items-center justify-center gap-2 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition"
+          className="w-full py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors"
         >
-          <Home size={20} />
-          <span>Back to Dashboard</span>
+          Back to Recovery Dashboard
         </button>
-
-        {/* Toast Notification */}
       </div>
     </div>
   );
