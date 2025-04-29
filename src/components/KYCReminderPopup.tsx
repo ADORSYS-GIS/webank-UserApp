@@ -5,6 +5,7 @@ import {
   faShieldAlt,
   faCheckCircle,
   faLock,
+  faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface KYCReminderPopupProps {
@@ -16,7 +17,7 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
 
   const handleVerify = () => {
     onClose(); // Close the popup before navigation
-    navigate("/settings");
+    navigate("/kyc");
   };
 
   return (
@@ -36,6 +37,25 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
             Complete your KYC verification for enhanced security and better
             experience
           </p>
+        </div>
+
+        {/* Transaction Limit Warning */}
+        <div className="bg-amber-50 rounded-xl p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                className="text-amber-500"
+              />
+            </div>
+            <div>
+              <h3 className="font-medium text-amber-800">Transaction Limit</h3>
+              <p className="text-sm text-amber-700">
+                Without KYC verification, you can only perform transactions up
+                to 1,000 XAF
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Benefits */}
