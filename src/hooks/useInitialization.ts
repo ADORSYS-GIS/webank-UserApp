@@ -27,7 +27,7 @@ const useInitialization = () => {
         const { publicKey } = await retrieveKeyPair(1);
         // Step 3: Perform Proof of Work
         console.log("Starting Proof of Work...");
-        const powDifficulty = 4;
+        const powDifficulty = 5;
         console.time();
 
         const result = await performProofOfWork(

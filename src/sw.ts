@@ -94,6 +94,20 @@ registerRoute(
         return new Response("No files shared", { status: 400 });
       }
 
+      // Check file size limit (100KB)
+      const MAX_FILE_SIZE = 100 * 1024; // 100KB in bytes
+      const oversizedFiles = files.filter((file) => file.size > MAX_FILE_SIZE);
+      if (oversizedFiles.length > 0) {
+        console.error(
+          "[SW] File size exceeds limit:",
+          oversizedFiles.map((f) => f.name),
+        );
+        return new Response(
+          `File size exceeds 100KB limit: ${oversizedFiles.map((f) => f.name).join(", ")}`,
+          { status: 400 },
+        );
+      }
+
       const fileData = await Promise.all(
         files.map(async (file) => {
           console.log(
