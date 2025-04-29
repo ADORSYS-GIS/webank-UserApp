@@ -60,8 +60,8 @@ describe("InputEmail Component", () => {
   test("navigates to /emailCode for a valid email", async () => {
     renderWithProviders(<InputEmail />);
     const emailInput = screen.getByPlaceholderText("name@example.com");
-    const proceedButton = screen.getByRole("button", { 
-      name: "Send Verification Code" 
+    const proceedButton = screen.getByRole("button", {
+      name: "Send Verification Code",
     });
 
     fireEvent.change(emailInput, { target: { value: "name@example.com" } });
@@ -82,8 +82,8 @@ describe("InputEmail Component", () => {
   test("shows error toast for an invalid email", async () => {
     renderWithProviders(<InputEmail />);
     const emailInput = screen.getByPlaceholderText("name@example.com");
-    const proceedButton = screen.getByRole("button", { 
-      name: "Send Verification Code" 
+    const proceedButton = screen.getByRole("button", {
+      name: "Send Verification Code",
     });
 
     fireEvent.change(emailInput, { target: { value: "invalid-email" } });

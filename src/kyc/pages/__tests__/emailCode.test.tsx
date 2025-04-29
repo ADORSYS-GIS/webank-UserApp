@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen} from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import EmailCode from "../emailCode";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import "@testing-library/jest-dom";
@@ -68,5 +68,4 @@ describe("EmailCode Component", () => {
     expect(screen.getByText("Verify")).toBeInTheDocument();
     expect(screen.getByText("Back")).toBeInTheDocument();
   });
-
 });

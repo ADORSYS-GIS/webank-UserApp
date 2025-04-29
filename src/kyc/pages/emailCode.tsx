@@ -52,6 +52,28 @@ const EmailCode: React.FC = () => {
     }
   };
 
+  const showAccountMissingError = () => {
+    toast.error("Account information is missing.");
+    navigate("/dashboard");
+  };
+
+  const showOtpErrorMessage = (message: string) => {
+    switch (message) {
+      case "Webank OTP expired":
+        toast.error("OTP has expired. Please request a new one.");
+        break;
+      case "User record not found":
+        toast.error("User not found. Please try again.");
+        break;
+      case "OTP expiration date missing":
+        toast.error("OTP is invalid. Please request a new one.");
+        break;
+      default:
+        toast.error("Failed to verify OTP. Please try again.");
+        break;
+    }
+  };
+
   const handleVerify = async () => {
     const enteredCode = otp.replace(/\s/g, ""); // Trim spaces
     if (enteredCode.length !== 6 || !/^\d{6}$/.test(enteredCode)) {
@@ -61,8 +83,7 @@ const EmailCode: React.FC = () => {
 
     try {
       if (!accountId || !accountCert) {
-        toast.error("Account information is missing.");
-        navigate("/dashboard");
+        showAccountMissingError();
         return;
       }
 
@@ -84,15 +105,7 @@ const EmailCode: React.FC = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data;
-        if (message === "Webank OTP expired") {
-          toast.error("OTP has expired. Please request a new one.");
-        } else if (message === "User record not found") {
-          toast.error("User not found. Please try again.");
-        } else if (message === "OTP expiration date missing") {
-          toast.error("OTP is invalid. Please request a new one.");
-        } else {
-          toast.error("Failed to verify OTP. Please try again.");
-        }
+        showOtpErrorMessage(message);
       } else {
         toast.error("An unexpected error occurred.");
       }
