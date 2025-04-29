@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LucideProps } from "lucide-react";
 import {
   Shield,
   Zap,
@@ -9,6 +8,7 @@ import {
   Wallet,
   ArrowRight,
   ArrowLeft,
+  LucideProps,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -111,9 +111,9 @@ const OnboardingFlow: React.FC = () => {
     <div className="h-screen overflow-hidden bg-gradient-to-b from-blue-50 to-white flex flex-col font-['Inter']">
       {/* Progress Dots */}
       <div className="flex justify-center mt-8 space-x-3">
-        {slides.map((_, index) => (
+        {slides.map((slide, index) => (
           <div
-            key={index}
+            key={`${slide.topic}-${index}`}
             className={`h-3 rounded-full transition-all duration-300 ${
               index === currentSlide ? "bg-blue-600 w-8" : "bg-blue-200 w-3"
             }`}
