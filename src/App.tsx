@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/Store";
-import Register from "./pages/RegisterPage";
-import OtpPage from "./pages/OtpPage";
+import PhoneInput from "./pages/PhoneInput.tsx";
+import PhoneVerification from "./pages/PhoneVerification.tsx";
 import DashboardPage from "./pages/DashboardPage";
 import AboutPage from "./pages/AboutPage";
 import Header from "./components/Header";
@@ -93,9 +93,9 @@ const App: React.FC = () => {
           <Route path="/" element={homePageElement} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/loading" element={<AccountLoadingPage />} />
-          <Route path="/otp" element={<OtpPage />} />
+          <Route path="/phone/verification" element={<PhoneVerification />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/phone" element={<PhoneInput />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/qr-scan" element={<QRScannerPage />} />
           <Route path="/agent" element={<AgentPage />} />
@@ -144,7 +144,9 @@ const App: React.FC = () => {
 
       {/* Bottom Navigation - Only show on dashboard and related pages */}
       {accountId &&
-        !["/onboarding", "/register", "/otp"].includes(location.pathname) && (
+        !["/onboarding", "/phone-input", "/phone-verification"].includes(
+          location.pathname,
+        ) && (
           <BottomNavigation
             accountId={accountId || ""}
             accountCert={accountCert || ""}
