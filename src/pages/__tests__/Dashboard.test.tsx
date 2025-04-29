@@ -7,9 +7,9 @@ import {
 } from "../../services/keyManagement/requestService.ts";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
-import { rootReducer } from "../../store/Store.ts";
 import "@testing-library/jest-dom";
+import { configureStore } from "@reduxjs/toolkit";
+import accountReducer from "../../slices/accountSlice";
 
 // Mock FontAwesome
 vi.mock("@fortawesome/react-fontawesome", () => ({
@@ -34,17 +34,24 @@ vi.mock("../../services/keyManagement/requestService.ts", () => ({
   RequestToGetTransactionHistory: vi.fn(),
 }));
 
-// Create a mock store with initial state
-const mockStore = createStore(rootReducer, {
-  account: {
-    accountId: "12345", // Mock accountId
-    accountCert: "cert123", // Mock accountCert
-    status: null, // KYC Status
-    documentStatus: null,
-    kycCert: null,
-    emailStatus: null,
-  },
-});
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      account: accountReducer,
+    },
+    preloadedState: {
+      account: {
+        accountId: "mock-account-id",
+        accountCert: "mock-account-cert",
+        status: null,
+        documentStatus: null,
+        kycCert: null,
+        emailStatus: null,
+        phoneStatus: null,
+      },
+    },
+  });
+};
 
 describe("Dashboard", () => {
   beforeEach(() => {
@@ -53,7 +60,7 @@ describe("Dashboard", () => {
 
   it("renders the logo and header", () => {
     render(
-      <Provider store={mockStore}>
+      <Provider store={createMockStore()}>
         <MemoryRouter>
           <Dashboard />
         </MemoryRouter>
@@ -69,7 +76,7 @@ describe("Dashboard", () => {
     (RequestToGetBalance as jest.Mock).mockRejectedValueOnce(mockError);
 
     render(
-      <Provider store={mockStore}>
+      <Provider store={createMockStore()}>
         <MemoryRouter>
           <Dashboard />
         </MemoryRouter>
@@ -107,7 +114,7 @@ describe("Dashboard", () => {
     );
 
     render(
-      <Provider store={mockStore}>
+      <Provider store={createMockStore()}>
         <MemoryRouter>
           <Dashboard />
         </MemoryRouter>
