@@ -10,6 +10,7 @@ import { RootState } from "./store/Store";
 import PhoneInput from "./pages/PhoneInput.tsx";
 import PhoneVerification from "./pages/PhoneVerification.tsx";
 import DashboardPage from "./pages/DashboardPage";
+import AboutPage from "./pages/AboutPage";
 import Header from "./components/Header";
 import "./App.css";
 import QRScannerPage from "./pages/QRScannerPage";
@@ -90,6 +91,7 @@ const App: React.FC = () => {
         {/* Main Content Routes */}
         <Routes>
           <Route path="/" element={homePageElement} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/loading" element={<AccountLoadingPage />} />
           <Route path="/phone/verification" element={<PhoneVerification />} />
           <Route path="/dashboard" element={<DashboardPage />} />
