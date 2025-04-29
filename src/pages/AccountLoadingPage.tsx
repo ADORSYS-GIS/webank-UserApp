@@ -38,8 +38,6 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
             "Bank account successfully created.",
           )
         ) {
-          toast.success("Account creation successful");
-
           const accountId = accountCreationResponse.split("\n")[2];
           const accountCert = accountCreationResponse.split("\n")[4];
 
@@ -50,7 +48,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
           dispatch(setAccountCert(accountCert));
 
           // Redirect to dashboard
-          navigate("/dashboard", {
+          navigate("/onboarding", {
             state: { accountId, accountCert },
           });
         } else {

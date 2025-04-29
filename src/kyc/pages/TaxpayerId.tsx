@@ -13,6 +13,11 @@ const TaxpayerId: React.FC<TaxpayerProps> = ({ onClose }) => {
       title="Taxpayer Document"
       description="Please take a clear picture of your Taxpayer Identification Document."
       sampleImageSrc="/Tax.png"
+      sampleImageStyle={{
+        maxWidth: "350px",
+        maxHeight: "300px",
+        objectFit: "contain",
+      }}
     />
   );
 };

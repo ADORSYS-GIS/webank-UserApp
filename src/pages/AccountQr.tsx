@@ -100,7 +100,7 @@ const AccountQRModal: React.FC<AccountQRModalProps> = ({ isOpen, onClose }) => {
 
             <button
               onClick={onClose}
-              className="w-full py-3 text-gray-700 text-sm font-medium bg-gray-100 rounded-xl transition hover:bg-gray-200 active:scale-98 flex items-center justify-center"
+              className="w-full py-3 text-gray-700 text-sm font-medium bg-gray-300 rounded-xl transition hover:bg-gray-200 active:scale-98 flex items-center justify-center"
             >
               Close
             </button>
