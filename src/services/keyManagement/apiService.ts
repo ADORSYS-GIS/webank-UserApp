@@ -124,16 +124,10 @@ export const validateOTP = async (
   }
 };
 
-export const createBankAccount = async (
-  fullPhoneNumber: string,
-  publicKey: string,
-  jwtToken: string,
-) => {
+export const createBankAccount = async (jwtToken: string) => {
   // Create the request object with both phone number and public key
-  const requestBody = {
-    publicKey: publicKey,
-    phoneNumber: fullPhoneNumber,
-  };
+  const requestBody = {};
+
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
@@ -150,7 +144,7 @@ export const createBankAccount = async (
     return response.data;
   } catch (error) {
     console.error("Error creating bank account:", error);
-    throw new Error("Incorrect OTPq");
+    throw new Error("Incorrect OTP");
   }
 };
 export const getTransactionHistory = async (

@@ -9,6 +9,7 @@ import {
   faCheckCircle,
   faShieldAlt,
   faKey,
+  faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -73,6 +74,9 @@ const SettingsPage: React.FC = () => {
   const emailStatus = useSelector(
     (state: RootState) => state.account.emailStatus,
   );
+  const phoneStatus = useSelector(
+    (state: RootState) => state.account.phoneStatus,
+  );
   const navigate = useNavigate();
 
   const supportPhoneNumber = "+237674388690";
@@ -126,31 +130,59 @@ const SettingsPage: React.FC = () => {
             </div>
             <div>
               <h2 className="font-medium text-black-800">Your Account</h2>
-              <div className="flex items-center mt-1">
-                {emailStatus === "APPROVED" ? (
-                  <FontAwesomeIcon
-                    icon={faCheckCircle}
-                    className="text-blue-500 mr-2"
-                    size="sm"
-                  />
-                ) : (
-                  <FontAwesomeIcon
-                    icon={faExclamationCircle}
-                    className="text-amber-500 mr-2"
-                    size="sm"
-                  />
-                )}
-                <p
-                  className={`text-sm ${
-                    emailStatus === "APPROVED"
-                      ? "text-blue-500"
-                      : "text-gray-600"
-                  }`}
-                >
-                  {emailStatus === "APPROVED"
-                    ? "Email Verified"
-                    : "Email Not Verified"}
-                </p>
+              <div className="flex flex-col gap-2 mt-1">
+                <div className="flex items-center">
+                  {emailStatus === "APPROVED" ? (
+                    <FontAwesomeIcon
+                      icon={faCheckCircle}
+                      className="text-blue-500 mr-2"
+                      size="sm"
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faExclamationCircle}
+                      className="text-amber-500 mr-2"
+                      size="sm"
+                    />
+                  )}
+                  <p
+                    className={`text-sm ${
+                      emailStatus === "APPROVED"
+                        ? "text-blue-500"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {emailStatus === "APPROVED"
+                      ? "Email Verified"
+                      : "Email Not Verified"}
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  {phoneStatus === "APPROVED" ? (
+                    <FontAwesomeIcon
+                      icon={faCheckCircle}
+                      className="text-blue-500 mr-2"
+                      size="sm"
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faExclamationCircle}
+                      className="text-amber-500 mr-2"
+                      size="sm"
+                    />
+                  )}
+                  <p
+                    className={`text-sm ${
+                      phoneStatus === "APPROVED"
+                        ? "text-blue-500"
+                        : "text-gray-600"
+                    }`}
+                  >
+                    {phoneStatus === "APPROVED"
+                      ? "Phone Number Verified"
+                      : "Phone Number Not Verified"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -188,6 +220,20 @@ const SettingsPage: React.FC = () => {
               }
               onClick={() => navigate("/inputEmail")}
               disabled={emailStatus === "APPROVED"}
+              iconType="fa"
+            />
+          </div>
+          <div className="group">
+            <MenuItem
+              icon={faPhone}
+              title="Phone number verification"
+              description={
+                phoneStatus === "APPROVED"
+                  ? "Phone number successfully verified"
+                  : "Secure your account with phone verification"
+              }
+              onClick={() => navigate("/register")}
+              disabled={phoneStatus === "APPROVED"}
               iconType="fa"
             />
           </div>
