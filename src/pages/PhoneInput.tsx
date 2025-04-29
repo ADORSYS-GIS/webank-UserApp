@@ -55,6 +55,11 @@ const PhoneInput: React.FC = () => {
       return;
     }
 
+    if (!accountJwt) {
+      toast.error("Authentication error. Please try again.");
+      return;
+    }
+
     const fullPhoneNumber = selectedCountry?.value + phoneNumber;
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
 
@@ -67,7 +72,7 @@ const PhoneInput: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt!);
+      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt);
 
       if (otpHash.includes("exists")) {
         toast.error("Phone number already registered.");

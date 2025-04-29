@@ -35,8 +35,13 @@ const PhoneVerification: React.FC = () => {
       return;
     }
 
+    if (!accountJwt) {
+      toast.error("Authentication error. Please try again.");
+      return;
+    }
+
     try {
-      const newOtpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt!);
+      const newOtpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt);
       setOtpHash(newOtpHash);
       setOtp(""); // Clear current OTP input
       setMinutes(1); // Reset timer
@@ -55,10 +60,15 @@ const PhoneVerification: React.FC = () => {
         return;
       }
 
+      if (!accountJwt) {
+        toast.error("Authentication error. Please try again.");
+        return;
+      }
+
       const response = await RequestToValidateOTP(
         fullPhoneNumber,
         otp,
-        accountJwt!,
+        accountJwt,
       );
 
       if (response.startsWith("Otp Validated Successfully")) {
