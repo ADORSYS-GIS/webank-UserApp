@@ -1,12 +1,19 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/Store"; // Ensure this is the correct path
-import { setStatus, setKycCert } from "../../slices/accountSlice"; // Updated Redux actions
+import {
+  setStatus,
+  setKycCert,
+  setDocumentStatus,
+} from "../../slices/accountSlice"; // Updated Redux actions
 import { RequestToGetCert } from "../../services/keyManagement/requestService";
 
 const KycCertChecker = () => {
   const dispatch = useDispatch();
   const status = useSelector((state: RootState) => state.account.status);
+  const documentStatus = useSelector(
+    (state: RootState) => state.account.documentStatus,
+  );
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
@@ -57,6 +64,7 @@ const KycCertChecker = () => {
                 );
                 dispatch(setKycCert(certificate)); // Store the certificate in Redux
                 dispatch(setStatus("APPROVED")); // Change status to APPROVED
+                dispatch(setDocumentStatus("APPROVED")); // Change status to APPROVED
                 clearInterval(interval); // Stop making requests
                 console.log(
                   "[KycCertChecker] Polling stopped as certificate is received.",
@@ -65,6 +73,16 @@ const KycCertChecker = () => {
             } else if (response === "null") {
               console.log(
                 "[KycCertChecker] Response is null. Continuing polling...",
+              );
+            } else if (response === "REJECTED") {
+              console.log(
+                "[KycCertChecker] Application rejected. Updating Redux state...",
+              );
+              dispatch(setStatus("REJECTED"));
+              dispatch(setDocumentStatus("REJECTED"));
+              clearInterval(interval);
+              console.log(
+                "[KycCertChecker] Polling stopped as application is rejected.",
               );
             }
           }
@@ -81,7 +99,7 @@ const KycCertChecker = () => {
       );
       clearInterval(interval);
     };
-  }, [status, accountCert, dispatch, accountId]);
+  }, [status, accountCert, dispatch, accountId, documentStatus]);
 
   return null; // No UI needed, just background processing
 };

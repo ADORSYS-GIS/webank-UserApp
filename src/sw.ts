@@ -156,13 +156,11 @@ registerRoute(
         includeUncontrolled: true,
       });
       console.log("[SW] Found clients:", clients.length);
+
       if (clients.length === 0) {
-        console.warn("[SW] No clients found, opening new window");
-        const newWindow = await self.clients.openWindow("/share-handler");
-        console.log(
-          "[SW] New window opened:",
-          newWindow ? "Success" : "Failed",
-        );
+        console.log("[SW] No clients found, storing data for later retrieval");
+        // Instead of trying to open a window, we'll just store the data
+        // The client will retrieve it when it loads
       } else {
         for (const client of clients) {
           console.log("[SW] Sending RELOAD_CONTENT to client:", client.id);
@@ -173,8 +171,13 @@ registerRoute(
         }
       }
 
-      console.log("[SW] Redirecting to /share-handler");
-      return Response.redirect("/share-handler", 303);
+      // Always return a successful response with a redirect
+      return new Response(null, {
+        status: 303,
+        headers: {
+          Location: "/share-handler",
+        },
+      });
     } catch (error) {
       console.error("[SW] Error handling share:", error);
       return new Response(`Error processing share: `, { status: 500 });
