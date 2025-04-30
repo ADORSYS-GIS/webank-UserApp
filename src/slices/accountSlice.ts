@@ -43,7 +43,10 @@ const accountSlice = createSlice({
       state.status = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },
-    setDocumentStatus: (state, action: PayloadAction<"PENDING" | "APPROVED" | "REJECTED">) => {
+    setDocumentStatus: (
+      state,
+      action: PayloadAction<"PENDING" | "APPROVED" | "REJECTED">,
+    ) => {
       state.documentStatus = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },

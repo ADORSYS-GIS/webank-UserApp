@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/Store"; // Ensure this is the correct path
-import { setStatus, setKycCert, setDocumentStatus } from "../../slices/accountSlice"; // Updated Redux actions
+import {
+  setStatus,
+  setKycCert,
+  setDocumentStatus,
+} from "../../slices/accountSlice"; // Updated Redux actions
 import { RequestToGetCert } from "../../services/keyManagement/requestService";
 
 const KycCertChecker = () => {
@@ -58,7 +62,7 @@ const KycCertChecker = () => {
                 console.log(
                   "[KycCertChecker] Certificate found. Updating Redux state...",
                 );
-                dispatch(setKycCert(certificate)); // Store the certificate in Redux 
+                dispatch(setKycCert(certificate)); // Store the certificate in Redux
                 dispatch(setStatus("APPROVED")); // Change status to APPROVED
                 dispatch(setDocumentStatus("APPROVED")); // Change status to APPROVED
                 clearInterval(interval); // Stop making requests
