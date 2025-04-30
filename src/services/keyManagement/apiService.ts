@@ -513,6 +513,7 @@ export const UpdateKycStatus = async (
   expiryDate: string,
   status: string,
   jwtToken: string,
+  reason: string,
 ) => {
   // Update the KYC status for a particular account
   const headers = {
@@ -524,6 +525,9 @@ export const UpdateKycStatus = async (
     idNumber: docNumber,
     expiryDate,
     accountId,
+    ...(status === "REJECTED" && {
+      rejectionReason: reason,
+    }),
   };
 
   try {
