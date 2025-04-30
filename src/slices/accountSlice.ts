@@ -4,7 +4,7 @@ interface AccountState {
   accountId: string | null;
   accountCert: string | null;
   status: "PENDING" | "APPROVED" | "REJECTED" | null;
-  documentStatus: "PENDING" | null;
+  documentStatus: "PENDING" | "APPROVED" | "REJECTED" | null;
   kycCert: string | null;
   emailStatus: "APPROVED" | null; // Add email status
   phoneStatus: "APPROVED" | null;
@@ -43,7 +43,7 @@ const accountSlice = createSlice({
       state.status = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },
-    setDocumentStatus: (state, action: PayloadAction<"PENDING">) => {
+    setDocumentStatus: (state, action: PayloadAction<"PENDING" | "APPROVED" | "REJECTED">) => {
       state.documentStatus = action.payload;
       localStorage.setItem("accountState", JSON.stringify(state));
     },
