@@ -687,3 +687,31 @@ export const verifyRecoveryFields = async (
     throw new Error("Failed to verify recovery fields");
   }
 };
+
+export const agentTopup = async (
+  accountId: string,
+  amount: number,
+  agentAccountCert: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${agentAccountCert}`,
+  };
+
+  const requestBody = {
+    accountId,
+    amount,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/agent/topup`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error processing agent top-up:", error);
+    throw new Error("Failed to process agent top-up");
+  }
+};

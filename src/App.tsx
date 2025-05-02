@@ -52,6 +52,7 @@ import KYCReminderPopup from "./components/KYCReminderPopup";
 import { useKYCReminder } from "./hooks/useKYCReminder";
 import ContactsPage from "./pages/ContactsPage";
 import PaymentSelectionPage from "./pages/PaymentSelectionPage";
+import AgentTopUpPage from "./pages/AgentTopUpPage";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -132,8 +133,9 @@ const App: React.FC = () => {
           <Route path="/map-confirmation" element={<MapConfirmation />} />
           <Route path="/kyc/imgs" element={<DocumentImages />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/agent-topup" element={<AgentTopUpPage />} />
+          <Route path="/teller" element={<TellerDashboard />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/teller" element={<TellerDashboard />} />
             <Route path="/agency" element={<KYCPage />} />
             <Route path="/account-recovery" element={<RecoveryDashboard />} />
             <Route
