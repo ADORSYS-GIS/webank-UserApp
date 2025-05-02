@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSpinner,
@@ -6,6 +6,8 @@ import {
   faArrowUp,
   faChevronRight,
   faEyeSlash,
+  faChevronLeft,
+  faChevronRight as faChevronRightIcon,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Transaction {
@@ -30,6 +32,9 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
   setTransactionsVisible,
   loadingTransactions,
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const transactionsPerPage = 10;
+
   const getButtonText = () => {
     if (loadingTransactions) {
       return (
@@ -70,14 +75,28 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
       fetchTransactions(); // Fetch transactions only when showing the list
     }
     setTransactionsVisible(!transactionsVisible); // Toggle visibility
+    setCurrentPage(1); // Reset to first page when toggling visibility
+  };
+
+  // Calculate pagination
+  const indexOfLastTransaction = currentPage * transactionsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+  const currentTransactions = transactionsData.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction,
+  );
+  const totalPages = Math.ceil(transactionsData.length / transactionsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 ">
+    <div className="bg-white rounded-lg p-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-gray-700 font-medium text-lg">Payment History</h3>
         <button
-          onClick={toggleVisibility} // Use the toggleVisibility function
+          onClick={toggleVisibility}
           className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
           disabled={loadingTransactions}
         >
@@ -87,53 +106,88 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
 
       {transactionsVisible ? (
         <div className="space-y-4">
-          {transactionsData.length > 0 ? (
-            transactionsData.map((transaction) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
-              >
-                <div className="flex items-center flex-1">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+          {currentTransactions.length > 0 ? (
+            <>
+              {currentTransactions.map((transaction) => (
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"
+                >
+                  <div className="flex items-center flex-1">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                        transaction.amount.startsWith("-")
+                          ? "bg-red-50"
+                          : "bg-blue-100"
+                      }`}
+                    >
+                      <FontAwesomeIcon
+                        icon={
+                          transaction.amount.startsWith("-")
+                            ? faArrowUp
+                            : faArrowDown
+                        }
+                        className={`text-sm ${
+                          transaction.amount.startsWith("-")
+                            ? "text-red-500"
+                            : "text-teal-500"
+                        }`}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-gray-800 font-medium text-sm block">
+                        {transaction.title}
+                      </span>
+                      <span className="text-gray-700 text-xs block mt-1">
+                        {transaction.date}
+                      </span>
+                    </div>
+                  </div>
+                  <span
+                    className={`text-sm min-w-[100px] text-right ${
                       transaction.amount.startsWith("-")
-                        ? "bg-red-50"
-                        : "bg-blue-100"
+                        ? "text-red-500"
+                        : "text-teal-500"
                     }`}
                   >
-                    <FontAwesomeIcon
-                      icon={
-                        transaction.amount.startsWith("-")
-                          ? faArrowUp
-                          : faArrowDown
-                      }
-                      className={`text-sm ${
-                        transaction.amount.startsWith("-")
-                          ? "text-red-500"
-                          : "text-teal-500"
-                      }`}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <span className="text-gray-800 font-medium text-sm block">
-                      {transaction.title}
-                    </span>
-                    <span className="text-gray-700 text-xs block mt-1">
-                      {transaction.date}
-                    </span>
-                  </div>
+                    {formatAmount(transaction.amount)}
+                  </span>
                 </div>
-                <span
-                  className={`text-sm min-w-[100px] text-right ${
-                    transaction.amount.startsWith("-")
-                      ? "text-red-500"
-                      : "text-teal-500"
-                  }`}
-                >
-                  {formatAmount(transaction.amount)}
-                </span>
-              </div>
-            ))
+              ))}
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center space-x-2 mt-4">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label="Previous page"
+                  >
+                    <FontAwesomeIcon
+                      icon={faChevronLeft}
+                      className="text-gray-600"
+                    />
+                  </button>
+
+                  <span className="text-sm text-gray-600">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label="Next page"
+                  >
+                    <FontAwesomeIcon
+                      icon={faChevronRightIcon}
+                      className="text-gray-600"
+                    />
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-center py-6 text-gray-500">
               {loadingTransactions ? (

@@ -6,11 +6,16 @@ export interface Contact {
 
 export class ContactService {
   private static contacts: Contact[] = [];
+  private static idCounter: number = 1;
 
   static addContact(contact: Omit<Contact, "id">): Contact {
+    // Generate a deterministic, unique ID using a counter combined with a timestamp
+    const timestamp = new Date().getTime();
+    const uniqueId = `${timestamp}-${this.idCounter++}`;
+
     const newContact: Contact = {
       ...contact,
-      id: Math.random().toString(36).substring(2, 11),
+      id: uniqueId,
     };
     this.contacts.push(newContact);
     return newContact;
