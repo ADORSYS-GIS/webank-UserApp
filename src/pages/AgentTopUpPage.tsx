@@ -4,14 +4,9 @@ import TopUpForm from "../components/TopUpForm";
 
 const AgentTopUpPage: React.FC = () => {
   const location = useLocation();
-  const { tellerAccountId, tellerAccountCert } = location.state || {};
+  const { tellerAccountCert } = location.state || {};
 
-  return (
-    <TopUpForm
-      tellerAccountId={tellerAccountId}
-      tellerAccountCert={tellerAccountCert}
-    />
-  );
+  return <TopUpForm tellerAccountCert={tellerAccountCert} />;
 };
 
 export default AgentTopUpPage;
