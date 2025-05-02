@@ -241,6 +241,9 @@ const QRScannerPage: React.FC = () => {
     (data: QRData, isOfflineTransaction: boolean, signature?: string) => {
       if (show === "Transfer" || show === "Payment" || show === "Withdraw") {
         handleTransferOrPayment(data);
+      } else if (show === "Top Up") {
+        stopScanner();
+        showConfirmationSheet(data, isOfflineTransaction, signature);
       } else {
         stopScanner();
         showConfirmationSheet(data, isOfflineTransaction, signature);

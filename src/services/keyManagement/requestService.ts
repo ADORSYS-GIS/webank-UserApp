@@ -25,6 +25,7 @@ import {
   verifyRecoveryFields,
   storeKycDocument,
   GetKycRecordsBySearch,
+  agentTopup,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -636,4 +637,29 @@ export async function RequestToRecoverAccountCert(
   );
 
   return await recoverAccountCert(jwtToken, accountId);
+}
+
+export async function RequestToAgentTopup(
+  accountId: string,
+  amount: number,
+  agentAccountCert: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    agentAccountCert,
+    null,
+    null,
+    null,
+    accountId,
+    amount,
+  );
+
+  return await agentTopup(accountId, amount, jwtToken);
 }

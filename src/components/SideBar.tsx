@@ -7,6 +7,7 @@ import {
   faIdCard,
   faTimes,
   faExclamationTriangle,
+  faMoneyBillWave,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface BottomSheetProps {
@@ -64,6 +65,19 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/account-recovery",
+          },
+        }),
+    },
+    {
+      id: "topup",
+      icon: faMoneyBillWave,
+      label: "Top Up Account",
+      onClick: () =>
+        navigate("/login", {
+          state: {
+            tellerAccountId: accountId,
+            tellerAccountCert: accountCert,
+            redirectTo: "/agent-topup",
           },
         }),
     },
