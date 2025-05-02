@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store/Store"; // Ensure this is the correct path
 import {
@@ -7,6 +7,7 @@ import {
   setDocumentStatus,
 } from "../../slices/accountSlice"; // Updated Redux actions
 import { RequestToGetCert } from "../../services/keyManagement/requestService";
+import KycRejectionPopup from "../components/KycRejectionPopup";
 
 const KycCertChecker = () => {
   const dispatch = useDispatch();
@@ -19,12 +20,14 @@ const KycCertChecker = () => {
   );
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const [showRejectionPopup, setShowRejectionPopup] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
 
   useEffect(() => {
-    // If status is null, approved, or rejected, stop execution
-    if (status === null || status === "APPROVED" || status === "REJECTED") {
+    // If status is null or approved, stop execution
+    if (status === null || status === "APPROVED") {
       console.log(
-        "[KycCertChecker] Status is null, APPROVED, or REJECTED. Stopping execution.",
+        "[KycCertChecker] Status is null or APPROVED. Stopping execution.",
       );
       return;
     }
@@ -70,16 +73,14 @@ const KycCertChecker = () => {
                   "[KycCertChecker] Polling stopped as certificate is received.",
                 );
               }
-            } else if (response === "null") {
-              console.log(
-                "[KycCertChecker] Response is null. Continuing polling...",
-              );
-            } else if (response === "REJECTED") {
+            } else if (response.includes("REJECTED")) {
               console.log(
                 "[KycCertChecker] Application rejected. Updating Redux state...",
               );
               dispatch(setStatus("REJECTED"));
               dispatch(setDocumentStatus("REJECTED"));
+              setRejectionReason(response.replace("REJECTED: ", ""));
+              setShowRejectionPopup(true);
               clearInterval(interval);
               console.log(
                 "[KycCertChecker] Polling stopped as application is rejected.",
@@ -101,7 +102,12 @@ const KycCertChecker = () => {
     };
   }, [status, accountCert, dispatch, accountId, documentStatus]);
 
-  return null; // No UI needed, just background processing
+  return showRejectionPopup ? (
+    <KycRejectionPopup
+      reason={rejectionReason}
+      onClose={() => setShowRejectionPopup(false)}
+    />
+  ) : null;
 };
 
 export default KycCertChecker;

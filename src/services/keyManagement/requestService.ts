@@ -492,7 +492,8 @@ export async function RequestToUpdateKycStatus(
   docNumber: string,
   expiryDate: string,
   status: string,
-  accountCert?: string | null,
+  accountCert: string | null,
+  reason: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -511,6 +512,7 @@ export async function RequestToUpdateKycStatus(
     docNumber,
     expiryDate,
     status,
+    reason,
   );
   console.log(jwtToken + "Account Cert!!!");
   return await UpdateKycStatus(
@@ -519,6 +521,7 @@ export async function RequestToUpdateKycStatus(
     expiryDate,
     status,
     jwtToken,
+    reason,
   );
 }
 
