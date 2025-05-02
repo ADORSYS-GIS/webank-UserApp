@@ -72,6 +72,13 @@ const ContactList: React.FC<ContactListProps> = ({
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent, contact: Contact) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelectContact?.(contact);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -81,6 +88,7 @@ const ContactList: React.FC<ContactListProps> = ({
           onChange={(e) => handleSearch(e.target.value)}
           placeholder="Search contacts..."
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Search contacts"
         />
       </div>
 
@@ -98,30 +106,37 @@ const ContactList: React.FC<ContactListProps> = ({
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
                     className="px-2 py-1 border border-gray-300 rounded"
+                    aria-label="Edit contact name"
                   />
                   <button
                     onClick={handleEditSave}
                     className="text-green-500 hover:text-green-600"
+                    aria-label="Save contact name"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingContact(null)}
                     className="text-gray-500 hover:text-gray-600"
+                    aria-label="Cancel editing"
                   >
                     Cancel
                   </button>
                 </div>
               ) : (
-                <div
-                  className="cursor-pointer"
+                <button
+                  className="w-full text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-2"
                   onClick={() => onSelectContact?.(contact)}
+                  onKeyDown={(e) => handleKeyPress(e, contact)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Select contact ${contact.name}`}
                 >
                   <p className="font-medium text-gray-800">{contact.name}</p>
                   <p className="text-sm text-gray-500">
                     ID: xxxxx{contact.accountId.slice(-4)}
                   </p>
-                </div>
+                </button>
               )}
             </div>
 
@@ -130,12 +145,14 @@ const ContactList: React.FC<ContactListProps> = ({
                 <button
                   onClick={() => handleEdit(contact)}
                   className="p-2 text-blue-500 hover:text-blue-600 rounded-full"
+                  aria-label={`Edit contact ${contact.name}`}
                 >
                   ✏️
                 </button>
                 <button
                   onClick={() => handleDelete(contact.id)}
                   className="p-2 text-red-500 hover:text-red-600 rounded-full"
+                  aria-label={`Delete contact ${contact.name}`}
                 >
                   🗑️
                 </button>

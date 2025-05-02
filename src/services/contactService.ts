@@ -10,7 +10,7 @@ export class ContactService {
   static addContact(contact: Omit<Contact, "id">): Contact {
     const newContact: Contact = {
       ...contact,
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 11),
     };
     this.contacts.push(newContact);
     return newContact;
