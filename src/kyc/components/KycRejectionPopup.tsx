@@ -49,12 +49,20 @@ const KycRejectionPopup: React.FC<KycRejectionPopupProps> = ({
         <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700 text-center">
           <span className="font-semibold">Reason:</span> {reason}
         </div>
-        <button
-          onClick={handleRetry}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors text-lg shadow"
-        >
-          Retry Verification
-        </button>
+        <div className="flex w-full gap-3">
+          <button
+            onClick={onClose}
+            className="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 rounded-lg transition-colors text-lg shadow"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleRetry}
+            className="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors text-lg shadow"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     </div>
   );
