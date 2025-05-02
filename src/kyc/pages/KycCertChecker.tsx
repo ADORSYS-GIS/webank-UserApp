@@ -78,7 +78,7 @@ const KycCertChecker = () => {
                 "[KycCertChecker] Application rejected. Updating Redux state...",
               );
               dispatch(setStatus("REJECTED"));
-              dispatch(setDocumentStatus(null));
+              dispatch(setDocumentStatus("REJECTED"));
               setRejectionReason(response.replace("REJECTED: ", ""));
               setShowRejectionPopup(true);
               clearInterval(interval);
