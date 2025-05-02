@@ -213,7 +213,7 @@ const QRScannerPage: React.FC = () => {
         agentAccountCert: agentAccountCert || "",
         ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
         show: show || "",
-        clientName: data.name || "Anonymous",
+        clientName: data.name ?? "Anonymous",
       };
     },
     [agentAccountId, agentAccountCert, show],
@@ -222,7 +222,7 @@ const QRScannerPage: React.FC = () => {
   const handleNewContact = useCallback(
     (data: QRData, isOfflineTransaction: boolean, signature?: string) => {
       setScannedAccountId(data.accountId);
-      setScannedName(data.name || null);
+      setScannedName(data.name ?? null);
       setShowSaveContact(true);
 
       if (agentAccountId && agentAccountCert) {

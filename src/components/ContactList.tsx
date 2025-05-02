@@ -128,7 +128,6 @@ const ContactList: React.FC<ContactListProps> = ({
                   className="w-full text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-2"
                   onClick={() => onSelectContact?.(contact)}
                   onKeyDown={(e) => handleKeyPress(e, contact)}
-                  role="button"
                   tabIndex={0}
                   aria-label={`Select contact ${contact.name}`}
                 >
