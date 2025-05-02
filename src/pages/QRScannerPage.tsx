@@ -6,14 +6,17 @@ import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
 import ConfirmationBottomSheet from "./ConfirmationPage";
+import SaveContactModal from "../components/SaveContactModal";
+import { ContactService, Contact } from "../services/contactService";
 
 interface ConfirmationData {
-  amount: number;
   clientAccountId: string;
+  amount: number;
   agentAccountId: string;
   agentAccountCert: string;
   transactionJwt?: string;
   show: string;
+  clientName: string;
 }
 
 interface QRData {
@@ -21,6 +24,7 @@ interface QRData {
   amount: number;
   timeGenerated: number;
   signature?: string;
+  name?: string; // Make name optional since it might not exist in all QR codes
 }
 
 const QRScannerPage: React.FC = () => {
@@ -34,6 +38,9 @@ const QRScannerPage: React.FC = () => {
   const location = useLocation();
   const isClientOffline = location.state?.isClientOffline;
   const show = location.state?.show;
+  const [showSaveContact, setShowSaveContact] = useState(false);
+  const [scannedAccountId, setScannedAccountId] = useState<string | null>(null);
+  const [scannedName, setScannedName] = useState<string | null>(null);
 
   const agentAccountId = useSelector(
     (state: RootState) => state.account.accountId,
@@ -75,6 +82,7 @@ const QRScannerPage: React.FC = () => {
           agentAccountId,
           agentAccountCert,
           show,
+          clientName: data.name ?? "Anonymous", // Pass the client name
         },
       });
     },
@@ -88,24 +96,89 @@ const QRScannerPage: React.FC = () => {
         return;
       }
 
-      setConfirmationData({
+      console.log("QR Data with Name:", data);
+      console.log("Name from QR:", data.name);
+
+      // Check if contact already exists
+      const existingContact = ContactService.getContactByAccountId(
+        data.accountId,
+      );
+
+      // If contact doesn't exist, show save contact modal first
+      if (!existingContact) {
+        setScannedAccountId(data.accountId);
+        setScannedName(data.name ?? null);
+        setShowSaveContact(true);
+        return; // Return early to wait for contact save
+      }
+
+      const confirmationData = {
         amount: data.amount,
         clientAccountId: data.accountId,
         agentAccountId,
         agentAccountCert,
         ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
         show: show || "",
-      });
+        clientName: data.name ?? "Anonymous",
+      };
+
+      console.log("Confirmation Data being set:", confirmationData);
+      setConfirmationData(confirmationData);
       setShowConfirmation(true);
     },
     [agentAccountId, agentAccountCert, show],
   );
 
-  const handleDecodedText = useCallback(
-    (decodedText: string) => {
-      const validateQRCode = (data: QRData) => {
-        if (!data.accountId || !data.amount || !data.timeGenerated) {
-          throw new Error("Invalid QR Code format.");
+  const handleContactSave = (contact: Contact) => {
+    console.log("Contact saved:", contact);
+    toast.success("Contact saved successfully");
+    setShowSaveContact(false);
+
+    // Navigate to TopUpPage after saving contact
+    if (confirmationData) {
+      navigate("/top-up", {
+        state: {
+          clientAccountId: confirmationData.clientAccountId,
+          agentAccountId: confirmationData.agentAccountId,
+          agentAccountCert: confirmationData.agentAccountCert,
+          show: confirmationData.show,
+          clientName: confirmationData.clientName,
+          amount: confirmationData.amount,
+        },
+      });
+    }
+  };
+
+  const handleContactCancel = () => {
+    setShowSaveContact(false);
+
+    // Proceed to TopUpPage even when contact saving is cancelled
+    if (confirmationData) {
+      navigate("/top-up", {
+        state: {
+          clientAccountId: confirmationData.clientAccountId,
+          agentAccountId: confirmationData.agentAccountId,
+          agentAccountCert: confirmationData.agentAccountCert,
+          show: confirmationData.show,
+          clientName: confirmationData.clientName,
+          amount: confirmationData.amount,
+        },
+      });
+    }
+  };
+
+  const validateQRCode = useCallback(
+    (data: QRData) => {
+      console.log("Validating QR Data:", data);
+      // Basic validation - at least accountId must be present
+      if (!data.accountId) {
+        throw new Error("Invalid QR Code format. Missing account ID.");
+      }
+
+      // If this is a payment/transfer QR code, validate required fields
+      if (data.amount !== undefined) {
+        if (!data.timeGenerated) {
+          throw new Error("Invalid QR Code format. Missing timestamp.");
         }
 
         const isExpired = Date.now() - data.timeGenerated > 15 * 60000;
@@ -114,38 +187,108 @@ const QRScannerPage: React.FC = () => {
           window.location.reload();
           return false;
         }
+      }
 
-        if (data.accountId === agentAccountId) {
-          toast.error("Self-transfer not allowed.");
-          window.location.reload();
-          return false;
-        }
+      if (data.accountId === agentAccountId) {
+        toast.error("Self-transfer not allowed.");
+        window.location.reload();
+        return false;
+      }
 
-        return true;
+      return true;
+    },
+    [agentAccountId],
+  );
+
+  const prepareConfirmationData = useCallback(
+    (
+      data: QRData,
+      isOfflineTransaction: boolean,
+      signature?: string,
+    ): ConfirmationData => {
+      return {
+        amount: data.amount || 0,
+        clientAccountId: data.accountId,
+        agentAccountId: agentAccountId || "",
+        agentAccountCert: agentAccountCert || "",
+        ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
+        show: show || "",
+        clientName: data.name ?? "Anonymous",
       };
+    },
+    [agentAccountId, agentAccountCert, show],
+  );
+
+  const handleNewContact = useCallback(
+    (data: QRData, isOfflineTransaction: boolean, signature?: string) => {
+      setScannedAccountId(data.accountId);
+      setScannedName(data.name ?? null);
+      setShowSaveContact(true);
+
+      if (agentAccountId && agentAccountCert) {
+        const tempConfirmationData = prepareConfirmationData(
+          data,
+          isOfflineTransaction,
+          signature,
+        );
+        setConfirmationData(tempConfirmationData);
+      }
+    },
+    [agentAccountId, agentAccountCert, prepareConfirmationData],
+  );
+
+  const handleExistingContact = useCallback(
+    (data: QRData, isOfflineTransaction: boolean, signature?: string) => {
+      if (show === "Transfer" || show === "Payment" || show === "Withdraw") {
+        handleTransferOrPayment(data);
+      } else {
+        stopScanner();
+        showConfirmationSheet(data, isOfflineTransaction, signature);
+      }
+    },
+    [show, handleTransferOrPayment, showConfirmationSheet],
+  );
+
+  const handleDecodedText = useCallback(
+    (decodedText: string) => {
+      console.log("Raw decoded text:", decodedText);
 
       try {
         const data = JSON.parse(decodedText) as QRData;
+        console.log("Parsed QR Data:", data);
 
-        if (data.accountId && data.amount && data.timeGenerated) {
-          if (!validateQRCode(data)) return;
-
-          const isOfflineTransaction = "signature" in data;
-          const signature = data.signature;
-
-          stopScanner();
-          showConfirmationSheet(data, isOfflineTransaction, signature);
-        } else if (show === "Transfer" || show === "Payment") {
-          handleTransferOrPayment(data);
-        } else {
-          throw new Error("Invalid QR Code format.");
+        // Ensure name is present, set a default if needed
+        if (!data.name) {
+          data.name = "Anonymous";
         }
+
+        // Debug: Log the data with name after setting default
+        console.log("QR Data after name defaulting:", data);
+
+        // Validate the QR code data
+        if (!validateQRCode(data)) return;
+
+        const isOfflineTransaction = "signature" in data;
+        const signature = data.signature;
+
+        // Check if contact exists first
+        const existingContact = ContactService.getContactByAccountId(
+          data.accountId,
+        );
+
+        if (!existingContact) {
+          handleNewContact(data, isOfflineTransaction, signature);
+          return;
+        }
+
+        handleExistingContact(data, isOfflineTransaction, signature);
       } catch (err) {
+        console.error("Error parsing QR data:", err);
         setError("Failed to read QR code. Please try again.");
         toast.error("Invalid QR code. Try again.");
       }
     },
-    [agentAccountId, showConfirmationSheet, handleTransferOrPayment, show],
+    [validateQRCode, handleNewContact, handleExistingContact],
   );
 
   // Process decoded text immediately without delay
@@ -283,6 +426,17 @@ const QRScannerPage: React.FC = () => {
         </button>
         {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
+
+      {/* Save Contact Modal */}
+      {showSaveContact && scannedAccountId && (
+        <SaveContactModal
+          isOpen={showSaveContact}
+          onClose={handleContactCancel}
+          accountId={scannedAccountId}
+          defaultName={scannedName || ""}
+          onSave={handleContactSave}
+        />
+      )}
 
       {/* Confirmation Bottom Sheet */}
       {showConfirmation && confirmationData && (

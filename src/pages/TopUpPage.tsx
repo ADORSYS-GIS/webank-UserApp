@@ -52,7 +52,7 @@ const TopUpPage: React.FC = () => {
       return;
     }
 
-    if (show === "Transfer" || show === "Payment") {
+    if (show === "Transfer" || show === "Payment" || show === "Withdraw") {
       // Instead of navigating to the confirmation page, show the bottom sheet
       setShowConfirmation(true);
     } else {
@@ -75,7 +75,9 @@ const TopUpPage: React.FC = () => {
     agentAccountId,
     agentAccountCert,
     show,
+    clientName: location.state?.clientName || "Anonymous",
   };
+  console.log("Confirmation Data:", confirmationData);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
