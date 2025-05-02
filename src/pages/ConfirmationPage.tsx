@@ -22,6 +22,7 @@ interface ConfirmationData {
   agentAccountCert: string;
   transactionJwt?: string;
   show: string;
+  clientName: string;
 }
 
 interface ConfirmationBottomSheetProps {
@@ -40,6 +41,12 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   );
   const [isVisible, setIsVisible] = useState(false);
 
+  // Make sure data has a clientName property even if it wasn't passed
+  const safeData = {
+    ...data,
+    clientName: data.clientName || "Anonymous",
+  };
+
   const {
     clientAccountId,
     amount,
@@ -47,7 +54,11 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     agentAccountCert,
     transactionJwt,
     show,
-  } = data;
+    clientName,
+  } = safeData;
+
+  console.log("Confirmation Page Data:", safeData);
+  console.log("Client Name in Confirmation:", clientName);
 
   useEffect(() => {
     // Animate the bottom sheet entry
@@ -72,6 +83,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             clientAccountId,
             amount,
             isClientOffline: true,
+            clientName, // Pass the client name in navigation
           },
         });
       }, 4000);
@@ -107,6 +119,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
               transactionCert,
               accountId: agentAccountId,
               accountCert: agentAccountCert,
+              clientName, // Include client name in success state
             },
           });
         } else if (response?.includes("Insufficient")) {
@@ -136,6 +149,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             transactionCert,
             accountId: agentAccountId,
             accountCert: agentAccountCert,
+            clientName, // Include client name in success state
           },
         });
       } else if (response?.includes("Insufficient")) {
@@ -187,11 +201,21 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
                   <FontAwesomeIcon icon={faIdCard} />
                 </div>
                 <div>
+                  <div className="mb-2">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {clientName || "Anonymous"}
+                    </p>
+                  </div>
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Account ID
                   </p>
                   <p className="text-sm font-semibold text-gray-800 break-all">
-                    {clientAccountId ?? "Default Account ID"}
+                    {clientAccountId
+                      ? `*******${clientAccountId.slice(-4)}`
+                      : "Default Account ID"}
                   </p>
                 </div>
               </div>

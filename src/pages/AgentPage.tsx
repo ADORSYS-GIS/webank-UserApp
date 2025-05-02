@@ -122,7 +122,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
             <button
               onClick={() =>
                 handleClose(() =>
-                  navigate("/top-up", {
+                  navigate("/qr-scan", {
                     state: {
                       show: "Pay out",
                       agentAccountId: accountId,
@@ -134,7 +134,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleClose(() =>
-                    navigate("/top-up", {
+                    navigate("/qr-scan", {
                       state: {
                         show: "Pay out",
                         agentAccountId: accountId,
@@ -155,7 +155,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               </div>
               <span className="font-medium text-gray-800">Pay-out</span>
               <span className="text-xs text-center text-gray-500 mt-1">
-                Payout cash to customers
+                Help customers withdraw offline
               </span>
             </button>
           </div>
