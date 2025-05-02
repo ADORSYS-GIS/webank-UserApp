@@ -7,6 +7,7 @@ import {
   faQrcode,
   faCog,
   faUserTie,
+  faAddressBook,
 } from "@fortawesome/free-solid-svg-icons";
 import AccountQRModal from "../pages/AccountQr";
 import AgentPage from "../pages/AgentPage";
@@ -136,6 +137,39 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
               }`}
             >
               Settings
+            </span>
+          </button>
+
+          <button
+            onClick={() =>
+              navigate("/contacts", { state: { accountId, accountCert } })
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate("/contacts", { state: { accountId, accountCert } });
+              }
+            }}
+            className="flex flex-col items-center justify-center w-1/4 h-full text-center"
+            role="tab"
+            aria-selected={location.pathname === "/contacts"}
+            tabIndex={0}
+          >
+            <FontAwesomeIcon
+              icon={faAddressBook}
+              className={`text-lg ${
+                location.pathname === "/contacts"
+                  ? "text-blue-500"
+                  : "text-gray-500"
+              }`}
+            />
+            <span
+              className={`text-xs mt-1 ${
+                location.pathname === "/contacts"
+                  ? "text-blue-500"
+                  : "text-gray-500"
+              }`}
+            >
+              Contacts
             </span>
           </button>
 

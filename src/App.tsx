@@ -50,6 +50,8 @@ import OnboardingFlow from "./components/OnboardingFlow";
 import Layout from "./components/Layout";
 import KYCReminderPopup from "./components/KYCReminderPopup";
 import { useKYCReminder } from "./hooks/useKYCReminder";
+import ContactsPage from "./pages/ContactsPage";
+import PaymentSelectionPage from "./pages/PaymentSelectionPage";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -107,6 +109,8 @@ const App: React.FC = () => {
           <Route path="/qrcode" element={<QRGenerator />} />
           <Route path="/top-up" element={<TopUpPage />} />
           <Route path="/success" element={<SuccessPage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/payment-selection" element={<PaymentSelectionPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/inputEmail" element={<EmailVerification />} />

@@ -39,15 +39,19 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleWithdrawClick = () =>
     handleActionClick(() => {
-      navigate("/qr-scan", {
-        state: { clientAccountId: accountId, clientAccountCert: accountCert },
+      navigate("/payment-selection", {
+        state: {
+          show: "Withdraw",
+          clientAccountId: accountId,
+          clientAccountCert: accountCert,
+        },
       });
       console.log("Withdrawal", accountId);
     });
 
   const handleTransferClick = () =>
     handleActionClick(() => {
-      navigate("/qr-scan", {
+      navigate("/payment-selection", {
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,
@@ -59,7 +63,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handlePayClick = () =>
     handleActionClick(() => {
-      navigate("/qr-scan", {
+      navigate("/payment-selection", {
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,

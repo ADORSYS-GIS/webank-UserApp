@@ -71,7 +71,9 @@ describe("AgentPage", () => {
     );
 
     expect(screen.getByText("Pay-out")).toBeInTheDocument();
-    expect(screen.getByText("Payout cash to customers")).toBeInTheDocument();
+    expect(
+      screen.getByText("Help customers withdraw offline"),
+    ).toBeInTheDocument();
   });
 
   test("Cash-In button navigates to /qr-scan", async () => {

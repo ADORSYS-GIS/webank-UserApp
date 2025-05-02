@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
@@ -12,10 +12,18 @@ const AccountQRModal: React.FC<AccountQRModalProps> = ({ isOpen, onClose }) => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const qrRef = useRef<HTMLCanvasElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [includeName, setIncludeName] = useState(false);
+  const [name, setName] = useState("");
 
   // Generate QR Code content with predefined values
   const qrValue = JSON.stringify({
     accountId: accountId,
+    ...(includeName && name ? { name } : {}),
+  });
+
+  console.log("QR Code Data being generated:", {
+    accountId,
+    name: includeName ? name : undefined,
   });
 
   // Function to download QR code
@@ -74,6 +82,31 @@ const AccountQRModal: React.FC<AccountQRModalProps> = ({ isOpen, onClose }) => {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
             Your QR Code
           </h2>
+
+          {/* Name Input Section */}
+          <div className="w-full mb-6">
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="includeName"
+                checked={includeName}
+                onChange={(e) => setIncludeName(e.target.checked)}
+                className="mr-2"
+              />
+              <label htmlFor="includeName" className="text-gray-700">
+                Include my name in QR code
+              </label>
+            </div>
+            {includeName && (
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            )}
+          </div>
 
           {/* QR Code Frame - Improved styling */}
           <div className="mb-8 p-3 bg-white rounded-2xl shadow-lg border border-gray-100 flex items-center justify-center">
