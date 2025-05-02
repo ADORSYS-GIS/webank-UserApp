@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { RequestToAgentTopup } from "../services/keyManagement/requestService";
 
 interface TopUpFormProps {
-  tellerAccountId: string;
   tellerAccountCert: string;
 }
 
