@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
 import ConfirmationBottomSheet from "./ConfirmationPage";
 import SaveContactModal from "../components/SaveContactModal";
-import ContactService, { Contact } from "../services/contactService";
+import { ContactService, Contact } from "../services/contactService";
 
 interface ConfirmationData {
   clientAccountId: string;

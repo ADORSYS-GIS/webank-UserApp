@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
-import ContactService, { Contact } from "../services/contactService";
+import { ContactService, Contact } from "../services/contactService";
 
 interface SaveContactModalProps {
   isOpen: boolean;
@@ -31,9 +31,9 @@ const SaveContactModal: React.FC<SaveContactModalProps> = ({
       return;
     }
 
-    const newContact = ContactService.saveContact({
-      accountId,
+    const newContact = ContactService.addContact({
       name: name.trim(),
+      accountId,
     });
 
     if (onSave) {

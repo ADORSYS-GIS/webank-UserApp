@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
-import ContactService, { Contact } from "../services/contactService";
+import { ContactService, Contact } from "../services/contactService";
 
 interface ContactListProps {
   onSelectContact?: (contact: Contact) => void;
@@ -72,18 +72,6 @@ const ContactList: React.FC<ContactListProps> = ({
     }
   };
 
-  const handleToggleQuickAdd = (contact: Contact) => {
-    const updated = ContactService.toggleQuickAdd(contact.id);
-    if (updated) {
-      toast.success(
-        updated.isQuickAdd
-          ? "Added to Quick Access"
-          : "Removed from Quick Access",
-      );
-      loadContacts();
-    }
-  };
-
   return (
     <div className="space-y-4">
       <div className="relative">
@@ -131,7 +119,7 @@ const ContactList: React.FC<ContactListProps> = ({
                 >
                   <p className="font-medium text-gray-800">{contact.name}</p>
                   <p className="text-sm text-gray-500">
-                    ID: *******{contact.accountId.slice(-4)}
+                    ID: xxxxx{contact.accountId.slice(-4)}
                   </p>
                 </div>
               )}
@@ -139,16 +127,6 @@ const ContactList: React.FC<ContactListProps> = ({
 
             {showActions && (
               <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleToggleQuickAdd(contact)}
-                  className={`p-2 rounded-full ${
-                    contact.isQuickAdd
-                      ? "text-yellow-500 hover:text-yellow-600"
-                      : "text-gray-400 hover:text-gray-500"
-                  }`}
-                >
-                  ⭐
-                </button>
                 <button
                   onClick={() => handleEdit(contact)}
                   className="p-2 text-blue-500 hover:text-blue-600 rounded-full"
