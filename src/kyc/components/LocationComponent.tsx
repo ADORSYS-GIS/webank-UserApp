@@ -60,7 +60,10 @@ const LocationComponent = () => {
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
           Location Verification
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p
+          data-testid="location-residence-message"
+          className="text-gray-600 mb-6"
+        >
           Are you currently at your primary residence? We need to verify your
           location as part of the KYC process.
         </p>

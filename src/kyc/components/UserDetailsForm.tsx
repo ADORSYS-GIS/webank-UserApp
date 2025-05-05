@@ -25,7 +25,10 @@ export const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
   onImageClick,
 }) => {
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8">
+    <div
+      data-testid="user-details-container"
+      className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8"
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-semibold text-gray-800">KYC Details</h2>
@@ -62,7 +65,11 @@ export const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
         </div>
       </div>
 
-      <form onSubmit={onApprove} className="space-y-6">
+      <form
+        onSubmit={onApprove}
+        className="space-y-6"
+        aria-label="KYC Verification Form"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label

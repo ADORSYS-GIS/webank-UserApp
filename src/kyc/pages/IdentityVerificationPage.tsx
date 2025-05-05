@@ -125,6 +125,7 @@ export default function IdentityVerification() {
               type="button"
               onClick={isCompleted ? undefined : step.onClick}
               disabled={isCompleted}
+              data-testid={`step-button-${step.id}`}
               className={`group p-4 md:p-6 rounded-xl border transition-all
                          flex items-center justify-between
                          w-full text-left ${
