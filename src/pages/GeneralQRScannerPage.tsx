@@ -95,7 +95,7 @@ const GeneralQRScannerPage: React.FC = () => {
       }
 
       const confirmationData = {
-        amount: data.amount || 0,
+        amount: data.amount ?? 0,
         clientAccountId: data.accountId,
         agentAccountId,
         agentAccountCert,
