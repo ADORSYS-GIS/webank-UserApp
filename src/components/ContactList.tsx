@@ -95,38 +95,37 @@ const ContactList: React.FC<ContactListProps> = ({
 
       <div className="space-y-2">
         {contacts.map((contact) => (
-          <div
-            key={contact.id}
-            className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm"
-          >
-            <div className="flex-1">
-              {editingContact?.id === contact.id ? (
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="px-2 py-1 border border-gray-300 rounded"
-                    aria-label="Edit contact name"
-                  />
+          <div key={contact.id} className="p-4 bg-white rounded-lg shadow-sm">
+            {editingContact?.id === contact.id ? (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="flex-1 w-full px-2 py-1 border border-gray-300 rounded"
+                  aria-label="Edit contact name"
+                />
+                <div className="flex gap-2 w-full sm:w-auto">
                   <button
                     onClick={handleEditSave}
-                    className="text-green-500 hover:text-green-600"
+                    className="flex-1 sm:flex-none px-3 py-1 text-green-500 hover:text-green-600 border border-green-500 rounded"
                     aria-label="Save contact name"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setEditingContact(null)}
-                    className="text-gray-500 hover:text-gray-600"
+                    className="flex-1 sm:flex-none px-3 py-1 text-gray-500 hover:text-gray-600 border border-gray-500 rounded"
                     aria-label="Cancel editing"
                   >
                     Cancel
                   </button>
                 </div>
-              ) : (
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-2">
                 <button
-                  className="w-full text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-2"
+                  className="flex-1 text-left cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-2"
                   onClick={() => onSelectContact?.(contact)}
                   onKeyDown={(e) => handleKeyPress(e, contact)}
                   tabIndex={0}
@@ -137,25 +136,24 @@ const ContactList: React.FC<ContactListProps> = ({
                     ID: xxxxx{contact.accountId.slice(-4)}
                   </p>
                 </button>
-              )}
-            </div>
-
-            {showActions && (
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleEdit(contact)}
-                  className="p-2 text-blue-500 hover:text-blue-600 rounded-full"
-                  aria-label={`Edit contact ${contact.name}`}
-                >
-                  <FaEdit className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(contact.id)}
-                  className="p-2 text-red-500 hover:text-red-600 rounded-full"
-                  aria-label={`Delete contact ${contact.name}`}
-                >
-                  <FaTrash className="w-5 h-5" />
-                </button>
+                {showActions && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleEdit(contact)}
+                      className="p-2 text-blue-500 hover:text-blue-600 rounded-full"
+                      aria-label={`Edit contact ${contact.name}`}
+                    >
+                      <FaEdit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(contact.id)}
+                      className="p-2 text-red-500 hover:text-red-600 rounded-full"
+                      aria-label={`Delete contact ${contact.name}`}
+                    >
+                      <FaTrash className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
