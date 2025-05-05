@@ -23,7 +23,7 @@ interface ConfirmationData {
 
 interface QRData {
   accountId: string;
-  name: string;
+  name?: string;
   amount?: number;
   timeGenerated?: number;
 }
@@ -81,26 +81,13 @@ const GeneralQRScannerPage: React.FC = () => {
         return;
       }
 
-      // Check if contact already exists
-      const existingContact = ContactService.getContactByAccountId(
-        data.accountId,
-      );
-
-      // If contact doesn't exist, show save contact modal first
-      if (!existingContact) {
-        setScannedAccountId(data.accountId);
-        setScannedName(data.name);
-        setShowSaveContact(true);
-        return;
-      }
-
       const confirmationData = {
         amount: data.amount ?? 0,
         clientAccountId: data.accountId,
         agentAccountId,
         agentAccountCert,
         show: show || "",
-        clientName: data.name,
+        clientName: data.name ?? "Anonymous",
       };
 
       setConfirmationData(confirmationData);
@@ -145,7 +132,7 @@ const GeneralQRScannerPage: React.FC = () => {
   const validateQRCode = useCallback(
     (data: QRData) => {
       // Check for required fields
-      const requiredFields = ["accountId", "name"];
+      const requiredFields = ["accountId"];
 
       // Check if all required fields are present
       for (const field of requiredFields) {
@@ -161,8 +148,10 @@ const GeneralQRScannerPage: React.FC = () => {
         throw new Error("Invalid QR Code format. accountId must be a string.");
       }
 
-      if (typeof data.name !== "string") {
-        throw new Error("Invalid QR Code format. name must be a string.");
+      if (data.name && typeof data.name !== "string") {
+        throw new Error(
+          "Invalid QR Code format. name must be a string if provided.",
+        );
       }
 
       if (data.accountId === agentAccountId) {
@@ -194,7 +183,7 @@ const GeneralQRScannerPage: React.FC = () => {
         if (!existingContact) {
           console.log("No existing contact, showing save contact modal");
           setScannedAccountId(data.accountId);
-          setScannedName(data.name);
+          setScannedName(data.name ?? null);
           setShowSaveContact(true);
           return;
         }

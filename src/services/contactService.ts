@@ -5,8 +5,17 @@ export interface Contact {
 }
 
 export class ContactService {
-  private static contacts: Contact[] = [];
+  private static readonly STORAGE_KEY = "contacts";
   private static idCounter: number = 1;
+
+  private static getContactsFromStorage(): Contact[] {
+    const stored = localStorage.getItem(this.STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  }
+
+  private static saveContactsToStorage(contacts: Contact[]): void {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(contacts));
+  }
 
   static addContact(contact: Omit<Contact, "id">): Contact {
     // Generate a deterministic, unique ID using a counter combined with a timestamp
@@ -17,45 +26,55 @@ export class ContactService {
       ...contact,
       id: uniqueId,
     };
-    this.contacts.push(newContact);
+
+    const contacts = this.getContactsFromStorage();
+    contacts.push(newContact);
+    this.saveContactsToStorage(contacts);
     return newContact;
   }
 
   static getAllContacts(): Contact[] {
-    return [...this.contacts];
+    return this.getContactsFromStorage();
   }
 
   static getContactById(id: string): Contact | undefined {
-    return this.contacts.find((contact) => contact.id === id);
+    const contacts = this.getContactsFromStorage();
+    return contacts.find((contact) => contact.id === id);
   }
 
   static getContactByAccountId(accountId: string): Contact | undefined {
-    return this.contacts.find((contact) => contact.accountId === accountId);
+    const contacts = this.getContactsFromStorage();
+    return contacts.find((contact) => contact.accountId === accountId);
   }
 
   static updateContact(
     id: string,
     updates: Partial<Omit<Contact, "id">>,
   ): Contact | undefined {
-    const index = this.contacts.findIndex((contact) => contact.id === id);
+    const contacts = this.getContactsFromStorage();
+    const index = contacts.findIndex((contact) => contact.id === id);
     if (index === -1) return undefined;
 
-    this.contacts[index] = {
-      ...this.contacts[index],
+    contacts[index] = {
+      ...contacts[index],
       ...updates,
     };
-    return this.contacts[index];
+    this.saveContactsToStorage(contacts);
+    return contacts[index];
   }
 
   static deleteContact(id: string): boolean {
-    const initialLength = this.contacts.length;
-    this.contacts = this.contacts.filter((contact) => contact.id !== id);
-    return this.contacts.length !== initialLength;
+    const contacts = this.getContactsFromStorage();
+    const initialLength = contacts.length;
+    const filteredContacts = contacts.filter((contact) => contact.id !== id);
+    this.saveContactsToStorage(filteredContacts);
+    return filteredContacts.length !== initialLength;
   }
 
   static searchContacts(query: string): Contact[] {
+    const contacts = this.getContactsFromStorage();
     const searchTerm = query.toLowerCase();
-    return this.contacts.filter(
+    return contacts.filter(
       (contact) =>
         contact.name.toLowerCase().includes(searchTerm) ||
         contact.accountId.toLowerCase().includes(searchTerm),
