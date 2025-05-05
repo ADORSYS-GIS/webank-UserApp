@@ -91,11 +91,10 @@ describe("AgentPage", () => {
     // Wait for the handleClose callback to execute
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    expect(mockNavigate).toHaveBeenCalledWith("/qr-scan", {
+    expect(mockNavigate).toHaveBeenCalledWith("/qr-scan/top-up", {
       state: {
         agentAccountId: "test-account-id",
         agentAccountCert: "test-account-cert",
-        show: "Top up",
       },
     });
   });

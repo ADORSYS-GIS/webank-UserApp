@@ -226,10 +226,10 @@ export default function ShareHandlerPage() {
             const isQR = await isQRCode(files[0]);
             if (isQR) {
               console.log("QR code detected, redirecting to /qr-scan/top-up");
-              navigate("/qr-scan/top-up", {
+              navigate("/qr-scan", {
                 state: {
                   sharedImage: files[0].base64,
-                  show: "Transfer", // or "Payment" depending on the context
+                  show: "Transfer",
                 },
               });
               return;

@@ -21,8 +21,7 @@ const IdCapture: React.FC<IdCaptureProps> = ({
   };
 
   const handleWhatsappUpload = () => {
-    const whatsappNumber = localStorage.getItem("phoneNumber");
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}`;
+    const whatsappUrl = `https://api.whatsapp.com/`;
     window.open(whatsappUrl, "_blank");
     console.log("Upload from WhatsApp clicked");
   };
