@@ -26,7 +26,11 @@ const PaymentSelectionPage: React.FC = () => {
           </button>
 
           <button
-            onClick={() => navigate("/qr-scan", { state: { show } })}
+            onClick={() =>
+              navigate(show === "Top Up" ? "/qr-scan/top-up" : "/qr-scan", {
+                state: { show },
+              })
+            }
             className="w-full flex items-center justify-center space-x-3 bg-green-500 text-white py-4 px-6 rounded-lg hover:bg-green-600 transition-colors"
           >
             <FaQrcode className="text-xl" />

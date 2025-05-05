@@ -13,7 +13,9 @@ import DashboardPage from "./pages/DashboardPage";
 import AboutPage from "./pages/AboutPage";
 import Header from "./components/Header";
 import "./App.css";
-import QRScannerPage from "./pages/QRScannerPage";
+import TopUpQRScannerPage from "./pages/TopUpQRScannerPage";
+import GeneralQRScannerPage from "./pages/GeneralQRScannerPage";
+import OfflineQRScannerPage from "./pages/OfflineQRScannerPage";
 import AgentPage from "./pages/AgentPage";
 import QRGenerator from "./pages/Qrcode";
 import TopUpPage from "./pages/TopUpPage";
@@ -104,7 +106,9 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/phone" element={<PhoneInput />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
-          <Route path="/qr-scan" element={<QRScannerPage />} />
+          <Route path="/qr-scan" element={<GeneralQRScannerPage />} />
+          <Route path="/qr-scan/top-up" element={<TopUpQRScannerPage />} />
+          <Route path="/qr-scan/offline" element={<OfflineQRScannerPage />} />
           <Route path="/agent" element={<AgentPage />} />
           <Route path="/share-handler" element={<ShareHandlerPage />} />
           <Route path="/qrcode" element={<QRGenerator />} />

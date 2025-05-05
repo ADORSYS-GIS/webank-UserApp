@@ -82,11 +82,10 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
             <button
               onClick={() =>
                 handleClose(() =>
-                  navigate("/qr-scan", {
+                  navigate("/qr-scan/top-up", {
                     state: {
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
-                      show: "Top up",
                     },
                   }),
                 )
@@ -94,11 +93,10 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleClose(() =>
-                    navigate("/qr-scan", {
+                    navigate("/qr-scan/top-up", {
                       state: {
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,
-                        show: "Top up",
                       },
                     }),
                   );
@@ -122,9 +120,8 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
             <button
               onClick={() =>
                 handleClose(() =>
-                  navigate("/qr-scan", {
+                  navigate("/qr-scan/offline", {
                     state: {
-                      show: "Pay out",
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
                     },
@@ -134,9 +131,8 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleClose(() =>
-                    navigate("/qr-scan", {
+                    navigate("/qr-scan/offline", {
                       state: {
-                        show: "Pay out",
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,
                       },
