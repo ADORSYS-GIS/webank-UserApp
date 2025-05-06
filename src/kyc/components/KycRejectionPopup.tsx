@@ -41,12 +41,18 @@ const KycRejectionPopup: React.FC<KycRejectionPopupProps> = ({
           <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
             Verification Failed
           </h2>
-          <p className="text-gray-600 text-center mb-4">
+          <p
+            data-testid="verification-failed-message"
+            className="text-gray-600 text-center mb-4"
+          >
             Your identity verification was{" "}
             <span className="font-semibold text-red-500">rejected</span>.
           </p>
         </div>
-        <div className="w-full bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700 text-center">
+        <div
+          data-testid="rejection-reason-box"
+          className="w-full bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700 text-center"
+        >
           <span className="font-semibold">Reason:</span> {reason}
         </div>
         <div className="flex w-full gap-3">
