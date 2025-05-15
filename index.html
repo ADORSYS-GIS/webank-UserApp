@@ -5,7 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Webank</title>
     <link rel="icon" type="image/x-icon" href="/Webank.png" />
-    
+
+    <!-- Google Analytics -->
+    <script>
+      // Initialize dataLayer and gtag
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      // Debug log to confirm gtag is defined
+      console.log('gtag defined:', typeof gtag !== 'undefined');
+    </script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VZTDZZPX12"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-VZTDZZPX12', {
+        send_page_view: false,
+        debug_mode: true,
+        transport_url: 'https://www.google-analytics.com',
+        cookie_flags: 'SameSite=None;Secure'
+      });
+    </script>
   </head>
   <body>
     <!-- Root React App Container -->
