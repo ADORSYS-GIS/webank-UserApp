@@ -9,6 +9,7 @@ import { PendingKycList } from "../components/PendingKycList";
 import { UserDetailsForm } from "../components/UserDetailsForm";
 import { useKycData } from "../hooks/useKycData";
 import { KycStatus } from "../types/types";
+import { logEvent } from "../../utils/analytics";
 
 export default function KYCDashboard(): JSX.Element {
   const {
@@ -31,7 +32,10 @@ export default function KYCDashboard(): JSX.Element {
     status: KycStatus,
   ): Promise<void> => {
     e.preventDefault();
-    await updateKycStatus(status);
+    const success = await updateKycStatus(status);
+    if (success && status === "APPROVED") {
+      await logEvent('kyc_verified');
+    }
   };
 
   const handleRejectWithReason = async (reason: string) => {

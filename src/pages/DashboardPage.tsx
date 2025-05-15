@@ -1,5 +1,5 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
   RequestToGetBalance,
@@ -14,6 +14,7 @@ import BottomSheet from "../components/SideBar";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
 import { useNavigate } from "react-router-dom";
+import { logEvent } from "../utils/analytics";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -36,6 +37,24 @@ const Dashboard: React.FC = () => {
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
+  // Fetch balance when balance becomes visible
+  useEffect(() => {
+    if (balanceVisible && accountId && accountCert) {
+      const fetchBalance = async () => {
+        try {
+          const response = await RequestToGetBalance(accountId, accountCert);
+          setBalance(response);
+          // Log balance view
+          await logEvent('view_item', { item_id: 'balance' });
+        } catch (error) {
+          console.error("Error fetching balance:", error);
+          toast.error("Failed to fetch balance");
+        }
+      };
+      fetchBalance();
+    }
+  }, [balanceVisible, accountId, accountCert]);
 
   const viewBalance = async () => {
     if (balanceVisible) {

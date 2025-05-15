@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setDocumentStatus } from "../../slices/accountSlice";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
+import { logEvent } from "../../utils/analytics";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
@@ -50,6 +51,7 @@ const DocumentImages = () => {
       if (response.includes("saved")) {
         dispatch(setDocumentStatus("PENDING"));
         toast.success("Documents submitted successfully");
+        logEvent('kyc_document_uploaded');
         navigate("/kyc");
       }
     } catch (error) {

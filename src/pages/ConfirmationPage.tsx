@@ -14,6 +14,7 @@ import {
   faCoins,
   faIdCard,
 } from "@fortawesome/free-solid-svg-icons";
+import { logEvent } from "../utils/analytics";
 
 interface ConfirmationData {
   clientAccountId: string;
@@ -34,19 +35,6 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   data,
   onDismiss,
 }) => {
-  const navigate = useNavigate();
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Make sure data has a clientName property even if it wasn't passed
-  const safeData = {
-    ...data,
-    clientName: data.clientName || "Anonymous",
-  };
-
   const {
     clientAccountId,
     amount,
@@ -55,10 +43,31 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     transactionJwt,
     show,
     clientName,
+  } = data;
+
+  const [isVisible, setIsVisible] = useState(true);
+  const navigate = useNavigate();
+  const accountCert = useSelector((state: RootState) => state.account.accountCert);
+  const kycCert = useSelector((state: RootState) => state.account.kycCert);
+
+  // Make sure data has a clientName property even if it wasn't passed
+  const safeData = {
+    ...data,
+    clientName: data.clientName || "Anonymous",
+  };
+
+  const {
+    clientAccountId: safeClientAccountId,
+    amount: safeAmount,
+    agentAccountId: safeAgentAccountId,
+    agentAccountCert: safeAgentAccountCert,
+    transactionJwt: safeTransactionJwt,
+    show: safeShow,
+    clientName: safeClientName,
   } = safeData;
 
   console.log("Confirmation Page Data:", safeData);
-  console.log("Client Name in Confirmation:", clientName);
+  console.log("Client Name in Confirmation:", safeClientName);
 
   useEffect(() => {
     // Animate the bottom sheet entry
@@ -72,32 +81,32 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     // Offline handling based on show type
     if (
       !navigator.onLine &&
-      show !== "Transfer" &&
-      show !== "Payment" &&
-      show !== "Top up"
+      safeShow !== "Transfer" &&
+      safeShow !== "Payment" &&
+      safeShow !== "Top up"
     ) {
       toast.info("Oops, you are offline. Redirecting to the amount page...");
       setTimeout(() => {
         navigate("/top-up", {
           state: {
-            clientAccountId,
-            amount,
+            clientAccountId: safeClientAccountId,
+            amount: safeAmount,
             isClientOffline: true,
-            clientName, // Pass the client name in navigation
+            clientName: safeClientName, // Pass the client name in navigation
           },
         });
       }, 4000);
-    } else if (!navigator.onLine && show === "Transfer") {
+    } else if (!navigator.onLine && safeShow === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
-    } else if (!navigator.onLine && show === "Top up") {
+    } else if (!navigator.onLine && safeShow === "Top up") {
       toast.error("Cannot top up offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 4000);
-    } else if (!navigator.onLine && show === "Payment") {
+    } else if (!navigator.onLine && safeShow === "Payment") {
       toast.error("Cannot do payment offline. Redirecting you to dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
@@ -105,28 +114,44 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     } else {
       try {
         const response = await RequestToTopup(
-          clientAccountId,
-          amount,
-          agentAccountId,
+          safeClientAccountId,
+          safeAmount,
+          safeAgentAccountId,
           accountCert,
           kycCert,
         );
         if (response?.includes("Success")) {
           const transactionCert = response.replace(" Success", "");
           toast.success("Account successfully topped up.");
+          // Log successful purchase
+          await logEvent('purchase', { 
+            transaction_id: transactionCert,
+            currency: 'XAF',
+            value: safeAmount
+          });
           navigate("/success", {
             state: {
               transactionCert,
-              accountId: agentAccountId,
-              accountCert: agentAccountCert,
-              clientName, // Include client name in success state
+              accountId: safeAgentAccountId,
+              accountCert: safeAgentAccountCert,
+              clientName: safeClientName, // Include client name in success state
             },
           });
         } else if (response?.includes("Insufficient")) {
           toast.error("Insufficient funds. Please add funds to your account.");
+          // Log transaction failure
+          await logEvent('transaction_failed', { 
+            flow: 'top_up',
+            error_code: 'insufficient_funds'
+          });
         }
       } catch (error) {
         toast.error("An error occurred while processing the transaction");
+        // Log transaction failure
+        await logEvent('transaction_failed', { 
+          flow: 'top_up',
+          error_code: 'unknown_error'
+        });
         console.error(error);
       }
     }
@@ -135,30 +160,46 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   const handleOfflineWithdrawal = async () => {
     try {
       const response = await RequestToWithdrawOffline(
-        clientAccountId,
-        amount,
-        agentAccountId,
+        safeClientAccountId,
+        safeAmount,
+        safeAgentAccountId,
         accountCert,
-        transactionJwt,
+        safeTransactionJwt,
       );
       if (response?.includes("Success")) {
         const transactionCert = response.replace(" Success", "");
         toast.success("Account successfully topped up.");
+        // Log successful purchase
+        await logEvent('purchase', { 
+          transaction_id: transactionCert,
+          currency: 'XAF',
+          value: safeAmount
+        });
         navigate("/success", {
           state: {
             transactionCert,
-            accountId: agentAccountId,
-            accountCert: agentAccountCert,
-            clientName, // Include client name in success state
+            accountId: safeAgentAccountId,
+            accountCert: safeAgentAccountCert,
+            clientName: safeClientName, // Include client name in success state
           },
         });
       } else if (response?.includes("Insufficient")) {
         toast.error(
           "Insufficient funds. Please ask the client to add funds to his account.",
         );
+        // Log transaction failure
+        await logEvent('transaction_failed', { 
+          flow: 'withdraw',
+          error_code: 'insufficient_funds'
+        });
       }
     } catch (error) {
       toast.error("An error occurred while processing the transaction");
+      // Log transaction failure
+      await logEvent('transaction_failed', { 
+        flow: 'withdraw',
+        error_code: 'unknown_error'
+      });
       console.error(error);
     }
   };
@@ -206,15 +247,15 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
                       Name
                     </p>
                     <p className="text-sm font-semibold text-gray-800">
-                      {clientName || "Anonymous"}
+                      {safeClientName || "Anonymous"}
                     </p>
                   </div>
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Account ID
                   </p>
                   <p className="text-sm font-semibold text-gray-800 break-all">
-                    {clientAccountId
-                      ? `*******${clientAccountId.slice(-4)}`
+                    {safeClientAccountId
+                      ? `*******${safeClientAccountId.slice(-4)}`
                       : "Default Account ID"}
                   </p>
                 </div>
@@ -229,7 +270,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
                     Amount
                   </p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {amount ? `${amount} XAF` : "Default Amount"}
+                    {safeAmount ? `${safeAmount} XAF` : "Default Amount"}
                   </p>
                 </div>
               </div>

@@ -55,6 +55,7 @@ import { useKYCReminder } from "./hooks/useKYCReminder";
 import ContactsPage from "./pages/ContactsPage";
 import PaymentSelectionPage from "./pages/PaymentSelectionPage";
 import AgentTopUpPage from "./pages/AgentTopUpPage";
+import { logPageView } from "./utils/analytics";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -65,6 +66,18 @@ const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { showReminder, handleClose } = useKYCReminder();
+
+  // Log page_view on route change for GA4
+  useEffect(() => {
+    const logPageViewAsync = async () => {
+      try {
+        await logPageView(location.pathname + location.search);
+      } catch (error) {
+        console.error('Failed to log page view:', error);
+      }
+    };
+    logPageViewAsync();
+  }, [location.pathname, location.search]);
 
   // Check if onboarding is completed
   useEffect(() => {

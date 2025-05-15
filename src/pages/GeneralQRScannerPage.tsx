@@ -11,6 +11,7 @@ import ConfirmationBottomSheet from "./ConfirmationPage";
 import SaveContactModal from "../components/SaveContactModal";
 import { ContactService } from "../services/contactService";
 import { useQRScannerCore } from "./useQRScannerCore";
+import { logEvent } from "../utils/analytics";
 
 interface ConfirmationData {
   clientAccountId: string;
@@ -36,6 +37,7 @@ const GeneralQRScannerPage: React.FC = () => {
   const [showSaveContact, setShowSaveContact] = useState(false);
   const [scannedAccountId, setScannedAccountId] = useState<string | null>(null);
   const [scannedName, setScannedName] = useState<string | null>(null);
+  const [scannedAmount, setScannedAmount] = useState<number | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,12 +57,17 @@ const GeneralQRScannerPage: React.FC = () => {
   };
 
   const handleTransferOrPayment = useCallback(
-    (data: QRData) => {
+    async (data: QRData) => {
       if (data.accountId === agentAccountId) {
         toast.error("Self-transfer not allowed.");
         window.location.reload();
         return;
       }
+      // Log transfer initiation
+      await logEvent('wallet_transfer_initiated', { 
+        amount: data.amount,
+        toUserId: data.accountId
+      });
       navigate("/top-up", {
         state: {
           clientAccountId: data.accountId,
