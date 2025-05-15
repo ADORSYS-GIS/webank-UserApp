@@ -54,9 +54,9 @@ const TopUpPage: React.FC = () => {
     }
 
     // Log top-up initiation
-    logEvent('add_payment_info', { 
-      currency: 'XAF', 
-      value: numericAmount 
+    logEvent("add_payment_info", {
+      currency: "XAF",
+      value: numericAmount,
     });
 
     if (show === "Transfer" || show === "Payment" || show === "Withdraw") {

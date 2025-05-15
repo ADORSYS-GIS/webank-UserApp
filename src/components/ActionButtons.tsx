@@ -40,8 +40,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleWithdrawClick = () =>
     handleActionClick(() => {
-      logEvent('wallet_withdrawal_initiated', {
-        fromUserId: accountId
+      logEvent("wallet_withdrawal_initiated", {
+        fromUserId: accountId,
       });
 
       navigate("/payment-selection", {
@@ -56,8 +56,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleTransferClick = () =>
     handleActionClick(() => {
-      logEvent('wallet_transfer_initiated', {
-        fromUserId: accountId
+      logEvent("wallet_transfer_initiated", {
+        fromUserId: accountId,
       });
 
       navigate("/payment-selection", {
@@ -72,8 +72,8 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handlePayClick = () =>
     handleActionClick(() => {
-      logEvent('wallet_payment_initiated', {
-        fromUserId: accountId
+      logEvent("wallet_payment_initiated", {
+        fromUserId: accountId,
       });
 
       navigate("/payment-selection", {

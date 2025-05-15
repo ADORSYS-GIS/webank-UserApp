@@ -49,42 +49,42 @@ export default function IdentityVerification() {
     if (status === "PENDING") {
       setPersonalInfoSubmitted(true);
       // Log KYC document upload
-      logEvent('kyc_document_uploaded', {
-        status: 'PENDING',
-        document_type: 'personal_info'
+      logEvent("kyc_document_uploaded", {
+        status: "PENDING",
+        document_type: "personal_info",
       });
     }
     if (documentStatus === "PENDING") {
       setDocumentsSubmitted(true);
       // Log KYC verification
-      logEvent('kyc_verified', {
-        status: 'PENDING',
-        document_type: 'identity_documents'
+      logEvent("kyc_verified", {
+        status: "PENDING",
+        document_type: "identity_documents",
       });
     }
-    
+
     // Log KYC status changes
     if (status === "APPROVED") {
-      logEvent('kyc_status_changed', {
-        status: 'APPROVED',
-        document_type: 'personal_info'
+      logEvent("kyc_status_changed", {
+        status: "APPROVED",
+        document_type: "personal_info",
       });
     } else if (status === "REJECTED") {
-      logEvent('kyc_status_changed', {
-        status: 'REJECTED',
-        document_type: 'personal_info'
+      logEvent("kyc_status_changed", {
+        status: "REJECTED",
+        document_type: "personal_info",
       });
     }
-    
+
     if (documentStatus === "APPROVED") {
-      logEvent('kyc_status_changed', {
-        status: 'APPROVED',
-        document_type: 'identity_documents'
+      logEvent("kyc_status_changed", {
+        status: "APPROVED",
+        document_type: "identity_documents",
       });
     } else if (documentStatus === "REJECTED") {
-      logEvent('kyc_status_changed', {
-        status: 'REJECTED',
-        document_type: 'identity_documents'
+      logEvent("kyc_status_changed", {
+        status: "REJECTED",
+        document_type: "identity_documents",
       });
     }
   }, [documentStatus, status]);

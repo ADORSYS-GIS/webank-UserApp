@@ -46,9 +46,9 @@ const Dashboard: React.FC = () => {
     try {
       if (!accountId || !accountCert) {
         // Log missing account info error
-        logEvent('view_balance_failed', {
-          error_type: 'missing_account_info',
-          error_message: 'Account ID or Certificate is missing'
+        logEvent("view_balance_failed", {
+          error_type: "missing_account_info",
+          error_message: "Account ID or Certificate is missing",
         });
         toast.error("Account information is missing.");
         return;
@@ -56,19 +56,19 @@ const Dashboard: React.FC = () => {
       const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
       setBalance(fetchedBalance);
       setBalanceVisible(true);
-      
+
       // Log balance view with specific event
-      logEvent('view_balance', { 
+      logEvent("view_balance", {
         account_id: accountId,
-        balance: fetchedBalance
+        balance: fetchedBalance,
       });
     } catch (error) {
       console.error("Error retrieving balance:", error);
       // Log balance view error with more details
-      logEvent('view_balance_failed', {
-        error_type: 'balance_retrieval_failed',
-        error_message: error instanceof Error ? error.message : 'Unknown error',
-        account_id: accountId
+      logEvent("view_balance_failed", {
+        error_type: "balance_retrieval_failed",
+        error_message: error instanceof Error ? error.message : "Unknown error",
+        account_id: accountId,
       });
       toast.error("Failed to retrieve balance. Please try again.");
     }
@@ -78,9 +78,9 @@ const Dashboard: React.FC = () => {
   const fetchTransactions = async () => {
     if (!accountId || !accountCert) {
       // Log missing account info error
-      logEvent('view_transactions_failed', {
-        error_type: 'missing_account_info',
-        error_message: 'Account ID or Certificate is missing'
+      logEvent("view_transactions_failed", {
+        error_type: "missing_account_info",
+        error_message: "Account ID or Certificate is missing",
       });
       toast.error("Account information is missing.");
       return;
@@ -108,20 +108,20 @@ const Dashboard: React.FC = () => {
 
       setTransactionsData(transactions);
       setTransactionsVisible(true);
-      
+
       // Log transaction history view with specific event
-      logEvent('view_transactions', {
+      logEvent("view_transactions", {
         account_id: accountId,
         transaction_count: transactions.length,
-        has_transactions: transactions.length > 0
+        has_transactions: transactions.length > 0,
       });
     } catch (error) {
       console.error("Error loading transactions:", error);
       // Log transaction view error with more details
-      logEvent('view_transactions_failed', {
-        error_type: 'transaction_history_load_failed',
-        error_message: error instanceof Error ? error.message : 'Unknown error',
-        account_id: accountId
+      logEvent("view_transactions_failed", {
+        error_type: "transaction_history_load_failed",
+        error_message: error instanceof Error ? error.message : "Unknown error",
+        account_id: accountId,
       });
       toast.error("Failed to load transactions.");
     } finally {
