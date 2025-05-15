@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "./store/Store";
+import { logPageView } from "./utils/analytics";
 import PhoneInput from "./pages/PhoneInput.tsx";
 import PhoneVerification from "./pages/PhoneVerification.tsx";
 import DashboardPage from "./pages/DashboardPage";
@@ -65,6 +66,11 @@ const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { showReminder, handleClose } = useKYCReminder();
+
+  // Track page views
+  useEffect(() => {
+    logPageView(location.pathname);
+  }, [location.pathname]);
 
   // Check if onboarding is completed
   useEffect(() => {

@@ -6,6 +6,7 @@ import { RootState } from "../store/Store";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import ConfirmationBottomSheet from "../pages/ConfirmationPage";
+import { logEvent } from "../utils/analytics";
 
 const TopUpPage: React.FC = () => {
   useDisableScroll();
@@ -51,6 +52,12 @@ const TopUpPage: React.FC = () => {
       toast.info("Maximum top-up amount is 500,000 XAF.");
       return;
     }
+
+    // Log top-up initiation
+    logEvent('add_payment_info', { 
+      currency: 'XAF', 
+      value: numericAmount 
+    });
 
     if (show === "Transfer" || show === "Payment" || show === "Withdraw") {
       // Instead of navigating to the confirmation page, show the bottom sheet

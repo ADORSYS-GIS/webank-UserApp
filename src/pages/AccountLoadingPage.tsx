@@ -5,6 +5,7 @@ import { setAccountId, setAccountCert } from "../slices/accountSlice";
 import { RequestToCreateBankAccount } from "../services/keyManagement/requestService.ts";
 import { toast } from "sonner";
 import useInitialization from "../hooks/useInitialization.ts";
+import { logEvent } from "../utils/analytics";
 
 interface AccountLoadingPageProps {
   message?: string;
@@ -21,6 +22,11 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
     const initializeAccount = async () => {
       try {
         if (error) {
+          // Log initialization error
+          logEvent('registration_failed', {
+            error_type: 'initialization_error',
+            error_message: error
+          });
           throw new Error(error);
         }
 
@@ -47,15 +53,28 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
           dispatch(setAccountId(accountId));
           dispatch(setAccountCert(accountCert));
 
+          // Log sign-up success
+          logEvent('registration success');
+
           // Redirect to dashboard
           navigate("/onboarding", {
             state: { accountId, accountCert },
           });
         } else {
+          // Log account creation failure
+          logEvent('registration_failed', {
+            error_type: 'account_creation_failed',
+            error_message: accountCreationResponse
+          });
           throw new Error("Account creation failed");
         }
       } catch (error) {
         console.error("Error during account creation:", error);
+        // Log general registration error
+        logEvent('registration_failed', {
+          error_type: 'general_error',
+          error_message: error instanceof Error ? error.message : 'Unknown error'
+        });
         toast.error("Account creation failed. Please try again.");
         navigate("/");
       }

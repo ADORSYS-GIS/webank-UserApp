@@ -13,7 +13,6 @@ This document defines all key metrics, events, and use-case scenarios to track i
 5. [Funnel & Onboarding Metrics](#onboarding)
 6. [Retention & Cohort Analysis](#retention)
 7. [Performance & Error Tracking](#performance)
-8. [Custom Dimensions & User Properties](#custom)
 9. [Real-Time Monitoring](#realtime)
 10. [Use-Case Scenarios](#use-cases)
 

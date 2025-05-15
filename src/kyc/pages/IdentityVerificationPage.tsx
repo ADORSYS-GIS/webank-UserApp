@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../store/Store.ts";
 import VerificationModal from "../components/VerificationModal";
+import { logEvent } from "../../utils/analytics";
 
 // Import FontAwesome instead of react-icons
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,9 +48,44 @@ export default function IdentityVerification() {
   useEffect(() => {
     if (status === "PENDING") {
       setPersonalInfoSubmitted(true);
+      // Log KYC document upload
+      logEvent('kyc_document_uploaded', {
+        status: 'PENDING',
+        document_type: 'personal_info'
+      });
     }
     if (documentStatus === "PENDING") {
       setDocumentsSubmitted(true);
+      // Log KYC verification
+      logEvent('kyc_verified', {
+        status: 'PENDING',
+        document_type: 'identity_documents'
+      });
+    }
+    
+    // Log KYC status changes
+    if (status === "APPROVED") {
+      logEvent('kyc_status_changed', {
+        status: 'APPROVED',
+        document_type: 'personal_info'
+      });
+    } else if (status === "REJECTED") {
+      logEvent('kyc_status_changed', {
+        status: 'REJECTED',
+        document_type: 'personal_info'
+      });
+    }
+    
+    if (documentStatus === "APPROVED") {
+      logEvent('kyc_status_changed', {
+        status: 'APPROVED',
+        document_type: 'identity_documents'
+      });
+    } else if (documentStatus === "REJECTED") {
+      logEvent('kyc_status_changed', {
+        status: 'REJECTED',
+        document_type: 'identity_documents'
+      });
     }
   }, [documentStatus, status]);
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { logEvent } from "../utils/analytics";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -39,6 +40,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleWithdrawClick = () =>
     handleActionClick(() => {
+      logEvent('wallet_withdrawal_initiated', {
+        fromUserId: accountId
+      });
+
       navigate("/payment-selection", {
         state: {
           show: "Withdraw",
@@ -51,6 +56,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleTransferClick = () =>
     handleActionClick(() => {
+      logEvent('wallet_transfer_initiated', {
+        fromUserId: accountId
+      });
+
       navigate("/payment-selection", {
         state: {
           clientAccountId: accountId,
@@ -63,6 +72,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handlePayClick = () =>
     handleActionClick(() => {
+      logEvent('wallet_payment_initiated', {
+        fromUserId: accountId
+      });
+
       navigate("/payment-selection", {
         state: {
           clientAccountId: accountId,

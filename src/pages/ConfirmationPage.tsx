@@ -14,6 +14,7 @@ import {
   faCoins,
   faIdCard,
 } from "@fortawesome/free-solid-svg-icons";
+import { logEvent } from "../utils/analytics";
 
 interface ConfirmationData {
   clientAccountId: string;
@@ -114,20 +115,38 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
         if (response?.includes("Success")) {
           const transactionCert = response.replace(" Success", "");
           toast.success("Account successfully topped up.");
+          
+          // Log successful top-up
+          logEvent('purchase', {
+            transaction_id: transactionCert,
+            currency: 'XAF',
+            value: amount
+          });
+
           navigate("/success", {
             state: {
               transactionCert,
               accountId: agentAccountId,
               accountCert: agentAccountCert,
-              clientName, // Include client name in success state
+              clientName,
             },
           });
         } else if (response?.includes("Insufficient")) {
           toast.error("Insufficient funds. Please add funds to your account.");
+          // Log top-up error
+          logEvent('transaction_failed', {
+            flow: 'top_up',
+            error_code: 'INSUFFICIENT_FUNDS'
+          });
         }
       } catch (error) {
         toast.error("An error occurred while processing the transaction");
         console.error(error);
+        // Log top-up error
+        logEvent('transaction_failed', {
+          flow: 'top_up',
+          error_code: 'UNKNOWN_ERROR'
+        });
       }
     }
   };
