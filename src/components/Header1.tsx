@@ -1,11 +1,11 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faInfoCircle,
   faUserTie,
-} from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
+import { useNavigate } from 'react-router';
 
 interface HeaderProps {
   onNotificationClick?: () => void;
@@ -24,7 +24,7 @@ const Header1: React.FC<HeaderProps> = ({
     if (onNotificationClick) {
       onNotificationClick();
     } else {
-      navigate("/notifications");
+      navigate('/notifications');
     }
   };
 
@@ -32,7 +32,7 @@ const Header1: React.FC<HeaderProps> = ({
     if (onAboutClick) {
       onAboutClick();
     } else {
-      navigate("/about");
+      navigate('/about');
     }
   };
 
@@ -43,36 +43,33 @@ const Header1: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div className="flex justify-between items-center bg-white shadow-sm">
+    <div className='flex justify-between items-center bg-white shadow-sm'>
       {/* Left: Logo and Username */}
-      <div className="flex items-center space-x-4">
-        <img src="/Webank.png" alt="WeBank Logo" className="w-16 h-auto" />
+      <div className='flex items-center space-x-4'>
+        <img src='/Webank.png' alt='WeBank Logo' className='w-16 h-auto' />
       </div>
 
       {/* Right: Icons */}
-      <div className="flex items-center space-x-4">
+      <div className='flex items-center space-x-4'>
         <button
           onClick={handleServiceMenuClick}
-          className="p-2 rounded-full hover:bg-blue-50 text-blue-500"
-          aria-label="Service Menu"
-        >
-          <FontAwesomeIcon icon={faUserTie} className="text-blue-500" />
+          className='p-2 rounded-full hover:bg-blue-50 text-blue-500'
+          aria-label='Service Menu'>
+          <FontAwesomeIcon icon={faUserTie} className='text-blue-500' />
         </button>
 
         <button
           onClick={handleNotificationClick}
-          className="p-2 rounded-full hover:bg-gray-100"
-          aria-label="Notifications"
-        >
-          <FontAwesomeIcon icon={faBell} className="text-gray-600" />
+          className='p-2 rounded-full hover:bg-gray-100'
+          aria-label='Notifications'>
+          <FontAwesomeIcon icon={faBell} className='text-gray-600' />
         </button>
 
         <button
           onClick={handleAboutClick}
-          className="p-2 rounded-full hover:bg-gray-100"
-          aria-label="About"
-        >
-          <FontAwesomeIcon icon={faInfoCircle} className="text-gray-600" />
+          className='p-2 rounded-full hover:bg-gray-100'
+          aria-label='About'>
+          <FontAwesomeIcon icon={faInfoCircle} className='text-gray-600' />
         </button>
       </div>
     </div>

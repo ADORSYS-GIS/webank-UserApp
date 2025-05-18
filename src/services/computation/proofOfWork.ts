@@ -1,5 +1,5 @@
-import CryptoJS from "crypto-js";
-import { canonicalize } from "json-canonicalize";
+import CryptoJS from 'crypto-js';
+import { canonicalize } from 'json-canonicalize';
 
 /**
  * Perform Proof of Work (PoW) computation.
@@ -13,9 +13,9 @@ export async function performProofOfWork(
   devicePub: string,
   difficulty: number,
 ): Promise<{ powHash: string; powNonce: number }> {
-  const target = "0".repeat(difficulty);
+  const target = '0'.repeat(difficulty);
   let powNonce = 0;
-  let powHash = "";
+  let powHash = '';
 
   const start = Date.now();
   // Iterate until a hash matching the difficulty is found

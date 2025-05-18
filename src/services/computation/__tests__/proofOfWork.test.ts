@@ -1,13 +1,13 @@
-import { describe, it, expect, vi } from "vitest";
-import { performProofOfWork } from "../proofOfWork";
+import { describe, expect, it, vi } from 'vitest';
+import { performProofOfWork } from '../proofOfWork';
 
 // Mock console.log to prevent clutter in test output
-vi.spyOn(console, "log").mockImplementation(() => {});
+vi.spyOn(console, 'log').mockImplementation(() => {});
 
-describe("performProofOfWork", () => {
-  it("should return a valid PoW hash and nonce", async () => {
-    const initiationNonce = "test_nonce";
-    const devicePub = "test_public_key";
+describe('performProofOfWork', () => {
+  it('should return a valid PoW hash and nonce', async () => {
+    const initiationNonce = 'test_nonce';
+    const devicePub = 'test_public_key';
     const difficulty = 2;
 
     const { powHash, powNonce } = await performProofOfWork(
@@ -17,14 +17,14 @@ describe("performProofOfWork", () => {
     );
 
     expect(powHash).toMatch(new RegExp(`^0{${difficulty}}`));
-    expect(typeof powNonce).toBe("number");
+    expect(typeof powNonce).toBe('number');
     expect(powNonce).toBeGreaterThanOrEqual(0);
   });
 
-  it("should handle difficulty 0 instantly", async () => {
+  it('should handle difficulty 0 instantly', async () => {
     const { powHash, powNonce } = await performProofOfWork(
-      "nonce",
-      "publicKey",
+      'nonce',
+      'publicKey',
       0,
     );
 

@@ -1,32 +1,32 @@
 import {
-  handleRegister,
   handleAuthenticate,
+  handleRegister,
   saveMessage,
-} from "@adorsys-gis/web-auth-prf";
+} from '@adorsys-gis/web-auth-prf';
 
 export class PasswordManager {
   private static isRegistering = false;
   private static isAuthenticating = false;
 
   static async initializeDOMElements() {
-    if (!document.querySelector("#messageInput")) {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.id = "messageInput";
+    if (!document.querySelector('#messageInput')) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.id = 'messageInput';
       document.body.appendChild(input);
     }
 
-    if (!document.querySelector("#messageList")) {
-      const list = document.createElement("ul");
-      list.id = "messageList";
-      list.style.display = "none";
+    if (!document.querySelector('#messageList')) {
+      const list = document.createElement('ul');
+      list.id = 'messageList';
+      list.style.display = 'none';
       document.body.appendChild(list);
     }
   }
 
   static async getPassword(): Promise<string | undefined> {
     // Check sessionStorage for password
-    const storedPassword = sessionStorage.getItem("password");
+    const storedPassword = sessionStorage.getItem('password');
     if (storedPassword) {
       return storedPassword;
     }
@@ -34,7 +34,7 @@ export class PasswordManager {
     await this.initializeDOMElements();
 
     try {
-      const messages = JSON.parse(localStorage.getItem("messages") ?? "[]");
+      const messages = JSON.parse(localStorage.getItem('messages') ?? '[]');
       let password: string | undefined;
       if (messages.length > 0) {
         password = await this.attemptAuthentication();
@@ -43,11 +43,11 @@ export class PasswordManager {
       }
       // Store password in sessionStorage if retrieved or generated
       if (password) {
-        sessionStorage.setItem("password", password);
+        sessionStorage.setItem('password', password);
       }
       return password;
     } catch (error) {
-      console.error("Password retrieval error:", error);
+      console.error('Password retrieval error:', error);
       return undefined;
     }
   }
@@ -61,7 +61,7 @@ export class PasswordManager {
       const decryptedPassword = await handleAuthenticate();
       return decryptedPassword?.[0];
     } catch (error) {
-      console.error("Authentication failed:", error);
+      console.error('Authentication failed:', error);
       return undefined;
     } finally {
       this.isAuthenticating = false;
@@ -79,13 +79,13 @@ export class PasswordManager {
       await handleRegister();
 
       const newPassword = this.generateSecurePassword();
-      const input = document.querySelector<HTMLInputElement>("#messageInput")!;
+      const input = document.querySelector<HTMLInputElement>('#messageInput')!;
       input.value = newPassword;
       await saveMessage();
 
       return newPassword;
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error('Registration failed:', error);
       return undefined;
     } finally {
       this.isRegistering = false;

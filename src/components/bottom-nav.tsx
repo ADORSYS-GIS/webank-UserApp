@@ -1,10 +1,10 @@
-import { useLocation, useNavigate } from 'react-router';
 import BottomNavigation from '@wua/components/BottomNavigation';
-import { useSelector } from 'react-redux';
-import { RootState } from '@wua/store/Store.ts';
-import { useEffect } from 'react';
 import BottomSheet from '@wua/components/SideBar';
 import { useBottomNav } from '@wua/hooks/bottom-nav.ts';
+import { RootState } from '@wua/store/Store.ts';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router';
 
 export function BottomNav() {
   const accountId = useSelector((state: RootState) => state.account.accountId);
@@ -20,7 +20,10 @@ export function BottomNav() {
   // Check if onboarding is completed
   useEffect(() => {
     const onboardingCompleted = localStorage.getItem('onboardingCompleted');
-    if (onboardingCompleted === 'true' && location.pathname === '/onboarding-flow') {
+    if (
+      onboardingCompleted === 'true' &&
+      location.pathname === '/onboarding-flow'
+    ) {
       navigate('/');
     }
   }, [location.pathname, navigate]);

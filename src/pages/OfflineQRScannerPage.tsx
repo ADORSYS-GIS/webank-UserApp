@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router";
-import { toast } from "sonner";
-import useDisableScroll from "../hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
-import ConfirmationBottomSheet from "./ConfirmationPage";
-import { useQRScannerCore } from "./useQRScannerCore";
+import React, { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import useDisableScroll from '../hooks/useDisableScroll';
+import { RootState } from '../store/Store';
+import ConfirmationBottomSheet from './ConfirmationPage';
+import { useQRScannerCore } from './useQRScannerCore';
 
 interface ConfirmationData {
   clientAccountId: string;
@@ -49,7 +49,7 @@ const OfflineQRScannerPage: React.FC = () => {
   const showConfirmationSheet = useCallback(
     (data: QRData) => {
       if (!agentAccountId || !agentAccountCert) {
-        toast.error("Missing account information. Please try again.");
+        toast.error('Missing account information. Please try again.');
         return;
       }
 
@@ -59,8 +59,8 @@ const OfflineQRScannerPage: React.FC = () => {
         agentAccountId,
         agentAccountCert,
         transactionJwt: data.signature,
-        show: "Withdraw",
-        clientName: data.name ?? "Anonymous",
+        show: 'Withdraw',
+        clientName: data.name ?? 'Anonymous',
       };
 
       setConfirmationData(confirmationData);
@@ -87,39 +87,39 @@ const OfflineQRScannerPage: React.FC = () => {
       //   }
 
       // Validate field types
-      if (typeof data.accountId !== "string") {
+      if (typeof data.accountId !== 'string') {
         throw new Error(
-          "Invalid Offline QR Code format. accountId must be a string.",
+          'Invalid Offline QR Code format. accountId must be a string.',
         );
       }
 
-      if (typeof data.amount !== "number") {
+      if (typeof data.amount !== 'number') {
         throw new Error(
-          "Invalid Offline QR Code format. amount must be a number.",
+          'Invalid Offline QR Code format. amount must be a number.',
         );
       }
 
-      if (typeof data.timeGenerated !== "number") {
+      if (typeof data.timeGenerated !== 'number') {
         throw new Error(
-          "Invalid Offline QR Code format. timeGenerated must be a number.",
+          'Invalid Offline QR Code format. timeGenerated must be a number.',
         );
       }
 
-      if (typeof data.signature !== "string") {
+      if (typeof data.signature !== 'string') {
         throw new Error(
-          "Invalid Offline QR Code format. signature must be a string.",
+          'Invalid Offline QR Code format. signature must be a string.',
         );
       }
 
       const isExpired = Date.now() - data.timeGenerated > 15 * 60000;
       if (isExpired) {
-        toast.error("QR Code expired. Please try again.");
+        toast.error('QR Code expired. Please try again.');
         window.location.reload();
         return false;
       }
 
       if (data.accountId === agentAccountId) {
-        toast.error("Self-transfer not allowed.");
+        toast.error('Self-transfer not allowed.');
         window.location.reload();
         return false;
       }
@@ -132,21 +132,21 @@ const OfflineQRScannerPage: React.FC = () => {
   const handleDecodedText = useCallback(
     (decodedText: string) => {
       try {
-        console.log("Raw decoded text:", decodedText);
+        console.log('Raw decoded text:', decodedText);
         const data = JSON.parse(decodedText) as QRData;
-        console.log("Parsed QR data:", data);
+        console.log('Parsed QR data:', data);
 
         if (!data.name) {
-          data.name = "Anonymous";
+          data.name = 'Anonymous';
         }
 
         if (!validateQRCode(data)) return;
 
-        console.log("Showing confirmation sheet for offline transaction");
+        console.log('Showing confirmation sheet for offline transaction');
         showConfirmationSheet(data);
       } catch (err) {
-        console.error("Error parsing QR data:", err);
-        toast.error("Invalid QR code. Try again.");
+        console.error('Error parsing QR data:', err);
+        toast.error('Invalid QR code. Try again.');
       }
     },
     [validateQRCode, showConfirmationSheet],
@@ -165,40 +165,39 @@ const OfflineQRScannerPage: React.FC = () => {
   }, [stopScanner]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative">
-      <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">
+    <div className='min-h-screen flex items-center justify-center bg-white p-4 relative'>
+      <div className='bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center space-y-6'>
+        <h2 className='text-2xl font-bold text-gray-800'>
           Scan Offline Withdrawal QR Code
         </h2>
 
         {/* Scanner Container with Frame */}
-        <div className="relative mx-auto w-full aspect-square">
-          <div id="qr-reader" className="w-full h-full overflow-hidden" />
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="absolute bottom-4 text-white/90 text-sm font-medium backdrop-blur-sm px-2 py-1 rounded">
+        <div className='relative mx-auto w-full aspect-square'>
+          <div id='qr-reader' className='w-full h-full overflow-hidden' />
+          <div className='absolute inset-0 flex items-center justify-center pointer-events-none'>
+            <span className='absolute bottom-4 text-white/90 text-sm font-medium backdrop-blur-sm px-2 py-1 rounded'>
               Align QR code within frame
             </span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <label className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
-          Upload QR Image{" "}
+        <label className='block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors'>
+          Upload QR Image{' '}
           <input
-            type="file"
-            accept="image/*"
+            type='file'
+            accept='image/*'
             onChange={handleFileUpload}
-            className="hidden"
+            className='hidden'
           />
         </label>
 
         <button
-          onClick={() => navigate("/")}
-          className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
-        >
+          onClick={() => navigate('/')}
+          className='w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors'>
           Cancel
         </button>
-        {error && <p className="text-red-600 font-medium">{error}</p>}
+        {error && <p className='text-red-600 font-medium'>{error}</p>}
       </div>
 
       {/* Confirmation Bottom Sheet */}

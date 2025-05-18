@@ -1,4 +1,4 @@
-export type KycStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type KycStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface UserKYC {
   id: string;

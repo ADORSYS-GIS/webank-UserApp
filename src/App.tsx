@@ -8,7 +8,7 @@ const App: React.FC = () => {
       <RouterProvider router={router} />
 
       <Toaster
-        position="top-center"
+        position='top-center'
         richColors
         toastOptions={{
           duration: 2000,

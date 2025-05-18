@@ -1,18 +1,18 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { faker } from "@faker-js/faker";
-import OtpInput, { Props } from "../../components/OtpInput.tsx";
-import { describe, it, expect, vi } from "vitest";
-import "@testing-library/jest-dom";
+import { faker } from '@faker-js/faker';
+import '@testing-library/jest-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import OtpInput, { Props } from '../../components/OtpInput.tsx';
 
-describe("<OtpInput />", () => {
+describe('<OtpInput />', () => {
   // Function to render the OtpInput component with given props
   const renderComponent = (props: Props) => render(<OtpInput {...props} />);
 
   // Test case for validating value and valueLength props
-  it("should accept value & valueLength props", () => {
+  it('should accept value & valueLength props', () => {
     // Generate a random OTP value and split it into an array
     const value = faker.number.int({ min: 0, max: 999999 }).toString();
-    const valueArray = value.split("");
+    const valueArray = value.split('');
     const valueLength = value.length;
 
     // Render the component with the generated value and length
@@ -23,7 +23,7 @@ describe("<OtpInput />", () => {
     });
 
     // Query for all input elements
-    const inputEls = screen.queryAllByRole("textbox");
+    const inputEls = screen.queryAllByRole('textbox');
 
     // Check if the number of input elements matches the valueLength
     expect(inputEls).toHaveLength(valueLength);
@@ -37,7 +37,7 @@ describe("<OtpInput />", () => {
 
   // Test case for allowing typing of digits in the inputs
 
-  it("should allow typing of digits", () => {
+  it('should allow typing of digits', () => {
     // Generate a random length for the OTP input
     const valueLength = faker.number.int({ min: 2, max: 6 });
     const onChange = vi.fn();
@@ -46,12 +46,12 @@ describe("<OtpInput />", () => {
     renderComponent({
       valueLength,
       onChange,
-      value: "",
+      value: '',
     });
 
     // Query for input elements
 
-    const inputEls = screen.queryAllByRole("textbox");
+    const inputEls = screen.queryAllByRole('textbox');
 
     // Verify the number of input elements
 
@@ -87,7 +87,7 @@ describe("<OtpInput />", () => {
 
   // Test case for preventing non-digit inputs
 
-  it("should NOT allow typing of non-digits", () => {
+  it('should NOT allow typing of non-digits', () => {
     const valueLength = faker.number.int({ min: 2, max: 6 });
     const onChange = vi.fn();
 
@@ -95,10 +95,10 @@ describe("<OtpInput />", () => {
     renderComponent({
       valueLength,
       onChange,
-      value: "",
+      value: '',
     });
 
-    const inputEls = screen.queryAllByRole("textbox");
+    const inputEls = screen.queryAllByRole('textbox');
 
     expect(inputEls).toHaveLength(valueLength);
 
@@ -120,7 +120,7 @@ describe("<OtpInput />", () => {
     });
   });
 
-  it("should allow deleting of digits (focus on previous element)", () => {
+  it('should allow deleting of digits (focus on previous element)', () => {
     // Generate a random numeric value and determine its length
     const value = faker.number.int({ min: 10, max: 999999 }).toString();
     const valueLength = value.length;
@@ -134,7 +134,7 @@ describe("<OtpInput />", () => {
       onChange,
     });
 
-    const inputEls = screen.queryAllByRole("textbox"); // Query all input elements
+    const inputEls = screen.queryAllByRole('textbox'); // Query all input elements
 
     // Check if the number of input elements matches the value length
     expect(inputEls).toHaveLength(valueLength);
@@ -142,20 +142,20 @@ describe("<OtpInput />", () => {
     // Loop through each input from the last to the first
     for (let idx = lastIdx; idx > -1; idx--) {
       const inputEl = inputEls[idx]; // Get the current input element
-      const target = { value: "" }; // Prepare target for change event
+      const target = { value: '' }; // Prepare target for change event
 
       // Simulate a change event to clear the current input
       fireEvent.change(inputEl, { target });
       // Simulate pressing the Backspace key
       fireEvent.keyDown(inputEl, {
         target,
-        key: "Backspace",
+        key: 'Backspace',
       });
 
-      const valueArray = value.split(""); // Split the original value into an array
-      valueArray[idx] = " "; // Replace the current digit with a space
+      const valueArray = value.split(''); // Split the original value into an array
+      valueArray[idx] = ' '; // Replace the current digit with a space
 
-      const expectedValue = valueArray.join(""); // Join the array to form the expected value
+      const expectedValue = valueArray.join(''); // Join the array to form the expected value
 
       // Verify that onChange was called correctly
       expect(onChange).toBeCalledTimes(1);
@@ -172,10 +172,10 @@ describe("<OtpInput />", () => {
     }
   });
 
-  it("should allow deleting of digits (do NOT focus on previous element)", () => {
+  it('should allow deleting of digits (do NOT focus on previous element)', () => {
     // Generate a random numeric value and split it into an array
     const value = faker.number.int({ min: 10, max: 999999 }).toString();
-    const valueArray = value.split("");
+    const valueArray = value.split('');
     const valueLength = value.length;
     const lastIdx = valueLength - 1;
 
@@ -186,7 +186,7 @@ describe("<OtpInput />", () => {
       onChange: vi.fn(), // Mock the onChange function
     });
 
-    const inputEls = screen.queryAllByRole("textbox"); // Query input elements
+    const inputEls = screen.queryAllByRole('textbox'); // Query input elements
 
     // Verify the number of input elements
     expect(inputEls).toHaveLength(valueLength);
@@ -197,7 +197,7 @@ describe("<OtpInput />", () => {
 
       // Simulate pressing the Backspace key on the current input
       fireEvent.keyDown(inputEl, {
-        key: "Backspace",
+        key: 'Backspace',
         target: { value: valueArray[idx] },
       });
 
@@ -208,7 +208,7 @@ describe("<OtpInput />", () => {
     }
   });
 
-  it("should allow pasting of digits (same length as valueLength)", () => {
+  it('should allow pasting of digits (same length as valueLength)', () => {
     // Generate a random numeric value and determine its length
     const value = faker.number.int({ min: 10, max: 999999 }).toString();
     const valueLength = value.length;
@@ -218,10 +218,10 @@ describe("<OtpInput />", () => {
     renderComponent({
       valueLength,
       onChange,
-      value: "",
+      value: '',
     });
 
-    const inputEls = screen.queryAllByRole("textbox"); // Query input elements
+    const inputEls = screen.queryAllByRole('textbox'); // Query input elements
     const randomIdx = faker.number.int({ min: 0, max: valueLength - 1 }); // Select a random index
     const randomInputEl = inputEls[randomIdx]; // Get the random input element
 
@@ -236,7 +236,7 @@ describe("<OtpInput />", () => {
     expect(randomInputEl).not.toHaveFocus();
   });
 
-  it("should NOT allow pasting of digits (less than valueLength)", () => {
+  it('should NOT allow pasting of digits (less than valueLength)', () => {
     // Generate a random numeric value and determine its length
     const value = faker.number.int({ min: 10, max: 99999 }).toString();
     const valueLength = faker.number.int({ min: 6, max: 10 }); // Set a random value length
@@ -246,10 +246,10 @@ describe("<OtpInput />", () => {
     renderComponent({
       valueLength,
       onChange,
-      value: "",
+      value: '',
     });
 
-    const inputEls = screen.queryAllByRole("textbox"); // Query input elements
+    const inputEls = screen.queryAllByRole('textbox'); // Query input elements
     const randomIdx = faker.number.int({ min: 0, max: valueLength - 1 }); // Select a random index
     const randomInputEl = inputEls[randomIdx]; // Get the random input element
 
@@ -260,7 +260,7 @@ describe("<OtpInput />", () => {
     expect(onChange).not.toBeCalled();
   });
 
-  it("should focus to next element on right/down key", () => {
+  it('should focus to next element on right/down key', () => {
     // Render the component with a random numeric value
     renderComponent({
       value: faker.number.int({ min: 100, max: 999 }).toString(),
@@ -268,11 +268,11 @@ describe("<OtpInput />", () => {
       onChange: vi.fn(), // Mock the onChange function
     });
 
-    const inputEls = screen.queryAllByRole("textbox"); // Query input elements
+    const inputEls = screen.queryAllByRole('textbox'); // Query input elements
     const firstInputEl = inputEls[0]; // Get the first input element
 
     // Simulate pressing the right arrow key
-    fireEvent.keyDown(firstInputEl, { key: "ArrowRight" });
+    fireEvent.keyDown(firstInputEl, { key: 'ArrowRight' });
 
     const secondInputEl = inputEls[1]; // Get the second input element
 
@@ -280,7 +280,7 @@ describe("<OtpInput />", () => {
     expect(secondInputEl).toHaveFocus();
 
     // Simulate pressing the down arrow key
-    fireEvent.keyDown(secondInputEl, { key: "ArrowDown" });
+    fireEvent.keyDown(secondInputEl, { key: 'ArrowDown' });
 
     const thirdInputEl = inputEls[2]; // Get the third input element
 
@@ -288,7 +288,7 @@ describe("<OtpInput />", () => {
     expect(thirdInputEl).toHaveFocus();
   });
 
-  it("should focus to next element on left/up key", () => {
+  it('should focus to next element on left/up key', () => {
     // Render the component with a random numeric value
     renderComponent({
       value: faker.number.int({ min: 100, max: 999 }).toString(),
@@ -296,11 +296,11 @@ describe("<OtpInput />", () => {
       onChange: vi.fn(), // Mock the onChange function
     });
 
-    const inputEls = screen.queryAllByRole("textbox"); // Query input elements
+    const inputEls = screen.queryAllByRole('textbox'); // Query input elements
     const thirdInputEl = inputEls[2]; // Get the third input element
 
     // Simulate pressing the left arrow key
-    fireEvent.keyDown(thirdInputEl, { key: "ArrowLeft" });
+    fireEvent.keyDown(thirdInputEl, { key: 'ArrowLeft' });
 
     const secondInputEl = inputEls[1]; // Get the second input element
 
@@ -308,7 +308,7 @@ describe("<OtpInput />", () => {
     expect(secondInputEl).toHaveFocus();
 
     // Simulate pressing the up arrow key
-    fireEvent.keyDown(secondInputEl, { key: "ArrowUp" });
+    fireEvent.keyDown(secondInputEl, { key: 'ArrowUp' });
 
     const firstInputEl = inputEls[0]; // Get the first input element
 
@@ -316,19 +316,19 @@ describe("<OtpInput />", () => {
     expect(firstInputEl).toHaveFocus();
   });
   // Test suite for handling focus behavior in a multi-input component
-  it("should only focus to input if previous input has value", () => {
+  it('should only focus to input if previous input has value', () => {
     // Set the expected number of input fields
     const valueLength = 6;
 
     // Render the component with the specified value length, an empty initial value, and a mock change handler
     renderComponent({
       valueLength, // Number of input fields
-      value: "", // Initial value for the inputs (empty)
+      value: '', // Initial value for the inputs (empty)
       onChange: vi.fn(), // Mock function to track changes
     });
 
     // Query all rendered input elements that are of the 'textbox' role
-    const inputEls = screen.queryAllByRole("textbox");
+    const inputEls = screen.queryAllByRole('textbox');
 
     // Identify the last input element in the array of input elements
     const lastInputEl = inputEls[valueLength - 1];

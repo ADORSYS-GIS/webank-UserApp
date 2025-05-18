@@ -1,25 +1,25 @@
-import { render, screen } from "@testing-library/react";
-import { Component as LocationComponent } from "@wua/kyc/components/LocationComponent";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router";
-import "@testing-library/jest-dom";
+import '@testing-library/jest-dom';
+import { render, screen } from '@testing-library/react';
+import { Component as LocationComponent } from '@wua/kyc/components/LocationComponent';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
-vi.mock("react-redux", () => ({
+vi.mock('react-redux', () => ({
   useSelector: vi.fn(),
 }));
 
-vi.mock("react-router", () => ({
+vi.mock('react-router', () => ({
   useNavigate: vi.fn(),
 }));
 
-describe("LocationComponent - Basic Rendering", () => {
+describe('LocationComponent - Basic Rendering', () => {
   beforeEach(() => {
     // Mock Redux state
-    (useSelector as unknown as jest.Mock).mockReturnValue("test-cert");
+    (useSelector as unknown as jest.Mock).mockReturnValue('test-cert');
     // Mock navigation
     (useNavigate as jest.Mock).mockReturnValue(vi.fn());
     // Mock geolocation
-    Object.defineProperty(global.navigator, "geolocation", {
+    Object.defineProperty(global.navigator, 'geolocation', {
       value: {
         getCurrentPosition: vi.fn(),
         watchPosition: vi.fn(),
@@ -29,11 +29,11 @@ describe("LocationComponent - Basic Rendering", () => {
     });
   });
 
-  it("renders all text elements correctly", () => {
+  it('renders all text elements correctly', () => {
     render(<LocationComponent />);
 
     // Check main title
-    expect(screen.getByText("Location Verification")).toBeInTheDocument();
+    expect(screen.getByText('Location Verification')).toBeInTheDocument();
 
     // Check description text
     expect(
@@ -42,13 +42,13 @@ describe("LocationComponent - Basic Rendering", () => {
 
     // Check buttons
     expect(
-      screen.getByText("Continue with KYC Verification"),
+      screen.getByText('Continue with KYC Verification'),
     ).toBeInTheDocument();
-    expect(screen.getByText("Cancel")).toBeInTheDocument();
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
 
     // Check no error message initially
     expect(
-      screen.queryByText("Location access denied"),
+      screen.queryByText('Location access denied'),
     ).not.toBeInTheDocument();
   });
 });

@@ -1,35 +1,35 @@
-import { vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
-import { Component as Dashboard } from "../DashboardPage.tsx";
+import { configureStore } from '@reduxjs/toolkit';
+import '@testing-library/jest-dom';
+import { render, screen, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
-} from "../../services/keyManagement/requestService.ts";
-import { MemoryRouter } from "react-router";
-import { Provider } from "react-redux";
-import "@testing-library/jest-dom";
-import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "../../slices/account.slice.ts";
+} from '../../services/keyManagement/requestService.ts';
+import accountReducer from '../../slices/account.slice.ts';
+import { Component as Dashboard } from '../DashboardPage.tsx';
 
 // Mock FontAwesome
-vi.mock("@fortawesome/react-fontawesome", () => ({
+vi.mock('@fortawesome/react-fontawesome', () => ({
   FontAwesomeIcon: () => null,
 }));
 
 // Mock necessary external modules
-vi.mock("react-router", () => ({
-  ...require("react-router"),
+vi.mock('react-router', () => ({
+  ...require('react-router'),
   useLocation: () => ({
-    pathname: "/",
+    pathname: '/',
     state: {
-      accountId: "12345",
-      accountCert: "cert123",
+      accountId: '12345',
+      accountCert: 'cert123',
     },
   }),
 }));
 
 // Mock RequestToGetBalance and RequestToGetTransactionHistory
-vi.mock("../../services/keyManagement/requestService.ts", () => ({
+vi.mock('../../services/keyManagement/requestService.ts', () => ({
   RequestToGetBalance: vi.fn(),
   RequestToGetTransactionHistory: vi.fn(),
 }));
@@ -41,19 +41,19 @@ const createMockStore = () => {
     },
     preloadedState: {
       account: {
-        accountId: "mock-account-id",
-        accountCert: "mock-account-cert",
+        accountId: 'mock-account-id',
+        accountCert: 'mock-account-cert',
       },
     },
   });
 };
 
-describe("Dashboard", () => {
+describe('Dashboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders the logo and header", () => {
+  it('renders the logo and header', () => {
     render(
       <Provider store={createMockStore()}>
         <MemoryRouter>
@@ -61,11 +61,11 @@ describe("Dashboard", () => {
         </MemoryRouter>
       </Provider>,
     );
-    expect(screen.getByText("Balance")).toBeInTheDocument();
+    expect(screen.getByText('Balance')).toBeInTheDocument();
   });
 
-  it("calls RequestToGetBalance and shows toast on error", async () => {
-    const mockError = new Error("API error");
+  it('calls RequestToGetBalance and shows toast on error', async () => {
+    const mockError = new Error('API error');
 
     // Mock RequestToGetBalance to reject with the mock error
     (RequestToGetBalance as jest.Mock).mockRejectedValueOnce(mockError);
@@ -84,22 +84,22 @@ describe("Dashboard", () => {
     });
   });
 
-  it("renders transaction items correctly", async () => {
+  it('renders transaction items correctly', async () => {
     // Mock transaction data
     const mockTransactions = [
       {
         id: 1,
-        title: "Apple",
-        date: "2023-10-01",
-        amount: "-$429.00",
-        icon: "shopping-cart",
+        title: 'Apple',
+        date: '2023-10-01',
+        amount: '-$429.00',
+        icon: 'shopping-cart',
       },
       {
         id: 2,
-        title: "Fiverr",
-        date: "2023-10-02",
-        amount: "+$5,379.63",
-        icon: "shopping-cart",
+        title: 'Fiverr',
+        date: '2023-10-02',
+        amount: '+$5,379.63',
+        icon: 'shopping-cart',
       },
     ];
 
@@ -117,13 +117,13 @@ describe("Dashboard", () => {
     );
 
     // Click the "View Last Transactions" button to fetch and display transactions
-    const viewTransactionsButton = screen.getByText("View All");
+    const viewTransactionsButton = screen.getByText('View All');
     viewTransactionsButton.click();
 
     // Wait for the transactions to be rendered
     await waitFor(() => {
-      expect(screen.getByText("Apple")).toBeInTheDocument();
-      expect(screen.getByText("Fiverr")).toBeInTheDocument();
+      expect(screen.getByText('Apple')).toBeInTheDocument();
+      expect(screen.getByText('Fiverr')).toBeInTheDocument();
     });
   });
 });

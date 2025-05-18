@@ -1,5 +1,5 @@
-import axios from "axios";
-import { getProjectEnvVariables } from "../../shared/projectEnvVariables.ts";
+import axios from 'axios';
+import { getProjectEnvVariables } from '../../shared/projectEnvVariables.ts';
 
 const { envVariables } = getProjectEnvVariables();
 export const initiateRegistration = async (
@@ -11,7 +11,7 @@ export const initiateRegistration = async (
     timeStamp,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -25,8 +25,8 @@ export const initiateRegistration = async (
     console.log(jwtToken);
     return response.data;
   } catch (error) {
-    console.error("Error sending OTP:", error);
-    throw new Error("Failed to send OTP");
+    console.error('Error sending OTP:', error);
+    throw new Error('Failed to send OTP');
   }
 };
 
@@ -43,7 +43,7 @@ export const validateDeviceRegistration = async (
     powNonce,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -57,8 +57,8 @@ export const validateDeviceRegistration = async (
     console.log(jwtToken);
     return response.data;
   } catch (error) {
-    console.error("failed to validate", error);
-    throw new Error("failed to validate device");
+    console.error('failed to validate', error);
+    throw new Error('failed to validate device');
   }
 };
 
@@ -73,7 +73,7 @@ export const sendOTP = async (
     publicKey: publicKey,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -87,8 +87,8 @@ export const sendOTP = async (
 
     return response.data;
   } catch (error) {
-    console.error("Error sending OTP:", error);
-    throw new Error("Failed to send OTP");
+    console.error('Error sending OTP:', error);
+    throw new Error('Failed to send OTP');
   }
 };
 
@@ -103,7 +103,7 @@ export const validateOTP = async (
     otpInput: otp,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -115,12 +115,12 @@ export const validateOTP = async (
       { headers },
     );
 
-    console.log("response", response);
+    console.log('response', response);
 
     return response.data;
   } catch (error) {
-    console.error("Error validating OTP:", error);
-    throw new Error("Incorrect OTP");
+    console.error('Error validating OTP:', error);
+    throw new Error('Incorrect OTP');
   }
 };
 
@@ -129,7 +129,7 @@ export const createBankAccount = async (jwtToken: string) => {
   const requestBody = {};
 
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -140,11 +140,11 @@ export const createBankAccount = async (jwtToken: string) => {
       { headers },
     );
 
-    console.log("response", response);
+    console.log('response', response);
     return response.data;
   } catch (error) {
-    console.error("Error creating bank account:", error);
-    throw new Error("Incorrect OTP");
+    console.error('Error creating bank account:', error);
+    throw new Error('Incorrect OTP');
   }
 };
 export const getTransactionHistory = async (
@@ -157,7 +157,7 @@ export const getTransactionHistory = async (
   };
   // Set up the headers for the request, including the JWT token for authorization
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -171,8 +171,8 @@ export const getTransactionHistory = async (
     // Return the data from the response
     return response.data;
   } catch (error) {
-    console.error("Error fetching transaction history:", error);
-    throw new Error("Failed to fetch transaction history");
+    console.error('Error fetching transaction history:', error);
+    throw new Error('Failed to fetch transaction history');
   }
 };
 export const getAccountBalance = async (
@@ -184,7 +184,7 @@ export const getAccountBalance = async (
     accountID: accountId,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -199,8 +199,8 @@ export const getAccountBalance = async (
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error retrieving account balance:", error);
-    throw new Error("Failed to retrieve account balance");
+    console.error('Error retrieving account balance:', error);
+    throw new Error('Failed to retrieve account balance');
   }
 };
 export const TopupAccount = async (
@@ -216,7 +216,7 @@ export const TopupAccount = async (
     amount: amount,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
   console.log(requestBody);
@@ -231,8 +231,8 @@ export const TopupAccount = async (
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error toping up account ", error);
-    throw new Error("Failed to top up account");
+    console.error('Error toping up account ', error);
+    throw new Error('Failed to top up account');
   }
 };
 
@@ -249,7 +249,7 @@ export const WithdrawOffline = async (
     amount: amount,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
   console.log(requestBody);
@@ -264,16 +264,16 @@ export const WithdrawOffline = async (
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error withdrawing offline ", error);
-    throw new Error("Failed to withdraw offline");
+    console.error('Error withdrawing offline ', error);
+    throw new Error('Failed to withdraw offline');
   }
 };
 export const getOtps = async (jwtToken: string) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
-  console.log(headers, "headers");
+  console.log(headers, 'headers');
 
   try {
     // Send the GET request to retrieve OTPs
@@ -285,8 +285,8 @@ export const getOtps = async (jwtToken: string) => {
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error retrieving otps:", error);
-    throw new Error("Failed to retrieve otps");
+    console.error('Error retrieving otps:', error);
+    throw new Error('Failed to retrieve otps');
   }
 };
 
@@ -298,7 +298,7 @@ export const sendEmailOTP = async (
   jwtToken: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -315,8 +315,8 @@ export const sendEmailOTP = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error sending email OTP:", error);
-    throw new Error("Failed to send email OTP");
+    console.error('Error sending email OTP:', error);
+    throw new Error('Failed to send email OTP');
   }
 };
 
@@ -327,7 +327,7 @@ export const verifyEmailCode = async (
   jwtToken: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -345,8 +345,8 @@ export const verifyEmailCode = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error verifying email code:", error);
-    throw new Error("Failed to verify email code");
+    console.error('Error verifying email code:', error);
+    throw new Error('Failed to verify email code');
   }
 };
 
@@ -356,7 +356,7 @@ export const getUserLocation = async (
   accountId: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -372,11 +372,11 @@ export const getUserLocation = async (
       { headers },
     );
     console.log(response.data);
-    console.log(requestBody, "requestBody");
+    console.log(requestBody, 'requestBody');
     return response.data;
   } catch (error) {
-    console.error("Error sending user location:", error);
-    throw new Error("Failed to send user location");
+    console.error('Error sending user location:', error);
+    throw new Error('Failed to send user location');
   }
 };
 
@@ -420,7 +420,7 @@ export const storeKycDocument = async (
   jwtToken: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -440,14 +440,14 @@ export const storeKycDocument = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error storing ID Card info:", error);
-    throw new Error("Failed to store ID Card info");
+    console.error('Error storing ID Card info:', error);
+    throw new Error('Failed to store ID Card info');
   }
 };
 
 export const getKycDocuments = async (accountId: string, jwtToken: string) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -463,14 +463,14 @@ export const getKycDocuments = async (accountId: string, jwtToken: string) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error retrieving KYC records:", error);
-    throw new Error("Failed to retrieve KYC records");
+    console.error('Error retrieving KYC records:', error);
+    throw new Error('Failed to retrieve KYC records');
   }
 };
 
 export const GetKycRecordsByStatusPending = async (jwtToken: string) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -481,8 +481,8 @@ export const GetKycRecordsByStatusPending = async (jwtToken: string) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error retrieving KYC records:", error);
-    throw new Error("Failed to retrieve KYC records");
+    console.error('Error retrieving KYC records:', error);
+    throw new Error('Failed to retrieve KYC records');
   }
 };
 
@@ -491,7 +491,7 @@ export const GetKycRecordsBySearch = async (
   jwtToken: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -502,8 +502,8 @@ export const GetKycRecordsBySearch = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error retrieving KYC records:", error);
-    throw new Error("Failed to retrieve KYC records");
+    console.error('Error retrieving KYC records:', error);
+    throw new Error('Failed to retrieve KYC records');
   }
 };
 
@@ -518,14 +518,14 @@ export const UpdateKycStatus = async (
   // Update the KYC status for a particular account
   const headers = {
     Authorization: `Bearer ${jwtToken}`,
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   };
 
   const requestBody = {
     idNumber: docNumber,
     expiryDate,
     accountId,
-    ...(status === "REJECTED" && {
+    ...(status === 'REJECTED' && {
       rejectionReason: reason,
     }),
   };
@@ -540,13 +540,13 @@ export const UpdateKycStatus = async (
     console.log(response.data);
     console.log(
       `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${accountId}/${status}`,
-      "url",
+      'url',
     );
 
     return response.data;
   } catch (error) {
-    console.error("Error updating KYC status:", error);
-    throw new Error("Failed to update KYC status");
+    console.error('Error updating KYC status:', error);
+    throw new Error('Failed to update KYC status');
   }
 };
 
@@ -554,7 +554,7 @@ export const getKycCert = async (accountId: string, jwtToken: string) => {
   const headers = {
     Authorization: `Bearer ${jwtToken}`,
   };
-  console.log(headers, "headers");
+  console.log(headers, 'headers');
 
   try {
     // get the kyc Cert
@@ -566,8 +566,8 @@ export const getKycCert = async (accountId: string, jwtToken: string) => {
     console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error retrieving kyc Cert:", error);
-    throw new Error("Failed to retrieve kyc Cert");
+    console.error('Error retrieving kyc Cert:', error);
+    throw new Error('Failed to retrieve kyc Cert');
   }
 };
 
@@ -577,7 +577,7 @@ export const requestToGetRecoveryToken = async (
   jwtToken: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -594,8 +594,8 @@ export const requestToGetRecoveryToken = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error getting recovery token:", error);
-    throw new Error("Failed to get recovery token");
+    console.error('Error getting recovery token:', error);
+    throw new Error('Failed to get recovery token');
   }
 };
 
@@ -614,7 +614,7 @@ export const submitRecoveryToken = async (
     newAccountId,
   };
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
 
@@ -625,11 +625,11 @@ export const submitRecoveryToken = async (
       { headers },
     );
     const data: RecoveredTokens = response.data;
-    console.log(data, "data");
-    return data.oldAccountId + " " + data.newKycCertificate;
+    console.log(data, 'data');
+    return data.oldAccountId + ' ' + data.newKycCertificate;
   } catch (error) {
-    console.error("Error submitting recovery token:", error);
-    throw new Error("Failed to submit recovery token");
+    console.error('Error submitting recovery token:', error);
+    throw new Error('Failed to submit recovery token');
   }
 };
 
@@ -640,7 +640,7 @@ export const recoverAccountCert = async (
   accountId: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
   const requestBody = {
@@ -655,8 +655,8 @@ export const recoverAccountCert = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error recovering account certificate:", error);
-    throw new Error("Failed to recover account certificate");
+    console.error('Error recovering account certificate:', error);
+    throw new Error('Failed to recover account certificate');
   }
 };
 
@@ -667,7 +667,7 @@ export const verifyRecoveryFields = async (
   expiryDate: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${jwtToken}`,
   };
   const requestBody = {
@@ -683,8 +683,8 @@ export const verifyRecoveryFields = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error verifying recovery fields:", error);
-    throw new Error("Failed to verify recovery fields");
+    console.error('Error verifying recovery fields:', error);
+    throw new Error('Failed to verify recovery fields');
   }
 };
 
@@ -694,7 +694,7 @@ export const agentTopup = async (
   agentAccountCert: string,
 ) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${agentAccountCert}`,
   };
 
@@ -711,7 +711,7 @@ export const agentTopup = async (
     );
     return response.data;
   } catch (error) {
-    console.error("Error processing agent top-up:", error);
-    throw new Error("Failed to process agent top-up");
+    console.error('Error processing agent top-up:', error);
+    throw new Error('Failed to process agent top-up');
   }
 };

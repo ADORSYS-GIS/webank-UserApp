@@ -1,6 +1,6 @@
-import './shared/register.sw.ts';
-import './index.scss';
 import ReactDOM from 'react-dom/client';
+import './index.scss';
+import './shared/register.sw.ts';
 
 import App from './App';
 import { ReduxProvider } from './store/redux-provider';

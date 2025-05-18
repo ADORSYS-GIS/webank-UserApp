@@ -1,12 +1,9 @@
-import type { Storage } from 'redux-persist/es/types';
 import type { StorageFactory } from '@adorsys-gis/storage';
 import type { WebankDatabase } from '@wua/services/keyManagement/storageSetup.ts';
+import type { Storage } from 'redux-persist/es/types';
 
 export class ReduxStorage implements Storage {
-  constructor(
-    private readonly storage: StorageFactory<WebankDatabase>,
-  ) {
-  }
+  constructor(private readonly storage: StorageFactory<WebankDatabase>) {}
 
   public async getItem(key: string) {
     const retrievedRecord = await this.storage.findOne('redux', key);
@@ -24,12 +21,14 @@ export class ReduxStorage implements Storage {
       return;
     }
 
-    const exist = (await this.storage.count('redux', {
-      key,
-    })) > 0;
+    const exist =
+      (await this.storage.count('redux', {
+        key,
+      })) > 0;
 
     // If strValue is a string, parse it as JSON
-    const jsonValue = typeof strValue === 'string' ? JSON.parse(strValue) : strValue;
+    const jsonValue =
+      typeof strValue === 'string' ? JSON.parse(strValue) : strValue;
 
     if (exist) {
       await this.storage.update('redux', key, jsonValue);

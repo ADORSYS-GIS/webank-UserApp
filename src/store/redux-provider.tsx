@@ -1,8 +1,8 @@
+import { PropsWithChildren } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { PropsWithChildren } from 'react';
-import { persistor, store } from './Store';
 import { LoadingPage } from '../pages/LoadingPage';
+import { persistor, store } from './Store';
 
 export function ReduxProvider({ children }: PropsWithChildren) {
   return (

@@ -1,10 +1,13 @@
-import moment from 'moment';
-import { useCallback } from 'react';
-import { usePostDevInitMutation, usePostDevValidateMutation } from '@gen/store/prf-api.gen';
+import { usePostRegistrationMutation } from '@gen/store/obs-api.gen';
+import {
+  usePostDevInitMutation,
+  usePostDevValidateMutation,
+} from '@gen/store/prf-api.gen';
+import { setAccountCert, setAccountId } from '@wua/slices/account.slice.ts';
 import { proofOfWorkAsyncThunk } from '@wua/slices/pow.thunk.ts';
 import { useAppDispatch } from '@wua/store/re-export.ts';
-import { usePostRegistrationMutation } from '@gen/store/obs-api.gen';
-import { setAccountCert, setAccountId } from '@wua/slices/account.slice.ts';
+import moment from 'moment';
+import { useCallback } from 'react';
 
 export const useMakeInit = () => {
   const [registerDevice] = usePostRegistrationMutation();
@@ -29,8 +32,13 @@ export const useMakeInit = () => {
       throw new Error('Failed to receive initiation nonce from the server.');
     }
 
-    const { payload } = await dispatch(proofOfWorkAsyncThunk({ initiationNonce }));
-    const { powHash, powNonce } = payload as { powHash: string, powNonce: number };
+    const { payload } = await dispatch(
+      proofOfWorkAsyncThunk({ initiationNonce }),
+    );
+    const { powHash, powNonce } = payload as {
+      powHash: string;
+      powNonce: number;
+    };
     if (!powHash || !powNonce) {
       throw new Error('Failed to perform proof of work.');
     }
@@ -63,8 +71,7 @@ export const useMakeInit = () => {
     }
 
     const message = registerDeviceResponse.data?.accountId;
-    if (!message?.startsWith('Bank account successfully created.')
-    ) {
+    if (!message?.startsWith('Bank account successfully created.')) {
       throw new Error('Failed to create bank account.');
     }
 

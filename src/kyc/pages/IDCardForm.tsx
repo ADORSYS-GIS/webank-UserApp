@@ -1,25 +1,25 @@
 // IDCardForm.tsx
-import React from "react";
+import React from 'react';
 import {
+  DateInput,
   FormContainer,
   TextInput,
-  DateInput,
-} from "../components/FormComponents";
+} from '../components/FormComponents';
 
 const IDCardForm: React.FC = () => {
   const handleSubmit = (formData: Record<string, string>) => {
     // Handle ID card specific submission
-    console.log("ID Card Form Data:", formData);
+    console.log('ID Card Form Data:', formData);
   };
 
   return (
-    <FormContainer title="ID Card Information" onSubmit={handleSubmit}>
+    <FormContainer title='ID Card Information' onSubmit={handleSubmit}>
       <TextInput
-        label="ID Card Number"
-        fieldName="UniqueDocumentIdentifier"
-        placeholder="Enter your ID card number"
+        label='ID Card Number'
+        fieldName='UniqueDocumentIdentifier'
+        placeholder='Enter your ID card number'
       />
-      <DateInput label="Expiry Date" fieldName="expiry" />
+      <DateInput label='Expiry Date' fieldName='expiry' />
     </FormContainer>
   );
 };

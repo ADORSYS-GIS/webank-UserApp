@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { Html5Qrcode } from "html5-qrcode";
-import { toast } from "sonner";
+import { Html5Qrcode } from 'html5-qrcode';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 export function useQRScannerCore({
   onDecodedText,
@@ -20,7 +20,7 @@ export function useQRScannerCore({
         await scannerRef.current.stop();
         scannerRef.current = null;
       } catch (err) {
-        console.error("Error stopping scanner:", err);
+        console.error('Error stopping scanner:', err);
       }
     }
   }, []);
@@ -31,9 +31,9 @@ export function useQRScannerCore({
       await stopScanner();
       if (!scannerRef.current) {
         try {
-          scannerRef.current = new Html5Qrcode("qr-reader");
+          scannerRef.current = new Html5Qrcode('qr-reader');
           await scannerRef.current.start(
-            { facingMode: "environment" },
+            { facingMode: 'environment' },
             {
               fps: 30,
               qrbox: { width: 400, height: 400 },
@@ -44,8 +44,8 @@ export function useQRScannerCore({
             onScanError || (() => {}),
           );
         } catch (err) {
-          setError("Unable to access camera. Please allow camera permissions.");
-          toast.error("Camera access denied. Enable permissions.");
+          setError('Unable to access camera. Please allow camera permissions.');
+          toast.error('Camera access denied. Enable permissions.');
         }
       }
     };
@@ -62,17 +62,17 @@ export function useQRScannerCore({
         try {
           const response = await fetch(sharedImage);
           const blob = await response.blob();
-          const file = new File([blob], "shared-qr.png", { type: blob.type });
+          const file = new File([blob], 'shared-qr.png', { type: blob.type });
           await stopScanner();
-          const qrScanner = new Html5Qrcode("qr-reader");
+          const qrScanner = new Html5Qrcode('qr-reader');
           const result = await qrScanner.scanFile(file, false);
           onDecodedText(result);
         } catch (err) {
           setError(
-            "Failed to read QR code from shared image. Please try again.",
+            'Failed to read QR code from shared image. Please try again.',
           );
           toast.error(
-            "Invalid QR code in shared image. Try scanning manually.",
+            'Invalid QR code in shared image. Try scanning manually.',
           );
         }
       };
@@ -86,20 +86,20 @@ export function useQRScannerCore({
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       if (!allowedTypes.includes(file.type)) {
-        setError("Unsupported file type. Please upload a PNG or JPEG image.");
-        toast.error("Invalid file format. Use PNG or JPG.");
+        setError('Unsupported file type. Please upload a PNG or JPEG image.');
+        toast.error('Invalid file format. Use PNG or JPG.');
         return;
       }
       try {
         await stopScanner();
-        const qrScanner = new Html5Qrcode("qr-reader");
+        const qrScanner = new Html5Qrcode('qr-reader');
         const result = await qrScanner.scanFile(file, false);
         onDecodedText(result);
       } catch (err) {
-        setError("Failed to read QR code from image. Please try again.");
-        toast.error("QR code scanning failed. Try another image.");
+        setError('Failed to read QR code from image. Please try again.');
+        toast.error('QR code scanning failed. Try another image.');
       }
     }
   };

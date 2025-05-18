@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import useDisableScroll from '../../hooks/useDisableScroll';
@@ -108,42 +108,40 @@ const GetNewAccountId: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative">
-      <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center space-y-6">
-        <h2 className="text-2xl font-bold text-gray-800">
+    <div className='min-h-screen flex items-center justify-center bg-white p-4 relative'>
+      <div className='bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center space-y-6'>
+        <h2 className='text-2xl font-bold text-gray-800'>
           Scan Recovery QR Code
         </h2>
 
         {/* Scanner Container with Frame */}
-        <div className="relative mx-auto w-full aspect-square">
-          <div id="qr-reader" className="w-full h-full overflow-hidden" />
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <span className="absolute bottom-4 text-white/90 text-sm font-medium backdrop-blur-sm px-2 py-1 rounded">
+        <div className='relative mx-auto w-full aspect-square'>
+          <div id='qr-reader' className='w-full h-full overflow-hidden' />
+          <div className='absolute inset-0 flex items-center justify-center pointer-events-none'>
+            <span className='absolute bottom-4 text-white/90 text-sm font-medium backdrop-blur-sm px-2 py-1 rounded'>
               Align QR code within frame
             </span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <label
-          className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
+        <label className='block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors'>
           <span>Upload QR Image</span>
           <input
-            type="file"
-            accept="image/*"
+            type='file'
+            accept='image/*'
             onChange={handleFileUpload}
-            className="hidden"
+            className='hidden'
           />
         </label>
 
         <button
           onClick={() => navigate('/')}
-          className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
-        >
+          className='w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors'>
           Cancel
         </button>
 
-        {error && <p className="text-red-600 font-medium">{error}</p>}
+        {error && <p className='text-red-600 font-medium'>{error}</p>}
       </div>
     </div>
   );

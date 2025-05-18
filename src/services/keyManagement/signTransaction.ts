@@ -1,5 +1,5 @@
-import { KeyManagement } from "./requestService";
-import { generateSignedSignatureJWT } from "./signedSigntaureJwt";
+import { KeyManagement } from './requestService';
+import { generateSignedSignatureJWT } from './signedSigntaureJwt';
 
 export async function signTransaction(
   accountId: string,
@@ -34,8 +34,8 @@ export async function signTransaction(
 
     return jwt;
   } catch (error) {
-    console.error("Error signing transaction:", error);
-    throw new Error("Failed to sign transaction");
+    console.error('Error signing transaction:', error);
+    throw new Error('Failed to sign transaction');
   }
 
   /**
@@ -48,8 +48,8 @@ export async function signTransaction(
   function generateSecureNonce(length: number): string {
     const array = new Uint8Array(length); // Use 8 bytes (64 bits) by default
     window.crypto.getRandomValues(array); // Fill the array with random values
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
-      "",
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+      '',
     ); // Convert to hex string
   }
 }

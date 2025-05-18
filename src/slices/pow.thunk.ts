@@ -1,19 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { retrieveKeyPair } from '@wua/services/keyManagement/storeKey.ts';
+import { getProjectEnvVariables } from '@wua/shared/projectEnvVariables.ts';
 import CryptoJS from 'crypto-js';
 import { canonicalize } from 'json-canonicalize';
-import { getProjectEnvVariables } from '@wua/shared/projectEnvVariables.ts';
-import { retrieveKeyPair } from '@wua/services/keyManagement/storeKey.ts';
 
 const { envVariables } = getProjectEnvVariables();
 
 export interface ProofOfWork {
-  initiationNonce: string,
-  difficulty?: number,
+  initiationNonce: string;
+  difficulty?: number;
 }
 
 export const proofOfWorkAsyncThunk = createAsyncThunk(
   'pow/proofOfWork',
-  async ({ difficulty = envVariables.VITE_POW_DIFFICULTY, initiationNonce }: ProofOfWork) => {
+  async ({
+    difficulty = envVariables.VITE_POW_DIFFICULTY,
+    initiationNonce,
+  }: ProofOfWork) => {
     const { publicKey } = await retrieveKeyPair(1);
 
     const target = '0'.repeat(difficulty);
@@ -40,7 +43,9 @@ export const proofOfWorkAsyncThunk = createAsyncThunk(
 
       // Check if hash meets the difficulty
       if (powHash.startsWith(target)) {
-        console.log(`Proof of Work completed in ${(Date.now() - start) / 1000}s`);
+        console.log(
+          `Proof of Work completed in ${(Date.now() - start) / 1000}s`,
+        );
         break;
       }
 

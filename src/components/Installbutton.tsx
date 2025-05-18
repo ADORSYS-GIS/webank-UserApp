@@ -1,6 +1,6 @@
-import React from "react";
-import { FiDownloadCloud } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+import React from 'react';
+import { FiDownloadCloud } from 'react-icons/fi';
 
 interface InstallButtonProps {
   deferredPrompt: {
@@ -15,13 +15,13 @@ const InstallButton: React.FC<InstallButtonProps> = ({ deferredPrompt }) => {
       deferredPrompt.prompt();
       deferredPrompt.userChoice
         .then((choiceResult) => {
-          if (choiceResult.outcome === "accepted") {
-            console.log("Installation accepted");
+          if (choiceResult.outcome === 'accepted') {
+            console.log('Installation accepted');
           } else {
-            console.log("Installation dismissed");
+            console.log('Installation dismissed');
           }
         })
-        .catch((err) => console.log("Installation error", err));
+        .catch((err) => console.log('Installation error', err));
     }
   };
 
@@ -40,22 +40,21 @@ const InstallButton: React.FC<InstallButtonProps> = ({ deferredPrompt }) => {
         shadow-lg hover:shadow-xl
         transition-all duration-300
         group
-        ${!deferredPrompt ? "opacity-50 cursor-not-allowed" : ""}
-      `}
-    >
+        ${!deferredPrompt ? 'opacity-50 cursor-not-allowed' : ''}
+      `}>
       {/* Animated background */}
-      <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-20 transition-opacity" />
+      <div className='absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-20 transition-opacity' />
 
       {/* Content */}
-      <div className="flex items-center space-x-2">
-        <FiDownloadCloud className="w-5 h-5 transform group-hover:scale-110 transition-transform" />
-        <span className="text-sm bg-gradient-to-r from-cyan-100 to-blue-50 bg-clip-text text-transparent">
+      <div className='flex items-center space-x-2'>
+        <FiDownloadCloud className='w-5 h-5 transform group-hover:scale-110 transition-transform' />
+        <span className='text-sm bg-gradient-to-r from-cyan-100 to-blue-50 bg-clip-text text-transparent'>
           Install Webank
         </span>
       </div>
 
       {/* Glow effect */}
-      <div className="absolute inset-0 rounded-xl pointer-events-none border border-white/10" />
+      <div className='absolute inset-0 rounded-xl pointer-events-none border border-white/10' />
     </motion.button>
   );
 };

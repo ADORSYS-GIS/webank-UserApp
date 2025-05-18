@@ -1,6 +1,9 @@
 type ProjectEnvVariablesType = Pick<
   ImportMetaEnv,
-  'VITE_POW_DIFFICULTY' | 'VITE_WEBANK_OBS_URL' | 'VITE_WEBANK_PRS_URL' | 'VITE_WEBANK_TELLER_PASSWORD'
+  | 'VITE_POW_DIFFICULTY'
+  | 'VITE_WEBANK_OBS_URL'
+  | 'VITE_WEBANK_PRS_URL'
+  | 'VITE_WEBANK_TELLER_PASSWORD'
 >;
 
 const projectEnvVariables: ProjectEnvVariablesType = {

@@ -4,21 +4,24 @@ import CryptoJS from 'crypto-js';
 import * as jose from 'jose';
 
 export interface GenerateJwtRequest {
-  devJwt?: string,
-  phoneNumberJwt?: string,
-  accountJwt?: string,
-  transactionJwt?: string,
-  kycJwt?: string,
-  recoveryJwt?: string,
+  devJwt?: string;
+  phoneNumberJwt?: string;
+  accountJwt?: string;
+  transactionJwt?: string;
+  kycJwt?: string;
+  recoveryJwt?: string;
   payload: string;
 }
 
 export const generateJwtTokenAsyncThunk = createAsyncThunk(
   'jwt/generateJwt',
   async (request: GenerateJwtRequest) => {
-    const { publicKey: publicKeyJWK, privateKey: privateKeyJWK } = await KeyManagement();
+    const { publicKey: publicKeyJWK, privateKey: privateKeyJWK } =
+      await KeyManagement();
 
-    const hashedPayload = CryptoJS.SHA256(request.payload).toString(CryptoJS.enc.Hex);
+    const hashedPayload = CryptoJS.SHA256(request.payload).toString(
+      CryptoJS.enc.Hex,
+    );
 
     const privateKey = await jose.importJWK(privateKeyJWK, 'ES256');
 

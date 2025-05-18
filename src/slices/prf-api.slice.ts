@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { getProjectEnvVariables } from '../shared/projectEnvVariables';
 import { axiosBaseQuery } from '@wua/shared/axios-base-query.ts';
+import { getProjectEnvVariables } from '../shared/projectEnvVariables';
 
 const { envVariables } = getProjectEnvVariables();
 

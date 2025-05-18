@@ -19,13 +19,13 @@ const accountSlice = createSlice({
     setAccountId: (state, action: PayloadAction<AccountState['accountId']>) => {
       state.accountId = action.payload;
     },
-    setAccountCert: (state, action: PayloadAction<AccountState['accountCert']>) => {
+    setAccountCert: (
+      state,
+      action: PayloadAction<AccountState['accountCert']>,
+    ) => {
       state.accountCert = action.payload;
     },
-    setStatus: (
-      state,
-      action: PayloadAction<AccountState['status']>,
-    ) => {
+    setStatus: (state, action: PayloadAction<AccountState['status']>) => {
       state.status = action.payload;
     },
     setDocumentStatus: (
@@ -38,10 +38,16 @@ const accountSlice = createSlice({
       state.kycCert = action.payload;
       state.status = 'APPROVED';
     },
-    setEmailStatus: (state, action: PayloadAction<AccountState['emailStatus']>) => {
+    setEmailStatus: (
+      state,
+      action: PayloadAction<AccountState['emailStatus']>,
+    ) => {
       state.emailStatus = action.payload;
     },
-    setPhoneStatus: (state, action: PayloadAction<AccountState['phoneStatus']>) => {
+    setPhoneStatus: (
+      state,
+      action: PayloadAction<AccountState['phoneStatus']>,
+    ) => {
       state.phoneStatus = action.payload;
     },
     clearAccount: (state) => {

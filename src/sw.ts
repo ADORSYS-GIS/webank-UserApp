@@ -3,55 +3,55 @@ import {
   cleanupOutdatedCaches,
   createHandlerBoundToURL,
   precacheAndRoute,
-} from "workbox-precaching";
-import { NavigationRoute, registerRoute } from "workbox-routing";
+} from 'workbox-precaching';
+import { NavigationRoute, registerRoute } from 'workbox-routing';
 
 declare let self: ServiceWorkerGlobalScope;
 
 // Database configuration
-const DB_NAME = "webank-db";
-const STORE_NAME = "shared-content";
+const DB_NAME = 'webank-db';
+const STORE_NAME = 'shared-content';
 const DB_VERSION = 1;
 
 // Enhanced database handling
 const openDB = () =>
   new Promise<IDBDatabase>((resolve, reject) => {
-    console.log("[SW] Opening database connection");
+    console.log('[SW] Opening database connection');
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onerror = (event) => {
-      console.error("[SW] Database error:", (event.target as IDBRequest).error);
-      reject(new Error("Database error"));
+      console.error('[SW] Database error:', (event.target as IDBRequest).error);
+      reject(new Error('Database error'));
     };
 
     request.onsuccess = (event) => {
-      console.log("[SW] Database opened successfully");
+      console.log('[SW] Database opened successfully');
       resolve((event.target as IDBOpenDBRequest).result);
     };
 
     request.onupgradeneeded = (event) => {
-      console.log("[SW] Database upgrade needed");
+      console.log('[SW] Database upgrade needed');
       const db = (event.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: "id" });
+        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
       }
     };
   });
 
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    console.log("[SW] Skipping waiting");
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[SW] Skipping waiting');
     self.skipWaiting();
   }
 });
 
-self.addEventListener("install", (event) => {
-  console.log("[SW] Installing service worker");
+self.addEventListener('install', (event) => {
+  console.log('[SW] Installing service worker');
   event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener("activate", (event) => {
-  console.log("[SW] Activating service worker");
+self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating service worker');
   event.waitUntil(Promise.all([self.clients.claim(), cleanupOutdatedCaches()]));
 });
 
@@ -61,27 +61,27 @@ let allowlist;
 if (import.meta.env.DEV) allowlist = [/^\/$/];
 
 registerRoute(
-  new NavigationRoute(createHandlerBoundToURL("index.html"), { allowlist }),
+  new NavigationRoute(createHandlerBoundToURL('index.html'), { allowlist }),
 );
 
 registerRoute(
   ({ url }) => {
-    const isShareHandler = url.pathname === "/share-handler";
+    const isShareHandler = url.pathname === '/share-handler';
     console.log(
       `[SW] Intercepted request: ${url.href}, isShareHandler: ${isShareHandler}`,
     );
     return isShareHandler;
   },
   async ({ request }) => {
-    console.log("[SW] Handling POST /share-handler");
+    console.log('[SW] Handling POST /share-handler');
     try {
       const formData = await request.formData();
-      const title = formData.get("title") || "";
-      const text = formData.get("text") || "";
-      const url = formData.get("url") || "";
-      const files = formData.getAll("files") as File[];
+      const title = formData.get('title') || '';
+      const text = formData.get('text') || '';
+      const url = formData.get('url') || '';
+      const files = formData.getAll('files') as File[];
 
-      console.log("[SW] Form data:", {
+      console.log('[SW] Form data:', {
         title,
         text,
         url,
@@ -90,8 +90,8 @@ registerRoute(
       });
 
       if (!files.length) {
-        console.error("[SW] No files received");
-        return new Response("No files shared", { status: 400 });
+        console.error('[SW] No files received');
+        return new Response('No files shared', { status: 400 });
       }
 
       // Check file size limit (100KB)
@@ -99,11 +99,11 @@ registerRoute(
       const oversizedFiles = files.filter((file) => file.size > MAX_FILE_SIZE);
       if (oversizedFiles.length > 0) {
         console.error(
-          "[SW] File size exceeds limit:",
+          '[SW] File size exceeds limit:',
           oversizedFiles.map((f) => f.name),
         );
         return new Response(
-          `File size exceeds 100KB limit: ${oversizedFiles.map((f) => f.name).join(", ")}`,
+          `File size exceeds 100KB limit: ${oversizedFiles.map((f) => f.name).join(', ')}`,
           { status: 400 },
         );
       }
@@ -130,42 +130,42 @@ registerRoute(
 
       const sharedContent = { title, text, url, files: fileData };
       const jsonSize = JSON.stringify(sharedContent).length;
-      console.log("[SW] Shared content size:", jsonSize);
+      console.log('[SW] Shared content size:', jsonSize);
 
       if (jsonSize > 10 * 1024 * 1024) {
-        console.error("[SW] Content too large for IndexedDB:", jsonSize);
-        return new Response("File too large (max 10MB)", { status: 400 });
+        console.error('[SW] Content too large for IndexedDB:', jsonSize);
+        return new Response('File too large (max 10MB)', { status: 400 });
       }
 
       // Store in IndexedDB
       const db = await openDB();
-      const tx = db.transaction(STORE_NAME, "readwrite");
+      const tx = db.transaction(STORE_NAME, 'readwrite');
       const store = tx.objectStore(STORE_NAME);
-      console.log("[SW] Storing data in IndexedDB");
+      console.log('[SW] Storing data in IndexedDB');
       await new Promise<void>((resolve, reject) => {
-        const request = store.put({ id: "sharedContent", ...sharedContent });
+        const request = store.put({ id: 'sharedContent', ...sharedContent });
         request.onsuccess = () => resolve();
         request.onerror = () =>
-          reject(new Error("Failed to store shared content"));
+          reject(new Error('Failed to store shared content'));
       });
-      console.log("[SW] Data stored successfully");
+      console.log('[SW] Data stored successfully');
 
       // Notify clients
       const clients = await self.clients.matchAll({
-        type: "window",
+        type: 'window',
         includeUncontrolled: true,
       });
-      console.log("[SW] Found clients:", clients.length);
+      console.log('[SW] Found clients:', clients.length);
 
       if (clients.length === 0) {
-        console.log("[SW] No clients found, storing data for later retrieval");
+        console.log('[SW] No clients found, storing data for later retrieval');
         // Instead of trying to open a window, we'll just store the data
         // The client will retrieve it when it loads
       } else {
         for (const client of clients) {
-          console.log("[SW] Sending RELOAD_CONTENT to client:", client.id);
+          console.log('[SW] Sending RELOAD_CONTENT to client:', client.id);
           client.postMessage({
-            type: "RELOAD_CONTENT",
+            type: 'RELOAD_CONTENT',
             data: sharedContent,
           });
         }
@@ -175,27 +175,27 @@ registerRoute(
       return new Response(null, {
         status: 303,
         headers: {
-          Location: "/share-handler",
+          Location: '/share-handler',
         },
       });
     } catch (error) {
-      console.error("[SW] Error handling share:", error);
+      console.error('[SW] Error handling share:', error);
       return new Response(`Error processing share: `, { status: 500 });
     }
   },
-  "POST",
+  'POST',
 );
 
 async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
-      console.log("[SW] File conversion completed");
+      console.log('[SW] File conversion completed');
       resolve(reader.result as string);
     };
     reader.onerror = () => {
-      console.error("[SW] File conversion failed");
-      reject(new Error("Failed to read file as base64"));
+      console.error('[SW] File conversion failed');
+      reject(new Error('Failed to read file as base64'));
     };
     reader.readAsDataURL(blob);
   });

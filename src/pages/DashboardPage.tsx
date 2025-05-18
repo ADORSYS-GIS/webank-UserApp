@@ -1,15 +1,18 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from 'react';
-import { toast } from 'sonner';
-import { RequestToGetBalance, RequestToGetTransactionHistory } from '../services/keyManagement/requestService';
-import Header1 from '../components/Header1';
-import BalanceCard from '../components/BalanceCard';
-import TransactionsSection from '../components/TransactionsSection';
-import ActionButtons from '../components/ActionButtons';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/Store';
-import { useNavigate } from 'react-router';
 import { useBottomNav } from '@wua/hooks/bottom-nav.ts';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import ActionButtons from '../components/ActionButtons';
+import BalanceCard from '../components/BalanceCard';
+import Header1 from '../components/Header1';
+import TransactionsSection from '../components/TransactionsSection';
+import {
+  RequestToGetBalance,
+  RequestToGetTransactionHistory,
+} from '../services/keyManagement/requestService';
+import { RootState } from '../store/Store';
 
 const Dashboard: React.FC = () => {
   const { toggleMenu } = useBottomNav();
@@ -93,7 +96,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className='flex flex-col h-screen bg-white'>
       {/* Header placement - Pass the toggleMenu function as onServiceMenuClick */}
       <Header1
         onNotificationClick={handleNotificationClick}
@@ -102,8 +105,8 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Main content */}
-      <div className="flex-1 overflow-auto pb-16 ">
-        <div className="p-4">
+      <div className='flex-1 overflow-auto pb-16 '>
+        <div className='p-4'>
           <BalanceCard
             balanceVisible={balanceVisible}
             balance={balance}

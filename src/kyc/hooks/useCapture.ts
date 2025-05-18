@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useCapture = (
-  defaultFacingMode: "user" | "environment" = "user",
+  defaultFacingMode: 'user' | 'environment' = 'user',
 ) => {
   const [showCamera, setShowCamera] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const [facingMode, setFacingMode] = useState<"user" | "environment">(
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>(
     defaultFacingMode,
   );
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -29,13 +29,13 @@ export const useCapture = (
         videoRef.current.srcObject = stream;
       }
     } catch (error) {
-      console.error("Error accessing camera:", error);
+      console.error('Error accessing camera:', error);
     }
   }, [facingMode]);
 
   // Function to switch between front and back cameras
   const switchCamera = () => {
-    setFacingMode((prev) => (prev === "user" ? "environment" : "user"));
+    setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
   };
 
   // Capture image from the video feed
@@ -43,12 +43,12 @@ export const useCapture = (
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
+      const context = canvas.getContext('2d');
       if (context) {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageUrl = canvas.toDataURL("image/png");
+        const imageUrl = canvas.toDataURL('image/png');
         setCapturedImage(imageUrl);
         stopCamera();
       }

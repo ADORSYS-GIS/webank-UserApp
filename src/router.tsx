@@ -1,5 +1,5 @@
-import { createBrowserRouter, Navigate } from 'react-router';
 import { AppInit } from '@wua/components/app-init';
+import { createBrowserRouter, Navigate } from 'react-router';
 
 const router = createBrowserRouter([
   {
@@ -271,7 +271,7 @@ const router = createBrowserRouter([
       },
       {
         path: '*',
-        element: <Navigate to="/" replace />,
+        element: <Navigate to='/' replace />,
       },
     ],
   },

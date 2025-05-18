@@ -1,6 +1,3 @@
-import { generateJWT } from './jwtService';
-import storeKeyPair, { retrieveKeyPair } from './storeKey';
-import checkKeyPairExists from './checkKeyPairExists';
 import {
   agentTopup,
   createBankAccount,
@@ -27,6 +24,9 @@ import {
   verifyRecoveryFields,
   WithdrawOffline,
 } from './apiService';
+import checkKeyPairExists from './checkKeyPairExists';
+import { generateJWT } from './jwtService';
+import storeKeyPair, { retrieveKeyPair } from './storeKey';
 
 let Key: string | null = null;
 

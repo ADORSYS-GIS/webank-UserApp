@@ -1,16 +1,16 @@
 import React, {
-  useState,
   createContext,
+  useCallback,
   useContext,
   useMemo,
-  useCallback,
-} from "react";
-import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
-import { useDispatch, useSelector } from "react-redux";
+  useState,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import { RequestToStoreKYCInfo } from '../../services/keyManagement/requestService.ts';
+import { setStatus } from '../../slices/account.slice.ts';
 import { AppDispatch, RootState } from '../../store/Store.ts';
-import { toast } from "sonner";
-import { useNavigate } from "react-router";
-import { setStatus } from "../../slices/account.slice.ts";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -61,17 +61,17 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("ID Card Form Data:", formData);
+    console.log('ID Card Form Data:', formData);
 
     // Extract only the required fields
-    const documentNumber = formData["UniqueDocumentIdentifier"];
-    const expiry = formData["expiry"];
+    const documentNumber = formData['UniqueDocumentIdentifier'];
+    const expiry = formData['expiry'];
 
-    console.log("Document Number:", documentNumber, "Expiry Date:", expiry);
+    console.log('Document Number:', documentNumber, 'Expiry Date:', expiry);
 
     try {
       if (!documentNumber || !expiry || !accountCert || !accountId) {
-        toast.error("Please fill in all the required fields");
+        toast.error('Please fill in all the required fields');
         return;
       }
 
@@ -82,16 +82,16 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         accountId,
       );
 
-      if (response === "KYC Info sent successfully and saved.") {
-        dispatch(setStatus("PENDING"));
-        toast.success("KYC Info sent successfully and saved.");
-        navigate("/kyc");
+      if (response === 'KYC Info sent successfully and saved.') {
+        dispatch(setStatus('PENDING'));
+        toast.success('KYC Info sent successfully and saved.');
+        navigate('/kyc');
       } else {
-        toast.error("Error submitting data, please try again later");
+        toast.error('Error submitting data, please try again later');
       }
     } catch (error) {
-      console.error("Error submitting data:", error);
-      toast.error("Error submitting data, please try again later");
+      console.error('Error submitting data:', error);
+      toast.error('Error submitting data, please try again later');
     }
     onSubmit(formData);
     setFormData({});
@@ -109,36 +109,31 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   return (
     <FormContext.Provider value={contextValue}>
       <div
-        className="max-w-lg mx-auto items-center mt-32 p-4 md:p-6 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.1)]"
-        style={{ fontFamily: "Poppins, sans-serif" }}
-      >
-        <div className="flex justify-between items-center mb-6">
+        className='max-w-lg mx-auto items-center mt-32 p-4 md:p-6 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.1)]'
+        style={{ fontFamily: 'Poppins, sans-serif' }}>
+        <div className='flex justify-between items-center mb-6'>
           <h2
-            id="form-title"
-            className="text-2xl font-bold mb-6 text-center text-gray-800"
-          >
+            id='form-title'
+            className='text-2xl font-bold mb-6 text-center text-gray-800'>
             {title}
           </h2>
           <button
             onClick={handleCancel}
-            className="text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
-            aria-label="Close form"
-            title="Close form"
-          >
+            className='text-gray-600 hover:text-gray-800 text-xl focus:outline-none'
+            aria-label='Close form'
+            title='Close form'>
             ×
           </button>
         </div>
         <form
-          className="space-y-5"
-          aria-labelledby="form-title"
-          onSubmit={handleSubmit}
-        >
+          className='space-y-5'
+          aria-labelledby='form-title'
+          onSubmit={handleSubmit}>
           {children}
           <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-4 rounded-3xl
-                     font-semibold transition duration-300 ease-in-out shadow-lg mt-2"
-          >
+            type='submit'
+            className='w-full bg-blue-600 text-white py-4 rounded-3xl
+                     font-semibold transition duration-300 ease-in-out shadow-lg mt-2'>
             Submit
           </button>
         </form>
@@ -159,50 +154,45 @@ const SelectWithPopup: React.FC<{
   const [showPopup, setShowPopup] = useState(false);
 
   return (
-    <div className="relative">
-      <label className="block text-gray-600 text-sm mb-2">{label}</label>
+    <div className='relative'>
+      <label className='block text-gray-600 text-sm mb-2'>{label}</label>
       <button
-        type="button"
-        className="w-full p-4 text-left border border-gray-200 rounded-2xl
+        type='button'
+        className='w-full p-4 text-left border border-gray-200 rounded-2xl
                  focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA]
-                 transition duration-200 ease-in-out"
-        onClick={() => setShowPopup(true)}
-      >
+                 transition duration-200 ease-in-out'
+        onClick={() => setShowPopup(true)}>
         {formData[fieldName] || placeholder}
       </button>
 
       {showPopup && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-50
-                     flex flex-col justify-end md:justify-center items-center p-4"
-        >
+          className='fixed inset-0 bg-black bg-opacity-40 z-50
+                     flex flex-col justify-end md:justify-center items-center p-4'>
           <div
-            className="w-full md:max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden
-                       md:scale-100 transform transition-transform duration-300 ease-in-out md:my-0 my-2"
-          >
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="text-lg font-semibold">{label}</h3>
+            className='w-full md:max-w-md rounded-3xl bg-white shadow-2xl overflow-hidden
+                       md:scale-100 transform transition-transform duration-300 ease-in-out md:my-0 my-2'>
+            <div className='p-4 border-b border-gray-100'>
+              <h3 className='text-lg font-semibold'>{label}</h3>
             </div>
-            <div className="max-h-64 overflow-y-auto">
+            <div className='max-h-64 overflow-y-auto'>
               {options.map((option) => (
                 <button
                   key={option}
                   className={`w-full p-4 text-left transition hover:bg-[#20B2AA]/10 ${
-                    formData[fieldName] === option ? "bg-[#20B2AA]/20" : ""
+                    formData[fieldName] === option ? 'bg-[#20B2AA]/20' : ''
                   }`}
                   onClick={() => {
                     setFormField(fieldName, option);
                     setShowPopup(false);
-                  }}
-                >
+                  }}>
                   {option}
                 </button>
               ))}
             </div>
             <button
-              className="w-full p-4 text-red-500 font-medium hover:bg-red-50 transition duration-200"
-              onClick={() => setShowPopup(false)}
-            >
+              className='w-full p-4 text-red-500 font-medium hover:bg-red-50 transition duration-200'
+              onClick={() => setShowPopup(false)}>
               Cancel
             </button>
           </div>
@@ -225,17 +215,17 @@ export const DateInput: React.FC<DateInputProps> = ({ label, fieldName }) => {
 
   return (
     <div>
-      <label htmlFor={fieldName} className="block text-gray-600 text-sm mb-2">
+      <label htmlFor={fieldName} className='block text-gray-600 text-sm mb-2'>
         {label}
       </label>
       <input
         id={fieldName}
-        type="text"
+        type='text'
         placeholder={`Select ${label}`}
-        onFocus={(e) => (e.target.type = "date")}
-        onBlur={(e) => (e.target.type = "text")}
-        className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] transition duration-200 ease-in-out"
-        value={formData[fieldName] || ""}
+        onFocus={(e) => (e.target.type = 'date')}
+        onBlur={(e) => (e.target.type = 'text')}
+        className='w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] transition duration-200 ease-in-out'
+        value={formData[fieldName] || ''}
         onChange={(e) => setFormField(fieldName, e.target.value)}
       />
     </div>
@@ -257,15 +247,15 @@ export const TextInput: React.FC<TextInputProps> = ({
 
   return (
     <div>
-      <label htmlFor={fieldName} className="block text-gray-600 text-sm mb-2">
+      <label htmlFor={fieldName} className='block text-gray-600 text-sm mb-2'>
         {label}
       </label>
       <input
         id={fieldName}
-        type="text"
+        type='text'
         placeholder={placeholder}
-        className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] transition duration-200 ease-in-out"
-        value={formData[fieldName] || ""}
+        className='w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#20B2AA] focus:border-[#20B2AA] transition duration-200 ease-in-out'
+        value={formData[fieldName] || ''}
         onChange={(e) => setFormField(fieldName, e.target.value)}
       />
     </div>

@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest"; // Import necessary functions from Vitest
+import { describe, expect, it } from 'vitest'; // Import necessary functions from Vitest
 // import storage from "../storageSetup"; // Import the initialized storage
-import { retrieveKeyPair } from "../storeKey"; // Adjust the import to the correct module path
+import { retrieveKeyPair } from '../storeKey'; // Adjust the import to the correct module path
 // import { decryptPrivateKey } from "../encrypt";
 
-describe("Key Pair Storage Tests", () => {
+describe('Key Pair Storage Tests', () => {
   // it("should store and retrieve a key pair correctly", async () => {
   //   // Step 1: Store a key pair
   //   await storeKeyPair(); // Call the function to store the key pair
@@ -26,7 +26,7 @@ describe("Key Pair Storage Tests", () => {
   //   expect(retrievedKeys.privateKey).toEqual(decryptedStoredPriv); // Check if the retrieved private key matches
   // });
 
-  it("should return null for a non-existent key ID", async () => {
+  it('should return null for a non-existent key ID', async () => {
     const retrievedKeys = await retrieveKeyPair(999); // Attempt to retrieve with a non-existent ID
     expect(retrievedKeys.publicKey).toBeNull(); // Expect public key to be null
     expect(retrievedKeys.privateKey).toBeNull(); // Expect private key to be null

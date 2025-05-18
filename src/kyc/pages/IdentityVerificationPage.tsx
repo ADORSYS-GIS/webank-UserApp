@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { RootState } from '../../store/Store.ts';
 import VerificationModal from '../components/VerificationModal';
 
 // Import FontAwesome instead of react-icons
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCheck,
   faChevronLeft,
@@ -14,6 +13,7 @@ import {
   faCloudUploadAlt,
   faUserEdit,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface VerificationStep {
   id: number;
@@ -81,68 +81,64 @@ export const IdentityVerification = () => {
 
   return (
     <div
-      className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative overflow-x-hidden"
-      style={{ fontFamily: 'Poppins, sans-serif' }}
-    >
+      className='min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative overflow-x-hidden'
+      style={{ fontFamily: 'Poppins, sans-serif' }}>
       <button
-        type="button"
+        type='button'
         onClick={() => navigate('/settings')}
-        className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
-      >
+        className='absolute top-6 left-4 md:left-6 flex items-center space-x-2 group'>
         <FontAwesomeIcon
           icon={faChevronLeft}
-          className="w-6 h-6 text-gray-500 group-hover:text-blue-500 transition-colors"
+          className='w-6 h-6 text-gray-500 group-hover:text-blue-500 transition-colors'
         />
-        <span className="text-gray-600 group-hover:text-blue-500 transition-colors text-sm font-medium">
+        <span className='text-gray-600 group-hover:text-blue-500 transition-colors text-sm font-medium'>
           Back
         </span>
       </button>
 
-      <div className="text-center space-y-4 mb-6 md:mb-8 pt-12">
-        <div className="flex items-center justify-center">
+      <div className='text-center space-y-4 mb-6 md:mb-8 pt-12'>
+        <div className='flex items-center justify-center'>
           <img
-            src="https://img.icons8.com/?size=100&id=qs973rWPpRhU&format=png&color=3B82F6"
-            alt="Verification Icon"
-            className="w-15 h-15 md:w-10 md:h-10 object-contain"
+            src='https://img.icons8.com/?size=100&id=qs973rWPpRhU&format=png&color=3B82F6'
+            alt='Verification Icon'
+            className='w-15 h-15 md:w-10 md:h-10 object-contain'
           />
         </div>
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
+        <h1 className='text-2xl md:text-3xl font-bold text-gray-900 tracking-tight'>
           Let's Verify Your Identity
         </h1>
-        <p className="text-gray-600 text-sm md:text-base max-w-prose mx-auto leading-relaxed">
+        <p className='text-gray-600 text-sm md:text-base max-w-prose mx-auto leading-relaxed'>
           Follow these quick steps to complete your identity verification and
           secure your account.
         </p>
       </div>
 
-      <div className="space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
+      <div className='space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full'>
         {steps.map((step) => {
           const isCompleted =
             step.id === 1 ? personalInfoSubmitted : documentsSubmitted;
           return (
             <button
               key={step.id}
-              type="button"
+              type='button'
               onClick={isCompleted ? undefined : step.onClick}
               disabled={isCompleted}
               className={`group p-4 md:p-6 rounded-xl border transition-all
                          flex items-center justify-between
                          w-full text-left ${
-                isCompleted
-                  ? 'bg-gray-50 cursor-not-allowed opacity-75'
-                  : 'cursor-pointer hover:scale-[1.005] hover:border-blue-500'
-              }`}
-            >
-              <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div
-                  className="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-500">
-                  <FontAwesomeIcon icon={step.icon} className="text-xl" />
+                           isCompleted
+                             ? 'bg-gray-50 cursor-not-allowed opacity-75'
+                             : 'cursor-pointer hover:scale-[1.005] hover:border-blue-500'
+                         }`}>
+              <div className='flex items-center space-x-4 flex-1 min-w-0'>
+                <div className='w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-500'>
+                  <FontAwesomeIcon icon={step.icon} className='text-xl' />
                 </div>
-                <div className="space-y-1 flex-1 min-w-0">
-                  <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
+                <div className='space-y-1 flex-1 min-w-0'>
+                  <h3 className='text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate'>
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
+                  <p className='text-gray-600 text-sm md:text-base leading-snug line-clamp-2'>
                     {step.description}
                   </p>
                 </div>
@@ -150,12 +146,12 @@ export const IdentityVerification = () => {
               {isCompleted ? (
                 <FontAwesomeIcon
                   icon={faCheck}
-                  className="w-5 h-5 text-blue-500 flex-shrink-0"
+                  className='w-5 h-5 text-blue-500 flex-shrink-0'
                 />
               ) : (
                 <FontAwesomeIcon
                   icon={faChevronRight}
-                  className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors"
+                  className='w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors'
                 />
               )}
             </button>
@@ -163,17 +159,16 @@ export const IdentityVerification = () => {
         })}
       </div>
 
-      <div className="pt-4 border-gray-100 bg-white w-full mt-15">
+      <div className='pt-4 border-gray-100 bg-white w-full mt-15'>
         <button
-          type="button"
+          type='button'
           onClick={handleSubmit}
           disabled={!bothStatusesPending}
           className={`w-full py-4 text-white font-semibold text-base md:text-lg rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg ${
             bothStatusesPending
               ? 'bg-blue-500 hover:bg-blue-600 hover:shadow-blue-500/50'
               : 'bg-gray-400 cursor-not-allowed'
-          }`}
-        >
+          }`}>
           <span>Secure My Account</span>
         </button>
       </div>

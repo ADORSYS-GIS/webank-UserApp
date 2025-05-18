@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
-import { useLocation } from "react-router";
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
+import { RootState } from '../store/Store';
 
 // Routes where KYC reminder should appear
-const INCLUDED_ROUTES = ["/"];
-const SESSION_STORAGE_KEY = "kycReminderShown";
+const INCLUDED_ROUTES = ['/'];
+const SESSION_STORAGE_KEY = 'kycReminderShown';
 
 export const useKYCReminder = () => {
   const [showReminder, setShowReminder] = useState(false);
@@ -15,12 +15,12 @@ export const useKYCReminder = () => {
 
   useEffect(() => {
     // Check if this is a new browser instance
-    const isNewInstance = !sessionStorage.getItem("browserInstance");
+    const isNewInstance = !sessionStorage.getItem('browserInstance');
     if (isNewInstance) {
       // Clear any existing reminder flags
       sessionStorage.removeItem(SESSION_STORAGE_KEY);
       // Mark this as a new browser instance
-      sessionStorage.setItem("browserInstance", "true");
+      sessionStorage.setItem('browserInstance', 'true');
     }
 
     // Only show reminder if:
@@ -30,13 +30,13 @@ export const useKYCReminder = () => {
     // 4. Not shown in this session yet
     if (
       kycCert == null &&
-      status !== "PENDING" &&
+      status !== 'PENDING' &&
       INCLUDED_ROUTES.includes(location.pathname) &&
       !sessionStorage.getItem(SESSION_STORAGE_KEY)
     ) {
       setShowReminder(true);
       // Mark as shown for this session
-      sessionStorage.setItem(SESSION_STORAGE_KEY, "true");
+      sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
     } else {
       setShowReminder(false);
     }

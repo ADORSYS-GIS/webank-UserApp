@@ -1,16 +1,16 @@
 //NO
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faAddressBook,
+  faCog,
   faHome,
   faQrcode,
-  faCog,
   faUserTie,
-  faAddressBook,
-} from "@fortawesome/free-solid-svg-icons";
-import AccountQRModal from "../pages/AccountQr";
-import { Component as AgentPage } from "../pages/AgentPage";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import AccountQRModal from '../pages/AccountQr';
+import { Component as AgentPage } from '../pages/AgentPage';
 
 interface BottomNavigationProps {
   accountId: string | undefined;
@@ -45,37 +45,29 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 md:left-auto md:right-auto md:w-[750px] md:mx-auto bg-white shadow-lg border-t border-gray-200 z-10">
-        <div className="flex justify-around items-center h-16">
+      <div className='fixed bottom-0 left-0 right-0 md:left-auto md:right-auto md:w-[750px] md:mx-auto bg-white shadow-lg border-t border-gray-200 z-10'>
+        <div className='flex justify-around items-center h-16'>
           <button
-            onClick={() =>
-              navigate("/", { state: { accountId, accountCert } })
-            }
+            onClick={() => navigate('/', { state: { accountId, accountCert } })}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                navigate("/", { state: { accountId, accountCert } });
+              if (e.key === 'Enter' || e.key === ' ') {
+                navigate('/', { state: { accountId, accountCert } });
               }
             }}
-            className="flex flex-col items-center justify-center w-1/4 h-full text-center"
-            role="tab"
-            aria-selected={location.pathname === "/"}
-            tabIndex={0}
-          >
+            className='flex flex-col items-center justify-center w-1/4 h-full text-center'
+            role='tab'
+            aria-selected={location.pathname === '/'}
+            tabIndex={0}>
             <FontAwesomeIcon
               icon={faHome}
               className={`text-lg ${
-                location.pathname === "/"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                location.pathname === '/' ? 'text-blue-500' : 'text-gray-500'
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/"
-                  ? "text-blue-500"
-                  : "text-gray-500"
-              }`}
-            >
+                location.pathname === '/' ? 'text-blue-500' : 'text-gray-500'
+              }`}>
               Home
             </span>
           </button>
@@ -83,92 +75,86 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <button
             onClick={openQRModal}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+              if (e.key === 'Enter' || e.key === ' ') {
                 openQRModal();
               }
             }}
-            className="flex flex-col items-center justify-center w-1/4 h-full text-center"
-            role="tab"
+            className='flex flex-col items-center justify-center w-1/4 h-full text-center'
+            role='tab'
             aria-selected={isQRModalOpen}
-            tabIndex={0}
-          >
+            tabIndex={0}>
             <FontAwesomeIcon
               icon={faQrcode}
               className={`text-lg ${
-                isQRModalOpen ? "text-blue-500" : "text-gray-500"
+                isQRModalOpen ? 'text-blue-500' : 'text-gray-500'
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                isQRModalOpen ? "text-blue-500" : "text-gray-500"
-              }`}
-            >
+                isQRModalOpen ? 'text-blue-500' : 'text-gray-500'
+              }`}>
               My Code
             </span>
           </button>
 
           <button
             onClick={() =>
-              navigate("/settings", { state: { accountId, accountCert } })
+              navigate('/settings', { state: { accountId, accountCert } })
             }
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                navigate("/settings", { state: { accountId, accountCert } });
+              if (e.key === 'Enter' || e.key === ' ') {
+                navigate('/settings', { state: { accountId, accountCert } });
               }
             }}
-            className="flex flex-col items-center justify-center w-1/4 h-full text-center"
-            role="tab"
-            aria-selected={location.pathname === "/settings"}
-            tabIndex={0}
-          >
+            className='flex flex-col items-center justify-center w-1/4 h-full text-center'
+            role='tab'
+            aria-selected={location.pathname === '/settings'}
+            tabIndex={0}>
             <FontAwesomeIcon
               icon={faCog}
               className={`text-lg ${
-                location.pathname === "/settings"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                location.pathname === '/settings'
+                  ? 'text-blue-500'
+                  : 'text-gray-500'
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/settings"
-                  ? "text-blue-500"
-                  : "text-gray-500"
-              }`}
-            >
+                location.pathname === '/settings'
+                  ? 'text-blue-500'
+                  : 'text-gray-500'
+              }`}>
               Settings
             </span>
           </button>
 
           <button
             onClick={() =>
-              navigate("/contacts", { state: { accountId, accountCert } })
+              navigate('/contacts', { state: { accountId, accountCert } })
             }
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                navigate("/contacts", { state: { accountId, accountCert } });
+              if (e.key === 'Enter' || e.key === ' ') {
+                navigate('/contacts', { state: { accountId, accountCert } });
               }
             }}
-            className="flex flex-col items-center justify-center w-1/4 h-full text-center"
-            role="tab"
-            aria-selected={location.pathname === "/contacts"}
-            tabIndex={0}
-          >
+            className='flex flex-col items-center justify-center w-1/4 h-full text-center'
+            role='tab'
+            aria-selected={location.pathname === '/contacts'}
+            tabIndex={0}>
             <FontAwesomeIcon
               icon={faAddressBook}
               className={`text-lg ${
-                location.pathname === "/contacts"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                location.pathname === '/contacts'
+                  ? 'text-blue-500'
+                  : 'text-gray-500'
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/contacts"
-                  ? "text-blue-500"
-                  : "text-gray-500"
-              }`}
-            >
+                location.pathname === '/contacts'
+                  ? 'text-blue-500'
+                  : 'text-gray-500'
+              }`}>
               Contacts
             </span>
           </button>
@@ -176,26 +162,24 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <button
             onClick={openAgentModal}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+              if (e.key === 'Enter' || e.key === ' ') {
                 openAgentModal();
               }
             }}
-            className="flex flex-col items-center justify-center w-1/4 h-full text-center"
-            role="tab"
+            className='flex flex-col items-center justify-center w-1/4 h-full text-center'
+            role='tab'
             aria-selected={isAgentModalOpen}
-            tabIndex={0}
-          >
+            tabIndex={0}>
             <FontAwesomeIcon
               icon={faUserTie}
               className={`text-lg ${
-                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+                isAgentModalOpen ? 'text-blue-500' : 'text-gray-500'
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
-              }`}
-            >
+                isAgentModalOpen ? 'text-blue-500' : 'text-gray-500'
+              }`}>
               Agent
             </span>
           </button>

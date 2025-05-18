@@ -1,21 +1,21 @@
-import { render, fireEvent, waitFor } from "@testing-library/react";
-import { Component as Register } from "../PhoneInput";
-import "@testing-library/jest-dom";
-import { MemoryRouter } from "react-router";
-import { RequestToSendOTP } from "../../services/keyManagement/requestService";
+import { configureStore } from '@reduxjs/toolkit';
+import '@testing-library/jest-dom';
+import { fireEvent, render, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+import { toast } from 'sonner';
 import {
-  describe,
-  it,
-  beforeEach,
-  vi,
-  expect,
-  afterEach,
   afterAll,
-} from "vitest";
-import { toast } from "sonner";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "../../slices/account.slice.ts";
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import { RequestToSendOTP } from '../../services/keyManagement/requestService';
+import accountReducer from '../../slices/account.slice.ts';
+import { Component as Register } from '../PhoneInput';
 
 // Mock global objects and methods
 global.alert = vi.fn();
@@ -28,26 +28,26 @@ const createMockStore = () => {
     },
     preloadedState: {
       account: {
-        accountId: "mock-account-id",
-        accountCert: "mock-cert",
+        accountId: 'mock-account-id',
+        accountCert: 'mock-cert',
       },
     },
   });
 };
 
 // Mock the service directly
-vi.mock("../../services/keyManagement/requestService", () => ({
+vi.mock('../../services/keyManagement/requestService', () => ({
   RequestToSendOTP: vi.fn(),
 }));
 
-describe("Register component", () => {
+describe('Register component', () => {
   let store: ReturnType<typeof createMockStore>;
 
   beforeEach(() => {
     store = createMockStore();
     vi.clearAllMocks();
-    vi.spyOn(toast, "success").mockImplementation(() => "mock-toast-id");
-    vi.spyOn(toast, "error").mockImplementation(() => "mock-toast-id");
+    vi.spyOn(toast, 'success').mockImplementation(() => 'mock-toast-id');
+    vi.spyOn(toast, 'error').mockImplementation(() => 'mock-toast-id');
   });
 
   afterEach(() => {
@@ -66,56 +66,56 @@ describe("Register component", () => {
     );
   };
 
-  it("sends OTP on button click", async () => {
-    const mockResponse = "otp-hash";
+  it('sends OTP on button click', async () => {
+    const mockResponse = 'otp-hash';
     vi.mocked(RequestToSendOTP).mockResolvedValueOnce(mockResponse);
 
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
-    const phoneNumberInput = getByPlaceholderText("Phone number");
+    const phoneNumberInput = getByPlaceholderText('Phone number');
 
-    fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
-    fireEvent.click(getByText("Send Verification Code"));
+    fireEvent.change(phoneNumberInput, { target: { value: '657040277' } });
+    fireEvent.click(getByText('Send Verification Code'));
 
     await waitFor(() => {
       expect(RequestToSendOTP).toHaveBeenCalledWith(
-        "+237657040277",
-        "mock-cert",
+        '+237657040277',
+        'mock-cert',
       );
     });
   });
 
-  it("displays error message on invalid phone number", async () => {
+  it('displays error message on invalid phone number', async () => {
     vi.mocked(RequestToSendOTP).mockRejectedValueOnce(
-      new Error("Invalid number"),
+      new Error('Invalid number'),
     );
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
-    const phoneNumberInput = getByPlaceholderText("Phone number");
+    const phoneNumberInput = getByPlaceholderText('Phone number');
 
     fireEvent.change(phoneNumberInput, {
-      target: { value: "788475847587458" },
+      target: { value: '788475847587458' },
     });
-    fireEvent.click(getByText("Send Verification Code"));
+    fireEvent.click(getByText('Send Verification Code'));
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(
-        "Please enter a valid phone number.",
+        'Please enter a valid phone number.',
       ),
     );
   });
 
-  it("handles API errors gracefully", async () => {
-    const mockError = new Error("Network error");
+  it('handles API errors gracefully', async () => {
+    const mockError = new Error('Network error');
     vi.mocked(RequestToSendOTP).mockRejectedValueOnce(mockError);
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
 
-    fireEvent.change(getByPlaceholderText("Phone number"), {
-      target: { value: "657040277" },
+    fireEvent.change(getByPlaceholderText('Phone number'), {
+      target: { value: '657040277' },
     });
-    fireEvent.click(getByText("Send Verification Code"));
+    fireEvent.click(getByText('Send Verification Code'));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(
-        "Failed to send OTP. Please try again.",
+        'Failed to send OTP. Please try again.',
       );
     });
   });

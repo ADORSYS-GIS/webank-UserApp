@@ -1,15 +1,22 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistReducer, persistStore } from 'redux-persist';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import storage from '@wua/services/keyManagement/storageSetup.ts';
+import { ReduxStorage } from '@wua/shared/redux.storage.ts';
+import { reduxLogger } from '@wua/store/redux-logger.ts';
 import { combineReducers } from 'redux';
+import { persistReducer, persistStore } from 'redux-persist';
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from 'redux-persist/es/constants';
 import accountReducer from '../slices/account.slice.ts';
 import configSlice from '../slices/config.slice';
-import { basePrfApi } from '../slices/prf-api.slice.ts';
 import { baseObsApi } from '../slices/obs-api.slice.ts';
-import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'redux-persist/es/constants';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { reduxLogger } from '@wua/store/redux-logger.ts';
-import { ReduxStorage } from '@wua/shared/redux.storage.ts';
-import storage from '@wua/services/keyManagement/storageSetup.ts';
+import { basePrfApi } from '../slices/prf-api.slice.ts';
 
 // Combine multiple reducers if needed
 export const rootReducer = combineReducers({
@@ -19,11 +26,14 @@ export const rootReducer = combineReducers({
   [baseObsApi.reducerPath]: baseObsApi.reducer,
 });
 
-const persistedReducer = persistReducer({
-  key: `root::webank:${import.meta.env.MODE}`,
-  storage: new ReduxStorage(storage),
-  whitelist: ['account'], // Only persist the account slice
-}, rootReducer);
+const persistedReducer = persistReducer(
+  {
+    key: `root::webank:${import.meta.env.MODE}`,
+    storage: new ReduxStorage(storage),
+    whitelist: ['account'], // Only persist the account slice
+  },
+  rootReducer,
+);
 
 // Create the Redux store
 export const store = configureStore({
@@ -31,14 +41,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [
-          FLUSH,
-          REHYDRATE,
-          PAUSE,
-          PERSIST,
-          PURGE,
-          REGISTER,
-        ],
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     })
       .concat(basePrfApi.middleware)

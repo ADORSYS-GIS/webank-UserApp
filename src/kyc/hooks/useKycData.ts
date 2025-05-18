@@ -1,18 +1,18 @@
 // hooks/useKycData.ts - Custom hook for KYC data fetching and manipulation
-import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/Store.ts";
-import { toast } from "sonner";
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { toast } from 'sonner';
 import {
   RequestToGetPendingKycRecords,
   RequestToUpdateKycStatus,
-} from "../../services/keyManagement/requestService.ts";
+} from '../../services/keyManagement/requestService.ts';
+import { RootState } from '../../store/Store.ts';
 import {
   KycBackendResponse,
-  UserKYC,
   KycStatus,
+  UserKYC,
   VerificationFormData,
-} from "../types/types.ts";
+} from '../types/types.ts';
 
 export const useKycData = () => {
   const accountCert = useSelector(
@@ -22,17 +22,17 @@ export const useKycData = () => {
   const [selectedUser, setSelectedUser] = useState<UserKYC | null>(null);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<VerificationFormData>({
-    accountId: "",
-    docNumber: "",
-    expirationDate: "",
+    accountId: '',
+    docNumber: '',
+    expirationDate: '',
   });
 
   const convertToUserKYC = useCallback(
     (userInfo: KycBackendResponse, index: number): UserKYC => {
-      const getOrDefault = (value?: string, fallback = ""): string =>
+      const getOrDefault = (value?: string, fallback = ''): string =>
         value ?? fallback;
       const normalizeStatus = (status?: string): KycStatus =>
-        (status?.toUpperCase() ?? "PENDING") as KycStatus;
+        (status?.toUpperCase() ?? 'PENDING') as KycStatus;
 
       // Ensure ID is never empty
       const id =
@@ -66,12 +66,12 @@ export const useKycData = () => {
 
       const parsedInfo = Array.isArray(response)
         ? (response as KycBackendResponse[])
-        : (JSON.parse(response || "[]") as KycBackendResponse[]);
+        : (JSON.parse(response || '[]') as KycBackendResponse[]);
 
       setUsers(parsedInfo.map((info, index) => convertToUserKYC(info, index)));
     } catch (error) {
-      toast.error("Failed to load pending KYC records");
-      console.error("Error fetching KYC records:", error);
+      toast.error('Failed to load pending KYC records');
+      console.error('Error fetching KYC records:', error);
     } finally {
       setLoading(false);
     }
@@ -93,12 +93,12 @@ export const useKycData = () => {
 
   const updateKycStatus = async (
     status: KycStatus,
-    reason: string = status === "APPROVED"
-      ? "Approved by teller"
-      : "Rejected by teller",
+    reason: string = status === 'APPROVED'
+      ? 'Approved by teller'
+      : 'Rejected by teller',
   ): Promise<boolean> => {
     if (!selectedUser || !accountCert) {
-      toast.error("Invalid verification request");
+      toast.error('Invalid verification request');
       return false;
     }
 
@@ -114,8 +114,8 @@ export const useKycData = () => {
 
       if (
         response &&
-        typeof response === "string" &&
-        response.startsWith("Failed")
+        typeof response === 'string' &&
+        response.startsWith('Failed')
       ) {
         toast.error(`${status} failed: User identity mismatch`);
         return false;
@@ -134,9 +134,9 @@ export const useKycData = () => {
 
   const resetForm = () => {
     setFormData({
-      accountId: "",
-      docNumber: "",
-      expirationDate: "",
+      accountId: '',
+      docNumber: '',
+      expirationDate: '',
     });
   };
 

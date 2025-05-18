@@ -374,6 +374,4 @@ function ShareHandlerPage() {
   );
 }
 
-export {
-  ShareHandlerPage as Component,
-};
+export { ShareHandlerPage as Component };

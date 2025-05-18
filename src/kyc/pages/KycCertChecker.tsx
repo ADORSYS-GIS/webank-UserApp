@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../store/Store'; // Ensure this is the correct path
-import { setDocumentStatus, setKycCert, setStatus } from '../../slices/account.slice.ts'; // Updated Redux actions
 import { RequestToGetCert } from '../../services/keyManagement/requestService';
+import {
+  setDocumentStatus,
+  setKycCert,
+  setStatus,
+} from '../../slices/account.slice.ts'; // Updated Redux actions
+import { AppDispatch, RootState } from '../../store/Store'; // Ensure this is the correct path
 import KycRejectionPopup from '../components/KycRejectionPopup';
 
 const KycCertChecker = () => {

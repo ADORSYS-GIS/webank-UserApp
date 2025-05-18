@@ -5,7 +5,7 @@ export interface Contact {
 }
 
 export class ContactService {
-  private static readonly STORAGE_KEY = "contacts";
+  private static readonly STORAGE_KEY = 'contacts';
   private static idCounter: number = 1;
 
   private static getContactsFromStorage(): Contact[] {
@@ -17,7 +17,7 @@ export class ContactService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(contacts));
   }
 
-  static addContact(contact: Omit<Contact, "id">): Contact {
+  static addContact(contact: Omit<Contact, 'id'>): Contact {
     // Generate a deterministic, unique ID using a counter combined with a timestamp
     const timestamp = new Date().getTime();
     const uniqueId = `${timestamp}-${this.idCounter++}`;
@@ -49,7 +49,7 @@ export class ContactService {
 
   static updateContact(
     id: string,
-    updates: Partial<Omit<Contact, "id">>,
+    updates: Partial<Omit<Contact, 'id'>>,
   ): Contact | undefined {
     const contacts = this.getContactsFromStorage();
     const index = contacts.findIndex((contact) => contact.id === id);

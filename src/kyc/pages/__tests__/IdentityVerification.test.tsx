@@ -1,11 +1,11 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { Component as IdentityVerification } from "../IdentityVerificationPage";
-import "@testing-library/jest-dom";
-import { MemoryRouter } from "react-router";
-import { Provider } from "react-redux";
+import '@testing-library/jest-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { store } from '@wua/store/Store.ts';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+import { Component as IdentityVerification } from '../IdentityVerificationPage';
 
-describe("IdentityVerification Component", () => {
+describe('IdentityVerification Component', () => {
   const renderComponent = () =>
     render(
       <Provider store={store}>
@@ -15,31 +15,31 @@ describe("IdentityVerification Component", () => {
       </Provider>,
     );
 
-  test("renders all verification steps", () => {
+  test('renders all verification steps', () => {
     renderComponent();
 
     // Verify that each step is displayed
-    expect(screen.getByText("Personal Info")).toBeInTheDocument();
+    expect(screen.getByText('Personal Info')).toBeInTheDocument();
   });
 
-  test("clicking on a step opens the corresponding popup", () => {
+  test('clicking on a step opens the corresponding popup', () => {
     renderComponent();
 
     // Click on "Personal Info" step
-    fireEvent.click(screen.getByText("Personal Info"));
-    expect(screen.getByText("Personal Info")).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Personal Info'));
+    expect(screen.getByText('Personal Info')).toBeInTheDocument();
   });
 
-  test("Back button resets to step selection", () => {
+  test('Back button resets to step selection', () => {
     renderComponent();
 
     // Click on a step
-    fireEvent.click(screen.getByText("Personal Info"));
+    fireEvent.click(screen.getByText('Personal Info'));
 
     // Click the Back button
-    fireEvent.click(screen.getByText("Back"));
+    fireEvent.click(screen.getByText('Back'));
 
     // Check if the steps are displayed again
-    expect(screen.getByText("Personal Info")).toBeInTheDocument();
+    expect(screen.getByText('Personal Info')).toBeInTheDocument();
   });
 });

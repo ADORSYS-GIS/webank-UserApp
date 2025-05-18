@@ -1,10 +1,9 @@
-@use "sass:color";
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@use 'sass:color';
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 :root {
   $primary-color: #4f46e5;

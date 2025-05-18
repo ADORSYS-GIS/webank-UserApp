@@ -1,5 +1,5 @@
-import * as jose from "jose";
-import CryptoJS from "crypto-js";
+import CryptoJS from 'crypto-js';
+import * as jose from 'jose';
 
 // Function to hash a string using SHA256
 function hashPayload(payload: string): string {
@@ -14,7 +14,7 @@ export async function generateSignedSignatureJWT(
 ): Promise<string> {
   try {
     // Convert the private key JWK to a CryptoKey
-    const privateKey = await jose.importJWK(privateKeyJWK, "ES256");
+    const privateKey = await jose.importJWK(privateKeyJWK, 'ES256');
 
     // Prepare the JWT payload
     const jwtPayload: Record<string, string | number> = {};
@@ -32,14 +32,14 @@ export async function generateSignedSignatureJWT(
 
     // Prepare the JWT header
     const header: jose.JWTHeaderParameters = {
-      typ: "JWT",
-      alg: "ES256",
+      typ: 'JWT',
+      alg: 'ES256',
       jwk: publicKeyJWK || undefined,
     };
 
     // Add optional fields to the header
     if (accountJwt) {
-      header["accountJwt"] = accountJwt;
+      header['accountJwt'] = accountJwt;
     }
 
     // Sign the JWT with the private key and custom header
@@ -49,7 +49,7 @@ export async function generateSignedSignatureJWT(
 
     return jwt;
   } catch (error) {
-    console.error("Error generating JWT:", error);
-    throw new Error("Failed to generate JWT.");
+    console.error('Error generating JWT:', error);
+    throw new Error('Failed to generate JWT.');
   }
 }

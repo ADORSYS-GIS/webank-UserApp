@@ -1,13 +1,13 @@
-import React from "react";
-import { useNavigate } from "react-router";
+import React from 'react';
+import { useNavigate } from 'react-router';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faExchangeAlt,
-  faDownload,
-  faWallet,
   faArrowUp,
-} from "@fortawesome/free-solid-svg-icons";
+  faDownload,
+  faExchangeAlt,
+  faWallet,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface ActionButtonsProps {
   accountId: string | undefined;
@@ -26,99 +26,97 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleTopUpClick = () =>
     handleActionClick(() => {
-      navigate("/top-up", {
+      navigate('/top-up', {
         state: {
-          show: "Top up",
+          show: 'Top up',
           clientAccountId: accountId,
           clientAccountCert: accountCert,
           isClientOnline: true,
         },
       });
-      console.log("Top Up button clicked", accountId);
+      console.log('Top Up button clicked', accountId);
     });
 
   const handleWithdrawClick = () =>
     handleActionClick(() => {
-      navigate("/payment-selection", {
+      navigate('/payment-selection', {
         state: {
-          show: "Withdraw",
+          show: 'Withdraw',
           clientAccountId: accountId,
           clientAccountCert: accountCert,
         },
       });
-      console.log("Withdrawal", accountId);
+      console.log('Withdrawal', accountId);
     });
 
   const handleTransferClick = () =>
     handleActionClick(() => {
-      navigate("/payment-selection", {
+      navigate('/payment-selection', {
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,
-          show: "Transfer",
+          show: 'Transfer',
         },
       });
-      console.log("Transfer", accountId);
+      console.log('Transfer', accountId);
     });
 
   const handlePayClick = () =>
     handleActionClick(() => {
-      navigate("/payment-selection", {
+      navigate('/payment-selection', {
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,
-          show: "Payment",
+          show: 'Payment',
         },
       });
-      console.log("Payment", accountId);
+      console.log('Payment', accountId);
     });
 
   const actions = [
     {
       icon: faArrowUp,
-      label: "Top Up",
-      color: "bg-blue-100",
-      textColor: "text-blue-500",
+      label: 'Top Up',
+      color: 'bg-blue-100',
+      textColor: 'text-blue-500',
       onClick: handleTopUpClick,
     },
     {
       icon: faExchangeAlt,
-      label: "Transfer",
-      color: "bg-blue-100",
-      textColor: "text-blue-500",
+      label: 'Transfer',
+      color: 'bg-blue-100',
+      textColor: 'text-blue-500',
       onClick: handleTransferClick,
     },
     {
       icon: faDownload,
-      label: "Withdraw",
-      color: "bg-blue-100",
-      textColor: "text-blue-500",
+      label: 'Withdraw',
+      color: 'bg-blue-100',
+      textColor: 'text-blue-500',
       onClick: handleWithdrawClick,
     },
     {
       icon: faWallet,
-      label: "Pay",
-      color: "bg-blue-100",
-      textColor: "text-blue-500",
+      label: 'Pay',
+      color: 'bg-blue-100',
+      textColor: 'text-blue-500',
       onClick: handlePayClick,
     },
   ];
 
   return (
-    <div className="mb-6">
-      <div className="grid grid-cols-4 gap-2">
+    <div className='mb-6'>
+      <div className='grid grid-cols-4 gap-2'>
         {actions.map((action) => (
           <button
             key={action.label}
-            className="flex flex-col items-center justify-center"
-            onClick={action.onClick}
-          >
+            className='flex flex-col items-center justify-center'
+            onClick={action.onClick}>
             <div
-              className={`w-12 h-12 rounded-lg ${action.color} ${action.textColor} flex items-center justify-center mb-2`}
-            >
+              className={`w-12 h-12 rounded-lg ${action.color} ${action.textColor} flex items-center justify-center mb-2`}>
               <FontAwesomeIcon icon={action.icon} />
             </div>
-            <span className="text-xs text-gray-600">{action.label}</span>
+            <span className='text-xs text-gray-600'>{action.label}</span>
           </button>
         ))}
       </div>
