@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 import TopUpForm from "../components/TopUpForm";
 
 const AgentTopUpPage: React.FC = () => {
@@ -9,4 +9,4 @@ const AgentTopUpPage: React.FC = () => {
   return <TopUpForm tellerAccountCert={tellerAccountCert} />;
 };
 
-export default AgentTopUpPage;
+export { AgentTopUpPage as Component };

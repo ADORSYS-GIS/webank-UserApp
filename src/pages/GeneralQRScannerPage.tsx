@@ -2,7 +2,7 @@
 // ... existing code from QRScannerPage.tsx ...
 
 import React, { useState, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { useSelector } from "react-redux";
@@ -244,7 +244,7 @@ const GeneralQRScannerPage: React.FC = () => {
         </label>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate("/")}
           className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
         >
           Cancel
@@ -274,4 +274,4 @@ const GeneralQRScannerPage: React.FC = () => {
   );
 };
 
-export default GeneralQRScannerPage;
+export { GeneralQRScannerPage as Component };

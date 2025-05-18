@@ -1,10 +1,10 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import EmailCode from "../emailCode";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { Component as EmailCode } from "../emailCode";
+import { MemoryRouter, Route, Routes } from "react-router";
 import "@testing-library/jest-dom";
 import { vi, test, expect, beforeEach } from "vitest";
-import { RequestToVerifyEmailCode } from "../../../services/keyManagement/requestService";
+import { RequestToVerifyEmailCode } from '@wua/services/keyManagement/requestService.ts';
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
@@ -23,11 +23,11 @@ vi.mock("sonner", () => ({
   ToastContainer: vi.fn(),
 }));
 
-// Mock react-router-dom
+// Mock react-router
 const navigateMock = vi.fn();
-vi.mock("react-router-dom", async () => ({
-  ...(await vi.importActual<typeof import("react-router-dom")>(
-    "react-router-dom",
+vi.mock("react-router", async () => ({
+  ...(await vi.importActual<typeof import("react-router")>(
+    "react-router",
   )),
   useNavigate: () => navigateMock,
   useLocation: () => ({

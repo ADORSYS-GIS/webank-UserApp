@@ -1,7 +1,8 @@
 import { StorageFactory } from "@adorsys-gis/storage";
-import { DBSchema } from "idb";
+import type { DBSchema } from "idb";
+import type { RootState } from '@wua/store/Store.ts';
 
-interface MyDatabase extends DBSchema {
+export interface WebankDatabase extends DBSchema {
   keys: {
     key: number;
     value: {
@@ -13,11 +14,15 @@ interface MyDatabase extends DBSchema {
       kid: number;
     };
   };
+  redux: {
+    key: string;
+    value: RootState
+  };
 }
 
 // Initialize the storage with the schema
-const storage: StorageFactory<MyDatabase> = new StorageFactory<MyDatabase>(
-  "KeysDB",
+const storage: StorageFactory<WebankDatabase> = new StorageFactory<WebankDatabase>(
+  "webank",
   1,
   {
     upgrade: (db) => {
@@ -26,6 +31,10 @@ const storage: StorageFactory<MyDatabase> = new StorageFactory<MyDatabase>(
           keyPath: "kid",
           autoIncrement: true,
         });
+      }
+
+      if (!db.objectStoreNames.contains("redux")) {
+        db.createObjectStore("redux");
       }
     },
   },

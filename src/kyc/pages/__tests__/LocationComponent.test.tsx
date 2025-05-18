@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import LocationComponent from "../../components/LocationComponent";
+import { Component as LocationComponent } from "@wua/kyc/components/LocationComponent";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import "@testing-library/jest-dom";
 
 vi.mock("react-redux", () => ({
   useSelector: vi.fn(),
 }));
 
-vi.mock("react-router-dom", () => ({
+vi.mock("react-router", () => ({
   useNavigate: vi.fn(),
 }));
 

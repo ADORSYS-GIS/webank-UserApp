@@ -1,32 +1,32 @@
-import { generateJWT } from "./jwtService";
-import storeKeyPair, { retrieveKeyPair } from "./storeKey";
-import checkKeyPairExists from "./checkKeyPairExists";
+import { generateJWT } from './jwtService';
+import storeKeyPair, { retrieveKeyPair } from './storeKey';
+import checkKeyPairExists from './checkKeyPairExists';
 import {
+  agentTopup,
   createBankAccount,
   getAccountBalance,
+  getKycCert,
+  GetKycRecordsBySearch,
+  GetKycRecordsByStatusPending,
+  getOtps,
+  getTransactionHistory,
+  getUserLocation,
   initiateRegistration,
+  recoverAccountCert,
+  requestToGetRecoveryToken,
+  sendEmailOTP,
   sendOTP,
+  storeKycDocument,
+  storeKYCInfo,
+  submitRecoveryToken,
+  TopupAccount,
+  UpdateKycStatus,
   validateDeviceRegistration,
   validateOTP,
-  getTransactionHistory,
-  TopupAccount,
-  WithdrawOffline,
-  getOtps,
-  sendEmailOTP,
   verifyEmailCode,
-  storeKYCInfo,
-  getUserLocation,
-  UpdateKycStatus,
-  getKycCert,
-  submitRecoveryToken,
-  recoverAccountCert,
-  GetKycRecordsByStatusPending,
-  requestToGetRecoveryToken,
   verifyRecoveryFields,
-  storeKycDocument,
-  GetKycRecordsBySearch,
-  agentTopup,
-} from "./apiService";
+  WithdrawOffline,
+} from './apiService';
 
 let Key: string | null = null;
 
@@ -40,7 +40,7 @@ export async function KeyManagement() {
   const { publicKey, privateKey } = await retrieveKeyPair(1);
 
   if (!publicKey || !privateKey) {
-    throw new Error("Failed to retrieve key pair.");
+    throw new Error('Failed to retrieve key pair.');
   }
 
   return { publicKey, privateKey };
@@ -65,7 +65,7 @@ export async function RequestToSendOTP(
     null,
     phoneNumber,
   );
-  console.log(jwtToken, "jwt token");
+  console.log(jwtToken, 'jwt token');
 
   return await sendOTP(phoneNumber, jwtToken, Key);
 }
@@ -73,7 +73,7 @@ export async function RequestToSendOTP(
 export async function RequestToSendNonce(): Promise<string> {
   const date = new Date();
   const timeStamp = date.toISOString();
-  console.log(timeStamp, "timeStamp");
+  console.log(timeStamp, 'timeStamp');
   const { publicKey, privateKey } = await KeyManagement();
   const jwtToken = await generateJWT(
     privateKey,
@@ -119,8 +119,8 @@ export const RequestToSendPowJWT = async (
       jwtToken,
     );
   } catch (error) {
-    console.error("Error constructing and sending PoW jwt:", error);
-    throw new Error("Failed to construct and send PoW jwt");
+    console.error('Error constructing and sending PoW jwt:', error);
+    throw new Error('Failed to construct and send PoW jwt');
   }
 };
 
@@ -189,8 +189,8 @@ export async function RequestToGetBalance(
     null,
     accountId,
   );
-  console.log(jwtToken + "Account Cert!!!");
-  console.log(accountId + "Account ID !!!");
+  console.log(jwtToken + 'Account Cert!!!');
+  console.log(accountId + 'Account ID !!!');
   return await getAccountBalance(accountId, jwtToken);
 }
 
@@ -214,8 +214,8 @@ export async function RequestToGetTransactionHistory(
     null,
     accountId,
   );
-  console.log(jwtToken + "Account Cert!!!");
-  console.log(accountId + "Account ID !!!");
+  console.log(jwtToken + 'Account Cert!!!');
+  console.log(accountId + 'Account ID !!!');
   return await getTransactionHistory(accountId, jwtToken);
 }
 
@@ -244,8 +244,8 @@ export async function RequestToTopup(
     amount,
     agentAccountId,
   );
-  console.log(jwtToken + "Account Cert!!!");
-  console.log(clientAccountId + "Account ID !!!");
+  console.log(jwtToken + 'Account Cert!!!');
+  console.log(clientAccountId + 'Account ID !!!');
   return await TopupAccount(clientAccountId, amount, agentAccountId, jwtToken);
 }
 
@@ -274,10 +274,10 @@ export async function RequestToWithdrawOffline(
     amount,
     agentAccountId,
   );
-  console.log(jwtToken + "Account Cert!!!");
-  console.log(clientAccountId + "Account ID !!!");
-  console.log(agentAccountId + "AgentAccount ID !!!");
-  console.log(transactionJwt + "Signed Transaction");
+  console.log(jwtToken + 'Account Cert!!!');
+  console.log(clientAccountId + 'Account ID !!!');
+  console.log(agentAccountId + 'AgentAccount ID !!!');
+  console.log(transactionJwt + 'Signed Transaction');
   return await WithdrawOffline(
     clientAccountId,
     amount,
@@ -304,7 +304,7 @@ export async function RequestToGetOtps(
     null,
     null,
   );
-  console.log(jwtToken + "Account Cert!!!");
+  console.log(jwtToken + 'Account Cert!!!');
   return await getOtps(jwtToken);
 }
 
@@ -328,8 +328,8 @@ export async function RequestToSendEmailOTP(
     email,
     accountId,
   );
-  console.log(jwtToken + "Account Cert!!!");
-  console.log(accountId + "Account ID !!!");
+  console.log(jwtToken + 'Account Cert!!!');
+  console.log(accountId + 'Account ID !!!');
   return await sendEmailOTP(email, accountId, jwtToken);
 }
 
@@ -461,7 +461,7 @@ export async function RequestToGetPendingKycRecords(
     null,
   );
 
-  console.log(jwtToken + "Account Cert!!!");
+  console.log(jwtToken + 'Account Cert!!!');
   return await GetKycRecordsByStatusPending(jwtToken);
 }
 
@@ -483,7 +483,7 @@ export async function RequestToGetKycRecordsBySearch(
     docNumber,
   );
 
-  console.log(jwtToken + "Account Cert!!!");
+  console.log(jwtToken + 'Account Cert!!!');
   return await GetKycRecordsBySearch(docNumber, jwtToken);
 }
 
@@ -514,7 +514,7 @@ export async function RequestToUpdateKycStatus(
     status,
     reason,
   );
-  console.log(jwtToken + "Account Cert!!!");
+  console.log(jwtToken + 'Account Cert!!!');
   return await UpdateKycStatus(
     accountId,
     docNumber,
@@ -543,7 +543,7 @@ export async function RequestToGetCert(
     null,
     null,
   );
-  console.log(jwtToken + "Account Cert!!!");
+  console.log(jwtToken + 'Account Cert!!!');
   return await getKycCert(accountId, jwtToken);
 }
 
@@ -589,10 +589,11 @@ export async function RequestToSubmitRecoveryToken(
     recoveryToken,
     newAccountId,
   );
-  console.log(jwtToken, "jwt token");
+  console.log(jwtToken, 'jwt token');
 
   return await submitRecoveryToken(newAccountId, jwtToken);
 }
+
 export async function RequestToValidateRecoveryDetails(
   oldAccountId: string,
   docNumber: string,
@@ -613,7 +614,7 @@ export async function RequestToValidateRecoveryDetails(
     docNumber,
     expirationDate,
   );
-  console.log(jwtToken, "jwt token");
+  console.log(jwtToken, 'jwt token');
 
   return await verifyRecoveryFields(
     jwtToken,
@@ -622,6 +623,7 @@ export async function RequestToValidateRecoveryDetails(
     expirationDate,
   );
 }
+
 //Request to get Account Cert
 export async function RequestToRecoverAccountCert(
   accountId: string,

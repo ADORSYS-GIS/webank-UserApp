@@ -5,7 +5,7 @@ import { RootState } from "../store/Store";
 import { toast } from "sonner";
 import { RequestToGetOtps } from "../services/keyManagement/requestService";
 
-export default function TellerDashboard() {
+const TellerDashboard = () => {
   const [data, setData] = useState<
     { phoneNumber: string; otpCode: string; status: string }[]
   >([]);
@@ -220,4 +220,6 @@ export default function TellerDashboard() {
       </div>
     </div>
   );
-}
+};
+
+export { TellerDashboard as Component };

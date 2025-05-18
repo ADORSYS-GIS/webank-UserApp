@@ -3,7 +3,7 @@ import countryOptions from "../assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -199,4 +199,4 @@ const PhoneInput: React.FC = () => {
   );
 };
 
-export default PhoneInput;
+export { PhoneInput as Component };

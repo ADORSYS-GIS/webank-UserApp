@@ -1,25 +1,19 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
-import { toast } from "sonner";
-import {
-  RequestToGetBalance,
-  RequestToGetTransactionHistory,
-} from "../services/keyManagement/requestService";
-import Header1 from "../components/Header1";
-import BalanceCard from "../components/BalanceCard";
-import TransactionsSection from "../components/TransactionsSection";
-import ActionButtons from "../components/ActionButtons";
-import BottomNavigation from "../components/BottomNavigation";
-import BottomSheet from "../components/SideBar";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import { RequestToGetBalance, RequestToGetTransactionHistory } from '../services/keyManagement/requestService';
+import Header1 from '../components/Header1';
+import BalanceCard from '../components/BalanceCard';
+import TransactionsSection from '../components/TransactionsSection';
+import ActionButtons from '../components/ActionButtons';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/Store';
+import { useNavigate } from 'react-router';
+import { useBottomNav } from '@wua/hooks/bottom-nav.ts';
 
 const Dashboard: React.FC = () => {
+  const { toggleMenu } = useBottomNav();
   const navigate = useNavigate();
-  // Bottom sheet state
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const [balanceVisible, setBalanceVisible] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,11 +26,6 @@ const Dashboard: React.FC = () => {
     (state: RootState) => state.account.accountCert,
   );
 
-  // Toggle menu
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-  };
-
   const viewBalance = async () => {
     if (balanceVisible) {
       setBalanceVisible(false);
@@ -44,22 +33,22 @@ const Dashboard: React.FC = () => {
     }
     try {
       if (!accountId || !accountCert) {
-        toast.error("Account information is missing.");
+        toast.error('Account information is missing.');
         return;
       }
       const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
       setBalance(fetchedBalance);
       setBalanceVisible(true);
     } catch (error) {
-      console.error("Error retrieving balance:", error);
-      toast.error("Failed to retrieve balance. Please try again.");
+      console.error('Error retrieving balance:', error);
+      toast.error('Failed to retrieve balance. Please try again.');
     }
   };
 
   // Fetch transactions function
   const fetchTransactions = async () => {
     if (!accountId || !accountCert) {
-      toast.error("Account information is missing.");
+      toast.error('Account information is missing.');
       return;
     }
     try {
@@ -70,9 +59,9 @@ const Dashboard: React.FC = () => {
       );
 
       let transactions;
-      if (typeof transactionsResponse === "string") {
+      if (typeof transactionsResponse === 'string') {
         const trimmedResponse = transactionsResponse.trim();
-        const endIndex = trimmedResponse.lastIndexOf("]");
+        const endIndex = trimmedResponse.lastIndexOf(']');
         if (endIndex !== -1) {
           const validJson = trimmedResponse.substring(0, endIndex + 1);
           transactions = JSON.parse(validJson);
@@ -86,8 +75,8 @@ const Dashboard: React.FC = () => {
       setTransactionsData(transactions);
       setTransactionsVisible(true);
     } catch (error) {
-      console.error("Error loading transactions:", error);
-      toast.error("Failed to load transactions.");
+      console.error('Error loading transactions:', error);
+      toast.error('Failed to load transactions.');
     } finally {
       setLoadingTransactions(false);
     }
@@ -95,12 +84,12 @@ const Dashboard: React.FC = () => {
 
   // Handler for notification clicks
   const handleNotificationClick = () => {
-    toast.info("Notifications feature coming soon!");
+    toast.info('Notifications feature coming soon!');
   };
 
   // Handler for about clicks
   const handleAboutClick = () => {
-    navigate("/about");
+    navigate('/about');
   };
 
   return (
@@ -119,11 +108,11 @@ const Dashboard: React.FC = () => {
             balanceVisible={balanceVisible}
             balance={balance}
             viewBalance={viewBalance}
-            accountId={accountId ?? ""}
+            accountId={accountId ?? ''}
           />
           <ActionButtons
-            accountId={accountId ?? ""}
-            accountCert={accountCert ?? ""}
+            accountId={accountId ?? ''}
+            accountCert={accountCert ?? ''}
           />
           <TransactionsSection
             transactionsData={transactionsData}
@@ -134,23 +123,8 @@ const Dashboard: React.FC = () => {
           />
         </div>
       </div>
-
-      {/* Bottom Navigation */}
-      <BottomNavigation
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-        toggleMenu={toggleMenu}
-      />
-
-      {/* Bottom Sheet Menu */}
-      <BottomSheet
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-      />
     </div>
   );
 };
 
-export default Dashboard;
+export { Dashboard as Component };

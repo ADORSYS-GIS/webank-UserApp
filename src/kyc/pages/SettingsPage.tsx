@@ -11,7 +11,7 @@ import {
   faKey,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
 
@@ -90,7 +90,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate("/dashboard");
+    navigate("/");
   };
 
   const handleSecureAccount = () => {
@@ -254,4 +254,4 @@ const SettingsPage: React.FC = () => {
   );
 };
 
-export default SettingsPage;
+export { SettingsPage as Component };

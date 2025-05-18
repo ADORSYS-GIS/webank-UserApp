@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 interface GeoLocation {
   lat: number;
@@ -106,4 +106,4 @@ const LocationComponent = () => {
   );
 };
 
-export default LocationComponent;
+export { LocationComponent as Component };

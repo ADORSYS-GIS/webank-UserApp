@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import SettingsPage from "../SettingsPage";
+import { Component as SettingsPage } from "../SettingsPage";
 import { describe, it, expect } from "vitest";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { Provider } from "react-redux";
-import { store } from "../../../store/Store";
+import { store } from '@wua/store/Store.ts';
 
 describe("SettingsPage", () => {
   it("renders the settings page with title and description", () => {

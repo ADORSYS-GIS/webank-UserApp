@@ -1,26 +1,25 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
-  storeSharedContent,
-  getSharedContent,
-  //clearSharedContent,
-  openDB,
-  LoadingState,
   ErrorState,
+  getSharedContent,
+  LoadingState,
   NoContentState,
-  SharedContentDisplay,
+  openDB,
   SharedContent,
-} from "../components/share-handler";
-import KYCSubmissionCompleted from "../components/share-handler/KYCSubmissionCompleted";
+  SharedContentDisplay,
+  storeSharedContent,
+} from '../components/share-handler';
+import KYCSubmissionCompleted from '../components/share-handler/KYCSubmissionCompleted';
 
-import jsQR from "jsqr";
-import { useNavigate } from "react-router-dom";
-import { RootState } from "../store/Store";
+import jsQR from 'jsqr';
+import { useNavigate } from 'react-router';
+import { RootState } from '../store/Store';
 
-export default function ShareHandlerPage() {
+function ShareHandlerPage() {
   const [sharedData, setSharedData] = useState<SharedContent | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   // Get documentStatus from Redux store
   const documentStatus = useSelector(
@@ -33,22 +32,22 @@ export default function ShareHandlerPage() {
     const maxRetries = 3;
 
     const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === "STORE_SHARED_CONTENT") {
-        console.log("Received shared content from SW:", event.data.data);
+      if (event.data.type === 'STORE_SHARED_CONTENT') {
+        console.log('Received shared content from SW:', event.data.data);
         storeSharedContent(event.data.data)
           .then(() => {
-            console.log("Stored shared content in IndexedDB");
+            console.log('Stored shared content in IndexedDB');
             loadSharedData();
           })
           .catch((err) => {
-            console.error("Failed to store shared content in IndexedDB:", err);
-            setError("Failed to store shared content.");
+            console.error('Failed to store shared content in IndexedDB:', err);
+            setError('Failed to store shared content.');
             setLoading(false);
           });
       }
     };
 
-    navigator.serviceWorker?.addEventListener("message", handleMessage);
+    navigator.serviceWorker?.addEventListener('message', handleMessage);
 
     const validateStorage = async () => {
       try {
@@ -57,7 +56,7 @@ export default function ShareHandlerPage() {
         return true;
       } catch (e) {
         setError(
-          "IndexedDB blocked. Please disable private mode or relax browser restrictions.",
+          'IndexedDB blocked. Please disable private mode or relax browser restrictions.',
         );
         return false;
       }
@@ -71,15 +70,15 @@ export default function ShareHandlerPage() {
         button.remove();
         return true;
       } catch (err) {
-        setError("Storage access denied. Check browser settings.");
+        setError('Storage access denied. Check browser settings.');
         return false;
       }
     };
 
     const setupStorageAccessButton = () => {
-      const button = document.createElement("button");
-      button.textContent = "Grant Storage Access";
-      button.className = "bg-blue-500 text-white p-2 rounded";
+      const button = document.createElement('button');
+      button.textContent = 'Grant Storage Access';
+      button.className = 'bg-blue-500 text-white p-2 rounded';
       document.body.appendChild(button);
       return button;
     };
@@ -93,7 +92,7 @@ export default function ShareHandlerPage() {
     const requestStoragePermission = async () => {
       try {
         if (!navigator.storage || !navigator.permissions) {
-          console.warn("Storage API not supported");
+          console.warn('Storage API not supported');
           return true;
         }
 
@@ -111,21 +110,21 @@ export default function ShareHandlerPage() {
         if (!persisted) {
           const result = await navigator.storage.persist();
           if (!result) {
-            setError("Browser denied storage persistence");
+            setError('Browser denied storage persistence');
             return false;
           }
         }
 
         const estimate = await navigator.storage.estimate();
         if ((estimate.quota || 0) < 1024 * 1024 * 10) {
-          setError("Insufficient storage quota (need at least 10MB)");
+          setError('Insufficient storage quota (need at least 10MB)');
           return false;
         }
 
         return true;
       } catch (error) {
-        console.error("Permission error:", error);
-        setError("Storage access failed. Check browser permissions.");
+        console.error('Permission error:', error);
+        setError('Storage access failed. Check browser permissions.');
         return false;
       }
     };
@@ -144,7 +143,7 @@ export default function ShareHandlerPage() {
       type: string;
     }): Promise<boolean> => {
       try {
-        if (!file.base64 || !file.type.startsWith("image/")) {
+        if (!file.base64 || !file.type.startsWith('image/')) {
           return false;
         }
 
@@ -153,15 +152,15 @@ export default function ShareHandlerPage() {
         const loadPromise = new Promise((resolve, reject) => {
           img.onload = () => resolve(undefined);
           img.onerror = reject;
-          img.src = file.base64 || "";
+          img.src = file.base64 || '';
         });
         await loadPromise;
 
         // Create a canvas to draw the image
-        const canvas = document.createElement("canvas");
+        const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         if (!ctx) {
           return false;
         }
@@ -173,7 +172,7 @@ export default function ShareHandlerPage() {
         const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
         return !!qrCode; // Returns true if QR code is detected
       } catch (err) {
-        console.error("Error detecting QR code:", err);
+        console.error('Error detecting QR code:', err);
         return false;
       }
     };
@@ -190,9 +189,9 @@ export default function ShareHandlerPage() {
           return;
         }
 
-        console.log("Starting to load shared data from IndexedDB...");
+        console.log('Starting to load shared data from IndexedDB...');
         const storedData = await getSharedContent();
-        console.log("IndexedDB contents:", storedData);
+        console.log('IndexedDB contents:', storedData);
 
         if (storedData) {
           // Check file sizes before processing
@@ -202,7 +201,7 @@ export default function ShareHandlerPage() {
           );
           if (oversizedFiles.length > 0) {
             setError(
-              `File size exceeds 100KB limit: ${oversizedFiles.map((f) => f.name).join(", ")}`,
+              `File size exceeds 100KB limit: ${oversizedFiles.map((f) => f.name).join(', ')}`,
             );
             setLoading(false);
             return;
@@ -219,17 +218,17 @@ export default function ShareHandlerPage() {
                 : file.blob,
             })),
           );
-          console.log("Found shared data:", storedData);
+          console.log('Found shared data:', storedData);
 
           // Check if the first file is a QR code
           if (files.length > 0) {
             const isQR = await isQRCode(files[0]);
             if (isQR) {
-              console.log("QR code detected, redirecting to /qr-scan/top-up");
-              navigate("/qr-scan", {
+              console.log('QR code detected, redirecting to /qr-scan/top-up');
+              navigate('/qr-scan', {
                 state: {
                   sharedImage: files[0].base64,
-                  show: "Transfer",
+                  show: 'Transfer',
                 },
               });
               return;
@@ -237,7 +236,7 @@ export default function ShareHandlerPage() {
           }
           setSharedData({ ...storedData, files });
           //await clearSharedContent();
-          console.log("Cleared shared data from IndexedDB");
+          console.log('Cleared shared data from IndexedDB');
         } else if (retryCount < maxRetries) {
           console.warn(
             `No shared data found, retrying (${retryCount + 1}/${maxRetries})`,
@@ -246,17 +245,17 @@ export default function ShareHandlerPage() {
           timeoutId = setTimeout(loadSharedData, 1000);
           return;
         } else {
-          console.error("No shared data found after retries");
+          console.error('No shared data found after retries');
           setError(
-            "No shared content found. Please share files before accessing this page.",
+            'No shared content found. Please share files before accessing this page.',
           );
         }
 
         setLoading(false);
       } catch (error) {
-        console.error("Error loading shared data:", error);
+        console.error('Error loading shared data:', error);
         setError(
-          "Failed to access storage. Please check permissions and try again.",
+          'Failed to access storage. Please check permissions and try again.',
         );
         setLoading(false);
       }
@@ -266,7 +265,7 @@ export default function ShareHandlerPage() {
 
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
-      navigator.serviceWorker?.removeEventListener("message", handleMessage);
+      navigator.serviceWorker?.removeEventListener('message', handleMessage);
     };
   }, [navigate]);
 
@@ -282,38 +281,38 @@ export default function ShareHandlerPage() {
   const storeTestData = async () => {
     try {
       // Create test image
-      const canvas = document.createElement("canvas");
+      const canvas = document.createElement('canvas');
       canvas.width = 400;
       canvas.height = 300;
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
 
       if (ctx) {
         // Draw test image
-        ctx.fillStyle = "#20B2AA";
+        ctx.fillStyle = '#20B2AA';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "white";
-        ctx.font = "30px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText("Webank Test Image", canvas.width / 2, canvas.height / 2);
+        ctx.fillStyle = 'white';
+        ctx.font = '30px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Webank Test Image', canvas.width / 2, canvas.height / 2);
       }
 
       // Convert canvas to Blob
       const blob: Blob = await new Promise((resolve) => {
         canvas.toBlob((blob) => {
           if (blob) resolve(blob);
-          else throw new Error("Canvas to Blob conversion failed");
-        }, "image/png");
+          else throw new Error('Canvas to Blob conversion failed');
+        }, 'image/png');
       });
 
       const base64 = await blobToBase64(blob);
       const testData: SharedContent = {
-        title: "Test Image Share",
-        text: "Sample image for testing purposes",
-        url: "https://th.bing.com/th/id/OIP.n0lDRFThM72xoYQHI-lUIgHaHa?rs=1&pid=ImgDetMain",
+        title: 'Test Image Share',
+        text: 'Sample image for testing purposes',
+        url: 'https://th.bing.com/th/id/OIP.n0lDRFThM72xoYQHI-lUIgHaHa?rs=1&pid=ImgDetMain',
         files: [
           {
-            name: "test-image.png",
-            type: "image/png",
+            name: 'test-image.png',
+            type: 'image/png',
             size: blob.size,
             base64,
           },
@@ -321,19 +320,19 @@ export default function ShareHandlerPage() {
       };
 
       await storeSharedContent(testData);
-      console.log("Stored image test data in IndexedDB");
+      console.log('Stored image test data in IndexedDB');
       window.location.reload();
     } catch (error) {
-      console.error("Error storing test data:", error);
-      setError("Failed to store test data.");
+      console.error('Error storing test data:', error);
+      setError('Failed to store test data.');
     }
   };
 
   const docTypeMap: Record<string, string> = {
-    "front-id": "frontID",
-    "back-id": "backID",
-    selfie: "selfieID",
-    "tax-id": "taxDoc",
+    'front-id': 'frontID',
+    'back-id': 'backID',
+    selfie: 'selfieID',
+    'tax-id': 'taxDoc',
   };
 
   const handleDestinationSelect = (selectedDocType: string) => {
@@ -342,16 +341,16 @@ export default function ShareHandlerPage() {
       const file = sharedData.files[0];
       if (file.base64) {
         localStorage.setItem(docType, file.base64);
-        navigate("/kyc/imgs");
+        navigate('/kyc/imgs');
       } else {
-        setError("No base64 data available for the file");
+        setError('No base64 data available for the file');
       }
     } else {
-      setError("Invalid document type or no files available");
+      setError('Invalid document type or no files available');
     }
   };
 
-  if (documentStatus === "PENDING") {
+  if (documentStatus === 'PENDING') {
     return <KYCSubmissionCompleted />;
   }
 
@@ -374,3 +373,7 @@ export default function ShareHandlerPage() {
     />
   );
 }
+
+export {
+  ShareHandlerPage as Component,
+};

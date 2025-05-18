@@ -24,4 +24,4 @@ const IDCardForm: React.FC = () => {
   );
 };
 
-export default IDCardForm;
+export { IDCardForm as Component };

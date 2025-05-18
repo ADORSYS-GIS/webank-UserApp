@@ -1,0 +1,768 @@
+openapi: 3.0.0
+info:
+  title: WeBank Phone Registration Service API
+  description: API for user registration, OTP verification, and KYC management
+  version: 1.0.0
+servers:
+  - url: 'https://api.webank.com/prs'
+    description: Production server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    TimeStampRequest:
+      type: object
+      properties:
+        timeStamp:
+          type: string
+    DeviceValidationRequest:
+      type: object
+      properties:
+        initiationNonce:
+          type: string
+        powHash:
+          type: string
+        powNonce:
+          type: string
+    OTPRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        publicKey:
+          type: string
+    OTPValidationRequest:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+        otpInput:
+          type: string
+    OTPResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    EmailOTPRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        accountId:
+          type: string
+    EmailOTPValidationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        otp:
+          type: string
+        accountId:
+          type: string
+    LocationRequest:
+      type: object
+      properties:
+        location:
+          type: string
+        accountId:
+          type: string
+    KYCInfoRequest:
+      type: object
+      properties:
+        idNumber:
+          type: string
+        expiryDate:
+          type: string
+        accountId:
+          type: string
+    KYCDocumentsRequest:
+      type: object
+      properties:
+        frontId:
+          type: string
+        backId:
+          type: string
+        selfieId:
+          type: string
+        taxId:
+          type: string
+        accountId:
+          type: string
+    KYCRecordRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+    KYCStatusUpdateRequest:
+      type: object
+      properties:
+        idNumber:
+          type: string
+        expiryDate:
+          type: string
+        accountId:
+          type: string
+        rejectionReason:
+          type: string
+    RecoveryTokenRequest:
+      type: object
+      properties:
+        oldAccountId:
+          type: string
+        newAccountId:
+          type: string
+    RecoveryValidationRequest:
+      type: object
+      properties:
+        newAccountId:
+          type: string
+    RecoveredTokens:
+      type: object
+      properties:
+        oldAccountId:
+          type: string
+        newKycCertificate:
+          type: string
+        message:
+          type: string
+    VerifyRecoveryFieldsRequest:
+      type: object
+      properties:
+        idNumber:
+          type: string
+        expiryDate:
+          type: string
+        accountId:
+          type: string
+paths:
+  /dev/init:
+    post:
+      summary: Initiate device registration
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TimeStampRequest'
+      responses:
+        '200':
+          description: Registration initiated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  initiationNonce:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /dev/validate:
+    post:
+      summary: Validate device registration
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceValidationRequest'
+      responses:
+        '200':
+          description: Device validated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /otp/send:
+    post:
+      summary: Send OTP to a phone number
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OTPRequest'
+      responses:
+        '200':
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OTPResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /otp/validate:
+    post:
+      summary: Validate OTP
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OTPValidationRequest'
+      responses:
+        '200':
+          description: OTP validated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OTPResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /otp/pending:
+    get:
+      summary: Get pending OTPs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Pending OTPs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    phoneNumber:
+                      type: string
+                    createdAt:
+                      type: string
+                      format: date-time
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /email-otp/send:
+    post:
+      summary: Send OTP to an email address
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailOTPRequest'
+      responses:
+        '200':
+          description: Email OTP sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /email-otp/validate:
+    post:
+      summary: Validate email OTP
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailOTPValidationRequest'
+      responses:
+        '200':
+          description: Email OTP validated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/location:
+    post:
+      summary: Store user location for KYC
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationRequest'
+      responses:
+        '200':
+          description: Location stored successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/info:
+    post:
+      summary: Store KYC information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KYCInfoRequest'
+      responses:
+        '200':
+          description: KYC info stored successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/documents:
+    post:
+      summary: Store KYC documents
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KYCDocumentsRequest'
+      responses:
+        '200':
+          description: KYC documents stored successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/record:
+    post:
+      summary: Get KYC records
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KYCRecordRequest'
+      responses:
+        '200':
+          description: KYC records retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/pending:
+    get:
+      summary: Get KYC records with pending status
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Pending KYC records retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/findById/{docNumber}:
+    get:
+      summary: Find KYC record by document number
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: docNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: KYC record found
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/{accountId}/{status}:
+    patch:
+      summary: Update KYC status
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [APPROVED, REJECTED, PENDING]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KYCStatusUpdateRequest'
+      responses:
+        '200':
+          description: KYC status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/cert/{accountId}:
+    get:
+      summary: Get KYC certificate for an account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: KYC certificate retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  certificate:
+                    type: string
+        '404':
+          description: Certificate not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /kyc/recovery/{accountId}:
+    post:
+      summary: Verify recovery fields for KYC
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRecoveryFieldsRequest'
+      responses:
+        '200':
+          description: Recovery fields verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /recovery/token:
+    post:
+      summary: Request recovery token
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoveryTokenRequest'
+      responses:
+        '200':
+          description: Recovery token generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /recovery/validate:
+    post:
+      summary: Validate recovery token
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoveryValidationRequest'
+      responses:
+        '200':
+          description: Recovery token validated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecoveredTokens'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

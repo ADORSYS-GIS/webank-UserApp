@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { calculateTransactionFee } from "../services/computation/transactionFeeCalculator";
 import useDisableScroll from "../hooks/useDisableScroll";
 import { RootState } from "../store/Store";
@@ -26,7 +26,7 @@ const TopUpPage: React.FC = () => {
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
 
   const handleCancel = () => {
-    navigate("/dashboard", {
+    navigate("/", {
       state: { accountId: clientAccountId },
     }); // Go back to the previous page
   };
@@ -151,4 +151,4 @@ const TopUpPage: React.FC = () => {
   );
 };
 
-export default TopUpPage;
+export { TopUpPage as Component };

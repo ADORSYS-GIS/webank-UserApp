@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
@@ -102,4 +102,4 @@ const AccountConfirmation: React.FC = () => {
   );
 };
 
-export default AccountConfirmation;
+export { AccountConfirmation as Component };

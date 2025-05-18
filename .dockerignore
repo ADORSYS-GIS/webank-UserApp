@@ -1,0 +1,16 @@
+.idea
+.yarn
+*.env*
+dist
+node_modules
+.dockerignore
+.gitignore
+.prettierignore
+.prettierrc
+Dockerfile
+eslint.config.js
+README.md
+tsconfig.app.tsbuildinfo
+tsconfig.node.tsbuildinfo
+bundlemeta.json
+*gen*

@@ -1,9 +1,9 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import IdentityVerification from "../IdentityVerificationPage";
+import { Component as IdentityVerification } from "../IdentityVerificationPage";
 import "@testing-library/jest-dom";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { Provider } from "react-redux";
-import { store } from "../../../store/Store.ts";
+import { store } from '@wua/store/Store.ts';
 
 describe("IdentityVerification Component", () => {
   const renderComponent = () =>

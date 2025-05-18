@@ -24,4 +24,4 @@ const DriverLicenseForm: React.FC = () => {
   );
 };
 
-export default DriverLicenseForm;
+export { DriverLicenseForm as Component };

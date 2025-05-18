@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { toast } from "sonner";
-import { RootState } from "../../store/Store.ts";
-import VerificationModal from "../components/VerificationModal";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
+import { toast } from 'sonner';
+import { RootState } from '../../store/Store.ts';
+import VerificationModal from '../components/VerificationModal';
 
 // Import FontAwesome instead of react-icons
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faUserEdit,
-  faCloudUploadAlt,
   faCheck,
   faChevronLeft,
   faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
+  faCloudUploadAlt,
+  faUserEdit,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface VerificationStep {
   id: number;
@@ -24,7 +24,7 @@ interface VerificationStep {
   onClick: () => void;
 }
 
-export default function IdentityVerification() {
+export const IdentityVerification = () => {
   const navigate = useNavigate();
   const [showVerificationModalPopup, setShowVerificationModalPopup] =
     useState(false);
@@ -42,13 +42,13 @@ export default function IdentityVerification() {
 
   // Check if both statuses are "PENDING" to enable the submit button
   const bothStatusesPending =
-    status === "PENDING" && documentStatus === "PENDING";
+    status === 'PENDING' && documentStatus === 'PENDING';
 
   useEffect(() => {
-    if (status === "PENDING") {
+    if (status === 'PENDING') {
       setPersonalInfoSubmitted(true);
     }
-    if (documentStatus === "PENDING") {
+    if (documentStatus === 'PENDING') {
       setDocumentsSubmitted(true);
     }
   }, [documentStatus, status]);
@@ -56,37 +56,37 @@ export default function IdentityVerification() {
   const steps: VerificationStep[] = [
     {
       id: 1,
-      title: "Personal Info",
-      description: "Enter your address and ID details",
+      title: 'Personal Info',
+      description: 'Enter your address and ID details',
       icon: faUserEdit,
       onClick: () => setShowVerificationModalPopup(true),
     },
     {
       id: 2,
-      title: "Upload Documents",
+      title: 'Upload Documents',
       description:
-        "Follow instructions to upload your ID and verification documents",
+        'Follow instructions to upload your ID and verification documents',
       icon: faCloudUploadAlt,
-      onClick: () => navigate("/guidelines"),
+      onClick: () => navigate('/guidelines'),
     },
   ];
 
   const handleSubmit = () => {
     if (!accountCert || !accountId) {
-      toast.error("Account information is missing");
+      toast.error('Account information is missing');
       return;
     }
-    navigate("/verification/location");
+    navigate('/verification/location');
   };
 
   return (
     <div
       className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative overflow-x-hidden"
-      style={{ fontFamily: "Poppins, sans-serif" }}
+      style={{ fontFamily: 'Poppins, sans-serif' }}
     >
       <button
         type="button"
-        onClick={() => navigate("/settings")}
+        onClick={() => navigate('/settings')}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
         <FontAwesomeIcon
@@ -128,13 +128,14 @@ export default function IdentityVerification() {
               className={`group p-4 md:p-6 rounded-xl border transition-all
                          flex items-center justify-between
                          w-full text-left ${
-                           isCompleted
-                             ? "bg-gray-50 cursor-not-allowed opacity-75"
-                             : "cursor-pointer hover:scale-[1.005] hover:border-blue-500"
-                         }`}
+                isCompleted
+                  ? 'bg-gray-50 cursor-not-allowed opacity-75'
+                  : 'cursor-pointer hover:scale-[1.005] hover:border-blue-500'
+              }`}
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div className="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-500">
+                <div
+                  className="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-500">
                   <FontAwesomeIcon icon={step.icon} className="text-xl" />
                 </div>
                 <div className="space-y-1 flex-1 min-w-0">
@@ -169,8 +170,8 @@ export default function IdentityVerification() {
           disabled={!bothStatusesPending}
           className={`w-full py-4 text-white font-semibold text-base md:text-lg rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg ${
             bothStatusesPending
-              ? "bg-blue-500 hover:bg-blue-600 hover:shadow-blue-500/50"
-              : "bg-gray-400 cursor-not-allowed"
+              ? 'bg-blue-500 hover:bg-blue-600 hover:shadow-blue-500/50'
+              : 'bg-gray-400 cursor-not-allowed'
           }`}
         >
           <span>Secure My Account</span>
@@ -184,4 +185,6 @@ export default function IdentityVerification() {
       )}
     </div>
   );
-}
+};
+
+export { IdentityVerification as Component };

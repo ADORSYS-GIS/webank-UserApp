@@ -21,7 +21,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@wua": ["./src"],
+      "@wua/*": ["./src/*"],
+      "@gen": ["./gen"],
+      "@gen/*": ["./gen/*"],
+    }
   },
   "include": [
     "src",

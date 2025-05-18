@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { ClipboardCopy } from "lucide-react";
 import useDisableScroll from "../../hooks/useDisableScroll";
@@ -63,4 +63,4 @@ const RecoveryToken: React.FC = () => {
   );
 };
 
-export default RecoveryToken;
+export { RecoveryToken as Component };

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { AppDispatch, RootState } from '../../store/Store';
 import { toast } from "sonner";
 import {
   setAccountCert,
   setAccountId,
   setKycCert,
-} from "../../slices/accountSlice.ts";
+} from "../../slices/account.slice.ts";
 import {
   RequestToSubmitRecoveryToken,
   RequestToRecoverAccountCert,
@@ -30,7 +30,7 @@ const RecoverAccountPage: React.FC = () => {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const supportPhoneNumber = "+237654066316";
   let data = "";
   let oldAccountId = "";
@@ -103,7 +103,7 @@ const RecoverAccountPage: React.FC = () => {
         dispatch(setAccountCert(certResponse));
         toast.success("Account recovery successful!");
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/");
         }, 1500);
       } else {
         toast.error("Failed to recover account certificate. Please try again.");
@@ -269,4 +269,4 @@ const RecoverAccountPage: React.FC = () => {
   );
 };
 
-export default RecoverAccountPage;
+export { RecoverAccountPage as Component };

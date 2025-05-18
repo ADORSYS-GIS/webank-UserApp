@@ -1,7 +1,7 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import Register from "../PhoneInput";
+import { Component as Register } from "../PhoneInput";
 import "@testing-library/jest-dom";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { RequestToSendOTP } from "../../services/keyManagement/requestService";
 import {
   describe,
@@ -15,7 +15,7 @@ import {
 import { toast } from "sonner";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "../../slices/accountSlice";
+import accountReducer from "../../slices/account.slice.ts";
 
 // Mock global objects and methods
 global.alert = vi.fn();
@@ -30,11 +30,6 @@ const createMockStore = () => {
       account: {
         accountId: "mock-account-id",
         accountCert: "mock-cert",
-        status: null,
-        documentStatus: null,
-        kycCert: null,
-        emailStatus: null,
-        phoneStatus: null,
       },
     },
   });

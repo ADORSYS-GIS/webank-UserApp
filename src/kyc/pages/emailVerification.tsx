@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
 import { useSelector } from "react-redux";
@@ -27,7 +27,7 @@ const InputEmail: React.FC = () => {
   // Validate account information
   const hasValidAccountInfo = (): boolean => {
     if (!accountId || !accountCert) {
-      navigate("/dashboard");
+      navigate("/");
       toast.error("Account information is missing.");
       return false;
     }
@@ -62,7 +62,7 @@ const InputEmail: React.FC = () => {
     try {
       if (!accountId || !accountCert) {
         toast.error("Account information is missing.");
-        navigate("/dashboard");
+        navigate("/");
         return;
       }
       const response = await RequestToSendEmailOTP(
@@ -152,4 +152,4 @@ const InputEmail: React.FC = () => {
   );
 };
 
-export default InputEmail;
+export { InputEmail as Component };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { RequestToGetUserLocation } from "../../services/keyManagement/requestService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
@@ -117,4 +117,4 @@ const MapConfirmation = () => {
   );
 };
 
-export default MapConfirmation;
+export { MapConfirmation as Component };

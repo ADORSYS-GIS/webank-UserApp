@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { getProjectEnvVariables } from "../shared/projectEnvVariables.ts";
 
@@ -7,7 +7,7 @@ const { envVariables } = getProjectEnvVariables();
 
 const PASSWORD = `${envVariables.VITE_WEBANK_TELLER_PASSWORD}`;
 
-export default function Login() {
+const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default function Login() {
   };
 
   const close = () => {
-    navigate("/dashboard");
+    navigate("/");
   };
 
   return (
@@ -85,3 +85,5 @@ export default function Login() {
     </div>
   );
 }
+
+export { Login as Component };

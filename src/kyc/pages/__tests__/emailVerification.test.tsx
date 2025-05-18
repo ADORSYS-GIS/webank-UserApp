@@ -1,15 +1,15 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import InputEmail from "../emailVerification";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
+import { Component as InputEmail } from "../emailVerification";
+import { MemoryRouter, Routes, Route } from "react-router";
 import "@testing-library/jest-dom";
 import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
 import { vi } from "vitest";
 
 const navigateMock = vi.fn();
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
+vi.mock("react-router", async () => {
+  const actual = await vi.importActual("react-router");
   return {
     ...actual,
     useNavigate: () => navigateMock,

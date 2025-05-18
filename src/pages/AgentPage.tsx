@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faQrcode,
@@ -161,4 +161,4 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
   );
 };
 
-export default AgentPage;
+export { AgentPage as Component };

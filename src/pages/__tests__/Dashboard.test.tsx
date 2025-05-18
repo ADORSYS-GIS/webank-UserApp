@@ -1,15 +1,15 @@
 import { vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import Dashboard from "../DashboardPage.tsx";
+import { Component as Dashboard } from "../DashboardPage.tsx";
 import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
 } from "../../services/keyManagement/requestService.ts";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
 import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "../../slices/accountSlice";
+import accountReducer from "../../slices/account.slice.ts";
 
 // Mock FontAwesome
 vi.mock("@fortawesome/react-fontawesome", () => ({
@@ -17,10 +17,10 @@ vi.mock("@fortawesome/react-fontawesome", () => ({
 }));
 
 // Mock necessary external modules
-vi.mock("react-router-dom", () => ({
-  ...require("react-router-dom"),
+vi.mock("react-router", () => ({
+  ...require("react-router"),
   useLocation: () => ({
-    pathname: "/dashboard",
+    pathname: "/",
     state: {
       accountId: "12345",
       accountCert: "cert123",
@@ -43,11 +43,6 @@ const createMockStore = () => {
       account: {
         accountId: "mock-account-id",
         accountCert: "mock-account-cert",
-        status: null,
-        documentStatus: null,
-        kycCert: null,
-        emailStatus: null,
-        phoneStatus: null,
       },
     },
   });

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { setEmailStatus } from "../../slices/accountSlice";
+import { setEmailStatus } from "../../slices/account.slice.ts";
 import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner";
 import OtpInput from "../../components/OtpInput";
 import useDisableScroll from "../../hooks/useDisableScroll";
-import { RootState } from "../../store/Store";
+import { AppDispatch, RootState } from '../../store/Store';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios"; // Import axios for error handling
@@ -18,7 +18,7 @@ const EmailCode: React.FC = () => {
   useDisableScroll();
   const [otp, setOtp] = useState<string>("".padStart(6, " "));
   const [showSuccess, setShowSuccess] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { email, accountCert } = location.state ?? {};
@@ -29,7 +29,7 @@ const EmailCode: React.FC = () => {
       try {
         if (!accountId || !accountCert) {
           toast.error("Account information is missing.");
-          navigate("/dashboard");
+          navigate("/");
           return;
         }
         const response = await RequestToSendEmailOTP(
@@ -54,7 +54,7 @@ const EmailCode: React.FC = () => {
 
   const showAccountMissingError = () => {
     toast.error("Account information is missing.");
-    navigate("/dashboard");
+    navigate("/");
   };
 
   const showOtpErrorMessage = (message: string) => {
@@ -193,4 +193,4 @@ const EmailCode: React.FC = () => {
   );
 };
 
-export default EmailCode;
+export { EmailCode as Component };

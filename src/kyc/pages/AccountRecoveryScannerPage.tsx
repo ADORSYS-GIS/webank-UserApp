@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Html5Qrcode } from "html5-qrcode";
-import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import useDisableScroll from "../../hooks/useDisableScroll";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { useLocation, useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import useDisableScroll from '../../hooks/useDisableScroll';
 
 const GetNewAccountId: React.FC = () => {
   useDisableScroll();
@@ -19,7 +19,7 @@ const GetNewAccountId: React.FC = () => {
         await scannerRef.current.stop();
         scannerRef.current = null;
       } catch (err) {
-        console.error("Error stopping scanner:", err);
+        console.error('Error stopping scanner:', err);
       }
     }
   };
@@ -31,23 +31,23 @@ const GetNewAccountId: React.FC = () => {
         const data = JSON.parse(decodedText);
         if (data.accountId) {
           stopScanner();
-          navigate("/recovery/account-confirmation", {
+          navigate('/recovery/account-confirmation', {
             state: { accountId: data.accountId, oldAccountId },
           });
         } else {
-          throw new Error("Invalid QR Code: Missing accountId");
+          throw new Error('Invalid QR Code: Missing accountId');
         }
       } catch (err) {
-        console.error("Error decoding QR code:", err);
-        setError("Failed to read recovery QR code. Please try again.");
-        toast.error("Invalid QR code. Try again.");
+        console.error('Error decoding QR code:', err);
+        setError('Failed to read recovery QR code. Please try again.');
+        toast.error('Invalid QR code. Try again.');
       }
     },
     [navigate, oldAccountId],
   );
 
   const handleScanError = useCallback((errorMessage: string) => {
-    console.log("Scanning error:", errorMessage);
+    console.log('Scanning error:', errorMessage);
   }, []);
 
   useEffect(() => {
@@ -55,9 +55,9 @@ const GetNewAccountId: React.FC = () => {
       await stopScanner();
       if (!scannerRef.current) {
         try {
-          scannerRef.current = new Html5Qrcode("qr-reader");
+          scannerRef.current = new Html5Qrcode('qr-reader');
           await scannerRef.current.start(
-            { facingMode: "environment" },
+            { facingMode: 'environment' },
             {
               fps: 30,
               qrbox: { width: 400, height: 400 },
@@ -68,9 +68,9 @@ const GetNewAccountId: React.FC = () => {
             handleScanError,
           );
         } catch (err) {
-          console.error("Error starting scanner:", err);
-          setError("Unable to access camera. Please allow camera permissions.");
-          toast.error("Camera access denied. Enable permissions.");
+          console.error('Error starting scanner:', err);
+          setError('Unable to access camera. Please allow camera permissions.');
+          toast.error('Camera access denied. Enable permissions.');
         }
       }
     };
@@ -88,21 +88,21 @@ const GetNewAccountId: React.FC = () => {
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
-      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       if (!allowedTypes.includes(file.type)) {
-        setError("Unsupported file type. Please upload a PNG or JPEG image.");
-        toast.error("Invalid file format. Use PNG or JPG.");
+        setError('Unsupported file type. Please upload a PNG or JPEG image.');
+        toast.error('Invalid file format. Use PNG or JPG.');
         return;
       }
       try {
         await stopScanner();
-        const qrScanner = new Html5Qrcode("qr-reader");
+        const qrScanner = new Html5Qrcode('qr-reader');
         const result = await qrScanner.scanFile(file, false);
         handleDecodedText(result);
       } catch (err) {
-        console.error("Error reading QR code from image:", err);
-        setError("Failed to read QR code from image. Please try again.");
-        toast.error("QR code scanning failed. Try another image.");
+        console.error('Error reading QR code from image:', err);
+        setError('Failed to read QR code from image. Please try again.');
+        toast.error('QR code scanning failed. Try another image.');
       }
     }
   };
@@ -125,7 +125,8 @@ const GetNewAccountId: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <label className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
+        <label
+          className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
           <span>Upload QR Image</span>
           <input
             type="file"
@@ -136,7 +137,7 @@ const GetNewAccountId: React.FC = () => {
         </label>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate('/')}
           className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
         >
           Cancel
@@ -148,4 +149,4 @@ const GetNewAccountId: React.FC = () => {
   );
 };
 
-export default GetNewAccountId;
+export { GetNewAccountId as Component };

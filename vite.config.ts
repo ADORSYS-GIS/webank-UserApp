@@ -1,12 +1,26 @@
 import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import progress from 'vite-plugin-progress';
+import bundlesize from 'vite-plugin-bundlesize';
+import { analyzer } from 'vite-bundle-analyzer';
+import { ViteMinifyPlugin } from 'vite-plugin-minify';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { Buffer } from 'buffer';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
-export default defineConfig({
+const base64Encode = (plaintext: string): string => {
+  return Buffer.from(plaintext).toString('base64');
+};
+
+export default defineConfig(({ mode }) => ({
   base: './',
   build: {
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
+        chunkFileNames: 'assets/chunks/[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/[name]-[hash][extname]',
         format: 'es',
         globals: {
           react: 'React',
@@ -14,7 +28,17 @@ export default defineConfig({
         },
         manualChunks(id) {
           if (/projectEnvVariables.ts/.test(id)) {
-            return 'projectEnvVariables';
+            return `projectEnvVariables.${mode}`;
+          }
+
+          //TODO Improve this to not load 100+ modules
+          if (id.includes('node_modules')) {
+            const cleanName = id
+              .toString()
+              .split('node_modules/')[1]
+              .split('/')[0]
+              .toString();
+            return cleanName + '~' + base64Encode(cleanName);
           }
         },
       },
@@ -22,6 +46,21 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    mode === 'production' && progress(),
+    tsconfigPaths(),
+    ViteMinifyPlugin(),
+    bundlesize({
+      limits: [
+        { name: 'assets/index-*.js', limit: '1000 kB' },
+        { name: '**/*', limit: '150 kB' },
+      ],
+    }),
+    analyzer({
+      summary: true,
+      analyzerMode: 'static',
+      fileName: `ignored.${mode}.report.html`,
+    }),
+    ViteImageOptimizer(),
     VitePWA({
       strategies: 'injectManifest',
       srcDir: 'src',
@@ -49,50 +88,54 @@ export default defineConfig({
             files: [
               {
                 name: 'files',
-                accept: ['image/*', 'application/pdf', 'text/plain'],
+                accept: [
+                  'image/*',
+                  'application/pdf',
+                  'text/plain',
+                ],
               },
             ],
           },
         },
         icons: [
           {
-            src: '/android-chrome-144x144.png',
+            src: '/assets/images/android-chrome-144x144.png',
             sizes: '144x144',
             type: 'image/png',
             purpose: 'any maskable',
           },
           {
-            src: '/android-chrome-192x192.png',
+            src: '/assets/images/android-chrome-192x192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/android-chrome-512x512.png',
+            src: '/assets/images/android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png',
           },
         ],
         screenshots: [
           {
-            src: '/Screenshot_otp.png',
+            src: '/assets/images/Screenshot_otp.png',
             type: 'image/png',
             sizes: '472x923',
             form_factor: 'wide',
           },
           {
-            src: '/Screenshot_dashboard.png',
+            src: '/assets/images/Screenshot_dashboard.png',
             type: 'image/png',
             sizes: '472x923',
             form_factor: 'wide',
           },
           {
-            src: '/Screenshot_register.png',
+            src: '/assets/images/Screenshot_register.png',
             type: 'image/png',
             sizes: '472x923',
             form_factor: 'wide',
           },
           {
-            src: '/Screenshot_register.png',
+            src: '/assets/images/Screenshot_register.png',
             type: 'image/png',
             sizes: '472x923',
             form_factor: 'narrow',
@@ -100,7 +143,7 @@ export default defineConfig({
         ],
       },
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,jpg,jpeg,woff2,woff,ttf,json}'],
       },
       devOptions: {
         enabled: true,
@@ -114,8 +157,8 @@ export default defineConfig({
     proxy: {
       '/share-handler': {
         target: 'http://localhost:5173',
-        rewrite: (path) => '/index.html',
+        rewrite: () => '/index.html',
       },
     },
   },
-});
+}));

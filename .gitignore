@@ -27,3 +27,7 @@ dev-dist
 *.njsproj
 *.sln
 *.sw?
+.yarn
+bundlemeta.json
+
+*gen*

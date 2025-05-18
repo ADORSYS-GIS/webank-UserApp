@@ -1,7 +1,5 @@
-// KYCDashboard.tsx - Main component (significantly simplified)
-
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { FiArrowLeft } from "react-icons/fi";
 import { ImageModal } from "../components/ImageModal";
 import { RejectionModal } from "../components/RejectionModal";
@@ -10,7 +8,7 @@ import { UserDetailsForm } from "../components/UserDetailsForm";
 import { useKycData } from "../hooks/useKycData";
 import { KycStatus } from "../types/types";
 
-export default function KYCDashboard(): JSX.Element {
+const KYCDashboard = () => {
   const {
     users,
     selectedUser,
@@ -44,7 +42,7 @@ export default function KYCDashboard(): JSX.Element {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
       <button
-        onClick={() => navigate("/dashboard")}
+        onClick={() => navigate("/")}
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Back to dashboard"
         type="button"
@@ -98,3 +96,5 @@ export default function KYCDashboard(): JSX.Element {
     </div>
   );
 }
+
+export { KYCDashboard as Component };

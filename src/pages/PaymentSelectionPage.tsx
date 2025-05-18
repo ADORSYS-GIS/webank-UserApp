@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { FaQrcode, FaAddressBook } from "react-icons/fa";
 
 const PaymentSelectionPage: React.FC = () => {
@@ -38,7 +38,7 @@ const PaymentSelectionPage: React.FC = () => {
           </button>
 
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
             className="w-full flex items-center justify-center space-x-3 bg-gray-200 text-gray-700 py-4 px-6 rounded-lg hover:bg-gray-300 transition-colors mt-4"
           >
             <span>Cancel</span>
@@ -49,4 +49,4 @@ const PaymentSelectionPage: React.FC = () => {
   );
 };
 
-export default PaymentSelectionPage;
+export { PaymentSelectionPage as Component };

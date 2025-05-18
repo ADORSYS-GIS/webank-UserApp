@@ -24,4 +24,4 @@ const PassportForm: React.FC = () => {
   );
 };
 
-export default PassportForm;
+export { PassportForm as Component };

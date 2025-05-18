@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { RequestToAgentTopup } from "../services/keyManagement/requestService";
 
@@ -42,7 +42,7 @@ const TopUpForm: React.FC<TopUpFormProps> = ({ tellerAccountCert }) => {
 
       if (response.includes("successfully")) {
         toast.success("Top-up successful!");
-        navigate("/dashboard");
+        navigate("/");
         setFormData({ clientAccountId: "", amount: "" });
       } else {
         toast.error("Failed to process top-up. Please try again.");
@@ -59,7 +59,7 @@ const TopUpForm: React.FC<TopUpFormProps> = ({ tellerAccountCert }) => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate("/")}
           className="text-gray-600 hover:text-red-500 transition float-right"
         >
           <svg

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import {
   RequestToTopup,
   RequestToWithdrawOffline,
@@ -90,17 +90,17 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     } else if (!navigator.onLine && show === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 4000);
     } else if (!navigator.onLine && show === "Top up") {
       toast.error("Cannot top up offline. Redirecting you to dashboard...");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 4000);
     } else if (!navigator.onLine && show === "Payment") {
       toast.error("Cannot do payment offline. Redirecting you to dashboard...");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 4000);
     } else {
       try {
@@ -108,7 +108,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
           clientAccountId,
           amount,
           agentAccountId,
-          accountCert,
+          accountCert ?? null,
           kycCert,
         );
         if (response?.includes("Success")) {

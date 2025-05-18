@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import {
   Shield,
   Zap,
@@ -70,7 +70,7 @@ const OnboardingFlow: React.FC = () => {
       localStorage.setItem("onboardingCompleted", "true");
       // Show success toast
       toast.success("Account creation successful");
-      navigate("/dashboard");
+      navigate("/");
     }
   };
 
@@ -175,4 +175,4 @@ const OnboardingFlow: React.FC = () => {
   );
 };
 
-export default OnboardingFlow;
+export { OnboardingFlow as Component };

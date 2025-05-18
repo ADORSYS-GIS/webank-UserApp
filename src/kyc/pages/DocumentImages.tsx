@@ -6,10 +6,10 @@ import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
 import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { AppDispatch, RootState } from '../../store/Store';
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { setDocumentStatus } from "../../slices/accountSlice";
+import { useNavigate } from "react-router";
+import { setDocumentStatus } from "../../slices/account.slice.ts";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
@@ -29,7 +29,7 @@ const DocumentImages = () => {
     (state: RootState) => state.account.accountCert,
   );
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const handleSubmitDocuments = async () => {
     try {
@@ -197,4 +197,4 @@ const DocumentImages = () => {
   );
 };
 
-export default DocumentImages;
+export { DocumentImages as Component };

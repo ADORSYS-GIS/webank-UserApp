@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import {
   RequestToSendOTP,
   RequestToValidateOTP,
@@ -8,15 +8,15 @@ import {
 import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
 import { useDispatch, useSelector } from "react-redux";
-import { setPhoneStatus } from "../slices/accountSlice.ts";
+import { setPhoneStatus } from "../slices/account.slice.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { RootState } from "../store/Store.ts";
+import { AppDispatch, RootState } from '../store/Store.ts';
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   // Initialize state from location
   const { otpHash: initialOtpHash, fullPhoneNumber } = location.state ?? {};
@@ -171,4 +171,4 @@ const PhoneVerification: React.FC = () => {
   );
 };
 
-export default PhoneVerification;
+export { PhoneVerification as Component };

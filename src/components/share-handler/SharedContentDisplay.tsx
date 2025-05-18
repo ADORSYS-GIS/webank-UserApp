@@ -5,7 +5,7 @@ import {
   faFilePdf,
   faFileLines,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export interface SharedContent {
   title: string;

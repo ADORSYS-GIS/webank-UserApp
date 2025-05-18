@@ -3,7 +3,15 @@ services:
     build:
       context: ./
     ports:
-      - "5173:80"
+      - "18080:80"
     environment:
       VITE_WEBANK_OBS_URL: 'http://localhost:8081'
       VITE_WEBANK_PRS_URL: 'http://localhost:8080'
+  tracking:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - '4318:4318' # OpenTelemetry receiver
+      - '14268:14268' # Jaeger receiver
+      - '16686:16686' # Jaeger UI
+    environment:
+      COLLECTOR_OTLP_ENABLED: 'true'

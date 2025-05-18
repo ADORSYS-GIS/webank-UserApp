@@ -7,7 +7,7 @@ import {
   FaLock,
 } from "react-icons/fa";
 
-const AboutPage: React.FC = () => {
+export const Component: React.FC = () => {
   const features = [
     {
       id: "feature-1",
@@ -126,5 +126,3 @@ const AboutPage: React.FC = () => {
     </div>
   );
 };
-
-export default AboutPage;

@@ -1,0 +1,96 @@
+@use "sass:color";
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  $primary-color: #4f46e5;
+  $secondary-color: #ff9966;
+  $neutral-color: #111111;
+  $success-color: #bbff00;
+  $danger-color: #ff0000;
+
+  --primary-color: #{$primary-color};
+  --primary-light-color: #{color.adjust($primary-color, $lightness: 36%)};
+  --primary-content-color: #{color.adjust($primary-color, $lightness: -32%)};
+
+  --secondary-color: #{$secondary-color};
+  --secondary-light-color: #{color.adjust($secondary-color, $lightness: 12%)};
+  --secondary-content-color: #{color.adjust($secondary-color, $lightness: -36%)};
+
+  --success-color: #{$success-color};
+  --success-content-color: #{color.adjust($success-color, $lightness: -36%)};
+  --success-light-color: #{color.adjust($success-color, $lightness: 24%)};
+
+  --neutral-color: #{$neutral-color};
+  --neutral-light-color: #{color.adjust($neutral-color, $lightness: 44%)};
+  --neutral-content-color: #{color.adjust($neutral-color, $lightness: -36%)};
+
+  --danger-color: #{$danger-color};
+  --danger-light-color: #{color.adjust($danger-color, $lightness: 14%)};
+  --danger-content-color: #{color.adjust($danger-color, $lightness: -40%)};
+}
+
+.scrollable {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; /* Enables momentum scrolling on iOS */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/*Styling for Register Page */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover\:bg-gray-100:hover {
+  background-color: #f7fafc; /* Tailwind's gray-100 */
+}
+
+.items-center {
+  align-items: center;
+}
+
+.material-icons {
+  font-size: 30px; /* Size for caret icon */
+}
+
+.p-2 {
+  padding: 8px; /* Padding for dropdown items */
+}
+
+/* Additional styles for responsiveness */
+@media (max-width: 768px) {
+  .relative {
+    width: 100%; /* Full width on mobile */
+  }
+
+  .flex-1 {
+    /*flex: 1; !* Allow input to take full space *!*/
+    width: 100%;
+  }
+
+  .rounded-lg {
+    border-radius: 0.5rem; /* Make buttons and dropdowns more rounded */
+  }
+}
+
+/* End of Styling for Registration Page */

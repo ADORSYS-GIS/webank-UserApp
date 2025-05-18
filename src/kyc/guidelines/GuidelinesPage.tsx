@@ -8,7 +8,7 @@ import {
   FaArrowLeft,
   FaLightbulb,
 } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 // Define proper TypeScript interfaces for the component props
 interface MarkdownHeadingProps
@@ -231,4 +231,4 @@ const GuidelinesPage: React.FC = () => {
   );
 };
 
-export default GuidelinesPage;
+export { GuidelinesPage as Component };

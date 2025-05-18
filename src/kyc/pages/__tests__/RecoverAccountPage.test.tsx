@@ -1,10 +1,10 @@
 // src/kyc/pages/__tests__/RecoverAccountPage.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { BrowserRouter as Router } from "react-router-dom";
-import RecoverAccountPage from "../RecoverAccountPage";
+import { BrowserRouter as Router } from "react-router";
+import { Component as RecoverAccountPage } from "../RecoverAccountPage";
 import "@testing-library/jest-dom";
-import { store } from "../../../store/Store";
+import { store } from '@wua/store/Store.ts';
 import jest from "jest-mock";
 
 describe("RecoverAccountPage", () => {

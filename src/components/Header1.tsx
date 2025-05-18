@@ -5,7 +5,7 @@ import {
   faInfoCircle,
   faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 interface HeaderProps {
   onNotificationClick?: () => void;

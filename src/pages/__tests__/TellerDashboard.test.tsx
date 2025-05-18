@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import TellerDashboard from "../TellerPage";
+import { Component as TellerDashboard } from "../TellerPage";
 import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
 import { toast } from "sonner";

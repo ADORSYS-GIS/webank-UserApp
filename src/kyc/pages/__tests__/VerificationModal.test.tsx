@@ -1,14 +1,14 @@
 // VerificationModal.test.tsx
 import { describe, it, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter, useNavigate } from "react-router-dom";
+import { MemoryRouter, useNavigate } from "react-router";
 import "@testing-library/jest-dom/vitest";
 
 import VerificationModal from "../../components/VerificationModal";
 
-// Mock react-router-dom navigation
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
+// Mock react-router navigation
+vi.mock("react-router", async () => {
+  const actual = await vi.importActual("react-router");
   return {
     ...actual,
     useNavigate: vi.fn(),

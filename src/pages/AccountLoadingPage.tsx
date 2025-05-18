@@ -1,76 +1,34 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setAccountId, setAccountCert } from "../slices/accountSlice";
-import { RequestToCreateBankAccount } from "../services/keyManagement/requestService.ts";
-import { toast } from "sonner";
-import useInitialization from "../hooks/useInitialization.ts";
+import { useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
+import { useMakeInit } from '@wua/hooks/useInitialization.ts';
 
-interface AccountLoadingPageProps {
-  message?: string;
-}
-
-const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
-  message = "Please wait while we initiate the bank account process. This might take some time...",
-}) => {
+const AccountLoadingPage = () => {
+  const { makeInit } = useMakeInit();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { devCert, error } = useInitialization();
+
+  const initializeAccount = useCallback(async () => {
+    try {
+      await makeInit();
+      navigate('/onboarding-flow');
+    } catch (error) {
+      navigate('/');
+      console.error('Error during account creation:', error);
+      toast.error('Account creation failed. Please try again.');
+    }
+  }, [makeInit, navigate]);
 
   useEffect(() => {
-    const initializeAccount = async () => {
-      try {
-        if (error) {
-          throw new Error(error);
-        }
-
-        if (!devCert) {
-          return; // Wait for devCert to be available
-        }
-
-        // Create bank account using device certificate
-        const accountCreationResponse = await RequestToCreateBankAccount(
-          devCert, // Use the devCert from initialization
-        );
-
-        if (
-          accountCreationResponse.startsWith(
-            "Bank account successfully created.",
-          )
-        ) {
-          const accountId = accountCreationResponse.split("\n")[2];
-          const accountCert = accountCreationResponse.split("\n")[4];
-
-          // Store account details
-          localStorage.setItem("accountId", accountId);
-          localStorage.setItem("accountCert", accountCert);
-          dispatch(setAccountId(accountId));
-          dispatch(setAccountCert(accountCert));
-
-          // Redirect to dashboard
-          navigate("/onboarding", {
-            state: { accountId, accountCert },
-          });
-        } else {
-          throw new Error("Account creation failed");
-        }
-      } catch (error) {
-        console.error("Error during account creation:", error);
-        toast.error("Account creation failed. Please try again.");
-        navigate("/");
-      }
-    };
-
     initializeAccount();
-  }, [navigate, dispatch, devCert, error]);
+  }, [initializeAccount]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">
-      <h1 className="text-2xl lg:text-3xl font-bold text-gray-700 text-center px-4">
-        {message}
+    <div className="flex flex-col flex-grow items-center justify-center gap-4">
+      <h1 className="text-2xl lg:text-3xl font-bold text-gray-700 text-center px-4 max-w-md">
+        Please wait while we initiate the bank account process. This might take some time...
       </h1>
       <div className="relative flex items-center justify-center">
-        <div className="animate-spin rounded-full h-40 w-40 border-t-4 border-b-4 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-40 w-40 border-t-4 border-b-4 border-purple-500" />
         <img
           src="https://www.svgrepo.com/show/509001/avatar-thinking-9.svg"
           alt="Thinking Avatar"
@@ -81,4 +39,4 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
   );
 };
 
-export default AccountLoadingPage;
+export { AccountLoadingPage as Component };

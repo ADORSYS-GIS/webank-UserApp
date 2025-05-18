@@ -1,6 +1,6 @@
 //NO
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -10,7 +10,7 @@ import {
   faAddressBook,
 } from "@fortawesome/free-solid-svg-icons";
 import AccountQRModal from "../pages/AccountQr";
-import AgentPage from "../pages/AgentPage";
+import { Component as AgentPage } from "../pages/AgentPage";
 
 interface BottomNavigationProps {
   accountId: string | undefined;
@@ -49,29 +49,29 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <div className="flex justify-around items-center h-16">
           <button
             onClick={() =>
-              navigate("/dashboard", { state: { accountId, accountCert } })
+              navigate("/", { state: { accountId, accountCert } })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/dashboard", { state: { accountId, accountCert } });
+                navigate("/", { state: { accountId, accountCert } });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
             role="tab"
-            aria-selected={location.pathname === "/dashboard"}
+            aria-selected={location.pathname === "/"}
             tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faHome}
               className={`text-lg ${
-                location.pathname === "/dashboard"
+                location.pathname === "/"
                   ? "text-blue-500"
                   : "text-gray-500"
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/dashboard"
+                location.pathname === "/"
                   ? "text-blue-500"
                   : "text-gray-500"
               }`}

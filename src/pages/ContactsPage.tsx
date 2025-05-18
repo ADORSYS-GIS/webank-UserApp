@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
 import ContactList from "../components/ContactList";
@@ -45,4 +45,4 @@ const ContactsPage: React.FC = () => {
   );
 };
 
-export default ContactsPage;
+export { ContactsPage as Component };

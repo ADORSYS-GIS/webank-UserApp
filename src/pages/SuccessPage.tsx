@@ -1,6 +1,6 @@
-import { CheckCircle } from "lucide-react";
-import { jwtDecode } from "jwt-decode";
-import { useLocation, useNavigate } from "react-router-dom";
+import { CheckCircle } from 'lucide-react';
+import { jwtDecode } from 'jwt-decode';
+import { useLocation, useNavigate } from 'react-router';
 
 // Define the type of the decoded JWT payload
 interface TransactionDetails {
@@ -10,7 +10,7 @@ interface TransactionDetails {
   paymentMethod: string;
 }
 
-export default function SuccessPage() {
+const SuccessPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { transactionCert } = location.state || {};
@@ -18,9 +18,9 @@ export default function SuccessPage() {
   // Define transaction details object with proper types
   let transactionDetails: TransactionDetails = {
     amount: 0,
-    TransactionID: "N/A",
+    TransactionID: 'N/A',
     paymentTime: 0,
-    paymentMethod: "N/A",
+    paymentMethod: 'N/A',
   };
 
   if (transactionCert) {
@@ -28,7 +28,7 @@ export default function SuccessPage() {
       const decoded = jwtDecode<TransactionDetails>(transactionCert); // Decode the JWT and infer the type
       transactionDetails = decoded; // Set the decoded transaction details
     } catch (error) {
-      console.error("Failed to decode JWT:", error);
+      console.error('Failed to decode JWT:', error);
     }
   }
 
@@ -53,21 +53,24 @@ export default function SuccessPage() {
 
         <div className="w-full bg-gray-50 rounded-lg p-6 mb-8">
           <dl className="space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-gray-200">
+            <div
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-gray-200">
               <dt className="text-gray-600 font-medium">Total Amount</dt>
               <dd className="text-emerald-700 font-semibold text-xl">
                 XAF {amount}
               </dd>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-gray-200">
+            <div
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-gray-200">
               <dt className="text-gray-600 font-medium">Transaction ID</dt>
               <dd className="text-gray-900 font-mono break-all whitespace-normal">
                 {TransactionID}
               </dd>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-gray-200">
+            <div
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-gray-200">
               <dt className="text-gray-600 font-medium">Payment Time</dt>
               <dd className="text-gray-900 break-all whitespace-normal">
                 {formattedPaymentTime}
@@ -84,7 +87,7 @@ export default function SuccessPage() {
         </div>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate('/')}
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 transform hover:scale-[1.02]"
         >
           Return to Dashboard
@@ -92,4 +95,6 @@ export default function SuccessPage() {
       </div>
     </div>
   );
-}
+};
+
+export { SuccessPage as Component };

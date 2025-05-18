@@ -7,10 +7,10 @@ import React, {
 } from "react";
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/Store.ts";
+import { AppDispatch, RootState } from '../../store/Store.ts';
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { setStatus } from "../../slices/accountSlice.ts";
+import { useNavigate } from "react-router";
+import { setStatus } from "../../slices/account.slice.ts";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -45,7 +45,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
