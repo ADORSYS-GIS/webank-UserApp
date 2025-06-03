@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Send, Search } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { RequestToGetOtps } from "../services/keyManagement/requestService";
 
 export default function TellerDashboard() {

@@ -1,4 +1,3 @@
-// passwordManager.ts
 import {
   handleRegister,
   handleAuthenticate,
@@ -8,7 +7,6 @@ import {
 export class PasswordManager {
   private static isRegistering = false;
   private static isAuthenticating = false;
-  private static cachedPassword: string | undefined = undefined;
 
   static async initializeDOMElements() {
     if (!document.querySelector("#messageInput")) {
@@ -27,21 +25,27 @@ export class PasswordManager {
   }
 
   static async getPassword(): Promise<string | undefined> {
-    // Return cached password if it exists
-    if (this.cachedPassword) {
-      return this.cachedPassword;
+    // Check sessionStorage for password
+    const storedPassword = sessionStorage.getItem("password");
+    if (storedPassword) {
+      return storedPassword;
     }
 
     await this.initializeDOMElements();
 
     try {
       const messages = JSON.parse(localStorage.getItem("messages") ?? "[]");
+      let password: string | undefined;
       if (messages.length > 0) {
-        this.cachedPassword = await this.attemptAuthentication();
+        password = await this.attemptAuthentication();
       } else {
-        this.cachedPassword = await this.handleNewUserRegistration();
+        password = await this.handleNewUserRegistration();
       }
-      return this.cachedPassword;
+      // Store password in sessionStorage if retrieved or generated
+      if (password) {
+        sessionStorage.setItem("password", password);
+      }
+      return password;
     } catch (error) {
       console.error("Password retrieval error:", error);
       return undefined;

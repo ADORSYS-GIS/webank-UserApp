@@ -111,7 +111,7 @@ const QRGenerator: React.FC = () => {
           {show == "Pay out" && (
             <button
               onClick={() =>
-                navigate("/qr-scan", { state: { isClientOffline } })
+                navigate("/qr-scan/top-up", { state: { isClientOffline } })
               }
               className="w-full px-6 py-3 text-white bg-amber-600 rounded-lg shadow-md transition hover:bg-amber-700 active:scale-95"
             >

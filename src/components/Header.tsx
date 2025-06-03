@@ -55,10 +55,10 @@ const InstallPrompt: React.FC = () => {
               <div className="flex items-center gap-3 pl-4 pr-2 py-2">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-800">
-                    Install Webank App
+                    Install App
                   </p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Get faster access and better experience
+                    Get faster access
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

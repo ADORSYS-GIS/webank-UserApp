@@ -1,289 +1,44 @@
+// KYCDashboard.tsx - Main component (significantly simplified)
+
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
-import { FiArrowLeft } from "react-icons/fi";
-import {
-  RequestToGetKycRecordsBySearch,
-  RequestToUpdateKycStatus,
-} from "../../services/keyManagement/requestService";
 import { useNavigate } from "react-router-dom";
+import { FiArrowLeft } from "react-icons/fi";
 import { ImageModal } from "../components/ImageModal";
-import { DocumentCard } from "../components/DocumentCard";
+import { RejectionModal } from "../components/RejectionModal";
+import { PendingKycList } from "../components/PendingKycList";
+import { UserDetailsForm } from "../components/UserDetailsForm";
+import { useKycData } from "../hooks/useKycData";
+import { KycStatus } from "../types/types";
 
-// Updated UserKYC interface to include all fields from UserInfoResponse
+export default function KYCDashboard(): JSX.Element {
+  const {
+    users,
+    selectedUser,
+    loading,
+    formData,
+    selectUser,
+    clearSelectedUser,
+    handleInputChange,
+    updateKycStatus,
+  } = useKycData();
 
-interface UserKYC {
-  id: string;
-  accountId: string;
-  docNumber: string;
-  expirationDate: string;
-  location: string;
-  email: string;
-  status: KycStatus;
-  frontID: string;
-  backID: string;
-  selfie: string;
-  taxDocument: string;
-}
-type KycStatus = "PENDING" | "APPROVED" | "REJECTED";
-
-// Helper function to determine the status class
-const getStatusClass = (status: string) => {
-  switch (status.toUpperCase()) {
-    case "PENDING":
-      return "bg-amber-100 text-amber-800 ring-amber-300";
-    case "APPROVED":
-      return "bg-emerald-100 text-emerald-800 ring-emerald-300";
-    case "REJECTED":
-      return "bg-rose-100 text-rose-800 ring-rose-300";
-    default:
-      return "bg-gray-100 text-gray-800 ring-gray-300";
-  }
-};
-
-export default function KYCDashboard() {
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const [user, setUser] = useState<UserKYC | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [formData, setFormData] = useState({
-    accountId: "",
-    docNumber: "",
-    expirationDate: "",
-  });
-  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const navigate = useNavigate();
 
-  const isVerificationAllowed = () => {
-    return !user || user.status.toUpperCase() === "PENDING";
-  };
-
-  const getStatusMessage = () => {
-    if (user) {
-      if (user.status.toUpperCase() === "APPROVED") {
-        return "Already Approved";
-      } else if (user.status.toUpperCase() === "REJECTED") {
-        return "Cannot Modify Rejected KYC";
-      }
-    }
-    return "Not Available";
-  };
-
-  // Handle search functionality
-  // Define an interface for the backend response
-  interface KycBackendResponse {
-    id?: string;
-    documentUniqueId?: string;
-    accountId?: string;
-    idNumber?: string;
-    expirationDate?: string;
-    location?: string;
-    email?: string;
-    status?: string;
-    frontID?: string;
-    backID?: string;
-    selfie?: string;
-    taxDocument?: string;
-  }
-
-  // Extract validation logic to a separate function
-  const validateSearchInput = () => {
-    if (!accountCert) {
-      toast.error("Authentication required");
-      return false;
-    }
-    if (!searchTerm.trim()) {
-      toast.error("Please enter a document number");
-      return false;
-    }
-    return true;
-  };
-
-  // Extract the user data processing logic with proper typing
-  const getOrDefault = (value?: string, fallback: string = "") =>
-    value ?? fallback;
-
-  const normalizeStatus = (status?: string): KycStatus => {
-    return (status?.toUpperCase() ?? "PENDING") as KycStatus;
-  };
-
-  const getDocNumber = (userInfo: KycBackendResponse) =>
-    getOrDefault(userInfo.idNumber, userInfo.documentUniqueId ?? "");
-
-  const processUserInfo = (userInfo: KycBackendResponse) => {
-    const status = normalizeStatus(userInfo.status);
-
-    const processedUser: UserKYC = {
-      id: getOrDefault(userInfo.id, userInfo.documentUniqueId),
-      accountId: getOrDefault(userInfo.accountId),
-      docNumber: getDocNumber(userInfo),
-      expirationDate: getOrDefault(userInfo.expirationDate),
-      location: getOrDefault(userInfo.location),
-      email: getOrDefault(userInfo.email),
-      status,
-      frontID: getOrDefault(userInfo.frontID),
-      backID: getOrDefault(userInfo.backID),
-      selfie: getOrDefault(userInfo.selfie),
-      taxDocument: getOrDefault(userInfo.taxDocument),
-    };
-
-    setUser(processedUser);
-
-    setFormData({
-      accountId: getOrDefault(userInfo.accountId),
-      docNumber: status === "PENDING" ? "" : getDocNumber(userInfo),
-      expirationDate:
-        status === "PENDING" ? "" : getOrDefault(userInfo.expirationDate),
-    });
-  };
-
-  // Handle empty search results
-  const handleEmptyResults = () => {
-    toast.info("No records found. Starting new verification");
-    setFormData({ ...formData, docNumber: searchTerm });
-  };
-
-  // Main search function with reduced complexity
-  const handleSearch = async () => {
-    try {
-      setLoading(true);
-      setUser(null);
-
-      if (!validateSearchInput()) {
-        return;
-      }
-
-      const response = await RequestToGetKycRecordsBySearch(
-        searchTerm,
-        accountCert,
-      );
-      console.log("Backend Response:", response);
-
-      const parsedInfo = Array.isArray(response)
-        ? (response as KycBackendResponse[])
-        : (JSON.parse(response || "[]") as KycBackendResponse[]);
-
-      if (parsedInfo.length === 0) {
-        handleEmptyResults();
-        return;
-      }
-
-      processUserInfo(parsedInfo[0]);
-    } catch (error) {
-      toast.error("Search failed. Please try again");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle verification/update functionality
   const handleVerification = async (
     e: React.FormEvent,
-    status: "APPROVED" | "REJECTED",
-  ) => {
+    status: KycStatus,
+  ): Promise<void> => {
     e.preventDefault();
+    await updateKycStatus(status);
+  };
 
-    if (!isFormValid(status)) return;
-    if (!accountCert) return showAuthError();
-
-    try {
-      if (user) {
-        const backendResponse = await updateKyc(user, status);
-        if (backendResponse.startsWith("Failed"))
-          return showMismatchError(status);
-
-        updateUserState(status);
-        toast.success(`KYC ${status.toLowerCase()} successfully`);
-      } else {
-        initializeNewUser();
-        toast.success("Verification initiated");
-      }
-      resetView();
-    } catch (error) {
-      toast.error(
-        `${status === "APPROVED" ? "Verification" : "Rejection"} failed`,
-      );
-      console.error(error);
+  const handleRejectWithReason = async (reason: string) => {
+    const success = await updateKycStatus("REJECTED", reason);
+    if (success) {
+      setShowRejectionModal(false);
     }
-  };
-
-  const isFormValid = (status: "APPROVED" | "REJECTED") => {
-    if (status === "APPROVED") {
-      const isValid =
-        formData.accountId && formData.docNumber && formData.expirationDate;
-      if (!isValid) {
-        toast.error("Please complete all fields for approval");
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const showAuthError = () => {
-    toast.error("Authentication required");
-  };
-
-  const updateKyc = async (user: UserKYC, status: "APPROVED" | "REJECTED") => {
-    return await RequestToUpdateKycStatus(
-      user.accountId,
-      formData.docNumber || user.docNumber,
-      formData.expirationDate || user.expirationDate,
-      status,
-      accountCert,
-    );
-  };
-
-  const showMismatchError = (status: "APPROVED" | "REJECTED") => {
-    toast.error(
-      `${status === "APPROVED" ? "Verification" : "Rejection"} failed, user identity mismatch`,
-    );
-  };
-
-  const updateUserState = (status: "APPROVED" | "REJECTED") => {
-    setUser((prev) =>
-      prev
-        ? {
-            ...prev,
-            docNumber:
-              status === "APPROVED" ? formData.docNumber : prev.docNumber,
-            expirationDate:
-              status === "APPROVED"
-                ? formData.expirationDate
-                : prev.expirationDate,
-            status: status,
-          }
-        : null,
-    );
-  };
-
-  const initializeNewUser = () => {
-    const newUser: UserKYC = {
-      id: formData.docNumber,
-      ...formData,
-      location: "",
-      email: "",
-      status: "PENDING",
-      frontID: "",
-      backID: "",
-      selfie: "",
-      taxDocument: "",
-    };
-    setUser(newUser);
-  };
-
-  // Reset the form and view
-  const resetView = () => {
-    setUser(null);
-    setSearchTerm("");
-    setFormData({
-      accountId: "",
-      docNumber: "",
-      expirationDate: "",
-    });
   };
 
   return (
@@ -291,11 +46,12 @@ export default function KYCDashboard() {
       <button
         onClick={() => navigate("/dashboard")}
         className="p-2 rounded-full hover:bg-gray-100 transition"
-        aria-label="Close form"
+        aria-label="Back to dashboard"
+        type="button"
       >
         <FiArrowLeft className="w-6 h-6 text-gray-600" />
       </button>
-      <ToastContainer />
+
       <div className="max-w-3xl mx-auto">
         <h1
           className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent 
@@ -304,235 +60,41 @@ export default function KYCDashboard() {
           KYC Verification
         </h1>
 
-        {/* Search Section */}
-        {!user && (
+        {!selectedUser ? (
           <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
-              <input
-                type="text"
-                placeholder="Enter Document Number"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-6 py-4 border-2 border-gray-200 rounded-full 
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 
-                  placeholder-gray-400 text-lg transition"
-              />
-              <button
-                onClick={handleSearch}
-                disabled={loading}
-                className="w-full md:w-auto px-8 py-4 bg-blue-600 
-                  text-white rounded-full hover:bg-blue-700 
-                  transition-all mt-4 md:mt-0 shadow-md 
-                  disabled:bg-gray-300 disabled:cursor-not-allowed"
-              >
-                {loading ? "Searching..." : "Search"}
-              </button>
-            </div>
-            <p className="text-center text-gray-600 mt-4">
-              Enter a document number to verify or start new verification
-            </p>
+            <h2 className="text-xl font-semibold mb-6">
+              Pending Verifications
+            </h2>
+            <PendingKycList
+              users={users}
+              loading={loading}
+              onSelectUser={selectUser}
+            />
           </div>
+        ) : (
+          <UserDetailsForm
+            user={selectedUser}
+            formData={formData}
+            onInputChange={handleInputChange}
+            onGoBack={clearSelectedUser}
+            onApprove={(e) => handleVerification(e, "APPROVED")}
+            onReject={() => setShowRejectionModal(true)}
+            onImageClick={setSelectedImage}
+          />
         )}
 
-        {/* User Details and Form Section */}
-        {user && (
-          <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  KYC Details
-                </h2>
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-medium 
-      ${getStatusClass(user.status)} transition-all`}
-                >
-                  {user.status.toUpperCase()}
-                </span>
-              </div>
-              <button
-                onClick={resetView}
-                className="p-2 rounded-full hover:bg-gray-100 transition"
-                aria-label="Close form"
-              >
-                <FiArrowLeft className="w-6 h-6 text-gray-600" />
-              </button>
-            </div>
+        <ImageModal
+          selectedImage={selectedImage}
+          onClose={() => setSelectedImage(null)}
+        />
 
-            {/* Display User Information */}
-            <form
-              onSubmit={(e) => handleVerification(e, "APPROVED")}
-              className="space-y-6"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="col-span-full md:col-span-1">
-                  <label
-                    htmlFor="accountId"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Account ID
-                  </label>
-                  <input
-                    id="accountId"
-                    value={formData.accountId}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        accountId: e.target.value,
-                      }))
-                    }
-                    placeholder="Enter account ID"
-                    className="w-full px-6 py-4 border-2 border-gray-200 
-                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
-                      placeholder-gray-400 disabled:bg-gray-100 transition"
-                    disabled
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="docNumber"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Document Number
-                  </label>
-                  <input
-                    id="docNumber"
-                    value={formData.docNumber}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        docNumber: e.target.value,
-                      }))
-                    }
-                    placeholder="Enter document number"
-                    className="w-full px-6 py-4 border-2 border-gray-200 
-                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
-                      placeholder-gray-400 transition"
-                    required
-                    disabled={!isVerificationAllowed()}
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="expirationDate"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Expiration Date
-                  </label>
-                  <input
-                    id="expirationDate"
-                    type="date"
-                    value={formData.expirationDate}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        expirationDate: e.target.value,
-                      }))
-                    }
-                    className="w-full px-6 py-4 border-2 border-gray-200 
-                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 
-                      placeholder-gray-400 transition"
-                    required
-                    disabled={!isVerificationAllowed()}
-                  />
-                </div>
-              </div>
-
-              {/* Display Email and Location */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800">
-                  Additional Information
-                </h3>
-                <div>
-                  <div className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                  </div>
-                  <p className="text-gray-800">
-                    {user.email || "Not provided"}
-                  </p>
-                </div>
-                <div>
-                  <div className="block text-sm font-medium text-gray-700 mb-2">
-                    Location
-                  </div>
-                  <p className="text-gray-800">
-                    {user.location || "Not provided"}
-                  </p>
-                </div>
-              </div>
-
-              {/* Display Documents */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium text-gray-800">Documents</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <DocumentCard
-                    title="Front ID"
-                    url={user.frontID}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                  <DocumentCard
-                    title="Back ID"
-                    url={user.backID}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                  <DocumentCard
-                    title="Selfie"
-                    url={user.selfie}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                  <DocumentCard
-                    title="Tax Document"
-                    url={user.taxDocument}
-                    type="image"
-                    onImageClick={setSelectedImage}
-                  />
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end space-x-4">
-                {isVerificationAllowed() ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={(e) => handleVerification(e, "REJECTED")}
-                      className="px-10 py-4 bg-rose-600 text-white rounded-full 
-                        hover:bg-rose-700 transition-all shadow-lg 
-                        focus:outline-none focus:ring-2 focus:ring-rose-500 
-                        focus:ring-offset-2"
-                    >
-                      Reject
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => handleVerification(e, "APPROVED")}
-                      className="px-10 py-4 bg-blue-600 text-white rounded-full 
-                        hover:bg-blue-700 transition-all shadow-lg 
-                        focus:outline-none focus:ring-2 focus:ring-blue-500 
-                        focus:ring-offset-2"
-                    >
-                      Approve
-                    </button>
-                  </>
-                ) : (
-                  <div
-                    className="px-10 py-4 bg-gray-300 text-white rounded-full 
-                    shadow-lg cursor-not-allowed"
-                  >
-                    {getStatusMessage()}
-                  </div>
-                )}
-              </div>
-            </form>
-          </div>
+        {showRejectionModal && (
+          <RejectionModal
+            onClose={() => setShowRejectionModal(false)}
+            onReject={handleRejectWithReason}
+          />
         )}
       </div>
-      <ImageModal
-        selectedImage={selectedImage}
-        onClose={() => setSelectedImage(null)}
-      />
     </div>
   );
 }

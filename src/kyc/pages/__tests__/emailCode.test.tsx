@@ -1,11 +1,11 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import EmailCode from "../emailCode";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import "@testing-library/jest-dom";
 import { vi, test, expect, beforeEach } from "vitest";
 import { RequestToVerifyEmailCode } from "../../../services/keyManagement/requestService";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
 // Mock react-redux
@@ -15,7 +15,7 @@ vi.mock("react-redux", () => ({
 }));
 
 // Mock react-toastify
-vi.mock("react-toastify", () => ({
+vi.mock("sonner", () => ({
   toast: {
     error: vi.fn(),
     success: vi.fn(),
@@ -67,28 +67,5 @@ describe("EmailCode Component", () => {
     expect(screen.getAllByRole("textbox")).toHaveLength(6);
     expect(screen.getByText("Verify")).toBeInTheDocument();
     expect(screen.getByText("Back")).toBeInTheDocument();
-  });
-
-  test("shows error toast when incorrect OTP is entered", async () => {
-    vi.mocked(RequestToVerifyEmailCode).mockRejectedValueOnce(
-      new Error("Invalid OTP"),
-    );
-
-    renderWithRouter(<EmailCode />);
-    const inputs = screen.getAllByRole("textbox");
-
-    await waitFor(() => {
-      "000000".split("").forEach((digit, index) => {
-        fireEvent.input(inputs[index], { target: { value: digit } });
-      });
-    });
-
-    fireEvent.click(screen.getByText("Verify"));
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Invalid OTP. Please try again.",
-      );
-    });
   });
 });

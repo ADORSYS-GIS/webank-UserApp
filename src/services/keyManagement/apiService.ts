@@ -124,16 +124,10 @@ export const validateOTP = async (
   }
 };
 
-export const createBankAccount = async (
-  fullPhoneNumber: string,
-  publicKey: string,
-  jwtToken: string,
-) => {
+export const createBankAccount = async (jwtToken: string) => {
   // Create the request object with both phone number and public key
-  const requestBody = {
-    publicKey: publicKey,
-    phoneNumber: fullPhoneNumber,
-  };
+  const requestBody = {};
+
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
@@ -150,7 +144,7 @@ export const createBankAccount = async (
     return response.data;
   } catch (error) {
     console.error("Error creating bank account:", error);
-    throw new Error("Incorrect OTPq");
+    throw new Error("Incorrect OTP");
   }
 };
 export const getTransactionHistory = async (
@@ -417,24 +411,78 @@ export const storeKYCInfo = async (
   }
 };
 
-export const getKycRecords = async (jwtToken: string) => {
+export const storeKycDocument = async (
+  frontId: string,
+  backId: string,
+  selfieId: string,
+  taxId: string,
+  accountId: string,
+  jwtToken: string,
+) => {
   const headers = {
+    "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
-  console.log(headers, "headers");
+
+  const requestBody = {
+    frontId,
+    backId,
+    selfieId,
+    taxId,
+    accountId,
+  };
 
   try {
-    // get the kyc records
-    const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/infos`,
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/documents`,
+      requestBody,
       { headers },
     );
-
-    console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error retrieving kyc records:", error);
-    throw new Error("Failed to retrieve kyc records");
+    console.error("Error storing ID Card info:", error);
+    throw new Error("Failed to store ID Card info");
+  }
+};
+
+export const getKycDocuments = async (accountId: string, jwtToken: string) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    accountId,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/record`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving KYC records:", error);
+    throw new Error("Failed to retrieve KYC records");
+  }
+};
+
+export const GetKycRecordsByStatusPending = async (jwtToken: string) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/pending`,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving KYC records:", error);
+    throw new Error("Failed to retrieve KYC records");
   }
 };
 
@@ -465,6 +513,7 @@ export const UpdateKycStatus = async (
   expiryDate: string,
   status: string,
   jwtToken: string,
+  reason: string,
 ) => {
   // Update the KYC status for a particular account
   const headers = {
@@ -476,6 +525,9 @@ export const UpdateKycStatus = async (
     idNumber: docNumber,
     expiryDate,
     accountId,
+    ...(status === "REJECTED" && {
+      rejectionReason: reason,
+    }),
   };
 
   try {
@@ -633,5 +685,33 @@ export const verifyRecoveryFields = async (
   } catch (error) {
     console.error("Error verifying recovery fields:", error);
     throw new Error("Failed to verify recovery fields");
+  }
+};
+
+export const agentTopup = async (
+  accountId: string,
+  amount: number,
+  agentAccountCert: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${agentAccountCert}`,
+  };
+
+  const requestBody = {
+    accountId,
+    amount,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/agent/topup`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error processing agent top-up:", error);
+    throw new Error("Failed to process agent top-up");
   }
 };

@@ -8,7 +8,7 @@ import React, {
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/Store.ts";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setStatus } from "../../slices/accountSlice.ts";
 
@@ -85,9 +85,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       if (response === "KYC Info sent successfully and saved.") {
         dispatch(setStatus("PENDING"));
         toast.success("KYC Info sent successfully and saved.");
-        setTimeout(() => {
-          navigate("/kyc");
-        }, 2000);
+        navigate("/kyc");
       } else {
         toast.error("Error submitting data, please try again later");
       }
@@ -138,7 +136,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
           {children}
           <button
             type="submit"
-            className="w-full bg-[#20B2AA] text-white py-4 rounded-3xl
+            className="w-full bg-blue-600 text-white py-4 rounded-3xl
                      font-semibold transition duration-300 ease-in-out shadow-lg mt-2"
           >
             Submit
@@ -270,7 +268,6 @@ export const TextInput: React.FC<TextInputProps> = ({
         value={formData[fieldName] || ""}
         onChange={(e) => setFormField(fieldName, e.target.value)}
       />
-      <ToastContainer />
     </div>
   );
 };

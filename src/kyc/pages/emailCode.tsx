@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setEmailStatus, setStatus } from "../../slices/accountSlice";
+import { setEmailStatus } from "../../slices/accountSlice";
 import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
 } from "../../services/keyManagement/requestService";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import OtpInput from "../../components/OtpInput";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RootState } from "../../store/Store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios"; // Import axios for error handling
 
 const EmailCode: React.FC = () => {
   useDisableScroll();
@@ -18,7 +21,7 @@ const EmailCode: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { email, accountCert } = location.state || {};
+  const { email, accountCert } = location.state ?? {};
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const resendOTP = async () => {
@@ -29,24 +32,61 @@ const EmailCode: React.FC = () => {
           navigate("/dashboard");
           return;
         }
-        RequestToSendEmailOTP(email, accountCert, accountId);
-        navigate("/emailCode", { state: { email, accountCert } });
+        const response = await RequestToSendEmailOTP(
+          email,
+          accountCert,
+          accountId,
+        );
+
+        if (response.startsWith("OTP sent successfully")) {
+          toast.success("OTP Resend, please check your email.", {
+            duration: 5000,
+          });
+        }
       } catch (error) {
-        toast.error("Failed to send OTP. Please try again.");
+        console.error("Error resending OTP:", error);
+        toast.error("Failed to resend OTP. Please try again.");
       }
     } else {
       toast.error("Please enter a valid email address.");
     }
   };
 
+  const showAccountMissingError = () => {
+    toast.error("Account information is missing.");
+    navigate("/dashboard");
+  };
+
+  const showOtpErrorMessage = (message: string) => {
+    switch (message) {
+      case "Webank OTP expired":
+        toast.error("OTP has expired. Please request a new one.");
+        break;
+      case "User record not found":
+        toast.error("User not found. Please try again.");
+        break;
+      case "OTP expiration date missing":
+        toast.error("OTP is invalid. Please request a new one.");
+        break;
+      default:
+        toast.error("Failed to verify OTP. Please try again.");
+        break;
+    }
+  };
+
   const handleVerify = async () => {
     const enteredCode = otp.replace(/\s/g, ""); // Trim spaces
+    if (enteredCode.length !== 6 || !/^\d{6}$/.test(enteredCode)) {
+      toast.error("Please enter a valid 6-digit OTP.");
+      return;
+    }
+
     try {
       if (!accountId || !accountCert) {
-        toast.error("Account information is missing.");
-        navigate("/dashboard");
+        showAccountMissingError();
         return;
       }
+
       const response = await RequestToVerifyEmailCode(
         email,
         enteredCode,
@@ -55,12 +95,20 @@ const EmailCode: React.FC = () => {
       );
 
       if (response === "Webank email verified successfully") {
-        dispatch(setStatus("PENDING"));
-        setShowSuccess(true);
         dispatch(setEmailStatus("APPROVED"));
+        setShowSuccess(true);
+      } else if (response === "Invalid Webank OTP") {
+        toast.error("Invalid OTP. Please try again.");
+      } else {
+        toast.error("OTP validation failed. Please try again.");
       }
     } catch (error) {
-      toast.error("Invalid OTP. Please try again.");
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data;
+        showOtpErrorMessage(message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     }
   };
 
@@ -73,20 +121,10 @@ const EmailCode: React.FC = () => {
             className="text-xl cursor-pointer p-2 focus:outline-none"
             aria-label="Back"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
+            <FontAwesomeIcon
+              icon={faArrowLeft}
+              className="h-6 w-6 text-gray-600"
+            />
           </button>
         </div>
 
@@ -108,7 +146,7 @@ const EmailCode: React.FC = () => {
           Didn't receive the code? Click below to resend.
         </p>
         <button
-          className="text-[#20B2AA] font-semibold hover:underline mb-6"
+          className="text-blue-500 font-semibold hover:underline mb-6"
           onClick={resendOTP}
         >
           Resend Code
@@ -122,7 +160,7 @@ const EmailCode: React.FC = () => {
             Back
           </button>
           <button
-            className="w-1/3 py-3 bg-[#20B2AA] text-white font-semibold rounded-full shadow-md hover:bg-[#1C8C8A] transition"
+            className="w-1/3 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition"
             onClick={handleVerify}
           >
             Verify
@@ -133,6 +171,9 @@ const EmailCode: React.FC = () => {
       {showSuccess && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+            <div className="w-16 h-16 bg-blue-100 text-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <FontAwesomeIcon icon={faCheckCircle} className="text-3xl" />
+            </div>
             <h2 className="text-2xl font-bold mb-3">
               Successful Email Verification
             </h2>
@@ -140,7 +181,7 @@ const EmailCode: React.FC = () => {
               Your email has been successfully verified!
             </p>
             <button
-              className="py-2 px-6 bg-[#20B2AA] text-white font-semibold rounded-full shadow-md hover:bg-[#1C8C8A] transition"
+              className="py-2 px-6 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition"
               onClick={() => navigate("/")}
             >
               OK
@@ -148,8 +189,6 @@ const EmailCode: React.FC = () => {
           </div>
         </div>
       )}
-
-      <ToastContainer />
     </div>
   );
 };

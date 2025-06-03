@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import useDisableScroll from "../../hooks/useDisableScroll";
 
 const GetNewAccountId: React.FC = () => {
@@ -144,7 +144,6 @@ const GetNewAccountId: React.FC = () => {
 
         {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
-      <ToastContainer />
     </div>
   );
 };

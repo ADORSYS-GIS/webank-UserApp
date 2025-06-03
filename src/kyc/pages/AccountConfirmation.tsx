@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
 import useDisableScroll from "../../hooks/useDisableScroll";
@@ -98,7 +98,6 @@ const AccountConfirmation: React.FC = () => {
           </button>
         </div>
       </div>
-      <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
 };
