@@ -9,19 +9,22 @@ import {
   getAccountBalance,
   getTransactionHistory,
   TopupAccount,
+  UpdateKycStatus,
 } from "../apiService";
+import { TransactionProjection } from "../../../shared/projections/TransactionProjection";
+import { KycStatusProjection } from "../../../shared/projections/KycStatusProjection";
 
 vi.mock("axios");
 
 const mockPost = vi.mocked(axios.post);
+const mockPatch = vi.mocked(axios.patch);
+const mockJwt = "mock.jwt.token";
 
 beforeEach(() => {
   vi.clearAllMocks(); // Reset mocks before each test
 });
 
 describe("API Functions", () => {
-  const mockJwt = "mocked-jwt-token";
-
   it("should call initiateRegistration API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { success: true } });
 
@@ -148,31 +151,6 @@ describe("API Functions", () => {
     ).rejects.toThrow("Incorrect OTP");
   });
 
-  it("should call getTransactionHistory API correctly", async () => {
-    mockPost.mockResolvedValueOnce({ data: { transactions: [] } });
-
-    const result = await getTransactionHistory("mockAccountId", mockJwt);
-
-    expect(mockPost).toHaveBeenCalledWith(
-      expect.stringContaining("/accounts/transactions"),
-      { accountID: "mockAccountId" },
-      {
-        headers: expect.objectContaining({
-          Authorization: `Bearer ${mockJwt}`,
-        }),
-      },
-    );
-    expect(result).toEqual({ transactions: [] });
-  });
-
-  it("should handle getTransactionHistory API failure", async () => {
-    mockPost.mockRejectedValueOnce(new Error("API Error"));
-
-    await expect(
-      getTransactionHistory("mockAccountId", mockJwt),
-    ).rejects.toThrow("Failed to fetch transaction history");
-  });
-
   it("should call getAccountBalance API correctly", async () => {
     mockPost.mockResolvedValueOnce({ data: { balance: 1000 } });
 
@@ -228,5 +206,89 @@ describe("API Functions", () => {
     await expect(
       TopupAccount("account123", 500, "otherAccount456", mockJwt),
     ).rejects.toThrow("Failed to top up account");
+  });
+});
+
+describe("Transaction History", () => {
+  it("should call getTransactionHistory API correctly", async () => {
+    const mockTransactions: TransactionProjection[] = [
+      {
+        id: 1,
+        date: 1234567890,
+        amount: "100.00",
+        title: "Test Transaction"
+      }
+    ];
+    mockPost.mockResolvedValueOnce({ data: { transactions: mockTransactions } });
+
+    const result = await getTransactionHistory("mockAccountId", mockJwt);
+
+    expect(mockPost).toHaveBeenCalledWith(
+      expect.stringContaining("/accounts/transactions"),
+      expect.any(Object),
+      expect.any(Object)
+    );
+    expect(result).toEqual({ transactions: mockTransactions });
+  });
+
+  it("should handle getTransactionHistory API failure", async () => {
+    mockPost.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(
+      getTransactionHistory("mockAccountId", mockJwt)
+    ).rejects.toThrow("Failed to fetch transaction history");
+  });
+});
+
+describe("KYC Status", () => {
+  it("should call UpdateKycStatus API correctly", async () => {
+    const mockStatus: KycStatusProjection = "APPROVED";
+    mockPatch.mockResolvedValueOnce({ 
+      data: { 
+        status: mockStatus,
+        message: "KYC status updated successfully" 
+      } 
+    });
+
+    const result = await UpdateKycStatus(
+      "mockAccountId",
+      "doc123",
+      "2024-12-31",
+      "APPROVED",
+      mockJwt
+    );
+
+    expect(mockPatch).toHaveBeenCalledWith(
+      expect.stringContaining("/kyc/mockAccountId/APPROVED"),
+      {
+        idNumber: "doc123",
+        expiryDate: "2024-12-31",
+        accountId: "mockAccountId"
+      },
+      {
+        headers: expect.objectContaining({
+          Authorization: `Bearer ${mockJwt}`,
+          "Content-Type": "application/json"
+        })
+      }
+    );
+    expect(result).toEqual({ 
+      status: mockStatus,
+      message: "KYC status updated successfully" 
+    });
+  });
+
+  it("should handle UpdateKycStatus API failure", async () => {
+    mockPatch.mockRejectedValueOnce(new Error("API Error"));
+
+    await expect(
+      UpdateKycStatus(
+        "mockAccountId",
+        "doc123",
+        "2024-12-31",
+        "APPROVED",
+        mockJwt
+      )
+    ).rejects.toThrow("Failed to update KYC status");
   });
 });

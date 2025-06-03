@@ -5,17 +5,11 @@ import {
   faMoneyBillWave,
   faHandHoldingDollar,
 } from "@fortawesome/free-solid-svg-icons";
-
-interface Transaction {
-  id: number;
-  date: number;
-  amount: string;
-  title: string;
-}
+import { TransactionProjection } from "../shared/projections/TransactionProjection";
 
 interface TransactionsSectionProps {
   transactionsVisible: boolean;
-  transactionsData: Array<Transaction>;
+  transactionsData: Array<TransactionProjection>;
   fetchTransactions: () => void;
   setTransactionsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   loadingTransactions: boolean;

@@ -25,6 +25,8 @@ import {
   requestToGetRecoveryToken,
   verifyRecoveryFields,
 } from "./apiService";
+import { TransactionProjection, toTransactionProjection } from "../../shared/projections/TransactionProjection";
+import { KycStatusProjection, toKycStatusProjection } from "../../shared/projections/KycStatusProjection";
 
 let Key: string | null = null;
 
@@ -200,26 +202,17 @@ export async function RequestToGetBalance(
 // Function to retrieve transaction history
 export async function RequestToGetTransactionHistory(
   accountId: string,
-  accountCert?: string | null,
-): Promise<string> {
-  const { publicKey, privateKey } = await KeyManagement();
-
-  Key = JSON.stringify(publicKey);
-
-  const jwtToken = await generateJWT(
-    privateKey,
-    publicKey,
-    null,
-    null,
-    accountCert,
-    null,
-    null,
-    null,
-    accountId,
-  );
-  console.log(jwtToken + "Account Cert!!!");
-  console.log(accountId + "Account ID !!!");
-  return await getTransactionHistory(accountId, jwtToken);
+  jwtToken: string
+): Promise<{ transactions: TransactionProjection[] }> {
+  try {
+    const result = await getTransactionHistory(accountId, jwtToken);
+    return {
+      transactions: result.transactions.map(toTransactionProjection)
+    };
+  } catch (error) {
+    console.error("Error fetching transaction history:", error);
+    throw new Error("Failed to fetch transaction history");
+  }
 }
 
 // Function to top up an account
@@ -461,34 +454,21 @@ export async function RequestToUpdateKycStatus(
   docNumber: string,
   expiryDate: string,
   status: string,
-  accountCert?: string | null,
-): Promise<string> {
-  const { publicKey, privateKey } = await KeyManagement();
-
-  Key = JSON.stringify(publicKey);
-
-  const jwtToken = await generateJWT(
-    privateKey,
-    publicKey,
-    null,
-    null,
-    accountCert,
-    null,
-    null,
-    null,
-    accountId,
-    docNumber,
-    expiryDate,
-    status,
-  );
-  console.log(jwtToken + "Account Cert!!!");
-  return await UpdateKycStatus(
-    accountId,
-    docNumber,
-    expiryDate,
-    status,
-    jwtToken,
-  );
+  jwtToken: string
+): Promise<KycStatusProjection> {
+  try {
+    const result = await UpdateKycStatus(
+      accountId,
+      docNumber,
+      expiryDate,
+      status,
+      jwtToken
+    );
+    return toKycStatusProjection(result.status);
+  } catch (error) {
+    console.error("Error updating KYC status:", error);
+    throw new Error("Failed to update KYC status");
+  }
 }
 
 export async function RequestToGetCert(
