@@ -508,11 +508,10 @@ export async function RequestToUpdateKycStatus(
     null,
     null,
     null,
-    accountId,
     docNumber,
     expiryDate,
+    accountId,
     status,
-    reason,
   );
   console.log(jwtToken + "Account Cert!!!");
   return await UpdateKycStatus(
@@ -607,6 +606,7 @@ export async function RequestToValidateRecoveryDetails(
     null,
     null,
     accountCert,
+    null,
     null,
     null,
     oldAccountId,

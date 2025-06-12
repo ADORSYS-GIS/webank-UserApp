@@ -333,7 +333,7 @@ export const verifyEmailCode = async (
 
   const requestBody = {
     email,
-    otp,
+    otpInput: otp,
     accountId,
   };
 
@@ -525,14 +525,15 @@ export const UpdateKycStatus = async (
     idNumber: docNumber,
     expiryDate,
     accountId,
+    status,
     ...(status === "REJECTED" && {
       rejectionReason: reason,
     }),
   };
 
   try {
-    const response = await axios.patch(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${accountId}/${status}`,
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/status/update`,
       requestBody,
       { headers },
     );
@@ -588,7 +589,7 @@ export const requestToGetRecoveryToken = async (
 
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/token`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/recovery/token`,
       requestBody,
       { headers },
     );
@@ -620,7 +621,7 @@ export const submitRecoveryToken = async (
 
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/validate`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/recovery/validate`,
       requestBody,
       { headers },
     );
@@ -677,7 +678,7 @@ export const verifyRecoveryFields = async (
   };
   try {
     const response = await axios.post(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/recovery/${accountId}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/recovery/verify`,
       requestBody,
       { headers },
     );
