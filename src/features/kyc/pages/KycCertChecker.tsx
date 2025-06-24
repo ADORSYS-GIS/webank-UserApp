@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@state/Store"; // Ensure this is the correct path
-import {
-  setStatus,
-  setKycCert,
-  setDocumentStatus,
-} from "@state/accountSlice"; // Updated Redux actions
+import { setStatus, setKycCert, setDocumentStatus } from "@state/accountSlice"; // Updated Redux actions
 import { RequestToGetCert } from "@services/keyManagement/requestService";
 import KycRejectionPopup from "../components/KycRejectionPopup";
 

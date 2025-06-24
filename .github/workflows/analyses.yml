@@ -3,9 +3,9 @@ name: analyses
 # Trigger workflow on push and pull request events targeting the main branch.
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
 
 jobs:
   # Step 1: Install dependencies and cache node_modules

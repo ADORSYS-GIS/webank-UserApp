@@ -21,6 +21,9 @@ import DashboardPage from "@features/dashboard/pages/DashboardPage";
 // Transactions Feature
 import TopUpPage from "@features/transactions/pages/TopUpPage";
 import SuccessPage from "@features/transactions/pages/SuccessPage";
+import ContactsPage from "@features/contacts/pages/ContactsPage";
+import PaymentSelectionPage from "@features/transactions/pages/PaymentSelectionPage";
+import AgentTopUpPage from "@features/teller/pages/AgentTopUpPage";
 
 // QR Feature
 import TopUpQRScannerPage from "@features/qr/pages/TopUpQRScannerPage";
@@ -51,6 +54,7 @@ import AccountConfirmation from "@features/kyc/pages/AccountConfirmation";
 import MapConfirmation from "@features/kyc/components/MapConfirmation";
 import DocumentImages from "@features/kyc/pages/DocumentImages";
 import GuidelinesPage from "@features/kyc/guidelines/GuidelinesPage";
+import { useKYCReminder } from "@features/kyc/hooks/useKYCReminder";
 
 // Shared Components
 import Header from "@shared/components/Header";
@@ -67,28 +71,11 @@ import OnboardingPage from "@shared/pages/HomePage";
 import ShareHandlerPage from "@shared/pages/ShareHandlerPage";
 import AccountLoadingPage from "@shared/pages/AccountLoadingPage";
 
-// Features
-import { useKYCReminder } from "@features/kyc/hooks/useKYCReminder";
-import ContactsPage from "@features/contacts/pages/ContactsPage";
-import PaymentSelectionPage from "@features/transactions/pages/PaymentSelectionPage";
-import AgentTopUpPage from "@features/teller/pages/AgentTopUpPage";
-import { TestComponent } from "@shared/components/TestComponent";
-
 // Styles
 import "@app/App.css";
 
 const App: React.FC = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
-  
-  // Test component to verify path aliases
-  if (process.env.NODE_ENV === 'development') {
-    return (
-      <div style={{ padding: '20px' }}>
-        <h1>Path Alias Test</h1>
-        <TestComponent />
-      </div>
-    );
-  }
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
@@ -135,56 +122,55 @@ const App: React.FC = () => {
           <Route path="/loading" element={<AccountLoadingPage />} />
           <Route path="/phone/verification" element={<PhoneVerification />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/phone" element={<PhoneInput />} />
-          <Route path="/topup" element={<TopUpPage />} />
-          <Route path="/topup/qr" element={<TopUpQRScannerPage />} />
-          <Route path="/scan" element={<GeneralQRScannerPage />} />
-          <Route path="/offline-scan" element={<OfflineQRScannerPage />} />
-          <Route path="/agent" element={<AgentPage />} />
-          <Route path="/agent/topup" element={<AgentTopUpPage />} />
-          <Route path="/success" element={<SuccessPage />} />
-          <Route path="/qr" element={<QRGenerator />} />
-          <Route path="/teller" element={<TellerDashboard />} />
-          <Route path="/contacts" element={<ContactsPage />} />
-          <Route path="/payment/select" element={<PaymentSelectionPage />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
-          <Route path="/share" element={<ShareHandlerPage />} />
-          
-          {/* KYC Routes */}
-          <Route path="/kyc" element={<KYCPage />} />
-          <Route path="/kyc/settings" element={<SettingsPage />} />
-          <Route path="/kyc/email/verify" element={<EmailVerification />} />
-          <Route path="/kyc/email/code" element={<EmailCode />} />
-          <Route path="/kyc/identity" element={<IdentityVerificationPage />} />
-          <Route path="/kyc/id-card" element={<IDCardForm />} />
-          <Route path="/kyc/driver-license" element={<DriverLicenseForm />} />
-          <Route path="/kyc/passport" element={<PassportForm />} />
-          <Route path="/kyc/location" element={<LocationComponent />} />
-          <Route path="/kyc/recover" element={<RecoverAccountPage />} />
-          <Route path="/kyc/recovery/dashboard" element={<RecoveryDashboard />} />
-          <Route path="/kyc/recovery/scan" element={<AccountRecoveryScannerPage />} />
-          <Route path="/kyc/recovery/token" element={<RecoveryToken />} />
-          <Route path="/kyc/confirm" element={<AccountConfirmation />} />
-          <Route path="/kyc/map" element={<MapConfirmation />} />
-          <Route path="/kyc/documents" element={<DocumentImages />} />
-          <Route path="/kyc/guidelines" element={<GuidelinesPage />} />
-          <Route path="/kyc/check" element={<KycCertChecker />} />
-          
-          {/* Protected Routes */}
+          <Route path="/qr-scan" element={<GeneralQRScannerPage />} />
+          <Route path="/qr-scan/top-up" element={<TopUpQRScannerPage />} />
+          <Route path="/qr-scan/offline" element={<OfflineQRScannerPage />} />
+          <Route path="/agent" element={<AgentPage />} />
+          <Route path="/share-handler" element={<ShareHandlerPage />} />
+          <Route path="/qrcode" element={<QRGenerator />} />
+          <Route path="/top-up" element={<TopUpPage />} />
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/payment-selection" element={<PaymentSelectionPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/inputEmail" element={<EmailVerification />} />
+          <Route path="/emailCode" element={<EmailCode />} />
+          <Route path="/kyc" element={<IdentityVerificationPage />} />
+          <Route path="/verification/id-card" element={<IDCardForm />} />
+          <Route
+            path="/verification/location"
+            element={<LocationComponent />}
+          />
+          <Route path="/verification/passport" element={<PassportForm />} />
+          <Route path="/recoverAccount" element={<RecoverAccountPage />} />
+          <Route path="/guidelines" element={<GuidelinesPage />} />
+          <Route
+            path="/verification/driving-license"
+            element={<DriverLicenseForm />}
+          />
+          <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
+          <Route path="/map-confirmation" element={<MapConfirmation />} />
+          <Route path="/kyc/imgs" element={<DocumentImages />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/agent-topup" element={<AgentTopUpPage />} />
+          <Route path="/teller" element={<TellerDashboard />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/teller" element={<TellerDashboard />} />
             <Route path="/agency" element={<KYCPage />} />
-            
-            {/* KYC Recovery Routes */}
             <Route path="/account-recovery" element={<RecoveryDashboard />} />
-            <Route path="/recovery/recovery-scanner" element={<AccountRecoveryScannerPage />} />
-            <Route path="/recovery/account-confirmation" element={<AccountConfirmation />} />
+            <Route
+              path="/recovery/recovery-scanner"
+              element={<AccountRecoveryScannerPage />}
+            />
+            <Route
+              path="/recovery/account-confirmation"
+              element={<AccountConfirmation />}
+            />
             <Route path="/recovery/recoverytoken" element={<RecoveryToken />} />
           </Route>
-          
-          {/* Fallback route */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/map-confirmation" element={<MapConfirmation />} />
         </Routes>
       </div>
 

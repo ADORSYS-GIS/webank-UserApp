@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
-import {
-  setAccountCert,
-  setAccountId,
-  setKycCert,
-} from "@state/accountSlice";
+import { setAccountCert, setAccountId, setKycCert } from "@state/accountSlice";
 import {
   RequestToSubmitRecoveryToken,
   RequestToRecoverAccountCert,
