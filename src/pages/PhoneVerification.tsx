@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -9,9 +9,9 @@ import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { setPhoneStatus } from "../slices/accountSlice.ts";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft } from "react-feather";
 import { RootState } from "../store/Store.ts";
+
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
@@ -104,13 +104,10 @@ const PhoneVerification: React.FC = () => {
           <div className="flex items-center mb-6">
             <button
               onClick={() => navigate(-1)}
-              className="text-xl cursor-pointer p-2 focus:outline-none"
-              aria-label="Back"
+              className="absolute left-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Go back"
             >
-              <FontAwesomeIcon
-                icon={faArrowLeft}
-                className="h-6 w-6 text-gray-600"
-              />
+              <ArrowLeft className="h-5 w-5 text-gray-600" size={20} />
             </button>
           </div>
 

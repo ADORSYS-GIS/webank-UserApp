@@ -4,12 +4,11 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "../constants.ts";
 import { RequestToSendOTP } from "../services/keyManagement/requestService.ts";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft } from "react-feather";
 import { RootState } from "../store/Store.ts";
-import { useSelector } from "react-redux";
 
 type CountryOption = {
   value: string;
@@ -19,69 +18,46 @@ type CountryOption = {
 
 const PhoneInput: React.FC = () => {
   useDisableScroll();
+  const [selectedCountry] = useState<CountryOption>(countryOptions[0]);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
-    countryOptions[0],
-  );
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const accountJwt = useSelector(
+  const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  const handleCountryChange = (option: CountryOption) => {
-    setSelectedCountry(option);
-    setIsOpen(false);
-  };
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handlePhoneNumberChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = event.target.value;
-    if (PHONE_NUMBER_REGEX.test(value)) {
-      setPhoneNumber(value);
-    }
-  };
-
-  const handleSendOTP = async () => {
+  const handleProceed = async () => {
     if (!phoneNumber.trim()) {
       toast.error("Please enter a phone number.");
       return;
     }
 
-    if (!accountJwt) {
+    if (!accountCert) {
       toast.error("Authentication error. Please try again.");
       return;
     }
 
-    const fullPhoneNumber = selectedCountry?.value + phoneNumber;
+    const fullPhoneNumber = selectedCountry.value + phoneNumber;
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
 
-    if (!phoneNumberObj?.isValid()) {
+    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
       toast.error("Please enter a valid phone number.");
       return;
     }
 
-    localStorage.setItem("phoneNumber", phoneNumber);
-
     setIsLoading(true);
     try {
-      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt);
+      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountCert);
 
       if (otpHash.includes("exists")) {
-        toast.error("Phone number already registered.");
-      } else {
-        toast.info("One-time code sent. Please check your whatsapp.", {
-          duration: 5000,
-        });
-        navigate("/phone/verification", {
-          state: { otpHash, fullPhoneNumber },
+        toast.error("This phone number is already registered.");
+        return;
+      }
+
+      if (otpHash.includes("OTP sent successfully")) {
+        toast.success("OTP sent successfully!", { duration: 5000 });
+        navigate("/phoneVerification", {
+          state: { phoneNumber: fullPhoneNumber, accountCert },
         });
       }
     } catch (error) {
@@ -99,13 +75,10 @@ const PhoneInput: React.FC = () => {
           <div className="flex items-center mb-6">
             <button
               onClick={() => navigate("/settings")}
-              className="text-xl cursor-pointer p-2 focus:outline-none"
-              aria-label="Back"
+              className="absolute left-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Go back"
             >
-              <FontAwesomeIcon
-                icon={faArrowLeft}
-                className="h-6 w-6 text-gray-600"
-              />
+              <ArrowLeft className="h-5 w-5 text-gray-600" size={20} />
             </button>
           </div>
 
@@ -131,45 +104,16 @@ const PhoneInput: React.FC = () => {
                 <div className="relative w-1/3">
                   <button
                     className="flex items-center justify-between w-full p-3 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onClick={toggleDropdown}
                   >
                     <div className="flex items-center">
                       <img
-                        src={selectedCountry?.flag}
+                        src={selectedCountry.flag}
                         alt=""
                         className="w-6 h-4 mr-2"
                       />
-                      <span>{selectedCountry?.value}</span>
+                      <span>{selectedCountry.label}</span>
                     </div>
                   </button>
-
-                  {isOpen && (
-                    <div className="absolute z-10 w-full bg-white border rounded-xl shadow-lg mt-1 max-h-64 overflow-auto">
-                      <input
-                        type="text"
-                        placeholder="Search Country"
-                        className="w-full p-2 border-b focus:outline-none"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                      {countryOptions.map((option) => (
-                        <button
-                          key={option.value}
-                          className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleCountryChange(option)}
-                        >
-                          <img
-                            src={option.flag}
-                            alt=""
-                            className="w-6 h-4 mr-2"
-                          />
-                          <span>
-                            {option.label} ({option.value})
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
                 </div>
 
                 <input
@@ -177,7 +121,12 @@ const PhoneInput: React.FC = () => {
                   pattern="[0-9]*"
                   placeholder="Phone number"
                   value={phoneNumber}
-                  onChange={handlePhoneNumberChange}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    if (PHONE_NUMBER_REGEX.test(value)) {
+                      setPhoneNumber(value);
+                    }
+                  }}
                   className="flex-1 p-3 border border-gray-200 rounded-r-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
@@ -186,7 +135,7 @@ const PhoneInput: React.FC = () => {
 
             <button
               type="button"
-              onClick={handleSendOTP}
+              onClick={handleProceed}
               className="w-full py-3.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-95"
               disabled={isLoading}
             >

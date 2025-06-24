@@ -1,12 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faQrcode,
-  faMoneyCheckAlt,
-  faArrowLeft,
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, X, Code, DollarSign } from "react-feather";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/Store";
 
@@ -54,7 +48,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
             aria-label="Back to Dashboard"
             tabIndex={0}
           >
-            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+            <ArrowLeft className="h-5 w-5 text-gray-600" size={20} />
           </button>
           <h1 className="text-xl font-semibold text-gray-800">
             Agent Services
@@ -70,7 +64,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
             aria-label="Close"
             tabIndex={0}
           >
-            <FontAwesomeIcon icon={faTimes} size="lg" />
+            <X className="h-5 w-5 text-gray-600" size={20} />
           </button>
         </div>
 
@@ -106,10 +100,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               tabIndex={0}
             >
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors mb-2">
-                <FontAwesomeIcon
-                  icon={faQrcode}
-                  className="text-blue-500 text-xl"
-                />
+                <Code className="text-blue-500" size={24} />
               </div>
               <span className="font-medium text-gray-800">Cash-In</span>
               <span className="text-xs text-center text-gray-500 mt-1">
@@ -144,10 +135,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               tabIndex={0}
             >
               <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-50 group-hover:bg-green-100 transition-colors mb-2">
-                <FontAwesomeIcon
-                  icon={faMoneyCheckAlt}
-                  className="text-green-500 text-xl"
-                />
+                <DollarSign className="text-green-500" size={24} />
               </div>
               <span className="font-medium text-gray-800">Pay-out</span>
               <span className="text-xs text-center text-gray-500 mt-1">

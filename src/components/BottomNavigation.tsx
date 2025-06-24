@@ -1,14 +1,7 @@
 //NO
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHome,
-  faQrcode,
-  faCog,
-  faUserTie,
-  faAddressBook,
-} from "@fortawesome/free-solid-svg-icons";
+import { Home, Code, Settings, User, BookOpen } from "react-feather";
 import AccountQRModal from "../pages/AccountQr";
 import AgentPage from "../pages/AgentPage";
 
@@ -61,8 +54,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={location.pathname === "/dashboard"}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faHome}
+            <Home
+              size={20}
               className={`text-lg ${
                 location.pathname === "/dashboard"
                   ? "text-blue-500"
@@ -92,8 +85,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={isQRModalOpen}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faQrcode}
+            <Code
+              size={20}
               className={`text-lg ${
                 isQRModalOpen ? "text-blue-500" : "text-gray-500"
               }`}
@@ -121,8 +114,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={location.pathname === "/settings"}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faCog}
+            <Settings
+              size={20}
               className={`text-lg ${
                 location.pathname === "/settings"
                   ? "text-blue-500"
@@ -154,8 +147,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={location.pathname === "/contacts"}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faAddressBook}
+            <BookOpen
+              size={20}
               className={`text-lg ${
                 location.pathname === "/contacts"
                   ? "text-blue-500"
@@ -185,8 +178,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={isAgentModalOpen}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faUserTie}
+            <User
+              size={20}
               className={`text-lg ${
                 isAgentModalOpen ? "text-blue-500" : "text-gray-500"
               }`}

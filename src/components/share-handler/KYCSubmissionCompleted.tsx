@@ -1,11 +1,6 @@
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheckCircle,
-  faIdCard,
-  faShieldAlt,
-  faHome,
-} from "@fortawesome/free-solid-svg-icons";
+import { CreditCard, Shield, Home } from "react-feather";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -32,10 +27,7 @@ export default function KYCSubmissionCompleted() {
         {/* Success banner */}
         <div className="bg-blue-500 py-6 px-6 flex items-center justify-center">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-            <FontAwesomeIcon
-              icon={faCheckCircle}
-              className="text-blue-500 text-4xl"
-            />
+            <CreditCard className="text-blue-500" size={32} />
           </div>
         </div>
 
@@ -44,34 +36,27 @@ export default function KYCSubmissionCompleted() {
             KYC Documents Already Submitted
           </h1>
 
-          <p className="text-gray-600 text-center mb-6">
-            Your identity verification documents have been successfully
-            submitted. There's no need to resubmit your information.
-          </p>
-
-          <div className="bg-blue-50 rounded-xl p-6 mb-8">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center">
-                <FontAwesomeIcon icon={faIdCard} />
-              </div>
-              <div>
-                <h3 className="font-medium text-gray-800">Identity Verified</h3>
-                <p className="text-sm text-gray-600">
-                  Your docs information has been submitted
-                </p>
-              </div>
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CreditCard className="text-green-500" size={32} />
             </div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              KYC Submission Completed
+            </h2>
+            <p className="text-gray-600">
+              Your identity verification has been submitted successfully. We'll
+              review your documents and get back to you within 24-48 hours.
+            </p>
+          </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center">
-                <FontAwesomeIcon icon={faShieldAlt} />
-              </div>
-              <div>
-                <h3 className="font-medium text-gray-800">Account Secured</h3>
-                <p className="text-sm text-gray-600">
-                  Please wait for your kyc to be Approved
-                </p>
-              </div>
+          <div className="space-y-4 mb-6">
+            <div className="flex items-center space-x-3">
+              <Shield className="text-blue-500" size={20} />
+              <span className="text-gray-700">Enhanced security features</span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Home className="mr-2" size={20} />
+              <span className="text-gray-700">Access to all services</span>
             </div>
           </div>
 
@@ -80,7 +65,7 @@ export default function KYCSubmissionCompleted() {
               onClick={handleReturnToDashboard}
               className="py-4 px-6 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-sm flex items-center justify-center"
             >
-              <FontAwesomeIcon icon={faHome} className="mr-2" />
+              <Home className="mr-2" size={20} />
               Return to Dashboard
             </button>
           </div>

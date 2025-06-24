@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useDisableScroll from "../../hooks/useDisableScroll";
-import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
 import { toast } from "sonner";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
+import { ArrowLeft, Mail } from "react-feather";
 import axios from "axios";
 
 const InputEmail: React.FC = () => {
-  useDisableScroll();
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const accountCert = useSelector(
@@ -89,13 +86,10 @@ const InputEmail: React.FC = () => {
         <div className="max-w-md mx-auto flex items-center space-x-4">
           <button
             onClick={() => navigate("/settings")}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Go Back"
+            className="absolute left-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+            aria-label="Go back"
           >
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              className="h-6 w-6 text-gray-600"
-            />
+            <ArrowLeft className="h-5 w-5 text-gray-600" size={20} />
           </button>
           <h2 className="text-lg font-semibold text-gray-800">
             Email Verification
@@ -107,13 +101,17 @@ const InputEmail: React.FC = () => {
       <main className="flex-1 overflow-auto px-4 py-6">
         <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-md p-6 space-y-6">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Secure Your Account
-            </h1>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              We'll send a 6-digit verification code to your email address to
-              ensure your account security.
-            </p>
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Mail className="text-blue-500" size={32} />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                Check Your Email
+              </h2>
+              <p className="text-gray-600">
+                We've sent a verification code to your email address.
+              </p>
+            </div>
           </div>
 
           {/* Email Input */}
@@ -132,10 +130,7 @@ const InputEmail: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <FontAwesomeIcon
-                icon={faEnvelope}
-                className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
-              />
+              <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" size={20} />
             </div>
           </div>
 

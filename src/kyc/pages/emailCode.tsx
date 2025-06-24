@@ -2,16 +2,12 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setEmailStatus } from "../../slices/accountSlice";
-import {
-  RequestToSendEmailOTP,
-  RequestToVerifyEmailCode,
-} from "../../services/keyManagement/requestService";
-import { toast } from "sonner";
-import OtpInput from "../../components/OtpInput";
+import { sendEmailOTP, verifyEmailCode } from "../../services/keyManagement/apiService";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RootState } from "../../store/Store";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "sonner";
+import OtpInput from "../../components/OtpInput";
+import { ArrowLeft, CheckCircle } from "react-feather";
 import axios from "axios"; // Import axios for error handling
 
 const EmailCode: React.FC = () => {
@@ -32,7 +28,7 @@ const EmailCode: React.FC = () => {
           navigate("/dashboard");
           return;
         }
-        const response = await RequestToSendEmailOTP(
+        const response = await sendEmailOTP(
           email,
           accountCert,
           accountId,
@@ -87,7 +83,7 @@ const EmailCode: React.FC = () => {
         return;
       }
 
-      const response = await RequestToVerifyEmailCode(
+      const response = await verifyEmailCode(
         email,
         enteredCode,
         accountId,
@@ -115,24 +111,25 @@ const EmailCode: React.FC = () => {
   return (
     <div className="flex items-center justify-center h-screen w-screen bg-white overflow-hidden relative">
       <div className="w-full max-w-md p-6 mx-auto mt-5 rounded-2xl text-center">
-        <div className="flex items-center mb-6">
-          <button
-            onClick={() => navigate("/inputEmail")}
-            className="text-xl cursor-pointer p-2 focus:outline-none"
-            aria-label="Back"
-          >
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              className="h-6 w-6 text-gray-600"
-            />
-          </button>
-        </div>
+        <button
+          onClick={() => navigate("/inputEmail")}
+          className="absolute left-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="h-5 w-5 text-gray-600" size={20} />
+        </button>
 
-        {/* Custom Header */}
-        <h1 className="text-3xl font-bold mb-3">Verify Your Email</h1>
-        <p className="text-gray-600 mb-6">
-          Enter the 6-digit code sent to your email.
-        </p>
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="text-3xl" size={32} />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Email Verified Successfully
+          </h2>
+          <p className="text-gray-600">
+            Your email has been verified. You can now use all features of your account.
+          </p>
+        </div>
 
         {/* OTP Input Component */}
         <OtpInput
@@ -172,7 +169,7 @@ const EmailCode: React.FC = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
             <div className="w-16 h-16 bg-blue-100 text-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <FontAwesomeIcon icon={faCheckCircle} className="text-3xl" />
+              <CheckCircle className="text-3xl" size={32} />
             </div>
             <h2 className="text-2xl font-bold mb-3">
               Successful Email Verification

@@ -1,12 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faShieldAlt,
-  faCheckCircle,
-  faLock,
-  faExclamationTriangle,
-} from "@fortawesome/free-solid-svg-icons";
+import { Lock, CheckCircle, X } from "react-feather";
 
 interface KYCReminderPopupProps {
   onClose: () => void;
@@ -24,64 +18,29 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FontAwesomeIcon
-              icon={faShieldAlt}
-              className="text-blue-500 text-2xl"
-            />
+          <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4">
+            <Lock className="text-blue-500" size={24} />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Verify Your Identity
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            KYC Verification Required
           </h2>
-          <p className="text-gray-600 text-sm">
-            Complete your KYC verification for enhanced security and better
-            experience
+          <p className="text-gray-600 text-center mb-6">
+            To continue using our services, please complete your identity verification.
           </p>
         </div>
 
-        {/* Transaction Limit Warning */}
-        <div className="bg-amber-50 rounded-xl p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
-              <FontAwesomeIcon
-                icon={faExclamationTriangle}
-                className="text-amber-500"
-              />
-            </div>
-            <div>
-              <h3 className="font-medium text-amber-800">Transaction Limit</h3>
-              <p className="text-sm text-amber-700">
-                Without KYC verification, you can only perform transactions up
-                to 1,000 XAF
-              </p>
-            </div>
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center space-x-3">
+            <X className="text-red-500" size={20} />
+            <span className="text-gray-700">Access to advanced features</span>
           </div>
-        </div>
-
-        {/* Benefits */}
-        <div className="space-y-4 mb-6">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-              <FontAwesomeIcon icon={faLock} className="text-blue-500" />
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-900">Enhanced Security</h3>
-              <p className="text-sm text-gray-600">
-                Protect your account with verified identity
-              </p>
-            </div>
+          <div className="flex items-center space-x-3">
+            <X className="text-red-500" size={20} />
+            <span className="text-gray-700">Higher transaction limits</span>
           </div>
-
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-              <FontAwesomeIcon icon={faCheckCircle} className="text-blue-500" />
-            </div>
-            <div>
-              <h3 className="font-medium text-gray-900">Better Experience</h3>
-              <p className="text-sm text-gray-600">
-                Access all features without restrictions
-              </p>
-            </div>
+          <div className="flex items-center space-x-3">
+            <CheckCircle className="text-blue-500" size={20} />
+            <span className="text-gray-700">Basic account features</span>
           </div>
         </div>
 

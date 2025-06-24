@@ -4,16 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../store/Store.ts";
 import VerificationModal from "../components/VerificationModal";
-
-// Import FontAwesome instead of react-icons
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserEdit,
-  faCloudUploadAlt,
-  faCheck,
-  faChevronLeft,
-  faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { Edit, UploadCloud, Check, ChevronLeft, ChevronRight } from "react-feather";
 
 interface VerificationStep {
   id: number;
@@ -58,7 +49,7 @@ export default function IdentityVerification() {
       id: 1,
       title: "Personal Info",
       description: "Enter your address and ID details",
-      icon: faUserEdit,
+      icon: Edit,
       onClick: () => setShowVerificationModalPopup(true),
     },
     {
@@ -66,7 +57,7 @@ export default function IdentityVerification() {
       title: "Upload Documents",
       description:
         "Follow instructions to upload your ID and verification documents",
-      icon: faCloudUploadAlt,
+      icon: UploadCloud,
       onClick: () => navigate("/guidelines"),
     },
   ];
@@ -89,8 +80,8 @@ export default function IdentityVerification() {
         onClick={() => navigate("/settings")}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
-        <FontAwesomeIcon
-          icon={faChevronLeft}
+        <ChevronLeft
+          size={20}
           className="w-6 h-6 text-gray-500 group-hover:text-blue-500 transition-colors"
         />
         <span className="text-gray-600 group-hover:text-blue-500 transition-colors text-sm font-medium">
@@ -135,7 +126,7 @@ export default function IdentityVerification() {
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
                 <div className="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-500">
-                  <FontAwesomeIcon icon={step.icon} className="text-xl" />
+                  <step.icon size={20} />
                 </div>
                 <div className="space-y-1 flex-1 min-w-0">
                   <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
@@ -147,13 +138,10 @@ export default function IdentityVerification() {
                 </div>
               </div>
               {isCompleted ? (
-                <FontAwesomeIcon
-                  icon={faCheck}
-                  className="w-5 h-5 text-blue-500 flex-shrink-0"
-                />
+                <Check size={20} className="w-5 h-5 text-blue-500 flex-shrink-0" />
               ) : (
-                <FontAwesomeIcon
-                  icon={faChevronRight}
+                <ChevronRight
+                  size={20}
                   className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors"
                 />
               )}

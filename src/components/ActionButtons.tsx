@@ -1,13 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faExchangeAlt,
-  faDownload,
-  faWallet,
-  faArrowUp,
-} from "@fortawesome/free-solid-svg-icons";
+import { ArrowUp, Repeat, Download, CreditCard } from "react-feather";
 
 interface ActionButtonsProps {
   accountId: string | undefined;
@@ -75,28 +68,28 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const actions = [
     {
-      icon: faArrowUp,
+      icon: <ArrowUp size={20} />,
       label: "Top Up",
       color: "bg-blue-100",
       textColor: "text-blue-500",
       onClick: handleTopUpClick,
     },
     {
-      icon: faExchangeAlt,
+      icon: <Repeat size={20} />,
       label: "Transfer",
       color: "bg-blue-100",
       textColor: "text-blue-500",
       onClick: handleTransferClick,
     },
     {
-      icon: faDownload,
+      icon: <Download size={20} />,
       label: "Withdraw",
       color: "bg-blue-100",
       textColor: "text-blue-500",
       onClick: handleWithdrawClick,
     },
     {
-      icon: faWallet,
+      icon: <CreditCard size={20} />,
       label: "Pay",
       color: "bg-blue-100",
       textColor: "text-blue-500",
@@ -116,7 +109,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
             <div
               className={`w-12 h-12 rounded-lg ${action.color} ${action.textColor} flex items-center justify-center mb-2`}
             >
-              <FontAwesomeIcon icon={action.icon} />
+              {action.icon}
             </div>
             <span className="text-xs text-gray-600">{action.label}</span>
           </button>
