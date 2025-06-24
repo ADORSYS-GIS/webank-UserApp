@@ -84,9 +84,21 @@ export default function ShareHandlerPage() {
       return button;
     };
 
-    const handleStorageAccessPromise = (button: HTMLButtonElement) => {
+    const createClickHandler = (
+      button: HTMLButtonElement,
+      resolve: (value: boolean) => void,
+    ) => {
+      return async () => {
+        const result = await handleStorageAccessRequest(button);
+        resolve(result);
+      };
+    };
+
+    const handleStorageAccessPromise = (
+      button: HTMLButtonElement,
+    ): Promise<boolean> => {
       return new Promise<boolean>((resolve) => {
-        button.onclick = () => handleStorageAccessRequest(button).then(resolve);
+        button.onclick = createClickHandler(button, resolve);
       });
     };
 
@@ -150,12 +162,29 @@ export default function ShareHandlerPage() {
 
         // Load the image
         const img = new Image();
-        const loadPromise = new Promise((resolve, reject) => {
-          img.onload = () => resolve(undefined);
-          img.onerror = reject;
-          img.src = file.base64 || "";
-        });
-        await loadPromise;
+
+        const setupImageHandlers = (
+          img: HTMLImageElement,
+          resolve: () => void,
+          reject: (reason?: string) => void,
+        ) => {
+          img.onload = () => resolve();
+          img.onerror = (event: Event | string) => {
+            const errorMessage = typeof event === "string" ? event : event.type;
+            reject(`Failed to load image: ${errorMessage}`);
+          };
+          img.src = file.base64 ?? "";
+        };
+
+        const createImageLoader = (img: HTMLImageElement): Promise<void> => {
+          return new Promise((resolve, reject) => {
+            setupImageHandlers(img, resolve, reject);
+          });
+        };
+
+        const loadImage = (): Promise<void> => createImageLoader(img);
+
+        await loadImage();
 
         // Create a canvas to draw the image
         const canvas = document.createElement("canvas");
