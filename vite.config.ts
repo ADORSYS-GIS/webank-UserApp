@@ -1,9 +1,23 @@
 import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   base: './',
+  resolve: {
+    alias: {
+      '@app': path.resolve(__dirname, 'src/app'),
+      '@features': path.resolve(__dirname, 'src/features'),
+      '@shared': path.resolve(__dirname, 'src/shared'),
+      '@services': path.resolve(__dirname, 'src/services'),
+      '@state': path.resolve(__dirname, 'src/state'),
+      '@assets': path.resolve(__dirname, 'src/assets')
+    }
+  },
   build: {
     rollupOptions: {
       output: {
