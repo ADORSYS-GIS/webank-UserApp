@@ -41,7 +41,7 @@ const createMockStore = () => {
 };
 
 // Mock the service directly
-vi.mock("../../services/keyManagement/requestService", () => ({
+vi.mock("@services/keyManagement/requestService", () => ({
   RequestToSendOTP: vi.fn(),
 }));
 

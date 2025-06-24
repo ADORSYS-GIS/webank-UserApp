@@ -40,7 +40,7 @@ vi.mock("react-router-dom", async () => ({
 }));
 
 // Mock service directly
-vi.mock("../../../services/keyManagement/requestService", () => ({
+vi.mock("@services/keyManagement/requestService", () => ({
   RequestToVerifyEmailCode: vi.fn(),
 }));
 

@@ -16,7 +16,7 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("../../../services/keyManagement/requestService", () => ({
+vi.mock("@services/keyManagement/requestService", () => ({
   RequestToSendEmailOTP: vi.fn(() => Promise.resolve("OTP sent successfully")),
 }));
 

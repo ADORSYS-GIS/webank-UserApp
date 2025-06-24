@@ -29,7 +29,7 @@ vi.mock("react-router-dom", () => ({
 }));
 
 // Mock RequestToGetBalance and RequestToGetTransactionHistory
-vi.mock("../../services/keyManagement/requestService.ts", () => ({
+vi.mock("@services/keyManagement/requestService.ts", () => ({
   RequestToGetBalance: vi.fn(),
   RequestToGetTransactionHistory: vi.fn(),
 }));

@@ -13,7 +13,7 @@ vi.mock("sonner", () => ({
   },
 }));
 
-vi.mock("../../services/keyManagement/requestService", () => ({
+vi.mock("@services/keyManagement/requestService", () => ({
   RequestToGetOtps: vi.fn(),
 }));
 
