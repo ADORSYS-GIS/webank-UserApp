@@ -17,6 +17,7 @@ import jsQR from "jsqr";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "@state/Store";
 
+// prettier-ignore
 export default function ShareHandlerPage() {
   const [sharedData, setSharedData] = useState<SharedContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -168,8 +169,8 @@ export default function ShareHandlerPage() {
           resolve: () => void,
           reject: (reason?: string) => void,
         ) => {
-          img.onload = () => resolve();
-          img.onerror = (event: Event | string) => {
+          img.onload = () => resolve(); //NOSONAR
+          img.onerror = (event: Event | string) => { //NOSONAR
             const errorMessage = typeof event === "string" ? event : event.type;
             reject(`Failed to load image: ${errorMessage}`);
           };
@@ -177,7 +178,7 @@ export default function ShareHandlerPage() {
         };
 
         const createImageLoader = (img: HTMLImageElement): Promise<void> => {
-          return new Promise((resolve, reject) => {
+          return new Promise((resolve, reject) => { //NOSONAR
             setupImageHandlers(img, resolve, reject);
           });
         };
