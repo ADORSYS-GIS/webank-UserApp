@@ -6,11 +6,9 @@ import React, {
   useCallback,
 } from "react";
 import { RequestToStoreKYCInfo } from "../../services/keyManagement/requestService.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/Store.ts";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { setStatus } from "../../slices/accountSlice.ts";
+import { useAccountStore } from "../../store/accountStore";
+import { toast } from "sonner";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -38,14 +36,11 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   onCancel,
 }) => {
   const [formData, setFormData] = useState<FormData>({});
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
+  const accountId = useAccountStore((state) => state.accountId);
+  const { setStatus } = useAccountStore();
 
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
@@ -61,20 +56,21 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("ID Card Form Data:", formData);
 
-    // Extract only the required fields
-    const documentNumber = formData["UniqueDocumentIdentifier"];
-    const expiry = formData["expiry"];
+    const documentNumber = formData.documentNumber;
+    const expiry = formData.expiry;
 
-    console.log("Document Number:", documentNumber, "Expiry Date:", expiry);
+    if (!documentNumber || !expiry) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    if (!accountCert || !accountId) {
+      toast.error("Account information is missing.");
+      return;
+    }
 
     try {
-      if (!documentNumber || !expiry || !accountCert || !accountId) {
-        toast.error("Please fill in all the required fields");
-        return;
-      }
-
       const response = await RequestToStoreKYCInfo(
         documentNumber,
         expiry,
@@ -83,7 +79,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       );
 
       if (response === "KYC Info sent successfully and saved.") {
-        dispatch(setStatus("PENDING"));
+        setStatus("PENDING");
         toast.success("KYC Info sent successfully and saved.");
         navigate("/kyc");
       } else {

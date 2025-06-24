@@ -5,8 +5,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "./store/Store";
+import { useAccountStore } from "./store/accountStore";
 import PhoneInput from "./pages/PhoneInput.tsx";
 import PhoneVerification from "./pages/PhoneVerification.tsx";
 import DashboardPage from "./pages/DashboardPage";
@@ -57,10 +56,8 @@ import PaymentSelectionPage from "./pages/PaymentSelectionPage";
 import AgentTopUpPage from "./pages/AgentTopUpPage";
 
 const App: React.FC = () => {
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const accountId = useAccountStore((state) => state.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();

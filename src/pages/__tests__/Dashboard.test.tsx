@@ -6,10 +6,8 @@ import {
   RequestToGetTransactionHistory,
 } from "../../services/keyManagement/requestService.ts";
 import { MemoryRouter } from "react-router-dom";
-import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "../../slices/accountSlice";
+import { useAccountStore } from "../../store/accountStore";
 
 // Mock FontAwesome
 vi.mock("@fortawesome/react-fontawesome", () => ({
@@ -34,37 +32,32 @@ vi.mock("../../services/keyManagement/requestService.ts", () => ({
   RequestToGetTransactionHistory: vi.fn(),
 }));
 
-const createMockStore = () => {
-  return configureStore({
-    reducer: {
-      account: accountReducer,
-    },
-    preloadedState: {
-      account: {
-        accountId: "mock-account-id",
-        accountCert: "mock-account-cert",
-        status: null,
-        documentStatus: null,
-        kycCert: null,
-        emailStatus: null,
-        phoneStatus: null,
-      },
-    },
-  });
-};
-
 describe("Dashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset Zustand store to initial state
+    useAccountStore.setState({
+      accountId: null,
+      accountCert: null,
+      status: null,
+      documentStatus: null,
+      kycCert: null,
+      emailStatus: null,
+      phoneStatus: null,
+    });
   });
 
   it("renders the logo and header", () => {
+    // Set up Zustand store state for this test
+    useAccountStore.setState({
+      accountId: "mock-account-id",
+      accountCert: "mock-account-cert",
+    });
+
     render(
-      <Provider store={createMockStore()}>
-        <MemoryRouter>
-          <Dashboard />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
     );
     expect(screen.getByText("Balance")).toBeInTheDocument();
   });
@@ -75,12 +68,16 @@ describe("Dashboard", () => {
     // Mock RequestToGetBalance to reject with the mock error
     (RequestToGetBalance as jest.Mock).mockRejectedValueOnce(mockError);
 
+    // Set up Zustand store state for this test
+    useAccountStore.setState({
+      accountId: "mock-account-id",
+      accountCert: "mock-account-cert",
+    });
+
     render(
-      <Provider store={createMockStore()}>
-        <MemoryRouter>
-          <Dashboard />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
     );
 
     // Ensure the RequestToGetBalance was called 0 times as per the original logic
@@ -113,12 +110,16 @@ describe("Dashboard", () => {
       JSON.stringify(mockTransactions),
     );
 
+    // Set up Zustand store state for this test
+    useAccountStore.setState({
+      accountId: "mock-account-id",
+      accountCert: "mock-account-cert",
+    });
+
     render(
-      <Provider store={createMockStore()}>
-        <MemoryRouter>
-          <Dashboard />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
     );
 
     // Click the "View Last Transactions" button to fetch and display transactions

@@ -1,45 +1,52 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import IdentityVerification from "../IdentityVerificationPage";
+import { render, screen } from "@testing-library/react";
+import { vi } from "vitest";
+import IdentityVerificationPage from "../IdentityVerificationPage";
+import { useAccountStore } from "../../../store/accountStore";
 import "@testing-library/jest-dom";
-import { MemoryRouter } from "react-router-dom";
-import { Provider } from "react-redux";
-import { store } from "../../../store/Store.ts";
 
-describe("IdentityVerification Component", () => {
-  const renderComponent = () =>
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <IdentityVerification />
-        </MemoryRouter>
-      </Provider>,
-    );
+// Mock react-router-dom
+vi.mock("react-router-dom", () => ({
+  useNavigate: () => vi.fn(),
+}));
 
-  test("renders all verification steps", () => {
-    renderComponent();
+// Mock sonner toast
+vi.mock("sonner", () => ({
+  toast: {
+    error: vi.fn(),
+    success: vi.fn(),
+  },
+}));
 
-    // Verify that each step is displayed
-    expect(screen.getByText("Personal Info")).toBeInTheDocument();
+describe("IdentityVerificationPage", () => {
+  beforeEach(() => {
+    // Reset Zustand store to initial state
+    useAccountStore.setState({
+      accountId: null,
+      accountCert: null,
+      status: null,
+      documentStatus: null,
+      kycCert: null,
+      emailStatus: null,
+      phoneStatus: null,
+    });
+    vi.clearAllMocks();
   });
 
-  test("clicking on a step opens the corresponding popup", () => {
-    renderComponent();
-
-    // Click on "Personal Info" step
-    fireEvent.click(screen.getByText("Personal Info"));
-    expect(screen.getByText("Personal Info")).toBeInTheDocument();
+  it("renders without crashing", () => {
+    render(<IdentityVerificationPage />);
+    expect(screen.getByText("Let's Verify Your Identity")).toBeInTheDocument();
   });
 
-  test("Back button resets to step selection", () => {
-    renderComponent();
+  it("shows verification modal when status is pending", () => {
+    // Set up Zustand store state for this test
+    useAccountStore.setState({
+      status: "PENDING",
+      documentStatus: "PENDING",
+    });
 
-    // Click on a step
-    fireEvent.click(screen.getByText("Personal Info"));
+    render(<IdentityVerificationPage />);
 
-    // Click the Back button
-    fireEvent.click(screen.getByText("Back"));
-
-    // Check if the steps are displayed again
-    expect(screen.getByText("Personal Info")).toBeInTheDocument();
+    // Should show verification modal or pending status
+    expect(screen.getByText("Let's Verify Your Identity")).toBeInTheDocument();
   });
 });

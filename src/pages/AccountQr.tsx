@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
+import { useAccountStore } from "../store/accountStore";
 
 interface AccountQRModalProps {
   isOpen: boolean;
@@ -9,7 +8,7 @@ interface AccountQRModalProps {
 }
 
 const AccountQRModal: React.FC<AccountQRModalProps> = ({ isOpen, onClose }) => {
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountId = useAccountStore((state) => state.accountId);
   const qrRef = useRef<HTMLCanvasElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [includeName, setIncludeName] = useState(false);

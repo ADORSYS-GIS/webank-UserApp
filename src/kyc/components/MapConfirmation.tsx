@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { RequestToGetUserLocation } from "../../services/keyManagement/requestService";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { useAccountStore } from "../../store/accountStore";
 import { toast } from "sonner";
 
 interface GeoLocation {
@@ -14,35 +13,29 @@ const MapConfirmation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [city, setCity] = useState<string | null>(null);
   const coords = (location.state as { coords: GeoLocation })?.coords;
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountId = useAccountStore((state) => state.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
 
   useEffect(() => {
-    if (!coords) navigate("/location-verification");
-
-    // Get city name using reverse geocoding
-    const getCityName = async () => {
-      try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}`,
-        );
-        const data = await response.json();
-        setCity(data.address.city || data.address.town || data.address.village);
-      } catch (error) {
-        console.error("Error fetching city name:", error);
-      }
-    };
-
-    getCityName();
-  }, [coords, navigate]);
+    if (coords) {
+      // Reverse geocoding to get city name
+      fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${coords.lat}&longitude=${coords.lng}&localityLanguage=en`,
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setCity(data.city || data.locality || "Unknown location");
+        })
+        .catch(() => {
+          setCity("Unknown location");
+        });
+    }
+  }, [coords]);
 
   const sendToBackend = async () => {
-    if (!accountCert || !accountId || !coords) return;
+    if (!coords || !accountId) return;
 
     try {
       setIsSubmitting(true);
@@ -51,12 +44,13 @@ const MapConfirmation = () => {
         `${coords.lat},${coords.lng}`,
         accountId,
       );
-      toast.success("Location verified!");
+      toast.success("Location saved successfully!");
       setTimeout(() => {
         navigate("/under-review");
       }, 3000);
     } catch (error) {
-      setError("Verification failed. Please try again.");
+      console.error("Error saving location:", error);
+      toast.error("Failed to save location. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -90,12 +84,6 @@ const MapConfirmation = () => {
         <p className="text-gray-600 mb-6 text-center">
           Does this area match your current residential location?
         </p>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-center">
-            {error}
-          </div>
-        )}
 
         <div className="flex flex-col space-y-4">
           <button

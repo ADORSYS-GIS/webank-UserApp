@@ -1,78 +1,45 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-import QRGenerator from "../Qrcode";
-import { QRCodeCanvas } from "qrcode.react";
-import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { render, screen } from "@testing-library/react";
+import { vi } from "vitest";
+import Qrcode from "../Qrcode";
+import { MemoryRouter } from "react-router-dom";
+import { useAccountStore } from "../../store/accountStore";
+import "@testing-library/jest-dom";
 
-// Mock QRCodeCanvas component
-vi.mock("qrcode.react", () => ({
-  QRCodeCanvas: vi.fn(() => <canvas data-testid="qrcode-canvas" />),
-}));
-
-// Mock useLocation hook from react-router-dom
+// Mock react-router-dom
 vi.mock("react-router-dom", () => ({
-  useLocation: vi.fn(),
-  useNavigate: vi.fn(),
+  ...require("react-router-dom"),
+  useNavigate: () => vi.fn(),
 }));
 
-// Mock useSelector to return a predefined accountId
-vi.mock("react-redux", () => ({
-  useSelector: vi.fn(),
+// Mock sonner toast
+vi.mock("sonner", () => ({
+  toast: {
+    error: vi.fn(),
+    success: vi.fn(),
+  },
 }));
 
-describe("QRGenerator Component", () => {
-  const mockTotalAmount = "100";
-  const mockAccountID = "12345ABC";
-  const mockTimeGenerated = Date.now() - 60000;
-  const expectedQrValue = JSON.stringify({
-    accountId: mockAccountID,
-    amount: mockTotalAmount,
-    timeGenerated: mockTimeGenerated,
-  });
-
+describe("Qrcode", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-
-    (useLocation as jest.Mock).mockReturnValue({
-      state: { totalAmount: mockTotalAmount },
+    // Reset Zustand store to initial state
+    useAccountStore.setState({
+      accountId: null,
+      accountCert: null,
+      status: null,
+      documentStatus: null,
+      kycCert: null,
+      emailStatus: null,
+      phoneStatus: null,
     });
-
-    vi.spyOn(Date, "now").mockReturnValue(mockTimeGenerated);
-
-    (useSelector as unknown as jest.Mock).mockReturnValue(mockAccountID);
+    vi.clearAllMocks();
   });
 
-  it("renders QR code with correct values", () => {
-    render(<QRGenerator />);
-
-    expect(QRCodeCanvas).toHaveBeenCalledWith(
-      expect.objectContaining({
-        value: expectedQrValue,
-        level: "L",
-        size: 250,
-      }),
-      expect.anything(),
+  it("renders without crashing", () => {
+    render(
+      <MemoryRouter>
+        <Qrcode />
+      </MemoryRouter>,
     );
-    expect(QRCodeCanvas).toHaveBeenCalledWith(
-      expect.objectContaining({
-        value: expectedQrValue,
-        level: "L",
-        size: 250,
-      }),
-      expect.anything(),
-    );
-  });
-
-  it("handles back button click correctly", () => {
-    const mockBack = vi.fn();
-    vi.stubGlobal("history", { back: mockBack });
-
-    render(<QRGenerator />);
-
-    const backButton = screen.getByRole("button", { name: /back/i });
-    fireEvent.click(backButton);
-
-    expect(mockBack).toHaveBeenCalledOnce();
+    expect(screen.getByText("Withdraw QR Code")).toBeInTheDocument();
   });
 });

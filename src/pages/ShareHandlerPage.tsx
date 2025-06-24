@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useAccountStore } from "../store/accountStore";
 import {
   storeSharedContent,
   getSharedContent,
@@ -15,17 +15,14 @@ import KYCSubmissionCompleted from "../components/share-handler/KYCSubmissionCom
 
 import jsQR from "jsqr";
 import { useNavigate } from "react-router-dom";
-import { RootState } from "../store/Store";
 
 export default function ShareHandlerPage() {
   const [sharedData, setSharedData] = useState<SharedContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  // Get documentStatus from Redux store
-  const documentStatus = useSelector(
-    (state: RootState) => state.account.documentStatus,
-  );
+  // Get documentStatus from Zustand store
+  const documentStatus = useAccountStore((state) => state.documentStatus);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | undefined = undefined;

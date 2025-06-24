@@ -12,8 +12,7 @@ import {
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { useAccountStore } from "../../store/accountStore";
 
 interface MenuItemProps {
   title: string;
@@ -71,12 +70,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
 };
 
 const SettingsPage: React.FC = () => {
-  const emailStatus = useSelector(
-    (state: RootState) => state.account.emailStatus,
-  );
-  const phoneStatus = useSelector(
-    (state: RootState) => state.account.phoneStatus,
-  );
+  const emailStatus = useAccountStore((state) => state.emailStatus);
+  const phoneStatus = useAccountStore((state) => state.phoneStatus);
   const navigate = useNavigate();
 
   const supportPhoneNumber = "+237674388690";

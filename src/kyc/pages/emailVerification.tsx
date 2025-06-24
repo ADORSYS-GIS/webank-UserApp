@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RequestToSendEmailOTP } from "../../services/keyManagement/requestService";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { useAccountStore } from "../../store/accountStore";
 import { toast } from "sonner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -13,10 +12,8 @@ const InputEmail: React.FC = () => {
   useDisableScroll();
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
+  const accountId = useAccountStore((state) => state.accountId);
 
   // Validate email format
   const isValidEmail = (email: string): boolean => {

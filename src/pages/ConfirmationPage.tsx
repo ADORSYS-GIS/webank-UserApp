@@ -5,8 +5,7 @@ import {
   RequestToWithdrawOffline,
 } from "../services/keyManagement/requestService";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
+import { useAccountStore } from "../store/accountStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -35,10 +34,8 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   onDismiss,
 }) => {
   const navigate = useNavigate();
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const kycCert = useAccountStore((state) => state.kycCert);
+  const accountCert = useAccountStore((state) => state.accountCert);
   const [isVisible, setIsVisible] = useState(false);
 
   // Make sure data has a clientName property even if it wasn't passed

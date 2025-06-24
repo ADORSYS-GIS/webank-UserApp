@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { useAccountStore } from "../../store/accountStore";
 import { toast } from "sonner";
-import {
-  setAccountCert,
-  setAccountId,
-  setKycCert,
-} from "../../slices/accountSlice.ts";
 import {
   RequestToSubmitRecoveryToken,
   RequestToRecoverAccountCert,
@@ -26,11 +20,9 @@ const RecoverAccountPage: React.FC = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const dispatch = useDispatch();
+  const accountId = useAccountStore((state) => state.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
+  const { setAccountId, setAccountCert, setKycCert } = useAccountStore();
   const supportPhoneNumber = "+237654066316";
   let data = "";
   let oldAccountId = "";
@@ -78,8 +70,8 @@ const RecoverAccountPage: React.FC = () => {
       // Update state and localStorage with valid data
       localStorage.setItem("accountId", oldAccountId);
       localStorage.setItem("kycCert", kycCert);
-      dispatch(setKycCert(kycCert));
-      dispatch(setAccountId(oldAccountId));
+      setKycCert(kycCert);
+      setAccountId(oldAccountId);
 
       // Proceed to the next step
       setShowTokenInput(false);
@@ -100,7 +92,7 @@ const RecoverAccountPage: React.FC = () => {
       const certResponse = await RequestToRecoverAccountCert(accountId);
       if (certResponse) {
         localStorage.setItem("accountCert", certResponse);
-        dispatch(setAccountCert(certResponse));
+        setAccountCert(certResponse);
         toast.success("Account recovery successful!");
         setTimeout(() => {
           navigate("/dashboard");

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setAccountId, setAccountCert } from "../slices/accountSlice";
+import { useAccountStore } from "../store/accountStore";
 import { RequestToCreateBankAccount } from "../services/keyManagement/requestService.ts";
 import { toast } from "sonner";
 import useInitialization from "../hooks/useInitialization.ts";
@@ -14,7 +13,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
   message = "Please wait while we initiate the bank account process. This might take some time...",
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { setAccountId, setAccountCert } = useAccountStore();
   const { devCert, error } = useInitialization();
 
   useEffect(() => {
@@ -44,8 +43,8 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
           // Store account details
           localStorage.setItem("accountId", accountId);
           localStorage.setItem("accountCert", accountCert);
-          dispatch(setAccountId(accountId));
-          dispatch(setAccountCert(accountCert));
+          setAccountId(accountId);
+          setAccountCert(accountCert);
 
           // Redirect to dashboard
           navigate("/onboarding", {
@@ -62,7 +61,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
     };
 
     initializeAccount();
-  }, [navigate, dispatch, devCert, error]);
+  }, [navigate, setAccountId, setAccountCert, devCert, error]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">

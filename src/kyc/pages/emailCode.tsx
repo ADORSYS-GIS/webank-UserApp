@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setEmailStatus } from "../../slices/accountSlice";
+import { useAccountStore } from "../../store/accountStore";
 import {
   RequestToSendEmailOTP,
   RequestToVerifyEmailCode,
@@ -9,7 +8,6 @@ import {
 import { toast } from "sonner";
 import OtpInput from "../../components/OtpInput";
 import useDisableScroll from "../../hooks/useDisableScroll";
-import { RootState } from "../../store/Store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios"; // Import axios for error handling
@@ -18,11 +16,11 @@ const EmailCode: React.FC = () => {
   useDisableScroll();
   const [otp, setOtp] = useState<string>("".padStart(6, " "));
   const [showSuccess, setShowSuccess] = useState(false);
-  const dispatch = useDispatch();
+  const { setEmailStatus } = useAccountStore();
   const navigate = useNavigate();
   const location = useLocation();
   const { email, accountCert } = location.state ?? {};
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountId = useAccountStore((state) => state.accountId);
 
   const resendOTP = async () => {
     if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
@@ -95,7 +93,7 @@ const EmailCode: React.FC = () => {
       );
 
       if (response === "Webank email verified successfully") {
-        dispatch(setEmailStatus("APPROVED"));
+        setEmailStatus("APPROVED");
         setShowSuccess(true);
       } else if (response === "Invalid Webank OTP") {
         toast.error("Invalid OTP. Please try again.");

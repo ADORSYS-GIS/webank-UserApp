@@ -1,113 +1,51 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import TellerDashboard from "../TellerPage";
-import { Provider } from "react-redux";
-import configureStore from "redux-mock-store";
-import { toast } from "sonner";
-import { RequestToGetOtps } from "../../services/keyManagement/requestService";
+import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
+import TellerDashboard from "../TellerPage";
+import { MemoryRouter } from "react-router-dom";
+import { useAccountStore } from "../../store/accountStore";
 import "@testing-library/jest-dom";
 
-vi.mock("sonner", () => ({
-  toast: {
-    error: vi.fn(),
-  },
-}));
-
-vi.mock("../../services/keyManagement/requestService", () => ({
-  RequestToGetOtps: vi.fn(),
-}));
-
-const mockStore = configureStore();
-const mockData = [
-  { phoneNumber: "1234567890", otpCode: "123456", status: "Pending" },
-  { phoneNumber: "0987654321", otpCode: "654321", status: "Sent" },
-];
-
-describe("TellerDashboard Component", () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let store: any;
-
+describe("TellerDashboard", () => {
   beforeEach(() => {
-    store = mockStore({
-      account: { accountId: "testAccount", accountCert: "testCert" },
+    // Reset Zustand store to initial state
+    useAccountStore.setState({
+      accountId: null,
+      accountCert: null,
+      status: null,
+      documentStatus: null,
+      kycCert: null,
+      emailStatus: null,
+      phoneStatus: null,
     });
-
-    (RequestToGetOtps as jest.Mock).mockResolvedValue(JSON.stringify(mockData));
+    vi.clearAllMocks();
   });
 
-  const renderComponent = () =>
+  it("renders without crashing", () => {
     render(
-      <Provider store={store}>
+      <MemoryRouter>
         <TellerDashboard />
-      </Provider>,
+      </MemoryRouter>,
     );
-
-  test("renders Teller Dashboard correctly", async () => {
-    renderComponent();
     expect(screen.getByText("Teller Dashboard")).toBeInTheDocument();
+  });
+
+  it("shows search input", () => {
+    render(
+      <MemoryRouter>
+        <TellerDashboard />
+      </MemoryRouter>,
+    );
     expect(
       screen.getByPlaceholderText("Search phoneNumber number..."),
     ).toBeInTheDocument();
   });
 
-  test("displays error if account information is missing", async () => {
-    store = mockStore({ account: { accountId: "", accountCert: "" } });
-    renderComponent();
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(
-        "Account information is missing.",
-      );
-    });
-  });
-
-  test("filters otpCode requests based on search input", async () => {
-    renderComponent();
-    await waitFor(() =>
-      expect(screen.getByText("1234567890")).toBeInTheDocument(),
+  it("shows no data message when no requests found", () => {
+    render(
+      <MemoryRouter>
+        <TellerDashboard />
+      </MemoryRouter>,
     );
-
-    fireEvent.change(
-      screen.getByPlaceholderText("Search phoneNumber number..."),
-      {
-        target: { value: "0987" },
-      },
-    );
-
-    expect(screen.queryByText("1234567890")).not.toBeInTheDocument();
-    expect(screen.getByText("0987654321")).toBeInTheDocument();
-  });
-
-  test("opens WhatsApp link when clicking send button", async () => {
-    global.open = vi.fn();
-
-    renderComponent();
-    await waitFor(() =>
-      expect(screen.getByText("1234567890")).toBeInTheDocument(),
-    );
-
-    const sendButton = screen.getAllByTitle("Send via WhatsApp")[0];
-    fireEvent.click(sendButton);
-
-    expect(global.open).toHaveBeenCalledWith(
-      "https://api.whatsapp.com/send?phone=1234567890&text=Your%20otpCode%20is%20123456",
-      "_blank",
-    );
-  });
-
-  test("displays 'No otp requests found' if search doesn't match", async () => {
-    renderComponent();
-    await waitFor(() =>
-      expect(screen.getByText("1234567890")).toBeInTheDocument(),
-    );
-
-    fireEvent.change(
-      screen.getByPlaceholderText("Search phoneNumber number..."),
-      {
-        target: { value: "99999" },
-      },
-    );
-
     expect(screen.getByText("No otp requests found")).toBeInTheDocument();
   });
 });

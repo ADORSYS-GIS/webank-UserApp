@@ -1,25 +1,14 @@
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../store/Store"; // Ensure this is the correct path
-import {
-  setStatus,
-  setKycCert,
-  setDocumentStatus,
-} from "../../slices/accountSlice"; // Updated Redux actions
 import { RequestToGetCert } from "../../services/keyManagement/requestService";
 import KycRejectionPopup from "../components/KycRejectionPopup";
+import { useAccountStore } from "../../store/accountStore";
 
-const KycCertChecker = () => {
-  const dispatch = useDispatch();
-  const status = useSelector((state: RootState) => state.account.status);
-  const documentStatus = useSelector(
-    (state: RootState) => state.account.documentStatus,
-  );
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+const KycCertChecker: React.FC = () => {
+  const { setStatus, setKycCert, setDocumentStatus } = useAccountStore();
+  const status = useAccountStore((state) => state.status);
+  const documentStatus = useAccountStore((state) => state.documentStatus);
+  const accountCert = useAccountStore((state) => state.accountCert);
+  const accountId = useAccountStore((state) => state.accountId);
   const [showRejectionPopup, setShowRejectionPopup] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -63,11 +52,11 @@ const KycCertChecker = () => {
 
               if (certificate) {
                 console.log(
-                  "[KycCertChecker] Certificate found. Updating Redux state...",
+                  "[KycCertChecker] Certificate found. Updating Zustand state...",
                 );
-                dispatch(setKycCert(certificate)); // Store the certificate in Redux
-                dispatch(setStatus("APPROVED")); // Change status to APPROVED
-                dispatch(setDocumentStatus("APPROVED")); // Change status to APPROVED
+                setKycCert(certificate); // Store the certificate in Zustand
+                setStatus("APPROVED"); // Change status to APPROVED
+                setDocumentStatus("APPROVED"); // Change status to APPROVED
                 clearInterval(interval); // Stop making requests
                 console.log(
                   "[KycCertChecker] Polling stopped as certificate is received.",
@@ -75,10 +64,10 @@ const KycCertChecker = () => {
               }
             } else if (response.includes("REJECTED")) {
               console.log(
-                "[KycCertChecker] Application rejected. Updating Redux state...",
+                "[KycCertChecker] Application rejected. Updating Zustand state...",
               );
-              dispatch(setStatus("REJECTED"));
-              dispatch(setDocumentStatus("REJECTED"));
+              setStatus("REJECTED");
+              setDocumentStatus("REJECTED");
               setRejectionReason(response.replace("REJECTED: ", ""));
               setShowRejectionPopup(true);
               clearInterval(interval);
@@ -100,7 +89,15 @@ const KycCertChecker = () => {
       );
       clearInterval(interval);
     };
-  }, [status, accountCert, dispatch, accountId, documentStatus]);
+  }, [
+    status,
+    accountCert,
+    setStatus,
+    setKycCert,
+    setDocumentStatus,
+    accountId,
+    documentStatus,
+  ]);
 
   return showRejectionPopup ? (
     <KycRejectionPopup

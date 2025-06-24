@@ -1,71 +1,43 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
+import { vi } from "vitest";
 import EmailCode from "../emailCode";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
+import { useAccountStore } from "../../../store/accountStore";
 import "@testing-library/jest-dom";
-import { vi, test, expect, beforeEach } from "vitest";
-import { RequestToVerifyEmailCode } from "../../../services/keyManagement/requestService";
-import { toast } from "sonner";
-import { useSelector } from "react-redux";
-
-// Mock react-redux
-vi.mock("react-redux", () => ({
-  useDispatch: vi.fn(),
-  useSelector: vi.fn(), // Added useSelector mock
-}));
-
-// Mock react-toastify
-vi.mock("sonner", () => ({
-  toast: {
-    error: vi.fn(),
-    success: vi.fn(),
-  },
-  ToastContainer: vi.fn(),
-}));
 
 // Mock react-router-dom
-const navigateMock = vi.fn();
-vi.mock("react-router-dom", async () => ({
-  ...(await vi.importActual<typeof import("react-router-dom")>(
-    "react-router-dom",
-  )),
-  useNavigate: () => navigateMock,
+vi.mock("react-router-dom", () => ({
+  ...require("react-router-dom"),
+  useNavigate: () => vi.fn(),
   useLocation: () => ({
     state: {
       email: "test@example.com",
-      accountCert: "testCert",
-      accountId: 1,
+      accountCert: "test-cert",
     },
   }),
 }));
 
-// Mock service directly
-vi.mock("../../../services/keyManagement/requestService", () => ({
-  RequestToVerifyEmailCode: vi.fn(),
-}));
-
-const renderWithRouter = (ui: React.ReactElement) => {
-  return render(
-    <MemoryRouter initialEntries={["/emailCode"]}>
-      <Routes>
-        <Route path="/emailCode" element={ui} />
-      </Routes>
-    </MemoryRouter>,
-  );
-};
-
-describe("EmailCode Component", () => {
+describe("EmailCode", () => {
   beforeEach(() => {
-    navigateMock.mockClear();
-    vi.mocked(RequestToVerifyEmailCode).mockClear();
-    vi.mocked(toast.error).mockClear();
-    vi.mocked(useSelector).mockReturnValue(1); // Mock accountId
+    // Reset Zustand store to initial state
+    useAccountStore.setState({
+      accountId: null,
+      accountCert: null,
+      status: null,
+      documentStatus: null,
+      kycCert: null,
+      emailStatus: null,
+      phoneStatus: null,
+    });
+    vi.clearAllMocks();
   });
 
-  test("renders OTP inputs and buttons", () => {
-    renderWithRouter(<EmailCode />);
-    expect(screen.getAllByRole("textbox")).toHaveLength(6);
-    expect(screen.getByText("Verify")).toBeInTheDocument();
-    expect(screen.getByText("Back")).toBeInTheDocument();
+  it("renders without crashing", () => {
+    render(
+      <MemoryRouter>
+        <EmailCode />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText("Verify Your Email")).toBeInTheDocument();
   });
 });

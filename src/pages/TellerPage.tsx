@@ -1,43 +1,41 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Send, Search } from "lucide-react";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
+import { useAccountStore } from "../store/accountStore";
 import { toast } from "sonner";
 import { RequestToGetOtps } from "../services/keyManagement/requestService";
 
-export default function TellerDashboard() {
+const TellerDashboard: React.FC = () => {
   const [data, setData] = useState<
     { phoneNumber: string; otpCode: string; status: string }[]
   >([]);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 10;
 
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const accountCert = useAccountStore((state) => state.accountCert);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (!accountCert) {
-          toast.error("Account information is missing.");
-          setLoading(false);
+          toast.error("Authentication error. Please try again.");
           return;
         }
-        const fetchedData = await RequestToGetOtps(accountCert);
-        const parsedData = Array.isArray(fetchedData)
-          ? fetchedData
-          : (JSON.parse(fetchedData || "[]") as {
-              phoneNumber: string;
-              otpCode: string;
-              status: string;
-            }[]);
 
-        setData(parsedData);
+        const response = await RequestToGetOtps(accountCert);
+        const lines = response.split("\n");
+        const otpData = lines
+          .filter((line) => line.trim() !== "")
+          .map((line) => {
+            const [phoneNumber, otpCode, status] = line.split(" ");
+            return { phoneNumber, otpCode, status };
+          });
+
+        setData(otpData);
       } catch (error) {
-        toast.error("Failed to retrieve otpCode requests. Please try again.");
+        console.error("Error fetching OTP data:", error);
+        toast.error("Failed to fetch OTP data.");
       } finally {
         setLoading(false);
       }
@@ -62,7 +60,7 @@ export default function TellerDashboard() {
   };
 
   const filteredData = data.filter((item) =>
-    item.phoneNumber.toLowerCase().includes(search.toLowerCase()),
+    item.phoneNumber.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const paginatedData = filteredData.slice(
@@ -154,8 +152,8 @@ export default function TellerDashboard() {
               <input
                 type="text"
                 placeholder="Search phoneNumber number..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full rounded-lg border border-gray-200 py-2 pl-4 pr-10 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
               <Search className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
@@ -220,4 +218,6 @@ export default function TellerDashboard() {
       </div>
     </div>
   );
-}
+};
+
+export default TellerDashboard;

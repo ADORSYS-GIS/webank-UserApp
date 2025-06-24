@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { calculateTransactionFee } from "../services/computation/transactionFeeCalculator";
 import useDisableScroll from "../hooks/useDisableScroll";
-import { RootState } from "../store/Store";
-import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import ConfirmationBottomSheet from "../pages/ConfirmationPage";
+import { useAccountStore } from "../store/accountStore";
 
 const TopUpPage: React.FC = () => {
   useDisableScroll();
@@ -19,8 +18,8 @@ const TopUpPage: React.FC = () => {
   const isClientOnline = location.state?.isClientOnline;
   const agentAccountCert = location.state?.agentAccountCert;
   const agentAccountId = location.state?.agentAccountId;
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const status = useSelector((state: RootState) => state.account.status);
+  const kycCert = useAccountStore((state) => state.kycCert);
+  const status = useAccountStore((state) => state.status);
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));

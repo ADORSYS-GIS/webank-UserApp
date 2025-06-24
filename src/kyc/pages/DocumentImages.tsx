@@ -5,11 +5,9 @@ import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
 import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { useAccountStore } from "../../store/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { setDocumentStatus } from "../../slices/accountSlice";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
@@ -24,12 +22,10 @@ const DocumentImages = () => {
   });
   const [activePopup, setActivePopup] = useState<ActivePopup>(null);
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const accountId = useAccountStore((state) => state.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
+  const { setDocumentStatus } = useAccountStore();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleSubmitDocuments = async () => {
     try {
@@ -48,7 +44,7 @@ const DocumentImages = () => {
       );
 
       if (response.includes("saved")) {
-        dispatch(setDocumentStatus("PENDING"));
+        setDocumentStatus("PENDING");
         toast.success("Documents submitted successfully");
         navigate("/kyc");
       }

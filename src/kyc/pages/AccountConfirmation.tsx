@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/Store";
+import { useAccountStore } from "../../store/accountStore";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RequestToGetRecoveryToken } from "../../services/keyManagement/requestService";
 
@@ -12,10 +11,7 @@ const AccountConfirmation: React.FC = () => {
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get account certificate from Redux store
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const accountCert = useAccountStore((state) => state.accountCert);
 
   // Extract state values
   const newAccountId = location.state?.accountId as string | undefined;

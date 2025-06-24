@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useAccountStore } from "../../store/accountStore";
 import { toast } from "sonner";
-import { RootState } from "../../store/Store.ts";
 import VerificationModal from "../components/VerificationModal";
 
 // Import FontAwesome instead of react-icons
@@ -31,14 +30,10 @@ export default function IdentityVerification() {
   const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
   const [documentsSubmitted, setDocumentsSubmitted] = useState(false);
 
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const status = useSelector((state: RootState) => state.account.status);
-  const documentStatus = useSelector(
-    (state: RootState) => state.account.documentStatus,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
+  const status = useAccountStore((state) => state.status);
+  const documentStatus = useAccountStore((state) => state.documentStatus);
+  const accountId = useAccountStore((state) => state.accountId);
 
   // Check if both statuses are "PENDING" to enable the submit button
   const bothStatusesPending =

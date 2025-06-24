@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -7,27 +7,20 @@ import {
 } from "../services/keyManagement/requestService.ts";
 import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { setPhoneStatus } from "../slices/accountSlice.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { RootState } from "../store/Store.ts";
+import { useAccountStore } from "../store/accountStore";
+
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
+  const [otp, setOtp] = useState<string>("".padStart(5, " "));
+  const { setPhoneStatus } = useAccountStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
-
-  // Initialize state from location
   const { otpHash: initialOtpHash, fullPhoneNumber } = location.state ?? {};
   const [otpHash, setOtpHash] = useState(initialOtpHash);
-  const [otp, setOtp] = useState("");
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(30);
-
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
 
   const handleResendOTP = async () => {
     if (!fullPhoneNumber) {
@@ -35,15 +28,16 @@ const PhoneVerification: React.FC = () => {
       return;
     }
 
-    if (!accountJwt) {
-      toast.error("Authentication error. Please try again.");
-      return;
-    }
-
     try {
-      const newOtpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt);
+      const accountCert = useAccountStore.getState().accountCert;
+      if (!accountCert) {
+        toast.error("Authentication error. Please try again.");
+        return;
+      }
+
+      const newOtpHash = await RequestToSendOTP(fullPhoneNumber, accountCert);
       setOtpHash(newOtpHash);
-      setOtp(""); // Clear current OTP input
+      setOtp("".padStart(5, " ")); // Clear current OTP input
       setMinutes(1); // Reset timer
       setSeconds(30);
       toast.success("OTP resent successfully!");
@@ -53,34 +47,36 @@ const PhoneVerification: React.FC = () => {
     }
   };
 
-  const handleVerifyClick = async () => {
-    try {
-      if (!otpHash || !fullPhoneNumber) {
-        toast.info("Required data is missing!");
-        return;
-      }
+  const handleVerify = async () => {
+    const enteredCode = otp.replace(/\s/g, ""); // Trim spaces
+    if (enteredCode.length !== 5 || !/^\d{5}$/.test(enteredCode)) {
+      toast.error("Please enter a valid 5-digit OTP.");
+      return;
+    }
 
-      if (!accountJwt) {
-        toast.error("Authentication error. Please try again.");
+    try {
+      if (!fullPhoneNumber || !otpHash) {
+        toast.error("Phone verification data is missing.");
         return;
       }
 
       const response = await RequestToValidateOTP(
         fullPhoneNumber,
-        otp,
-        accountJwt,
+        enteredCode,
+        otpHash,
       );
 
-      if (response.startsWith("Otp Validated Successfully")) {
-        toast.success("Phone number successfully verified!");
-        dispatch(setPhoneStatus("APPROVED"));
+      if (response === "Webank OTP verified successfully") {
+        setPhoneStatus("APPROVED");
         setTimeout(() => navigate("/settings"), 2000);
+      } else if (response === "Invalid Webank OTP") {
+        toast.error("Invalid OTP. Please try again.");
       } else {
-        toast.error("The code is invalid", { duration: 5000 });
+        toast.error("OTP validation failed. Please try again.");
       }
     } catch (error) {
-      console.error("Error during OTP validation:", error);
-      toast.error("Phone number verification failed");
+      console.error("Error verifying OTP:", error);
+      toast.error("An unexpected error occurred.");
     }
   };
 
@@ -132,7 +128,7 @@ const PhoneVerification: React.FC = () => {
             />
 
             <button
-              onClick={handleVerifyClick}
+              onClick={handleVerify}
               className="w-full py-3.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-95"
             >
               Verify Code

@@ -8,8 +8,7 @@ import { toast } from "sonner";
 import useDisableScroll from "../hooks/useDisableScroll.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { RootState } from "../store/Store.ts";
-import { useSelector } from "react-redux";
+import { useAccountStore } from "../store/accountStore";
 
 type CountryOption = {
   value: string;
@@ -28,9 +27,8 @@ const PhoneInput: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const accountCert = useAccountStore((state) => state.accountCert);
+
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
     setIsOpen(false);
@@ -55,7 +53,7 @@ const PhoneInput: React.FC = () => {
       return;
     }
 
-    if (!accountJwt) {
+    if (!accountCert) {
       toast.error("Authentication error. Please try again.");
       return;
     }
@@ -72,7 +70,7 @@ const PhoneInput: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt);
+      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountCert);
 
       if (otpHash.includes("exists")) {
         toast.error("Phone number already registered.");

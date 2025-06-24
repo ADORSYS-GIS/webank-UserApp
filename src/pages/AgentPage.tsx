@@ -7,8 +7,7 @@ import {
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
+import { useAccountStore } from "../store/accountStore";
 
 interface AgentPageProps {
   onClose?: () => void;
@@ -16,10 +15,8 @@ interface AgentPageProps {
 
 const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
   const navigate = useNavigate();
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const accountId = useAccountStore((state) => state.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
   const [isOpen, setIsOpen] = useState(true);
 
   const handleClose = (callback?: () => void) => {

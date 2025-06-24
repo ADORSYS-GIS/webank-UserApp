@@ -11,8 +11,7 @@ import TransactionsSection from "../components/TransactionsSection";
 import ActionButtons from "../components/ActionButtons";
 import BottomNavigation from "../components/BottomNavigation";
 import BottomSheet from "../components/SideBar";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
+import { useAccountStore } from "../store/accountStore";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
@@ -27,10 +26,8 @@ const Dashboard: React.FC = () => {
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const accountId = useAccountStore((state) => state.accountId);
+  const accountCert = useAccountStore((state) => state.accountCert);
 
   // Toggle menu
   const toggleMenu = () => {

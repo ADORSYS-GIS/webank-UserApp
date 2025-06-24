@@ -13,32 +13,10 @@ import {
   afterAll,
 } from "vitest";
 import { toast } from "sonner";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "../../slices/accountSlice";
+import { useAccountStore } from "../../store/accountStore";
 
 // Mock global objects and methods
 global.alert = vi.fn();
-
-// Create a mock store
-const createMockStore = () => {
-  return configureStore({
-    reducer: {
-      account: accountReducer,
-    },
-    preloadedState: {
-      account: {
-        accountId: "mock-account-id",
-        accountCert: "mock-cert",
-        status: null,
-        documentStatus: null,
-        kycCert: null,
-        emailStatus: null,
-        phoneStatus: null,
-      },
-    },
-  });
-};
 
 // Mock the service directly
 vi.mock("../../services/keyManagement/requestService", () => ({
@@ -46,10 +24,17 @@ vi.mock("../../services/keyManagement/requestService", () => ({
 }));
 
 describe("Register component", () => {
-  let store: ReturnType<typeof createMockStore>;
-
   beforeEach(() => {
-    store = createMockStore();
+    // Reset Zustand store to initial state
+    useAccountStore.setState({
+      accountId: null,
+      accountCert: null,
+      status: null,
+      documentStatus: null,
+      kycCert: null,
+      emailStatus: null,
+      phoneStatus: null,
+    });
     vi.clearAllMocks();
     vi.spyOn(toast, "success").mockImplementation(() => "mock-toast-id");
     vi.spyOn(toast, "error").mockImplementation(() => "mock-toast-id");
@@ -63,19 +48,20 @@ describe("Register component", () => {
     vi.restoreAllMocks();
   });
 
-  const renderWithRouter = (component: React.ReactNode) => {
-    return render(
-      <Provider store={store}>
-        <MemoryRouter>{component}</MemoryRouter>
-      </Provider>,
-    );
-  };
-
   it("sends OTP on button click", async () => {
     const mockResponse = "otp-hash";
     vi.mocked(RequestToSendOTP).mockResolvedValueOnce(mockResponse);
 
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+    // Set up Zustand store state for this test
+    useAccountStore.setState({
+      accountCert: "mock-cert",
+    });
+
+    const { getByText, getByPlaceholderText } = render(
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, { target: { value: "657040277" } });
@@ -93,7 +79,17 @@ describe("Register component", () => {
     vi.mocked(RequestToSendOTP).mockRejectedValueOnce(
       new Error("Invalid number"),
     );
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+
+    // Set up Zustand store state for this test
+    useAccountStore.setState({
+      accountCert: "mock-cert",
+    });
+
+    const { getByText, getByPlaceholderText } = render(
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>,
+    );
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
     fireEvent.change(phoneNumberInput, {
@@ -111,7 +107,17 @@ describe("Register component", () => {
   it("handles API errors gracefully", async () => {
     const mockError = new Error("Network error");
     vi.mocked(RequestToSendOTP).mockRejectedValueOnce(mockError);
-    const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
+
+    // Set up Zustand store state for this test
+    useAccountStore.setState({
+      accountCert: "mock-cert",
+    });
+
+    const { getByText, getByPlaceholderText } = render(
+      <MemoryRouter>
+        <Register />
+      </MemoryRouter>,
+    );
 
     fireEvent.change(getByPlaceholderText("Phone number"), {
       target: { value: "657040277" },
