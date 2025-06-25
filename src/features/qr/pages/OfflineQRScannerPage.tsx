@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useSelector } from "react-redux";
@@ -32,8 +32,8 @@ const OfflineQRScannerPage: React.FC = () => {
     useState<ConfirmationData | null>(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const sharedImage = location.state?.sharedImage;
+  const location = useRouterState().location;
+  const { sharedImage } = location.state as { sharedImage?: string };
 
   const agentAccountId = useSelector(
     (state: RootState) => state.account.accountId,
@@ -193,7 +193,7 @@ const OfflineQRScannerPage: React.FC = () => {
         </label>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate({ to: '/dashboard' })}
           className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
         >
           Cancel

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 import {
   RequestToTopup,
   RequestToWithdrawOffline,
@@ -78,29 +78,30 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     ) {
       toast.info("Oops, you are offline. Redirecting to the amount page...");
       setTimeout(() => {
-        navigate("/top-up", {
+        navigate({
+          to: '/top-up',
           state: {
             clientAccountId,
             amount,
             isClientOffline: true,
             clientName, // Pass the client name in navigation
-          },
+          } as any,
         });
       }, 4000);
     } else if (!navigator.onLine && show === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate({ to: '/dashboard' });
       }, 4000);
     } else if (!navigator.onLine && show === "Top up") {
       toast.error("Cannot top up offline. Redirecting you to dashboard...");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate({ to: '/dashboard' });
       }, 4000);
     } else if (!navigator.onLine && show === "Payment") {
       toast.error("Cannot do payment offline. Redirecting you to dashboard...");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate({ to: '/dashboard' });
       }, 4000);
     } else {
       try {
@@ -114,13 +115,14 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
         if (response?.includes("Success")) {
           const transactionCert = response.replace(" Success", "");
           toast.success("Account successfully topped up.");
-          navigate("/success", {
+          navigate({
+            to: '/success',
             state: {
               transactionCert,
               accountId: agentAccountId,
               accountCert: agentAccountCert,
               clientName, // Include client name in success state
-            },
+            } as any,
           });
         } else if (response?.includes("Insufficient")) {
           toast.error("Insufficient funds. Please add funds to your account.");
@@ -144,13 +146,14 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
       if (response?.includes("Success")) {
         const transactionCert = response.replace(" Success", "");
         toast.success("Account successfully topped up.");
-        navigate("/success", {
+        navigate({
+          to: '/success',
           state: {
             transactionCert,
             accountId: agentAccountId,
             accountCert: agentAccountCert,
             clientName, // Include client name in success state
-          },
+          } as any,
         });
       } else if (response?.includes("Insufficient")) {
         toast.error(

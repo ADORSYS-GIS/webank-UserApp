@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoneyCheckAlt,
@@ -34,12 +34,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       icon: faMoneyCheckAlt,
       label: "Teller Services",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: '/login',
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/teller",
-          },
+          } as any,
         }),
     },
     {
@@ -47,12 +48,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       icon: faShieldAlt,
       label: "KYC Verification",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: '/login',
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/agency",
-          },
+          } as any,
         }),
     },
     {
@@ -60,12 +62,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       icon: faIdCard,
       label: "KYC Recovery Agency",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: '/login',
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/account-recovery",
-          },
+          } as any,
         }),
     },
     {
@@ -73,12 +76,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       icon: faMoneyBillWave,
       label: "Top Up Account",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: '/login',
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/agent-topup",
-          },
+          } as any,
         }),
     },
   ];

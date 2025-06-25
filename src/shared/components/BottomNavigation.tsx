@@ -1,6 +1,6 @@
 //NO
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -22,7 +22,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   accountId,
   accountCert,
 }) => {
-  const location = useLocation();
+  const location = useRouterState().location;
   const navigate = useNavigate();
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
@@ -49,11 +49,11 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <div className="flex justify-around items-center h-16">
           <button
             onClick={() =>
-              navigate("/dashboard", { state: { accountId, accountCert } })
+              navigate({ to: '/dashboard', state: { accountId, accountCert } as any })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/dashboard", { state: { accountId, accountCert } });
+                navigate({ to: '/dashboard', state: { accountId, accountCert } as any });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
@@ -109,11 +109,11 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
           <button
             onClick={() =>
-              navigate("/settings", { state: { accountId, accountCert } })
+              navigate({ to: '/settings', state: { accountId, accountCert } as any })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/settings", { state: { accountId, accountCert } });
+                navigate({ to: '/settings', state: { accountId, accountCert } as any });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
@@ -142,11 +142,11 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
           <button
             onClick={() =>
-              navigate("/contacts", { state: { accountId, accountCert } })
+              navigate({ to: '/contacts', state: { accountId, accountCert } as any })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/contacts", { state: { accountId, accountCert } });
+                navigate({ to: '/contacts', state: { accountId, accountCert } as any });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"

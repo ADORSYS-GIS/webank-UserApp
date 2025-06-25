@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
-import { useLocation } from "react-router-dom";
+import { useRouterState } from '@tanstack/react-router';
 
 // Routes where KYC reminder should appear
 const INCLUDED_ROUTES = ["/dashboard"];
@@ -11,7 +11,7 @@ export const useKYCReminder = () => {
   const [showReminder, setShowReminder] = useState(false);
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
   const status = useSelector((state: RootState) => state.account.status);
-  const location = useLocation();
+  const location = useRouterState().location;
 
   useEffect(() => {
     // Check if this is a new browser instance

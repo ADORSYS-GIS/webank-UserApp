@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -18,7 +18,7 @@ export default function KYCSubmissionCompleted() {
   }, []);
 
   const handleReturnToDashboard = () => {
-    navigate("/dashboard");
+    navigate({ to: '/dashboard' });
   };
 
   return (

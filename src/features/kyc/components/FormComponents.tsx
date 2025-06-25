@@ -9,7 +9,7 @@ import { RequestToStoreKYCInfo } from "@services/keyManagement/requestService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 import { setStatus } from "@state/accountSlice";
 
 type FormData = Record<string, string>;
@@ -85,7 +85,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       if (response === "KYC Info sent successfully and saved.") {
         dispatch(setStatus("PENDING"));
         toast.success("KYC Info sent successfully and saved.");
-        navigate("/kyc");
+        navigate({ to: '/kyc' });
       } else {
         toast.error("Error submitting data, please try again later");
       }
@@ -102,7 +102,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       onCancel(); // Call the custom onCancel function if provided
     } else {
       setFormData({}); // Reset the form data
-      navigate(-1); // Navigate back to the previous page
+      navigate({ to: -1 as any }); // Navigate back to the previous page
     }
   };
 

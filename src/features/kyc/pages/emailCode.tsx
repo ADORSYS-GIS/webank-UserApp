@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useDispatch, useSelector } from "react-redux";
 import { setEmailStatus } from "@state/accountSlice";
 import {
@@ -20,16 +20,20 @@ const EmailCode: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { email, accountCert } = location.state ?? {};
+  const location = useRouterState().location;
+  const { email, accountCert } = location.state as { email?: string; accountCert?: string };
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   const resendOTP = async () => {
+    if (!email) {
+      toast.error("Email is missing.");
+      return;
+    }
     if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
       try {
         if (!accountId || !accountCert) {
           toast.error("Account information is missing.");
-          navigate("/dashboard");
+          navigate({ to: '/dashboard' });
           return;
         }
         const response = await RequestToSendEmailOTP(
@@ -54,7 +58,7 @@ const EmailCode: React.FC = () => {
 
   const showAccountMissingError = () => {
     toast.error("Account information is missing.");
-    navigate("/dashboard");
+    navigate({ to: '/dashboard' });
   };
 
   const showOtpErrorMessage = (message: string) => {
@@ -80,13 +84,15 @@ const EmailCode: React.FC = () => {
       toast.error("Please enter a valid 6-digit OTP.");
       return;
     }
-
+    if (!email) {
+      toast.error("Email is missing.");
+      return;
+    }
+    if (!accountId || !accountCert) {
+      showAccountMissingError();
+      return;
+    }
     try {
-      if (!accountId || !accountCert) {
-        showAccountMissingError();
-        return;
-      }
-
       const response = await RequestToVerifyEmailCode(
         email,
         enteredCode,
@@ -117,7 +123,7 @@ const EmailCode: React.FC = () => {
       <div className="w-full max-w-md p-6 mx-auto mt-5 rounded-2xl text-center">
         <div className="flex items-center mb-6">
           <button
-            onClick={() => navigate("/inputEmail")}
+            onClick={() => navigate({ to: '/inputEmail' })}
             className="text-xl cursor-pointer p-2 focus:outline-none"
             aria-label="Back"
           >
@@ -155,7 +161,7 @@ const EmailCode: React.FC = () => {
         <div className="flex justify-between">
           <button
             className="w-1/3 py-3 bg-gray-300 text-black font-semibold rounded-full shadow-md hover:bg-gray-400 transition"
-            onClick={() => navigate("/inputEmail")}
+            onClick={() => navigate({ to: '/inputEmail' })}
           >
             Back
           </button>
@@ -182,7 +188,7 @@ const EmailCode: React.FC = () => {
             </p>
             <button
               className="py-2 px-6 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition"
-              onClick={() => navigate("/")}
+              onClick={() => navigate({ to: '/' })}
             >
               OK
             </button>

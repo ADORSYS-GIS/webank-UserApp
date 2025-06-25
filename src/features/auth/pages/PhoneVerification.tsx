@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import {
   RequestToSendOTP,
   RequestToValidateOTP,
@@ -15,11 +15,11 @@ import { RootState } from "@state/Store.ts";
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useRouterState().location;
   const dispatch = useDispatch();
 
   // Initialize state from location
-  const { otpHash: initialOtpHash, fullPhoneNumber } = location.state ?? {};
+  const { otpHash: initialOtpHash, fullPhoneNumber } = location.state as { otpHash?: string; fullPhoneNumber?: string };
   const [otpHash, setOtpHash] = useState(initialOtpHash);
   const [otp, setOtp] = useState("");
   const [minutes, setMinutes] = useState(0);
@@ -74,7 +74,7 @@ const PhoneVerification: React.FC = () => {
       if (response.startsWith("Otp Validated Successfully")) {
         toast.success("Phone number successfully verified!");
         dispatch(setPhoneStatus("APPROVED"));
-        setTimeout(() => navigate("/settings"), 2000);
+        setTimeout(() => navigate({ to: '/settings' }), 2000);
       } else {
         toast.error("The code is invalid", { duration: 5000 });
       }
@@ -103,7 +103,7 @@ const PhoneVerification: React.FC = () => {
         <div className="w-full max-w-md mx-auto">
           <div className="flex items-center mb-6">
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate({ to: -1 as any })}
               className="text-xl cursor-pointer p-2 focus:outline-none"
               aria-label="Back"
             >

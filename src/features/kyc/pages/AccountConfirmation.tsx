@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
@@ -9,7 +9,7 @@ import { RequestToGetRecoveryToken } from "@services/keyManagement/requestServic
 const AccountConfirmation: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useRouterState().location;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Get account certificate from Redux store

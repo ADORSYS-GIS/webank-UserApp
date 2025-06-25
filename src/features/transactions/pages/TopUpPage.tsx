@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { calculateTransactionFee } from "@services/computation/transactionFeeCalculator";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { RootState } from "@state/Store";
@@ -12,13 +12,8 @@ const TopUpPage: React.FC = () => {
   const [amount, setAmount] = useState<number | string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const clientAccountId = location.state?.clientAccountId;
-  const show = location.state?.show;
-  const isClientOffline = location.state?.isClientOffline;
-  const isClientOnline = location.state?.isClientOnline;
-  const agentAccountCert = location.state?.agentAccountCert;
-  const agentAccountId = location.state?.agentAccountId;
+  const location = useRouterState().location;
+  const { clientAccountId, show, isClientOffline, isClientOnline, agentAccountCert, agentAccountId, clientName } = location.state as { clientAccountId?: string; show?: string; isClientOffline?: boolean; isClientOnline?: boolean; agentAccountCert?: string; agentAccountId?: string; clientName?: string };
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
   const status = useSelector((state: RootState) => state.account.status);
 
@@ -26,9 +21,7 @@ const TopUpPage: React.FC = () => {
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
 
   const handleCancel = () => {
-    navigate("/dashboard", {
-      state: { accountId: clientAccountId },
-    }); // Go back to the previous page
+    navigate({ to: '/dashboard', state: { accountId: clientAccountId } as any });
   };
 
   const handleConfirmationDismiss = () => {
@@ -56,26 +49,18 @@ const TopUpPage: React.FC = () => {
       // Instead of navigating to the confirmation page, show the bottom sheet
       setShowConfirmation(true);
     } else {
-      navigate("/qrcode", {
-        state: {
-          totalAmount,
-          accountId: clientAccountId,
-          isClientOffline,
-          isClientOnline,
-          show,
-        },
-      });
+      navigate({ to: '/qrcode', state: { totalAmount, accountId: clientAccountId, isClientOffline, isClientOnline, show } as any });
     }
   };
 
   // Prepare the confirmation data that would have been passed via location state
   const confirmationData = {
     amount: totalAmount,
-    clientAccountId,
-    agentAccountId,
-    agentAccountCert,
-    show,
-    clientName: location.state?.clientName || "Anonymous",
+    clientAccountId: clientAccountId ?? "",
+    agentAccountId: agentAccountId ?? "",
+    agentAccountCert: agentAccountCert ?? "",
+    show: show ?? "",
+    clientName: clientName || "Anonymous",
   };
   console.log("Confirmation Data:", confirmationData);
 

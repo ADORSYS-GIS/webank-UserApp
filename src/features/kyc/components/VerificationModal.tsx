@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 
 interface VerificationModalProps {
   onClose: () => void;
@@ -33,7 +33,7 @@ const VerificationModal: React.FC<VerificationModalProps> = ({ onClose }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                navigate("/verification/id-card");
+                navigate({ to: '/verification/id-card' });
                 onClose();
               }}
               className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-blue-100 transition duration-200"
@@ -46,7 +46,7 @@ const VerificationModal: React.FC<VerificationModalProps> = ({ onClose }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                navigate("/verification/passport");
+                navigate({ to: '/verification/passport' });
                 onClose();
               }}
               className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-blue-100 transition duration-200"
@@ -59,7 +59,7 @@ const VerificationModal: React.FC<VerificationModalProps> = ({ onClose }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                navigate("/verification/driving-license");
+                navigate({ to: '/verification/driving-license' });
                 onClose();
               }}
               className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-blue-100 transition duration-200"

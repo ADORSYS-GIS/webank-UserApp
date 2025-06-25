@@ -5,7 +5,7 @@ import {
   faFilePdf,
   faFileLines,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 
 export interface SharedContent {
   title: string;
@@ -53,7 +53,7 @@ export default function SharedContentDisplay({
   return (
     <div className="max-w-2xl mx-auto p-4">
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate({ to: '/' })}
         className="mb-6 text-[#20B2AA] hover:text-[#1C8C8A] flex items-center"
       >
         <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />

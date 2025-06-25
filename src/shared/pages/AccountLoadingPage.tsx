@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from "react-redux";
 import { setAccountId, setAccountCert } from "@state/accountSlice";
 import { RequestToCreateBankAccount } from "@services/keyManagement/requestService.ts";
@@ -48,16 +48,14 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
           dispatch(setAccountCert(accountCert));
 
           // Redirect to dashboard
-          navigate("/onboarding", {
-            state: { accountId, accountCert },
-          });
+          navigate({ to: '/onboarding', state: { accountId, accountCert } as any });
         } else {
           throw new Error("Account creation failed");
         }
       } catch (error) {
         console.error("Error during account creation:", error);
         toast.error("Account creation failed. Please try again.");
-        navigate("/");
+        navigate({ to: '/' });
       }
     };
 

@@ -1,11 +1,11 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { FaQrcode, FaAddressBook } from "react-icons/fa";
 
 const PaymentSelectionPage: React.FC = () => {
-  const location = useLocation();
+  const location = useRouterState().location;
+  const { show } = location.state as { show?: string };
   const navigate = useNavigate();
-  const show = location.state?.show;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -17,7 +17,7 @@ const PaymentSelectionPage: React.FC = () => {
         <div className="space-y-4">
           <button
             onClick={() =>
-              navigate("/contacts", { state: { show: "Payment" } })
+              navigate({ to: '/contacts', state: { show: "Payment" } as any })
             }
             className="w-full flex items-center justify-center space-x-3 bg-blue-500 text-white py-4 px-6 rounded-lg hover:bg-blue-600 transition-colors"
           >
@@ -27,9 +27,7 @@ const PaymentSelectionPage: React.FC = () => {
 
           <button
             onClick={() =>
-              navigate(show === "Top Up" ? "/qr-scan/top-up" : "/qr-scan", {
-                state: { show },
-              })
+              navigate({ to: show === "Top Up" ? '/qr-scan/top-up' : '/qr-scan', state: { show } as any })
             }
             className="w-full flex items-center justify-center space-x-3 bg-green-500 text-white py-4 px-6 rounded-lg hover:bg-green-600 transition-colors"
           >
@@ -38,7 +36,7 @@ const PaymentSelectionPage: React.FC = () => {
           </button>
 
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate({ to: '/dashboard' })}
             className="w-full flex items-center justify-center space-x-3 bg-gray-200 text-gray-700 py-4 px-6 rounded-lg hover:bg-gray-300 transition-colors mt-4"
           >
             <span>Cancel</span>

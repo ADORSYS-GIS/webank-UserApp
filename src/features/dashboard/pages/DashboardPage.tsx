@@ -13,7 +13,7 @@ import BottomNavigation from "@shared/components/BottomNavigation";
 import BottomSheet from "@shared/components/SideBar";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
 
   // Handler for about clicks
   const handleAboutClick = () => {
-    navigate("/about");
+    navigate({ to: '/about' });
   };
 
   return (

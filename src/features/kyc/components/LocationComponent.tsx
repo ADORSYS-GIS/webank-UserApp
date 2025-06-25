@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '@tanstack/react-router';
 
 interface GeoLocation {
   lat: number;
@@ -24,7 +24,7 @@ const LocationComponent = () => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-        navigate("/map-confirmation", { state: { coords } });
+        navigate({ to: '/map-confirmation', state: { coords } as any });
         setIsLoading(false);
         setLocation(coords);
       },
@@ -95,7 +95,7 @@ const LocationComponent = () => {
               : "Continue with KYC Verification"}
           </button>
           <button
-            onClick={() => navigate("/kyc")}
+            onClick={() => navigate({ to: '/kyc' })}
             className="text-gray-600 px-6 py-3 rounded-md hover:bg-gray-100 transition-colors"
           >
             Cancel
