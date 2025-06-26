@@ -2,12 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
-import {
-  setAccountCert,
-} from "../../slices/accountSlice";
-import {
-  RequestToRecoverAccountCert,
-} from "../../services/keyManagement/requestService";
+import { setAccountCert } from "../../slices/accountSlice";
+import { RequestToRecoverAccountCert } from "../../services/keyManagement/requestService";
 import { Key, CreditCard, ArrowLeft } from "react-feather";
 
 const RecoverAccountPage: React.FC = () => {

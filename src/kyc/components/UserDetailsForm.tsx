@@ -1,6 +1,6 @@
 // components/UserDetailsForm.tsx - Component for user details and verification form
 import React from "react";
-import { ArrowLeft } from 'react-feather';
+import { ArrowLeft } from "react-feather";
 import { DocumentCard } from "./DocumentCard";
 import { UserKYC, VerificationFormData } from "../types/types";
 import { getStatusClass } from "../utils/kycUtils";
@@ -42,7 +42,11 @@ export const UserDetailsForm: React.FC<UserDetailsFormProps> = ({
           type="button"
           aria-label="Back to list"
         >
-          <ArrowLeft size={24} color="#6B7280" style={{width: '1.5rem', height: '1.5rem'}} />
+          <ArrowLeft
+            size={24}
+            color="#6B7280"
+            style={{ width: "1.5rem", height: "1.5rem" }}
+          />
         </button>
       </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { ContactService, Contact } from "../services/contactService";
-import { Edit, Trash } from 'react-feather';
+import { Edit, Trash } from "react-feather";
 
 interface ContactListProps {
   onSelectContact?: (contact: Contact) => void;
@@ -143,14 +143,22 @@ const ContactList: React.FC<ContactListProps> = ({
                       className="p-2 text-blue-500 hover:text-blue-600 rounded-full"
                       aria-label={`Edit contact ${contact.name}`}
                     >
-                      <Edit size={16} color="#4B5563" style={{marginRight: 4}} />
+                      <Edit
+                        size={16}
+                        color="#4B5563"
+                        style={{ marginRight: 4 }}
+                      />
                     </button>
                     <button
                       onClick={() => handleDelete(contact.id)}
                       className="p-2 text-red-500 hover:text-red-600 rounded-full"
                       aria-label={`Delete contact ${contact.name}`}
                     >
-                      <Trash size={16} color="#EF4444" style={{marginRight: 4}} />
+                      <Trash
+                        size={16}
+                        color="#EF4444"
+                        style={{ marginRight: 4 }}
+                      />
                     </button>
                   </div>
                 )}

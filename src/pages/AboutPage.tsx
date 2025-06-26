@@ -1,39 +1,39 @@
 import React from "react";
-import { Shield, Smartphone, Code, UserCheck, Lock } from 'react-feather';
+import { Shield, Smartphone, Code, UserCheck, Lock } from "react-feather";
 
 const AboutPage: React.FC = () => {
   const features = [
     {
       id: "feature-1",
-      icon: <Shield size={32} color="#2563EB" style={{marginRight: 8}} />,
+      icon: <Shield size={32} color="#2563EB" style={{ marginRight: 8 }} />,
       title: "Secure Identity Verification",
       description:
         "Advanced KYC process ensuring your identity is verified with the highest security standards.",
     },
     {
       id: "feature-2",
-      icon: <Smartphone size={32} color="#2563EB" style={{marginRight: 8}} />,
+      icon: <Smartphone size={32} color="#2563EB" style={{ marginRight: 8 }} />,
       title: "Mobile-First Experience",
       description:
         "Seamless mobile experience with easy document upload and verification process.",
     },
     {
       id: "feature-3",
-      icon: <Code size={32} color="#2563EB" style={{marginRight: 8}} />,
+      icon: <Code size={32} color="#2563EB" style={{ marginRight: 8 }} />,
       title: "QR Code Integration",
       description:
         "Quick and secure transactions using our integrated QR code system.",
     },
     {
       id: "feature-4",
-      icon: <UserCheck size={32} color="#2563EB" style={{marginRight: 8}} />,
+      icon: <UserCheck size={32} color="#2563EB" style={{ marginRight: 8 }} />,
       title: "Agent Support",
       description:
         "Dedicated agent support for personalized assistance throughout your verification process.",
     },
     {
       id: "feature-5",
-      icon: <Lock size={32} color="#2563EB" style={{marginRight: 8}} />,
+      icon: <Lock size={32} color="#2563EB" style={{ marginRight: 8 }} />,
       title: "End-to-End Encryption",
       description:
         "Your data is protected with industry-standard encryption protocols.",

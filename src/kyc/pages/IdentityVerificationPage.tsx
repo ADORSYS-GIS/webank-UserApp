@@ -4,7 +4,13 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "../../store/Store.ts";
 import VerificationModal from "../components/VerificationModal";
-import { Edit, UploadCloud, Check, ChevronLeft, ChevronRight } from "react-feather";
+import {
+  Edit,
+  UploadCloud,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+} from "react-feather";
 
 interface VerificationStep {
   id: number;
@@ -138,7 +144,10 @@ export default function IdentityVerification() {
                 </div>
               </div>
               {isCompleted ? (
-                <Check size={20} className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                <Check
+                  size={20}
+                  className="w-5 h-5 text-blue-500 flex-shrink-0"
+                />
               ) : (
                 <ChevronRight
                   size={20}

@@ -102,9 +102,7 @@ const PhoneInput: React.FC = () => {
               </label>
               <div className="flex items-center">
                 <div className="relative w-1/3">
-                  <button
-                    className="flex items-center justify-between w-full p-3 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
+                  <button className="flex items-center justify-between w-full p-3 border border-gray-200 rounded-l-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <div className="flex items-center">
                       <img
                         src={selectedCountry.flag}

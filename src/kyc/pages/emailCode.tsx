@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setEmailStatus } from "../../slices/accountSlice";
-import { sendEmailOTP, verifyEmailCode } from "../../services/keyManagement/apiService";
+import {
+  sendEmailOTP,
+  verifyEmailCode,
+} from "../../services/keyManagement/apiService";
 import useDisableScroll from "../../hooks/useDisableScroll";
 import { RootState } from "../../store/Store";
 import { toast } from "sonner";
@@ -28,11 +31,7 @@ const EmailCode: React.FC = () => {
           navigate("/dashboard");
           return;
         }
-        const response = await sendEmailOTP(
-          email,
-          accountCert,
-          accountId,
-        );
+        const response = await sendEmailOTP(email, accountCert, accountId);
 
         if (response.startsWith("OTP sent successfully")) {
           toast.success("OTP Resend, please check your email.", {
@@ -127,7 +126,8 @@ const EmailCode: React.FC = () => {
             Email Verified Successfully
           </h2>
           <p className="text-gray-600">
-            Your email has been verified. You can now use all features of your account.
+            Your email has been verified. You can now use all features of your
+            account.
           </p>
         </div>
 

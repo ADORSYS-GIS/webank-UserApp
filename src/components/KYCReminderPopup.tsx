@@ -25,7 +25,8 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
             KYC Verification Required
           </h2>
           <p className="text-gray-600 text-center mb-6">
-            To continue using our services, please complete your identity verification.
+            To continue using our services, please complete your identity
+            verification.
           </p>
         </div>
 

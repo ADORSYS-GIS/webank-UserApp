@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X } from 'react-feather';
+import { X } from "react-feather";
 
 interface RejectionModalProps {
   onClose: () => void;
@@ -38,7 +38,11 @@ export const RejectionModal: React.FC<RejectionModalProps> = ({
             className="text-gray-500 hover:text-gray-700 p-2"
             aria-label="Close modal"
           >
-            <X size={24} color="#6B7280" style={{width: '1.5rem', height: '1.5rem'}} />
+            <X
+              size={24}
+              color="#6B7280"
+              style={{ width: "1.5rem", height: "1.5rem" }}
+            />
           </button>
         </div>
 
