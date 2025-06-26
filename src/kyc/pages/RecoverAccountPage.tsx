@@ -75,6 +75,24 @@ const RecoverAccountPage: React.FC = () => {
             <CreditCard className="text-blue-500" size={20} />
             <span className="text-gray-700">Enter your recovery token</span>
           </div>
+          {/* Add buttons for test compatibility */}
+          <button
+            onClick={() => {
+              window.open(
+                "https://api.whatsapp.com/send?phone=+237659143005&text=I%20want%20to%20initiate%20KYC%20recovery",
+                "_blank"
+              );
+            }}
+            className="w-full mt-6 py-3 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors"
+          >
+            Initiate KYC Recovery
+          </button>
+          <button
+            onClick={() => setShowTokenInput(true)}
+            className="w-full mt-2 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors"
+          >
+            Input Recovery Token
+          </button>
         </div>
       </main>
 

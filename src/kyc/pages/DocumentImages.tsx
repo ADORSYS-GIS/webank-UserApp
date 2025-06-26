@@ -10,7 +10,7 @@ import { RootState } from "../../store/Store";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setDocumentStatus } from "../../slices/accountSlice";
-import { FaUpload } from "react-icons/fa";
+import { Upload } from 'react-feather';
 import { ArrowLeft } from "react-feather";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
@@ -141,7 +141,7 @@ const DocumentImages = () => {
               ) : (
                 <div className="text-gray-500 text-center space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600">
-                    <FaUpload size={24} />
+                    <Upload size={24} />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-700">
