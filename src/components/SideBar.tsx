@@ -25,7 +25,7 @@ const SideBar: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="p-4">
+          <div className="p-4">
           <nav className="mt-16">
             <ul className="space-y-2">
               <li>
@@ -41,44 +41,44 @@ const SideBar: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
                 </button>
               </li>
               <li>
-                <button
+                    <button
                   onClick={() => {
                     onClose();
                     navigate("/transactions");
                   }}
                   className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                >
+                    >
                   <CreditCard className="text-gray-600" size={20} />
                   <span className="text-gray-800">Transactions</span>
-                </button>
+                    </button>
               </li>
               <li>
-                <button
+                    <button
                   onClick={() => {
                     onClose();
                     navigate("/kyc");
                   }}
                   className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                >
+                    >
                   <User className="text-gray-600" size={20} />
                   <span className="text-gray-800">KYC</span>
-                </button>
+                    </button>
               </li>
               <li>
-                <button
-                  onClick={() => {
-                    onClose();
+              <button
+                onClick={() => {
+                  onClose();
                     navigate("/settings");
-                  }}
+                }}
                   className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
-                >
+              >
                   <Settings className="text-gray-600" size={20} />
                   <span className="text-gray-800">Settings</span>
-                </button>
+              </button>
               </li>
             </ul>
           </nav>
-        </div>
+          </div>
       </div>
     </div>
   );
