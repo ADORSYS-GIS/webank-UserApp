@@ -10,7 +10,8 @@ import { RootState } from "../../store/Store";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setDocumentStatus } from "../../slices/accountSlice";
-import { FaArrowLeft, FaUpload } from "react-icons/fa";
+import { FaUpload } from "react-icons/fa";
+import { ArrowLeft } from 'react-feather';
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
@@ -104,7 +105,7 @@ const DocumentImages = () => {
           onClick={() => navigate(-1)}
           className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
         >
-          <FaArrowLeft className="mr-2" />
+          <ArrowLeft size={20} color="#374151" style={{marginRight: 8}} />
           Back
         </button>
         <a
@@ -112,7 +113,7 @@ const DocumentImages = () => {
           className="text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium flex items-center"
         >
           View detailed instructions
-          <FaArrowLeft className="ml-2 rotate-180" />
+          <ArrowLeft size={20} color="#374151" className="ml-2 rotate-180" />
         </a>
       </div>
 

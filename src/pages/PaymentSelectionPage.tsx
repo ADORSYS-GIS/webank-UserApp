@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaQrcode, FaAddressBook } from "react-icons/fa";
+import { User, Code } from 'react-feather';
 
 const PaymentSelectionPage: React.FC = () => {
   const location = useLocation();
@@ -21,7 +21,7 @@ const PaymentSelectionPage: React.FC = () => {
             }
             className="w-full flex items-center justify-center space-x-3 bg-blue-500 text-white py-4 px-6 rounded-lg hover:bg-blue-600 transition-colors"
           >
-            <FaAddressBook className="text-xl" />
+            <User size={20} color="#2563EB" style={{marginRight: 8}} />
             <span>Select from Contacts</span>
           </button>
 
@@ -33,7 +33,7 @@ const PaymentSelectionPage: React.FC = () => {
             }
             className="w-full flex items-center justify-center space-x-3 bg-green-500 text-white py-4 px-6 rounded-lg hover:bg-green-600 transition-colors"
           >
-            <FaQrcode className="text-xl" />
+            <Code size={20} color="#2563EB" style={{marginRight: 8}} />
             <span>Scan QR Code</span>
           </button>
 

@@ -1,13 +1,7 @@
 import React, { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-import {
-  FaCamera,
-  FaShareAlt,
-  FaCheckCircle,
-  FaArrowLeft,
-  FaLightbulb,
-} from "react-icons/fa";
+import { Info, ArrowLeft } from "react-feather";
 import { useNavigate } from "react-router-dom";
 
 // Define proper TypeScript interfaces for the component props
@@ -50,28 +44,16 @@ const MarkdownH2: React.FC<MarkdownHeadingProps> = ({ children, ...props }) => {
       {...props}
     >
       {typeof firstChild === "string" && firstChild.startsWith("Step 1") && (
-        <FaCamera
-          className="mr-3 text-blue-600 text-xl flex-shrink-0"
-          aria-hidden="true"
-        />
+        <Info size={20} color="#2563EB" style={{marginRight: 12}} aria-hidden="true" />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Step 2") && (
-        <FaShareAlt
-          className="mr-3 text-blue-600 text-xl flex-shrink-0"
-          aria-hidden="true"
-        />
+        <Info size={20} color="#2563EB" style={{marginRight: 12}} aria-hidden="true" />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Step 3") && (
-        <FaCheckCircle
-          className="mr-3 text-blue-600 text-xl flex-shrink-0"
-          aria-hidden="true"
-        />
+        <Info size={20} color="#2563EB" style={{marginRight: 12}} aria-hidden="true" />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Pro Tips") && (
-        <FaLightbulb
-          className="mr-3 text-amber-500 text-xl flex-shrink-0"
-          aria-hidden="true"
-        />
+        <Info size={20} color="#F59E42" style={{marginRight: 12}} aria-hidden="true" />
       )}
       {children || "Untitled"} {/* Fallback content for accessibility */}
     </h2>
@@ -193,16 +175,13 @@ const GuidelinesPage: React.FC = () => {
           className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition duration-200 mb-6"
           aria-label="Go back"
         >
-          <FaArrowLeft className="h-4 w-4" aria-hidden="true" />
+          <ArrowLeft size={16} color="#374151" style={{marginRight: 8}} aria-hidden="true" />
           <span className="text-base font-medium">Back</span>
         </button>
 
         <div className="text-center mb-8 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center justify-center mb-4 tracking-tight">
-            <FaCheckCircle
-              className="mr-3 text-blue-600 flex-shrink-0"
-              aria-hidden="true"
-            />{" "}
+            <Info size={20} color="#2563EB" style={{marginRight: 12}} aria-hidden="true" />{" "}
             Document Upload Guide
           </h1>
           <div className="w-16 h-1 bg-blue-600 mx-auto mb-6 rounded-full"></div>

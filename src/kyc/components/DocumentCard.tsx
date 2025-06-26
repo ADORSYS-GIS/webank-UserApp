@@ -1,5 +1,5 @@
 import React from "react";
-import { FiDownload } from "react-icons/fi";
+import { Download } from 'react-feather';
 
 interface DocumentCardProps {
   title: string;
@@ -51,7 +51,7 @@ export const DocumentCard = ({
           aria-label={`Download ${title}`}
           download
         >
-          <FiDownload className="w-4 h-4" />
+          <Download size={16} color="#374151" style={{marginRight: 4}} />
         </a>
       </div>
       <div className="relative flex-1">

@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { CreditCard, Shield, Home } from "react-feather";
 import { motion } from "framer-motion";

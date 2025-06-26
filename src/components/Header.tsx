@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import InstallButton from "./Installbutton";
-import { FiX } from "react-icons/fi";
+import { X } from 'react-feather';
 import { motion, AnimatePresence } from "framer-motion";
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -68,7 +68,7 @@ const InstallPrompt: React.FC = () => {
                     className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                     aria-label="Dismiss"
                   >
-                    <FiX className="w-4 h-4 text-gray-500" />
+                    <X size={20} color="#6B7280" style={{width: '1.5rem', height: '1.5rem'}} />
                   </button>
                 </div>
               </div>
