@@ -40,7 +40,7 @@ const PhoneInput: React.FC = () => {
     const fullPhoneNumber = selectedCountry.value + phoneNumber;
     const phoneNumberObj = parsePhoneNumberFromString(fullPhoneNumber);
 
-    if (!phoneNumberObj || !phoneNumberObj.isValid()) {
+    if (!phoneNumberObj?.isValid()) {
       toast.error("Please enter a valid phone number.");
       return;
     }
