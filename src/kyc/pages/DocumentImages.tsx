@@ -10,7 +10,7 @@ import { RootState } from "../../store/Store";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setDocumentStatus } from "../../slices/accountSlice";
-import { Upload } from 'react-feather';
+import { Upload } from "react-feather";
 import { ArrowLeft } from "react-feather";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";

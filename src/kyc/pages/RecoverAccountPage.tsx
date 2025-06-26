@@ -80,7 +80,7 @@ const RecoverAccountPage: React.FC = () => {
             onClick={() => {
               window.open(
                 "https://api.whatsapp.com/send?phone=+237659143005&text=I%20want%20to%20initiate%20KYC%20recovery",
-                "_blank"
+                "_blank",
               );
             }}
             className="w-full mt-6 py-3 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors"
