@@ -70,8 +70,7 @@ const InstallPrompt: React.FC = () => {
                   >
                     <X
                       size={20}
-                      color="#6B7280"
-                      style={{ width: "1.5rem", height: "1.5rem" }}
+                      className="w-6 h-6"
                     />
                   </button>
                 </div>

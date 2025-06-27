@@ -140,25 +140,17 @@ const ContactList: React.FC<ContactListProps> = ({
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleEdit(contact)}
-                      className="p-2 text-blue-500 hover:text-blue-600 rounded-full"
+                      className="p-2 text-blue-500 hover:text-blue-600 rounded-full mr-1"
                       aria-label={`Edit contact ${contact.name}`}
                     >
-                      <Edit
-                        size={16}
-                        color="#4B5563"
-                        style={{ marginRight: 4 }}
-                      />
+                      <Edit size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(contact.id)}
                       className="p-2 text-red-500 hover:text-red-600 rounded-full"
                       aria-label={`Delete contact ${contact.name}`}
                     >
-                      <Trash
-                        size={16}
-                        color="#EF4444"
-                        style={{ marginRight: 4 }}
-                      />
+                      <Trash size={16} />
                     </button>
                   </div>
                 )}

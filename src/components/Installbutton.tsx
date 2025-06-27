@@ -50,8 +50,7 @@ const InstallButton: React.FC<InstallButtonProps> = ({ deferredPrompt }) => {
       <div className="flex items-center space-x-2">
         <DownloadCloud
           size={20}
-          color="#374151"
-          style={{ transform: "scale(1.1)" }}
+          className="scale-110"
         />
         <span className="text-sm bg-gradient-to-r from-cyan-100 to-blue-50 bg-clip-text text-transparent">
           Install Webank
