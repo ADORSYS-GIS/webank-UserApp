@@ -25,7 +25,10 @@ describe("RecoverAccountPage", () => {
       </MemoryRouter>,
     );
     const heading = screen.getByText((content, element) => {
-      return element?.tagName.toLowerCase() === "h2" && content === "Recover Your Account";
+      return (
+        element?.tagName.toLowerCase() === "h2" &&
+        content === "Recover Your Account"
+      );
     });
     expect(heading).toBeInTheDocument();
   });
