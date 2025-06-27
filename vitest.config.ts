@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import { resolve } from "path";
 
 export default defineConfig({
   test: {
@@ -6,10 +7,38 @@ export default defineConfig({
     environment: "happy-dom",
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html","lcov"],
+      reporter: ["text", "json", "html", "lcov"],
       reportsDirectory: 'coverage',
       all: true,
     },
     setupFiles: ["./vitest.setup.ts"],
+  },
+  resolve: {
+    alias: [
+      {
+        find: /^@app\/(.*)/,
+        replacement: resolve(__dirname, "./src/app/$1"),
+      },
+      {
+        find: /^@features\/(.*)/,
+        replacement: resolve(__dirname, "./src/features/$1"),
+      },
+      {
+        find: /^@shared\/(.*)/,
+        replacement: resolve(__dirname, "./src/shared/$1"),
+      },
+      {
+        find: /^@services\/(.*)/,
+        replacement: resolve(__dirname, "./src/services/$1"),
+      },
+      {
+        find: /^@state\/(.*)/,
+        replacement: resolve(__dirname, "./src/state/$1"),
+      },
+      {
+        find: /^@assets\/(.*)/,
+        replacement: resolve(__dirname, "./src/assets/$1"),
+      },
+    ],
   },
 });
