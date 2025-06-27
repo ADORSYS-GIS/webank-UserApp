@@ -6,7 +6,13 @@ import { RootState } from "@state/Store";
 import VerificationModal from "@features/kyc/components/VerificationModal";
 
 // Import FontAwesome instead of react-icons
-import { User, UploadCloud, Check, ChevronLeft, ChevronRight } from "react-feather";
+import {
+  User,
+  UploadCloud,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+} from "react-feather";
 
 interface VerificationStep {
   id: number;

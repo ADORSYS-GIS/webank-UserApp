@@ -54,7 +54,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={location.pathname === "/dashboard"}
             tabIndex={0}
           >
-            <Home className={`text-lg ${location.pathname === "/dashboard" ? "text-blue-500" : "text-gray-500"}`} />
+            <Home
+              className={`text-lg ${location.pathname === "/dashboard" ? "text-blue-500" : "text-gray-500"}`}
+            />
             <span
               className={`text-xs mt-1 ${
                 location.pathname === "/dashboard"
@@ -78,7 +80,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={isQRModalOpen}
             tabIndex={0}
           >
-            <Code className={`text-lg ${isQRModalOpen ? "text-blue-500" : "text-gray-500"}`} />
+            <Code
+              className={`text-lg ${isQRModalOpen ? "text-blue-500" : "text-gray-500"}`}
+            />
             <span
               className={`text-xs mt-1 ${
                 isQRModalOpen ? "text-blue-500" : "text-gray-500"
@@ -102,7 +106,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={location.pathname === "/settings"}
             tabIndex={0}
           >
-            <Settings className={`text-lg ${location.pathname === "/settings" ? "text-blue-500" : "text-gray-500"}`} />
+            <Settings
+              className={`text-lg ${location.pathname === "/settings" ? "text-blue-500" : "text-gray-500"}`}
+            />
             <span
               className={`text-xs mt-1 ${
                 location.pathname === "/settings"
@@ -128,7 +134,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={location.pathname === "/contacts"}
             tabIndex={0}
           >
-            <Book className={`text-lg ${location.pathname === "/contacts" ? "text-blue-500" : "text-gray-500"}`} />
+            <Book
+              className={`text-lg ${location.pathname === "/contacts" ? "text-blue-500" : "text-gray-500"}`}
+            />
             <span
               className={`text-xs mt-1 ${
                 location.pathname === "/contacts"
@@ -152,7 +160,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             aria-selected={isAgentModalOpen}
             tabIndex={0}
           >
-            <User className={`text-lg ${isAgentModalOpen ? "text-blue-500" : "text-gray-500"}`} />
+            <User
+              className={`text-lg ${isAgentModalOpen ? "text-blue-500" : "text-gray-500"}`}
+            />
             <span
               className={`text-xs mt-1 ${
                 isAgentModalOpen ? "text-blue-500" : "text-gray-500"
