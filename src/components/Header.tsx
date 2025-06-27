@@ -68,10 +68,7 @@ const InstallPrompt: React.FC = () => {
                     className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
                     aria-label="Dismiss"
                   >
-                    <X
-                      size={20}
-                      className="w-6 h-6"
-                    />
+                    <X size={20} className="w-6 h-6" />
                   </button>
                 </div>
               </div>
