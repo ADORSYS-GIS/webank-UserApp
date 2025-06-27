@@ -7,6 +7,15 @@
     "module": "ESNext",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/app/*"],
+      "@features/*": ["src/features/*"],
+      "@shared/*": ["src/shared/*"],
+      "@services/*": ["src/services/*"],
+      "@state/*": ["src/state/*"],
+      "@assets/*": ["src/assets/*"]
+    },
 
     /* Bundler mode */
     "moduleResolution": "node",
@@ -26,6 +35,9 @@
   "include": [
     "src",
     "node_modules/vitest/globals.d.ts"
+  ],
+  "exclude": [
+    "vite.config.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
