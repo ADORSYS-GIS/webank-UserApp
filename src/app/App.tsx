@@ -78,14 +78,14 @@ const App: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { showReminder, handleClose } = useKYCReminder();
-  const { accountId, accountCert } = useAccountStore();
+  const { accountId, onboardingCompleted } = useAccountStore();
+
   // Check if onboarding is completed
   useEffect(() => {
-    const onboardingCompleted = localStorage.getItem("onboardingCompleted");
-    if (onboardingCompleted === "true" && location.pathname === "/onboarding") {
+    if (onboardingCompleted && location.pathname === "/onboarding") {
       navigate("/dashboard");
     }
-  }, [location.pathname, navigate]);
+  }, [onboardingCompleted, location.pathname, navigate]);
 
   // Close menu whenever route changes
   useEffect(() => {
@@ -96,14 +96,6 @@ const App: React.FC = () => {
     setIsMenuOpen((prev) => !prev);
   };
 
-  let homePageElement;
-
-  if (accountId) {
-    homePageElement = <DashboardPage />;
-  } else {
-    homePageElement = <OnboardingPage />;
-  }
-
   return (
     <Layout>
       <KycCertChecker />
@@ -112,12 +104,15 @@ const App: React.FC = () => {
       <div className={`${accountId ? "pb-16" : ""}`}>
         {/* Main Content Routes */}
         <Routes>
-          <Route path="/" element={homePageElement} />
+          {/* Public Routes */}
+          <Route
+            path="/"
+            element={accountId ? <DashboardPage /> : <OnboardingPage />}
+          />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/loading" element={<AccountLoadingPage />} />
-          <Route path="/phone/verification" element={<PhoneVerification />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/phone" element={<PhoneInput />} />
+          <Route path="/phone/verification" element={<PhoneVerification />} />
           <Route path="/onboarding" element={<OnboardingFlow />} />
           <Route path="/qr-scan" element={<GeneralQRScannerPage />} />
           <Route path="/qr-scan/top-up" element={<TopUpQRScannerPage />} />
@@ -173,20 +168,9 @@ const App: React.FC = () => {
       {accountId &&
         !["/onboarding", "/phone-input", "/phone-verification"].includes(
           location.pathname,
-        ) && (
-          <BottomNavigation
-            accountId={accountId || ""}
-            accountCert={accountCert || ""}
-            toggleMenu={toggleMenu}
-          />
-        )}
+        ) && <BottomNavigation toggleMenu={toggleMenu} />}
 
-      <BottomSheet
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        accountId={accountId || ""}
-        accountCert={accountCert || ""}
-      />
+      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
       {/* KYC Reminder Popup */}
       {showReminder && <KYCReminderPopup onClose={handleClose} />}

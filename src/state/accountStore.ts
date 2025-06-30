@@ -9,6 +9,7 @@ interface AccountState {
   kycCert: string | null;
   emailStatus: "APPROVED" | null;
   phoneStatus: "APPROVED" | null;
+  onboardingCompleted: boolean;
 }
 
 interface AccountActions {
@@ -21,6 +22,7 @@ interface AccountActions {
   setKycCert: (kycCert: string) => void;
   setEmailStatus: (emailStatus: "APPROVED") => void;
   setPhoneStatus: (phoneStatus: "APPROVED") => void;
+  setOnboardingCompleted: (completed: boolean) => void;
   clearAccount: () => void;
 }
 
@@ -37,6 +39,7 @@ export const useAccountStore = create<AccountStore>()(
       kycCert: null,
       emailStatus: null,
       phoneStatus: null,
+      onboardingCompleted: false,
 
       // Actions
       setAccountId: (accountId) => set({ accountId }),
@@ -46,6 +49,8 @@ export const useAccountStore = create<AccountStore>()(
       setKycCert: (kycCert) => set({ kycCert, status: "APPROVED" }),
       setEmailStatus: (emailStatus) => set({ emailStatus }),
       setPhoneStatus: (phoneStatus) => set({ phoneStatus }),
+      setOnboardingCompleted: (completed) =>
+        set({ onboardingCompleted: completed }),
       clearAccount: () =>
         set({
           accountId: null,
@@ -55,6 +60,7 @@ export const useAccountStore = create<AccountStore>()(
           kycCert: null,
           emailStatus: null,
           phoneStatus: null,
+          onboardingCompleted: false,
         }),
     }),
     {

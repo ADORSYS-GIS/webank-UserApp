@@ -132,19 +132,10 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-        toggleMenu={toggleMenu}
-      />
+      <BottomNavigation toggleMenu={toggleMenu} />
 
       {/* Bottom Sheet Menu */}
-      <BottomSheet
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-      />
+      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </div>
   );
 };

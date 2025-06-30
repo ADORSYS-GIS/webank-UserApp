@@ -22,11 +22,12 @@ const DocumentImages = () => {
   });
   const [activePopup, setActivePopup] = useState<ActivePopup>(null);
 
-  const { accountId, accountCert, setDocumentStatus } = useAccountStore();
+  const { setDocumentStatus } = useAccountStore();
   const navigate = useNavigate();
 
   const handleSubmitDocuments = async () => {
     try {
+      const { accountId, accountCert } = useAccountStore.getState();
       if (!accountCert || !accountId) {
         toast.error("Account information is missing.");
         navigate("/guidelines");
