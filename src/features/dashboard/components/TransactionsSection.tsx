@@ -10,12 +10,7 @@ import {
   faChevronRight as faChevronRightIcon,
 } from "@fortawesome/free-solid-svg-icons";
 
-interface Transaction {
-  id: number;
-  date: number;
-  amount: string;
-  title: string;
-}
+import { Transaction } from '../types/transaction';
 
 interface TransactionsSectionProps {
   transactionsVisible: boolean;
@@ -116,19 +111,17 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
                   <div className="flex items-center flex-1">
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                        transaction.amount.startsWith("-")
-                          ? "bg-red-50"
-                          : "bg-blue-100"
+                        String(transaction.amount).startsWith("-") ? "bg-red-50" : "bg-blue-100"
                       }`}
                     >
                       <FontAwesomeIcon
                         icon={
-                          transaction.amount.startsWith("-")
+                          String(transaction.amount).startsWith("-")
                             ? faArrowUp
                             : faArrowDown
                         }
                         className={`text-sm ${
-                          transaction.amount.startsWith("-")
+                          String(transaction.amount).startsWith("-")
                             ? "text-red-500"
                             : "text-teal-500"
                         }`}
@@ -145,12 +138,10 @@ const TransactionsSection: React.FC<TransactionsSectionProps> = ({
                   </div>
                   <span
                     className={`text-sm min-w-[100px] text-right ${
-                      transaction.amount.startsWith("-")
-                        ? "text-red-500"
-                        : "text-teal-500"
+                      String(transaction.amount).startsWith("-") ? "text-red-500" : "text-teal-500"
                     }`}
                   >
-                    {formatAmount(transaction.amount)}
+                    {formatAmount(String(transaction.amount))}
                   </span>
                 </div>
               ))}

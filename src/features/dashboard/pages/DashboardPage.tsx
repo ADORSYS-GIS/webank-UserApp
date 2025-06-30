@@ -1,10 +1,10 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
+import React from "react";
 import { toast } from "sonner";
-import {
-  RequestToGetBalance,
-  RequestToGetTransactionHistory,
-} from "@services/keyManagement/requestService";
+import { useMenuToggle } from "../hooks/useMenuToggle";
+import { useBalance } from "../hooks/useBalance";
+import { useTransactions } from "../hooks/useTransactions";
+
 import Header1 from "@shared/components/Header1";
 import BalanceCard from "../components/BalanceCard";
 import TransactionsSection from "../components/TransactionsSection";
@@ -17,81 +17,14 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  // Bottom sheet state
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Custom hooks for state and business logic
+  const { isMenuOpen, toggleMenu } = useMenuToggle();
+  const accountId = useSelector((state: RootState) => state.account.accountId) ?? undefined;
+  const accountCert = useSelector((state: RootState) => state.account.accountCert) ?? undefined;
+  const { balance, balanceVisible, viewBalance } = useBalance(accountId, accountCert);
+  const { transactionsData, transactionsVisible, loadingTransactions, fetchTransactions, setTransactionsVisible } = useTransactions(accountId, accountCert);
 
-  const [balanceVisible, setBalanceVisible] = useState(false);
-  const [balance, setBalance] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [transactionsData, setTransactionsData] = useState<any[]>([]);
-  const [transactionsVisible, setTransactionsVisible] = useState(false);
-  const [loadingTransactions, setLoadingTransactions] = useState(false);
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-
-  // Toggle menu
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-  };
-
-  const viewBalance = async () => {
-    if (balanceVisible) {
-      setBalanceVisible(false);
-      return;
-    }
-    try {
-      if (!accountId || !accountCert) {
-        toast.error("Account information is missing.");
-        return;
-      }
-      const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
-      setBalance(fetchedBalance);
-      setBalanceVisible(true);
-    } catch (error) {
-      console.error("Error retrieving balance:", error);
-      toast.error("Failed to retrieve balance. Please try again.");
-    }
-  };
-
-  // Fetch transactions function
-  const fetchTransactions = async () => {
-    if (!accountId || !accountCert) {
-      toast.error("Account information is missing.");
-      return;
-    }
-    try {
-      setLoadingTransactions(true);
-      const transactionsResponse = await RequestToGetTransactionHistory(
-        accountId,
-        accountCert,
-      );
-
-      let transactions;
-      if (typeof transactionsResponse === "string") {
-        const trimmedResponse = transactionsResponse.trim();
-        const endIndex = trimmedResponse.lastIndexOf("]");
-        if (endIndex !== -1) {
-          const validJson = trimmedResponse.substring(0, endIndex + 1);
-          transactions = JSON.parse(validJson);
-        } else {
-          transactions = JSON.parse(trimmedResponse);
-        }
-      } else {
-        transactions = transactionsResponse;
-      }
-
-      setTransactionsData(transactions);
-      setTransactionsVisible(true);
-    } catch (error) {
-      console.error("Error loading transactions:", error);
-      toast.error("Failed to load transactions.");
-    } finally {
-      setLoadingTransactions(false);
-    }
-  };
 
   // Handler for notification clicks
   const handleNotificationClick = () => {
@@ -145,7 +78,7 @@ const Dashboard: React.FC = () => {
       {/* Bottom Sheet Menu */}
       <BottomSheet
         isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
+        onClose={toggleMenu}
         accountId={accountId ?? ""}
         accountCert={accountCert ?? ""}
       />
