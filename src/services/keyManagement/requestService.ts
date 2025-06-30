@@ -10,6 +10,22 @@ import {
   validateOTP,
   getTransactionHistory,
   TopupAccount,
+  WithdrawOffline,
+  getOtps,
+  sendEmailOTP,
+  verifyEmailCode,
+  storeKYCInfo,
+  getUserLocation,
+  UpdateKycStatus,
+  getKycCert,
+  submitRecoveryToken,
+  recoverAccountCert,
+  GetKycRecordsByStatusPending,
+  requestToGetRecoveryToken,
+  verifyRecoveryFields,
+  storeKycDocument,
+  GetKycRecordsBySearch,
+  agentTopup,
 } from "./apiService";
 
 let Key: string | null = null;
@@ -32,7 +48,7 @@ export async function KeyManagement() {
 
 export async function RequestToSendOTP(
   phoneNumber: string,
-  deviceCert: string | null,
+  accountJwt: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -41,13 +57,15 @@ export async function RequestToSendOTP(
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
-    deviceCert,
+    null,
+    null,
+    accountJwt,
+    null,
     null,
     null,
     phoneNumber,
   );
   console.log(jwtToken, "jwt token");
-  console.log(deviceCert, "device cert");
 
   return await sendOTP(phoneNumber, jwtToken, Key);
 }
@@ -55,11 +73,14 @@ export async function RequestToSendOTP(
 export async function RequestToSendNonce(): Promise<string> {
   const date = new Date();
   const timeStamp = date.toISOString();
-  console.log(timeStamp);
+  console.log(timeStamp, "timeStamp");
   const { publicKey, privateKey } = await KeyManagement();
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
+    null,
+    null,
+    null,
     null,
     null,
     null,
@@ -79,6 +100,9 @@ export const RequestToSendPowJWT = async (
     const jwtToken = await generateJWT(
       privateKey,
       publicKey,
+      null,
+      null,
+      null,
       null,
       null,
       null,
@@ -103,8 +127,7 @@ export const RequestToSendPowJWT = async (
 export async function RequestToValidateOTP(
   phoneNumber: string,
   otp: string,
-  otpHash: string,
-  deviceCert: string | null,
+  accountJwt: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -113,21 +136,21 @@ export async function RequestToValidateOTP(
   const jwtToken = await generateJWT(
     privateKey,
     publicKey,
-    deviceCert,
+    null,
+    null,
+    accountJwt,
+    null,
     null,
     null,
     phoneNumber,
     otp,
-    otpHash,
   );
   console.log(otp);
-  return await validateOTP(phoneNumber, otp, otpHash, jwtToken);
+  return await validateOTP(phoneNumber, otp, jwtToken);
 }
 
 export async function RequestToCreateBankAccount(
-  phoneNumber: string,
   deviceCert?: string | null,
-  phoneNumberCert?: string | null,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -137,13 +160,14 @@ export async function RequestToCreateBankAccount(
     privateKey,
     publicKey,
     deviceCert,
-    phoneNumberCert,
     null,
-    phoneNumber,
-    Key,
+    null,
+    null,
+    null,
+    null,
   );
 
-  return await createBankAccount(phoneNumber, Key, jwtToken);
+  return await createBankAccount(jwtToken);
 }
 
 export async function RequestToGetBalance(
@@ -160,6 +184,9 @@ export async function RequestToGetBalance(
     null,
     null,
     accountCert,
+    null,
+    null,
+    null,
     accountId,
   );
   console.log(jwtToken + "Account Cert!!!");
@@ -182,6 +209,9 @@ export async function RequestToGetTransactionHistory(
     null,
     null,
     accountCert,
+    null,
+    null,
+    null,
     accountId,
   );
   console.log(jwtToken + "Account Cert!!!");
@@ -194,7 +224,428 @@ export async function RequestToTopup(
   clientAccountId: string,
   amount: number,
   agentAccountId: string,
-  agentAccountCert?: string | null,
+  accountCert: string | null,
+  kycCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    kycCert,
+    null,
+    clientAccountId,
+    amount,
+    agentAccountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(clientAccountId + "Account ID !!!");
+  return await TopupAccount(clientAccountId, amount, agentAccountId, jwtToken);
+}
+
+// Request to Withdraw Offline.
+export async function RequestToWithdrawOffline(
+  clientAccountId: string,
+  amount: number,
+  agentAccountId: string,
+  accountCert?: string | null,
+  transactionJwt?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    transactionJwt,
+    null,
+    null,
+    clientAccountId,
+    amount,
+    agentAccountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(clientAccountId + "Account ID !!!");
+  console.log(agentAccountId + "AgentAccount ID !!!");
+  console.log(transactionJwt + "Signed Transaction");
+  return await WithdrawOffline(
+    clientAccountId,
+    amount,
+    agentAccountId,
+    jwtToken,
+  );
+}
+
+// Function to get otps for phonenumbers
+export async function RequestToGetOtps(
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getOtps(jwtToken);
+}
+
+//Request to send Email code
+export async function RequestToSendEmailOTP(
+  email: string,
+  accountCert: string | null,
+  accountId: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  Key = JSON.stringify(publicKey);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    email,
+    accountId,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  console.log(accountId + "Account ID !!!");
+  return await sendEmailOTP(email, accountId, jwtToken);
+}
+
+//Request to  Email code
+export async function RequestToVerifyEmailCode(
+  email: string,
+  otp: string,
+  accountId: string,
+  accountCert: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    email,
+    otp,
+    accountId,
+  );
+  return await verifyEmailCode(email, otp, accountId, jwtToken);
+}
+
+//Request to get user Location
+export async function RequestToGetUserLocation(
+  accountCert: string | null,
+  location: string,
+  accountId: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    location,
+    accountId,
+  );
+  return await getUserLocation(jwtToken, location, accountId);
+}
+
+// prettier-ignore
+export async function RequestToStoreKYCInfo( // NOSONAR
+
+  docNumber: string,
+  expiryDate: string,
+  accountCert: string | null,
+  accountId: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    docNumber,
+    expiryDate,
+    accountId,
+  );
+  return await storeKYCInfo(
+    docNumber,
+    expiryDate,
+    accountId,
+    jwtToken,
+  );
+}
+
+//Store Kyc doc
+export async function RequestToStoreKycDocument(
+  frontId: string,
+  backId: string,
+  selfieId: string,
+  taxId: string,
+  accountCert: string | null,
+  accountId: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    frontId,
+    backId,
+    selfieId,
+    taxId,
+    accountId,
+  );
+  return await storeKycDocument(
+    frontId,
+    backId,
+    selfieId,
+    taxId,
+    accountId,
+    jwtToken,
+  );
+}
+
+export async function RequestToGetPendingKycRecords(
+  accountCert: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  Key = JSON.stringify(publicKey);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+  );
+
+  console.log(jwtToken + "Account Cert!!!");
+  return await GetKycRecordsByStatusPending(jwtToken);
+}
+
+export async function RequestToGetKycRecordsBySearch(
+  docNumber: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+  Key = JSON.stringify(publicKey);
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    docNumber,
+  );
+
+  console.log(jwtToken + "Account Cert!!!");
+  return await GetKycRecordsBySearch(docNumber, jwtToken);
+}
+
+export async function RequestToUpdateKycStatus(
+  accountId: string,
+  docNumber: string,
+  expiryDate: string,
+  status: string,
+  accountCert: string | null,
+  reason: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    accountId,
+    docNumber,
+    expiryDate,
+    status,
+    reason,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await UpdateKycStatus(
+    accountId,
+    docNumber,
+    expiryDate,
+    status,
+    jwtToken,
+    reason,
+  );
+}
+
+export async function RequestToGetCert(
+  accountId: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  Key = JSON.stringify(publicKey);
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+  );
+  console.log(jwtToken + "Account Cert!!!");
+  return await getKycCert(accountId, jwtToken);
+}
+
+export async function RequestToGetRecoveryToken(
+  oldAccountId: string,
+  newAccountId: string,
+  accountCert?: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    null,
+    oldAccountId,
+    newAccountId,
+  );
+
+  return await requestToGetRecoveryToken(oldAccountId, newAccountId, jwtToken);
+}
+
+//Request to send account recovery token
+export async function RequestToSubmitRecoveryToken(
+  newAccountId: string,
+  recoveryToken: string,
+  accountCert: string | null,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    recoveryToken,
+    newAccountId,
+  );
+  console.log(jwtToken, "jwt token");
+
+  return await submitRecoveryToken(newAccountId, jwtToken);
+}
+export async function RequestToValidateRecoveryDetails(
+  oldAccountId: string,
+  docNumber: string,
+  expirationDate: string,
+  accountCert: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    accountCert,
+    null,
+    null,
+    oldAccountId,
+    docNumber,
+    expirationDate,
+  );
+  console.log(jwtToken, "jwt token");
+
+  return await verifyRecoveryFields(
+    jwtToken,
+    oldAccountId,
+    docNumber,
+    expirationDate,
+  );
+}
+//Request to get Account Cert
+export async function RequestToRecoverAccountCert(
+  accountId: string,
+): Promise<string> {
+  const { publicKey, privateKey } = await KeyManagement();
+
+  const jwtToken = await generateJWT(
+    privateKey,
+    publicKey,
+    null,
+    null,
+    null,
+    null,
+    null,
+    accountId,
+  );
+
+  return await recoverAccountCert(jwtToken, accountId);
+}
+
+export async function RequestToAgentTopup(
+  accountId: string,
+  amount: number,
+  agentAccountCert: string,
 ): Promise<string> {
   const { publicKey, privateKey } = await KeyManagement();
 
@@ -206,12 +657,12 @@ export async function RequestToTopup(
     null,
     null,
     agentAccountCert,
-    clientAccountId,
+    null,
+    null,
+    null,
+    accountId,
     amount,
-    agentAccountId,
   );
-  console.log(jwtToken + "Account Cert!!!");
-  console.log(clientAccountId + "Account ID !!!");
-  return await TopupAccount(clientAccountId, amount, agentAccountId, jwtToken);
+
+  return await agentTopup(accountId, amount, jwtToken);
 }
-export const getKey = () => Key;

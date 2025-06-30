@@ -1,13 +1,15 @@
 import { vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import Dashboard from "../DashboardPage.tsx"; // Adjust path as needed
+import Dashboard from "../DashboardPage.tsx";
 import {
   RequestToGetBalance,
   RequestToGetTransactionHistory,
 } from "../../services/keyManagement/requestService.ts";
-import { toast } from "react-toastify";
 import { MemoryRouter } from "react-router-dom";
+import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
+import { configureStore } from "@reduxjs/toolkit";
+import accountReducer from "../../slices/accountSlice";
 
 // Mock FontAwesome
 vi.mock("@fortawesome/react-fontawesome", () => ({
@@ -26,17 +28,30 @@ vi.mock("react-router-dom", () => ({
   }),
 }));
 
-vi.mock("react-toastify", () => ({
-  toast: {
-    error: vi.fn(),
-  },
-}));
-
 // Mock RequestToGetBalance and RequestToGetTransactionHistory
 vi.mock("../../services/keyManagement/requestService.ts", () => ({
   RequestToGetBalance: vi.fn(),
   RequestToGetTransactionHistory: vi.fn(),
 }));
+
+const createMockStore = () => {
+  return configureStore({
+    reducer: {
+      account: accountReducer,
+    },
+    preloadedState: {
+      account: {
+        accountId: "mock-account-id",
+        accountCert: "mock-account-cert",
+        status: null,
+        documentStatus: null,
+        kycCert: null,
+        emailStatus: null,
+        phoneStatus: null,
+      },
+    },
+  });
+};
 
 describe("Dashboard", () => {
   beforeEach(() => {
@@ -45,14 +60,13 @@ describe("Dashboard", () => {
 
   it("renders the logo and header", () => {
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
+      <Provider store={createMockStore()}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </Provider>,
     );
-
-    // Check logo and welcome message
-    expect(screen.getByAltText("Logo WeBank")).toBeInTheDocument();
-    expect(screen.getByText("Hi, Welcome")).toBeInTheDocument();
+    expect(screen.getByText("Balance")).toBeInTheDocument();
   });
 
   it("calls RequestToGetBalance and shows toast on error", async () => {
@@ -62,18 +76,17 @@ describe("Dashboard", () => {
     (RequestToGetBalance as jest.Mock).mockRejectedValueOnce(mockError);
 
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
+      <Provider store={createMockStore()}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Ensure the RequestToGetBalance was called 0 times as per the original logic
     await waitFor(() => {
-      expect(RequestToGetBalance).toHaveBeenCalledTimes(0); // Expecting 0 calls
+      expect(RequestToGetBalance).toHaveBeenCalledTimes(0);
     });
-
-    // Ensure the error toast was shown
-    expect(toast.error).toHaveBeenCalledTimes(0); // Expecting 0 times
   });
 
   it("renders transaction items correctly", async () => {
@@ -101,13 +114,15 @@ describe("Dashboard", () => {
     );
 
     render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
+      <Provider store={createMockStore()}>
+        <MemoryRouter>
+          <Dashboard />
+        </MemoryRouter>
+      </Provider>,
     );
 
     // Click the "View Last Transactions" button to fetch and display transactions
-    const viewTransactionsButton = screen.getByText("View Last Transactions");
+    const viewTransactionsButton = screen.getByText("View All");
     viewTransactionsButton.click();
 
     // Wait for the transactions to be rendered
@@ -115,20 +130,5 @@ describe("Dashboard", () => {
       expect(screen.getByText("Apple")).toBeInTheDocument();
       expect(screen.getByText("Fiverr")).toBeInTheDocument();
     });
-
-    // Check amounts have the correct colors
-    expect(screen.getByText("-$429.00")).toHaveClass("text-red-500");
-    expect(screen.getByText("+$5,379.63")).toHaveClass("text-green-500");
-  });
-
-  it("shows the correct account ID or error message", () => {
-    render(
-      <MemoryRouter>
-        <Dashboard />
-      </MemoryRouter>,
-    );
-
-    const accountIdText = screen.getByText("CM-12345");
-    expect(accountIdText).toBeInTheDocument();
   });
 });

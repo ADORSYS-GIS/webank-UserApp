@@ -6,18 +6,18 @@ export default defineConfig({
   base: './',
   build: {
     rollupOptions: {
-        output: {
-            format: 'es',
-            globals: {
-                react: 'React',
-                'react-dom': 'ReactDOM',
-            },
-            manualChunks(id) {
-                if (/projectEnvVariables.ts/.test(id)) {
-                    return 'projectEnvVariables'
-                }
-            },
+      output: {
+        format: 'es',
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
         },
+        manualChunks(id) {
+          if (/projectEnvVariables.ts/.test(id)) {
+            return 'projectEnvVariables';
+          }
+        },
+      },
     },
   },
   plugins: [
@@ -28,7 +28,6 @@ export default defineConfig({
       filename: 'sw.ts',
       registerType: 'autoUpdate',
       injectRegister: false,
-
       manifest: {
         name: 'Webank',
         short_name: 'Webank',
@@ -39,13 +38,28 @@ export default defineConfig({
         display_override: ['standalone', 'minimal-ui'],
         display: 'standalone',
         id: 'webank_user_app',
-
+        share_target: {
+          action: '/share-handler',
+          method: 'POST',
+          enctype: 'multipart/form-data',
+          params: {
+            title: 'title',
+            text: 'text',
+            url: 'url',
+            files: [
+              {
+                name: 'files',
+                accept: ['image/*', 'application/pdf', 'text/plain'],
+              },
+            ],
+          },
+        },
         icons: [
           {
             src: '/android-chrome-144x144.png',
             sizes: '144x144',
             type: 'image/png',
-            purpose: "any",
+            purpose: 'any maskable',
           },
           {
             src: '/android-chrome-192x192.png',
@@ -58,7 +72,6 @@ export default defineConfig({
             type: 'image/png',
           },
         ],
-
         screenshots: [
           {
             src: '/Screenshot_otp.png',
@@ -76,7 +89,6 @@ export default defineConfig({
             src: '/Screenshot_register.png',
             type: 'image/png',
             sizes: '472x923',
-
             form_factor: 'wide',
           },
           {
@@ -87,11 +99,9 @@ export default defineConfig({
           },
         ],
       },
-
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
       },
-
       devOptions: {
         enabled: true,
         navigateFallback: 'index.html',
@@ -100,4 +110,12 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      '/share-handler': {
+        target: 'http://localhost:5173',
+        rewrite: (path) => '/index.html',
+      },
+    },
+  },
 });

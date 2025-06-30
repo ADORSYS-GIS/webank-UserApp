@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import QRGenerator from "../Qrcode";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // Mock QRCodeCanvas component
 vi.mock("qrcode.react", () => ({
@@ -12,32 +13,51 @@ vi.mock("qrcode.react", () => ({
 // Mock useLocation hook from react-router-dom
 vi.mock("react-router-dom", () => ({
   useLocation: vi.fn(),
+  useNavigate: vi.fn(),
+}));
+
+// Mock useSelector to return a predefined accountId
+vi.mock("react-redux", () => ({
+  useSelector: vi.fn(),
 }));
 
 describe("QRGenerator Component", () => {
   const mockTotalAmount = "100";
   const mockAccountID = "12345ABC";
+  const mockTimeGenerated = Date.now() - 60000;
   const expectedQrValue = JSON.stringify({
-    accountId: mockAccountID, // Update based on new component key
+    accountId: mockAccountID,
     amount: mockTotalAmount,
+    timeGenerated: mockTimeGenerated,
   });
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Mock useLocation to return predefined state values
     (useLocation as jest.Mock).mockReturnValue({
-      state: { totalAmount: mockTotalAmount, accountId: mockAccountID },
+      state: { totalAmount: mockTotalAmount },
     });
+
+    vi.spyOn(Date, "now").mockReturnValue(mockTimeGenerated);
+
+    (useSelector as unknown as jest.Mock).mockReturnValue(mockAccountID);
   });
 
   it("renders QR code with correct values", () => {
     render(<QRGenerator />);
 
-    // Check if QRCodeCanvas is called with correct props
     expect(QRCodeCanvas).toHaveBeenCalledWith(
       expect.objectContaining({
         value: expectedQrValue,
+        level: "L",
+        size: 250,
+      }),
+      expect.anything(),
+    );
+    expect(QRCodeCanvas).toHaveBeenCalledWith(
+      expect.objectContaining({
+        value: expectedQrValue,
+        level: "L",
         size: 250,
       }),
       expect.anything(),
@@ -50,7 +70,7 @@ describe("QRGenerator Component", () => {
 
     render(<QRGenerator />);
 
-    const backButton = screen.getByRole("button", { name: /back to entry/i });
+    const backButton = screen.getByRole("button", { name: /back/i });
     fireEvent.click(backButton);
 
     expect(mockBack).toHaveBeenCalledOnce();
