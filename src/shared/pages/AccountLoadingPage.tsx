@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAccountId, setAccountCert } from "@state/accountSlice";
-import { RequestToCreateBankAccount } from "@services/keyManagement/requestService.ts";
+import { useAccountRegistrationServicePostApiRegistration } from "@openapi/generated/obs/queries/queries";
 import { toast } from "sonner";
 import useInitialization from "../hooks/useInitialization.ts";
 
@@ -16,53 +16,64 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { devCert, error } = useInitialization();
+  const accountRegistrationMutation =
+    useAccountRegistrationServicePostApiRegistration();
+  const hasRegistered = useRef(false);
 
   useEffect(() => {
-    const initializeAccount = async () => {
+    if (hasRegistered.current) return;
+    if (error) {
+      toast.error(error);
+      navigate("/");
+      return;
+    }
+    if (!devCert || typeof devCert !== "string" || devCert.trim() === "") {
+      // devCert not ready yet; wait for it
+      return;
+    }
+    // Defensive check: ensure devCert is in localStorage before registration
+    const devCertFromStorage = localStorage.getItem("devCert");
+    if (!devCertFromStorage || devCertFromStorage !== devCert) {
+      toast.error(
+        "Device certificate missing or out of sync. Please restart onboarding.",
+      );
+      console.error(
+        "devCert in state:",
+        devCert,
+        "devCert in localStorage:",
+        devCertFromStorage,
+      );
+      navigate("/");
+      return;
+    }
+    // Log for debugging
+    console.log("Proceeding to registration with devCert:", devCert);
+
+    const register = async () => {
       try {
-        if (error) {
-          throw new Error(error);
-        }
-
-        if (!devCert) {
-          return; // Wait for devCert to be available
-        }
-
-        // Create bank account using device certificate
-        const accountCreationResponse = await RequestToCreateBankAccount(
-          devCert, // Use the devCert from initialization
-        );
-
-        if (
-          accountCreationResponse.startsWith(
-            "Bank account successfully created.",
-          )
-        ) {
-          const accountId = accountCreationResponse.split("\n")[2];
-          const accountCert = accountCreationResponse.split("\n")[4];
-
-          // Store account details
+        hasRegistered.current = true;
+        const response = await accountRegistrationMutation.mutateAsync();
+        const accountId = response?.accountId ?? "";
+        const accountCert = response?.message?.split("\n")[4];
+        if (accountId && accountCert) {
           localStorage.setItem("accountId", accountId);
           localStorage.setItem("accountCert", accountCert);
           dispatch(setAccountId(accountId));
           dispatch(setAccountCert(accountCert));
-
-          // Redirect to dashboard
           navigate("/onboarding", {
             state: { accountId, accountCert },
           });
         } else {
           throw new Error("Account creation failed");
         }
-      } catch (error) {
-        console.error("Error during account creation:", error);
+      } catch (e) {
+        console.error("Account creation error:", e);
         toast.error("Account creation failed. Please try again.");
         navigate("/");
       }
     };
-
-    initializeAccount();
-  }, [navigate, dispatch, devCert, error]);
+    register();
+  }, [devCert, error, accountRegistrationMutation, dispatch, navigate]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">

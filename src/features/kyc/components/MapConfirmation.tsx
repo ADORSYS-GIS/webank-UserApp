@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { RequestToGetUserLocation } from "@services/keyManagement/requestService";
+// TODO: Migrate location verification to OpenAPI-generated TanStack Query hook once available.
+// import { useLocationServicePostApiLocationVerify } from 'openapi/generated/obs/queries/queries';
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
+import { RequestToGetUserLocation } from "@services/keyManagement/requestService";
 
 interface GeoLocation {
   lat: number;

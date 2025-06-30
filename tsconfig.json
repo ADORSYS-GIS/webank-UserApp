@@ -14,7 +14,9 @@
       "@shared/*": ["src/shared/*"],
       "@services/*": ["src/services/*"],
       "@state/*": ["src/state/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@openapi/*": ["src/openapi/*"],
+      "@openapi/generated/*": ["openapi/generated/*"]
     },
 
     /* Bundler mode */

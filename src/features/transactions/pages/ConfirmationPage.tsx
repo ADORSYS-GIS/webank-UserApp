@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  RequestToTopup,
-  RequestToWithdrawOffline,
-} from "@services/keyManagement/requestService";
+  useAccountTopUpServicePostApiAccountsAgentTopup,
+  useAccountWithdrawalServicePostApiAccountsWithdraw,
+} from "openapi/generated/obs/queries/queries";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -35,10 +33,6 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   onDismiss,
 }) => {
   const navigate = useNavigate();
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
   const [isVisible, setIsVisible] = useState(false);
 
   // Make sure data has a clientName property even if it wasn't passed
@@ -67,6 +61,8 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  const topUpMutation = useAccountTopUpServicePostApiAccountsAgentTopup();
 
   const handleTopUp = async () => {
     // Offline handling based on show type
@@ -104,15 +100,17 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
       }, 4000);
     } else {
       try {
-        const response = await RequestToTopup(
-          clientAccountId,
-          amount,
-          agentAccountId,
-          accountCert,
-          kycCert,
-        );
-        if (response?.includes("Success")) {
-          const transactionCert = response.replace(" Success", "");
+        const response = await topUpMutation.mutateAsync({
+          requestBody: {
+            accountId: clientAccountId,
+            amount,
+          },
+        });
+        if (
+          response?.status === "COMPLETED" ||
+          response?.status === "PENDING"
+        ) {
+          const transactionCert = response?.transactionId ?? "";
           toast.success("Account successfully topped up.");
           navigate("/success", {
             state: {
@@ -122,8 +120,8 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
               clientName, // Include client name in success state
             },
           });
-        } else if (response?.includes("Insufficient")) {
-          toast.error("Insufficient funds. Please add funds to your account.");
+        } else {
+          toast.error(response?.message ?? "Top up failed.");
         }
       } catch (error) {
         toast.error("An error occurred while processing the transaction");
@@ -132,17 +130,20 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     }
   };
 
+  const withdrawalMutation =
+    useAccountWithdrawalServicePostApiAccountsWithdraw();
+
   const handleOfflineWithdrawal = async () => {
     try {
-      const response = await RequestToWithdrawOffline(
-        clientAccountId,
-        amount,
-        agentAccountId,
-        accountCert,
-        transactionJwt,
-      );
-      if (response?.includes("Success")) {
-        const transactionCert = response.replace(" Success", "");
+      const response = await withdrawalMutation.mutateAsync({
+        requestBody: {
+          senderAccountId: agentAccountId,
+          recipientAccountId: clientAccountId,
+          amount,
+        },
+      });
+      if (response?.status === "COMPLETED" || response?.status === "PENDING") {
+        const transactionCert = response?.transactionId ?? "";
         toast.success("Account successfully topped up.");
         navigate("/success", {
           state: {
@@ -152,10 +153,12 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             clientName, // Include client name in success state
           },
         });
-      } else if (response?.includes("Insufficient")) {
+      } else if (response?.status === "INSUFFICIENT_FUNDS") {
         toast.error(
           "Insufficient funds. Please ask the client to add funds to his account.",
         );
+      } else {
+        toast.error(response?.message ?? "Withdrawal failed.");
       }
     } catch (error) {
       toast.error("An error occurred while processing the transaction");

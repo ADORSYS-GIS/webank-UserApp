@@ -5,12 +5,14 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { RequestToStoreKYCInfo } from "@services/keyManagement/requestService";
+// TODO: Migrate KYC info submission to OpenAPI-generated TanStack Query hook once available.
+// import { useKycServicePostApiKycInfo } from 'openapi/generated/obs/queries/queries';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setStatus } from "@state/accountSlice";
+import { RequestToStoreKYCInfo } from "@services/keyManagement/requestService";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
