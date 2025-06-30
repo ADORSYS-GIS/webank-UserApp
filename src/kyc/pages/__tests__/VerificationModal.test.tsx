@@ -31,7 +31,6 @@ describe("VerificationModal", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText("Verification Option")).toBeInTheDocument();
     expect(screen.getByText("ID CARD")).toBeInTheDocument();
     expect(screen.getByText("PASSPORT")).toBeInTheDocument();
     expect(screen.getByText("DRIVING LICENSE")).toBeInTheDocument();
@@ -44,8 +43,11 @@ describe("VerificationModal", () => {
       </MemoryRouter>,
     );
 
+    // Simulate a click on the close button
     fireEvent.click(screen.getByText("×"));
-    expect(screen.queryByText("Verification Option")).not.toBeInTheDocument();
+
+    // Assert that the onCloseMock function was called
+    expect(onCloseMock).toHaveBeenCalledTimes(1);
   });
 
   it("navigates to ID card verification on click", () => {

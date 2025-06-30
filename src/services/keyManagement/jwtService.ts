@@ -14,6 +14,7 @@ export async function generateJWT( //NOSONAR
   accountJwt?: string | null,
   transactionJwt?: string | null,
   kycJwt?: string | null,
+  recoveryJwt?: string | null,
   ...data: Array<string | number>
 ): Promise<string> {
   // Hash the payload
@@ -56,8 +57,12 @@ export async function generateJWT( //NOSONAR
     }
 
     if (kycJwt) {
-      header["kycJwt"] = kycJwt;
+      header["kycCertJwt"] = kycJwt;
     }
+    if (recoveryJwt) {
+      header["recoveryJwt"] = recoveryJwt;
+    }
+
 
     // Sign the JWT with the private key and custom header
     const jwt = await new jose.SignJWT(jwtPayload)

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { getProjectEnvVariables } from "../shared/projectEnvVariables.ts";
 
 const { envVariables } = getProjectEnvVariables();
@@ -13,7 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectTo = location.state?.redirectTo || "/teller";
+  const redirectTo = location.state?.redirectTo ?? "/teller";
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === PASSWORD) {
@@ -29,9 +29,30 @@ export default function Login() {
     }
   };
 
+  const close = () => {
+    navigate("/dashboard");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <button
+          onClick={close}
+          className="text-gray-600 hover:text-red-500 transition float-right"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Teller Login
         </h2>
@@ -61,7 +82,6 @@ export default function Login() {
           </button>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
 }

@@ -1,29 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import useDisableScroll from "../hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/Store";
+import { toast } from "sonner";
+import useDisableScroll from "../../hooks/useDisableScroll";
 
-const QRScannerPage: React.FC = () => {
+const GetNewAccountId: React.FC = () => {
   useDisableScroll();
-  const [amount, setAmount] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const isClientOffline = location.state?.isClientOffline;
-  const show = location.state?.show;
-
-  const agentAccountId = useSelector(
-    (state: RootState) => state.account.accountId,
-  );
-  const agentAccountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-
-  console.log("Agent ID:", agentAccountId, "Cert:", agentAccountCert);
+  const oldAccountId = location.state.oldAccountId;
 
   // Stop the scanner safely
   const stopScanner = async () => {
@@ -42,69 +29,21 @@ const QRScannerPage: React.FC = () => {
     (decodedText: string) => {
       try {
         const data = JSON.parse(decodedText);
-        if (data.accountId && data.amount && data.timeGenerated) {
-          setAmount(data.amount.toString());
-          setError(null);
+        if (data.accountId) {
           stopScanner();
-
-          // Validate QR code time (expires after 15 minutes)
-          const isExpired = Date.now() - data.timeGenerated > 15 * 60000;
-          if (isExpired) {
-            toast.error("QR Code expired. Please try again.");
-            return window.location.reload();
-          }
-
-          // Prevent self-transfers
-          if (data.accountId === agentAccountId) {
-            toast.error("Self-transfer not allowed.");
-            return window.location.reload();
-          }
-
-          const isOfflineTransaction = "signature" in data;
-          const signature = data.signature;
-
-          navigate("/confirmation", {
-            state: {
-              amount: data.amount,
-              clientAccountId: data.accountId,
-              agentAccountId,
-              agentAccountCert,
-              ...(isOfflineTransaction ? { transactionJwt: signature } : {}),
-              show,
-            },
-          });
-        } else if (show === "Transfer" || show === "Payment") {
-          setError(null);
-          stopScanner();
-          if (data.accountId === agentAccountId) {
-            toast.error("Self-transfer not allowed.");
-            return window.location.reload();
-          }
-          navigate("/top-up", {
-            state: {
-              clientAccountId: data.accountId,
-              agentAccountId,
-              agentAccountCert,
-              show,
-            },
+          navigate("/recovery/account-confirmation", {
+            state: { accountId: data.accountId, oldAccountId },
           });
         } else {
-          throw new Error("Invalid QR Code format.");
+          throw new Error("Invalid QR Code: Missing accountId");
         }
       } catch (err) {
-        setError("Failed to read QR code. Please try again.");
+        console.error("Error decoding QR code:", err);
+        setError("Failed to read recovery QR code. Please try again.");
         toast.error("Invalid QR code. Try again.");
       }
     },
-    [agentAccountId, navigate, agentAccountCert, show],
-  );
-
-  // Process decoded text immediately without delay
-  const handleScanDecodedText = useCallback(
-    (decodedText: string) => {
-      handleDecodedText(decodedText);
-    },
-    [handleDecodedText],
+    [navigate, oldAccountId],
   );
 
   const handleScanError = useCallback((errorMessage: string) => {
@@ -125,10 +64,11 @@ const QRScannerPage: React.FC = () => {
               aspectRatio: 1.0,
               disableFlip: true,
             },
-            handleScanDecodedText,
+            handleDecodedText,
             handleScanError,
           );
         } catch (err) {
+          console.error("Error starting scanner:", err);
           setError("Unable to access camera. Please allow camera permissions.");
           toast.error("Camera access denied. Enable permissions.");
         }
@@ -140,7 +80,7 @@ const QRScannerPage: React.FC = () => {
     return () => {
       stopScanner();
     };
-  }, [handleScanDecodedText, handleScanError]);
+  }, [handleDecodedText, handleScanError]);
 
   // Handle file upload for QR code scanning
   const handleFileUpload = async (
@@ -160,6 +100,7 @@ const QRScannerPage: React.FC = () => {
         const result = await qrScanner.scanFile(file, false);
         handleDecodedText(result);
       } catch (err) {
+        console.error("Error reading QR code from image:", err);
         setError("Failed to read QR code from image. Please try again.");
         toast.error("QR code scanning failed. Try another image.");
       }
@@ -170,7 +111,7 @@ const QRScannerPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center bg-white p-4 relative">
       <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md text-center space-y-6">
         <h2 className="text-2xl font-bold text-gray-800">
-          {isClientOffline ? "Scan Client QR Code" : "Scan Agent QR Code"}
+          Scan Recovery QR Code
         </h2>
 
         {/* Scanner Container with Frame */}
@@ -185,7 +126,7 @@ const QRScannerPage: React.FC = () => {
 
         {/* Action Buttons */}
         <label className="block w-full max-w-[280px] mx-auto bg-blue-600 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors">
-          Upload QR Image{" "}
+          <span>Upload QR Image</span>
           <input
             type="file"
             accept="image/*"
@@ -194,20 +135,17 @@ const QRScannerPage: React.FC = () => {
           />
         </label>
 
-        {!amount && (
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Cancel
-          </button>
-        )}
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Cancel
+        </button>
 
         {error && <p className="text-red-600 font-medium">{error}</p>}
       </div>
-      <ToastContainer />
     </div>
   );
 };
 
-export default QRScannerPage;
+export default GetNewAccountId;

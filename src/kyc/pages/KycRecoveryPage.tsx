@@ -2,403 +2,356 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/Store";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { FiArrowLeft } from "react-icons/fi";
 import {
-  FiUser,
-  FiMail,
-  FiMapPin,
-  FiBriefcase,
-  FiClock,
-  FiCreditCard,
-  FiCalendar,
-  FiMap,
-  FiDownload,
-  FiX,
-  FiArrowLeft,
-} from "react-icons/fi";
-import { RequestToGetKycRecordsBySearch } from "../../services/keyManagement/requestService";
-
-interface DocumentSet {
-  FrontID: string;
-  BackID: string;
-  Selfie: string;
-  TaxDocument: string;
-}
-
-interface UserInfo {
-  fullName: string;
-  profession: string;
-  idNumber: string;
-  dob: string;
-  region: string;
-  expirationDate: string;
-  location: string;
-  email: string;
-}
+  RequestToGetKycRecordsBySearch,
+  RequestToValidateRecoveryDetails,
+} from "../../services/keyManagement/requestService";
+import { ImageModal } from "../components/ImageModal";
+import { DocumentCard } from "../components/DocumentCard";
 
 interface UserKYC {
   id: string;
-  oldAccountId?: string; // Sensitive data not displayed in UI
-  documents: DocumentSet;
-  info: UserInfo;
+  oldAccountId: string;
+  docNumber?: string;
+  expirationDate?: string;
+  location: string;
+  email: string;
+  status: string;
+  frontID?: string;
+  backID?: string;
+  selfie?: string;
+  taxDocument?: string;
 }
-
-interface ImageModalProps {
-  selectedImage: string | null;
-  onClose: () => void;
-}
-
-const ImageModal = ({ selectedImage, onClose }: ImageModalProps) => {
-  if (!selectedImage) return null;
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h3 className="text-lg font-semibold">Document Preview</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 p-2"
-            aria-label="Close modal"
-          >
-            <FiX className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="p-4 overflow-auto">
-          <img
-            src={selectedImage}
-            alt="Enlarged document"
-            className="max-w-full max-h-[75vh] object-contain mx-auto"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const DocumentCard = ({
-  title,
-  url,
-  type,
-  onImageClick,
-}: {
-  title: string;
-  url: string;
-  type: "image" | "pdf";
-  onImageClick?: (url: string) => void;
-}) => {
-  const handleDownload = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!url) return;
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute(
-      "download",
-      `${title}_${Date.now()}.${type === "image" ? "jpg" : "pdf"}`,
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const handleClick = () => {
-    if (url && onImageClick) {
-      onImageClick(url);
-    }
-  };
-
-  return (
-    <button
-      className="w-full bg-gray-50 rounded-lg p-4 flex flex-col cursor-pointer text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      onClick={handleClick}
-      aria-label={`View ${title} document`}
-      type="button"
-    >
-      <div className="flex justify-between items-center mb-2 w-full">
-        <p className="text-sm font-medium text-gray-700">{title}</p>
-        <a
-          href={url}
-          onClick={handleDownload}
-          className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200"
-          title="Download document"
-          aria-label={`Download ${title}`}
-          download
-        >
-          <FiDownload className="w-4 h-4" />
-        </a>
-      </div>
-      <div className="relative flex-1">
-        {type === "image" ? (
-          <img
-            src={url}
-            alt={title}
-            className="w-full h-full object-contain rounded-md bg-white"
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-white rounded-md p-2">
-            <span className="text-blue-600 mb-2">PDF Document</span>
-            <a
-              href={url}
-              download
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-              aria-label={`Download ${title} PDF`}
-            >
-              Download PDF
-            </a>
-          </div>
-        )}
-      </div>
-    </button>
-  );
-};
-
-const InfoRow = ({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) => (
-  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-    <div className="flex items-center gap-2">
-      <span className="text-gray-400">{icon}</span>
-      <span className="text-sm text-gray-600">{label}</span>
-    </div>
-    <span className="text-sm font-medium text-gray-900">{value || "N/A"}</span>
-  </div>
-);
 
 export default function RecoveryDashboard() {
   const accountCert = useSelector(
     (state: RootState) => state.account.accountCert,
   );
-  const [user, setUser] = useState<UserKYC | null>(null);
+  const [foundRecord, setFoundRecord] = useState<UserKYC | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    docNumber: "",
+    expirationDate: "",
+  });
   const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  // Helper to pick badge styles
+  const getStatusStyles = (status: string) => {
+    switch (status.toUpperCase()) {
+      case "APPROVED":
+        return "bg-emerald-100 text-emerald-800 ring-emerald-300";
+      case "PENDING":
+        return "bg-amber-100 text-amber-800 ring-amber-300";
+      default:
+        return "bg-rose-100 text-rose-800 ring-rose-300";
+    }
+  };
+
+  // Check if recovery is allowed based on status
+  const isRecoveryAllowed = () => {
+    return foundRecord && foundRecord.status.toUpperCase() === "APPROVED";
+  };
+
+  // Get status message for disabled button
+  const getStatusMessage = () => {
+    if (foundRecord) {
+      if (foundRecord.status.toUpperCase() === "PENDING") {
+        return "Recovery not available for pending records";
+      } else if (foundRecord.status.toUpperCase() === "REJECTED") {
+        return "Recovery not available for rejected records";
+      }
+    }
+    return "Not Available";
+  };
+
+  /** Step1: search by document ID */
   const handleSearch = async () => {
+    if (!searchTerm.trim()) {
+      toast.error("Please enter a document number");
+      return;
+    }
+    if (!accountCert) {
+      toast.error("Account authentication missing");
+      return;
+    }
     try {
       setLoading(true);
-
-      if (!accountCert) {
-        toast.error("Account authentication missing");
-        return;
-      }
+      setFoundRecord(null);
 
       const response = await RequestToGetKycRecordsBySearch(
         searchTerm,
         accountCert,
       );
-      console.log("test", response);
+      const parsed = Array.isArray(response)
+        ? response
+        : JSON.parse(response ?? "[]");
 
-      const parsedInfo = parseResponse(response);
-      if (parsedInfo.length === 0) {
-        toast.error("No user found with the provided document number");
+      if (!parsed.length) {
+        toast.info("No user found with the provided document number");
         return;
       }
 
-      const userInfo = parsedInfo[0];
-      const userKYC = createUserKYC(userInfo);
-      setUser(userKYC);
-    } catch (error) {
-      handleError(error);
+      const info = parsed[0];
+      setFoundRecord({
+        id: info.id ?? info.documentUniqueId,
+        oldAccountId: info.accountId,
+        docNumber: info.idNumber ?? info.documentUniqueId,
+        expirationDate: info.expirationDate,
+        location: info.location ?? "N/A",
+        email: info.email ?? "N/A",
+        status: info.status ?? "PENDING",
+        frontID: info.frontID ?? "",
+        backID: info.backID ?? "",
+        selfie: info.selfie ?? "",
+        taxDocument: info.taxDocument ?? "",
+      });
+      setFormData({ docNumber: "", expirationDate: "" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Search failed");
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper function to parse the response
-  const parseResponse = (response: any): any[] => {
-    return Array.isArray(response) ? response : JSON.parse(response || "[]");
+  /** Step2: validate docNumber + expirationDate only */
+  const handleContinueRecovery = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.docNumber || !formData.expirationDate) {
+      toast.error("Please complete all fields");
+      return;
+    }
+    if (!accountCert || !foundRecord) {
+      toast.error("Unexpected error, please start over");
+      return;
+    }
+    try {
+      setLoading(true);
+      const result = await RequestToValidateRecoveryDetails(
+        foundRecord.oldAccountId,
+        formData.docNumber,
+        formData.expirationDate,
+        accountCert,
+      );
+      if (result.startsWith("Failed")) {
+        toast.error("Validation failed, details do not match");
+        return;
+      }
+      navigate("/recovery/recovery-scanner", {
+        state: { oldAccountId: foundRecord.oldAccountId },
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Validation request failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Helper function to create a UserKYC object
-  const createUserKYC = (userInfo: any): UserKYC => {
-    const { frontID, backID, selfie, taxDocument, accountId } = userInfo;
-
-    return {
-      id: userInfo.id,
-      oldAccountId: accountId || undefined,
-      documents: {
-        FrontID: frontID || "",
-        BackID: backID || "",
-        Selfie: selfie || "",
-        TaxDocument: taxDocument || "",
-      },
-      info: {
-        fullName: userInfo.fullName || "",
-        profession: userInfo.profession || "",
-        idNumber: userInfo.idNumber || "",
-        dob: userInfo.dob || "",
-        region: userInfo.region || "",
-        expirationDate: userInfo.expirationDate || "",
-        location: userInfo.location || "N/A",
-        email: userInfo.email || "N/A",
-      },
-    };
-  };
-
-  // Helper function to handle errors
-  const handleError = (error: any) => {
-    toast.error("Failed to load user data");
-    console.error("Error:", error);
-  };
-
-  const handleContinueRecovery = () => {
-    const oldAccountId = user?.oldAccountId;
-    navigate("/next-page", {
-      state: { oldAccountId },
-    });
-  };
-
-  if (loading)
-    return <div className="p-8 text-center">Loading user data...</div>;
+  if (loading) {
+    return (
+      <div className="p-8 text-center text-gray-600">
+        {foundRecord ? "Validating details…" : "Searching…"}
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
-      <ToastContainer />
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="p-2 rounded-full hover:bg-gray-100 transition"
+        aria-label="Close form"
+      >
+        <FiArrowLeft className="w-6 h-6 text-gray-600" />
+      </button>
+
+      <div className="max-w-3xl mx-auto">
+        <h1
+          className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent
+            bg-gradient-to-r from-blue-600 to-cyan-500 mb-8 text-center drop-shadow-sm"
+        >
           Recovery Process
         </h1>
-        <div className="mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
-            <input
-              type="text"
-              placeholder="Enter Document Number (ID, Passport, etc.)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-            />
-            <button
-              onClick={handleSearch}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
-            >
-              Search
-            </button>
-          </div>
-        </div>
-        {user ? (
-          <div>
-            <button
-              onClick={() => setUser(null)}
-              className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm sm:text-base"
-            >
-              <FiArrowLeft className="w-5 h-5" />
-              <span>Back to Search</span>
-            </button>
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                    {user.info.fullName}
-                  </h2>
-                  <p className="text-sm sm:text-base text-gray-500">
-                    {user.info.profession}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-                    Documents
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <DocumentCard
-                      title="Front ID"
-                      url={user.documents.FrontID}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Back ID"
-                      url={user.documents.BackID}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Selfie"
-                      url={user.documents.Selfie}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                    <DocumentCard
-                      title="Tax Document"
-                      url={user.documents.TaxDocument}
-                      type="image"
-                      onImageClick={setSelectedImage}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-                    Personal Information
-                  </h3>
-                  <div className="space-y-4">
-                    <InfoRow
-                      icon={<FiUser />}
-                      label="Full Name"
-                      value={user.info.fullName}
-                    />
-                    <InfoRow
-                      icon={<FiBriefcase />}
-                      label="Profession"
-                      value={user.info.profession}
-                    />
-                    <InfoRow
-                      icon={<FiCreditCard />}
-                      label="ID Number"
-                      value={user.info.idNumber}
-                    />
-                    <InfoRow
-                      icon={<FiCalendar />}
-                      label="Date of Birth"
-                      value={user.info.dob}
-                    />
-                    <InfoRow
-                      icon={<FiMapPin />}
-                      label="Region"
-                      value={user.info.region}
-                    />
-                    <InfoRow
-                      icon={<FiClock />}
-                      label="Expiration Date"
-                      value={user.info.expirationDate}
-                    />
-                    <InfoRow
-                      icon={<FiMap />}
-                      label="Location"
-                      value={user.info.location}
-                    />
-                    <InfoRow
-                      icon={<FiMail />}
-                      label="Email"
-                      value={user.info.email}
-                    />
-                  </div>
-                </div>
-              </div>
-              {/* Continue Recovery Process Button */}
-              <div className="mt-8 flex justify-end">
-                <button
-                  onClick={handleContinueRecovery}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Continue Recovery Process
-                </button>
-              </div>
+
+        {/* Step1: Search Form */}
+        {!foundRecord && (
+          <div className="bg-white rounded-3xl shadow-lg p-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4">
+              <input
+                type="text"
+                placeholder="Enter Document Number"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-6 py-4 border-2 border-gray-200 rounded-full
+                  focus:outline-none focus:ring-2 focus:ring-blue-500
+                  placeholder-gray-400 text-lg transition"
+              />
+              <button
+                onClick={handleSearch}
+                className="px-8 py-4 bg-blue-600 text-white rounded-full
+                  hover:bg-blue-700 transition-all shadow-md"
+              >
+                {loading ? "Searching..." : "Search"}
+              </button>
             </div>
           </div>
-        ) : (
-          <p className="text-center text-gray-600 text-sm sm:text-base">
-            Please search for a user to begin the recovery process.
-          </p>
+        )}
+
+        {/* Step2: Validation Form + Display of document details */}
+        {foundRecord && (
+          <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 space-y-6">
+            {/* Header row: Back button on left, Status badge on right */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => setFoundRecord(null)}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800
+                  p-2 rounded-full hover:bg-gray-100 transition"
+              >
+                <FiArrowLeft className="w-5 h-5" />
+                Back to Search
+              </button>
+              <span
+                className={`px-3 py-1 text-sm font-medium rounded-full 
+                  ${getStatusStyles(foundRecord.status)}`}
+              >
+                {foundRecord.status.toUpperCase()}
+              </span>
+            </div>
+            {/* Instruction */}
+            <p className="text-gray-700">
+              We found the following info for this customer. To proceed, please
+              re‑enter their Document Number and Expiration Date for
+              verification.
+            </p>
+
+            {/* Prominent Display Boxes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 border rounded-lg bg-blue-50">
+                <p className="text-sm text-gray-600">Location</p>
+                <p className="mt-1 font-medium text-gray-900">
+                  {foundRecord.location}
+                </p>
+              </div>
+              <div className="p-4 border rounded-lg bg-blue-50">
+                <p className="text-sm text-gray-600">Email</p>
+                <p className="mt-1 font-medium text-gray-900">
+                  {foundRecord.email}
+                </p>
+              </div>
+            </div>
+
+            {/* Display Documents */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-800">Documents</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <DocumentCard
+                  title="Front ID"
+                  url={foundRecord.frontID ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  title="Back ID"
+                  url={foundRecord.backID ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  title="Selfie"
+                  url={foundRecord.selfie ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+                <DocumentCard
+                  title="Tax Document"
+                  url={foundRecord.taxDocument ?? ""}
+                  type="image"
+                  onImageClick={setSelectedImage}
+                />
+              </div>
+            </div>
+
+            {/* Input Fields */}
+            <form onSubmit={handleContinueRecovery} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    htmlFor="docNumber"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Document Number
+                  </label>
+                  <input
+                    id="docNumber"
+                    type="text"
+                    value={formData.docNumber}
+                    onChange={(e) =>
+                      setFormData((f) => ({
+                        ...f,
+                        docNumber: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter document number"
+                    className="w-full px-6 py-4 border-2 border-gray-200
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500
+                      placeholder-gray-400 transition"
+                    required
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="expirationDate"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Expiration Date
+                  </label>
+                  <input
+                    id="expirationDate"
+                    type="date"
+                    value={formData.expirationDate}
+                    onChange={(e) =>
+                      setFormData((f) => ({
+                        ...f,
+                        expirationDate: e.target.value,
+                      }))
+                    }
+                    className="w-full px-6 py-4 border-2 border-gray-200
+                      rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500
+                      placeholder-gray-400 transition"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-center sm:justify-end">
+                {isRecoveryAllowed() ? (
+                  <button
+                    type="submit"
+                    className="px-10 py-4 bg-blue-600 text-white rounded-full 
+                      hover:bg-blue-700 transition-all shadow-md"
+                  >
+                    Continue Recovery Process
+                  </button>
+                ) : (
+                  <div
+                    className="px-10 py-4 bg-gray-300 text-white rounded-full 
+                      shadow-lg cursor-not-allowed"
+                  >
+                    {getStatusMessage()}
+                  </div>
+                )}
+              </div>
+            </form>
+          </div>
         )}
       </div>
+      {/* Image Modal Component */}
       <ImageModal
         selectedImage={selectedImage}
         onClose={() => setSelectedImage(null)}

@@ -9,10 +9,7 @@ export class PasswordManager {
   private static isAuthenticating = false;
 
   static async initializeDOMElements() {
-    console.log("🛠 Initializing required DOM elements...");
-
     if (!document.querySelector("#messageInput")) {
-      console.log("ℹ️ Creating message input field...");
       const input = document.createElement("input");
       input.type = "hidden";
       input.id = "messageInput";
@@ -20,61 +17,51 @@ export class PasswordManager {
     }
 
     if (!document.querySelector("#messageList")) {
-      console.log("ℹ️ Creating message list...");
       const list = document.createElement("ul");
       list.id = "messageList";
       list.style.display = "none";
       document.body.appendChild(list);
     }
-
-    if (!document.querySelector("#error")) {
-      console.log("ℹ️ Creating error display...");
-      const errorDiv = document.createElement("div");
-      errorDiv.id = "error";
-      errorDiv.style.color = "red";
-      errorDiv.style.display = "none";
-      document.body.appendChild(errorDiv);
-    }
   }
 
   static async getPassword(): Promise<string | undefined> {
-    console.log("🔍 Retrieving password...");
+    // Check sessionStorage for password
+    const storedPassword = sessionStorage.getItem("password");
+    if (storedPassword) {
+      return storedPassword;
+    }
+
     await this.initializeDOMElements();
 
     try {
       const messages = JSON.parse(localStorage.getItem("messages") ?? "[]");
-      console.log("📦 Stored messages found:", messages);
-
+      let password: string | undefined;
       if (messages.length > 0) {
-        console.log("🔑 Attempting authentication...");
-        return await this.attemptAuthentication();
+        password = await this.attemptAuthentication();
+      } else {
+        password = await this.handleNewUserRegistration();
       }
-      console.log("🚀 No stored messages. Initiating registration...");
-      return await this.handleNewUserRegistration();
+      // Store password in sessionStorage if retrieved or generated
+      if (password) {
+        sessionStorage.setItem("password", password);
+      }
+      return password;
     } catch (error) {
-      console.error("❌ Password retrieval error:", error);
+      console.error("Password retrieval error:", error);
       return undefined;
     }
   }
 
   private static async attemptAuthentication(): Promise<string | undefined> {
-    console.log("🔐 Attempting authentication...");
-    if (this.isAuthenticating) {
-      console.warn("⚠️ Authentication already in progress");
-      return undefined;
-    }
+    if (this.isAuthenticating) return undefined;
     this.isAuthenticating = true;
 
     try {
       await this.cancelPendingRequests();
       const decryptedPassword = await handleAuthenticate();
-      console.log(
-        "✅ Authentication successful. Decrypted password:",
-        decryptedPassword?.[0],
-      );
       return decryptedPassword?.[0];
     } catch (error) {
-      console.error("❌ Authentication failed:", error);
+      console.error("Authentication failed:", error);
       return undefined;
     } finally {
       this.isAuthenticating = false;
@@ -84,34 +71,21 @@ export class PasswordManager {
   private static async handleNewUserRegistration(): Promise<
     string | undefined
   > {
-    console.log("👤 Registering new user...");
-
-    if (this.isRegistering) {
-      console.warn("⚠️ Registration already in progress");
-      return undefined;
-    }
-
+    if (this.isRegistering) return undefined;
     this.isRegistering = true;
+
     try {
-      console.log("📝 Starting WebAuthn registration...");
       await this.cancelPendingRequests();
       await handleRegister();
-      console.log("✅ User successfully registered");
 
-      console.log("🔄 Attempting post-registration authentication...");
       const newPassword = this.generateSecurePassword();
-      console.log("🔑 Generated password (unencrypted):", newPassword);
-
-      console.log("💾 Storing password securely...");
       const input = document.querySelector<HTMLInputElement>("#messageInput")!;
       input.value = newPassword;
-      console.log("✅ Password stored successfully", newPassword);
       await saveMessage();
 
-      return this.attemptAuthentication();
+      return newPassword;
     } catch (error) {
-      console.error("❌ Registration failed:", error);
-      localStorage.removeItem("messages");
+      console.error("Registration failed:", error);
       return undefined;
     } finally {
       this.isRegistering = false;
@@ -119,7 +93,6 @@ export class PasswordManager {
   }
 
   private static async cancelPendingRequests(): Promise<void> {
-    console.log("⏳ Cancelling pending authentication requests...");
     try {
       const abortController = new AbortController();
       const challenge = new Uint8Array(32);
@@ -130,21 +103,14 @@ export class PasswordManager {
         signal: abortController.signal,
         publicKey: { challenge, allowCredentials: [] },
       });
-      console.log("✅ Pending requests cancelled");
     } catch (error) {
-      console.warn(
-        "⚠️ Expected abort error during request cancellation",
-        error,
-      );
+      // Expected abort error
     }
   }
 
   private static generateSecurePassword(): string {
-    console.log("🔐 Generating a secure password...");
     const array = new Uint8Array(32);
     window.crypto.getRandomValues(array);
-    const password = btoa(String.fromCharCode(...array)).slice(0, 32);
-    console.log("🔑 Secure password generated:", password);
-    return password;
+    return btoa(String.fromCharCode(...array)).slice(0, 32);
   }
 }

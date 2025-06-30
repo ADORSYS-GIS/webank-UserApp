@@ -124,16 +124,10 @@ export const validateOTP = async (
   }
 };
 
-export const createBankAccount = async (
-  fullPhoneNumber: string,
-  publicKey: string,
-  jwtToken: string,
-) => {
+export const createBankAccount = async (jwtToken: string) => {
   // Create the request object with both phone number and public key
-  const requestBody = {
-    publicKey: publicKey,
-    phoneNumber: fullPhoneNumber,
-  };
+  const requestBody = {};
+
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
@@ -150,7 +144,7 @@ export const createBankAccount = async (
     return response.data;
   } catch (error) {
     console.error("Error creating bank account:", error);
-    throw new Error("Incorrect OTPq");
+    throw new Error("Incorrect OTP");
   }
 };
 export const getTransactionHistory = async (
@@ -356,8 +350,6 @@ export const verifyEmailCode = async (
   }
 };
 
-//User Location
-// User Location API Call
 export const getUserLocation = async (
   jwtToken: string,
   location: string,
@@ -390,11 +382,7 @@ export const getUserLocation = async (
 
 // prettier-ignore
 export const storeKYCInfo = async (
-  fullName: string,
-  profession: string,
   docNumber: string,
-  dateOfBirth: string,
-  currentRegion: string,
   expiryDate: string,
   accountId: string,
   jwtToken: string,
@@ -405,11 +393,7 @@ export const storeKYCInfo = async (
   };
 
   const requestBody = {
-    fullName,
-    profession,
     idNumber: docNumber,
-    dateOfBirth,
-    currentRegion,
     expiryDate,
     accountId,
   };
@@ -461,59 +445,14 @@ export const storeKycDocument = async (
   }
 };
 
-export const getKycRecords = async (jwtToken: string) => {
-  const headers = {
-    Authorization: `Bearer ${jwtToken}`,
-  };
-  console.log(headers, "headers");
-
-  try {
-    // get the kyc records
-    const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/infos`,
-      { headers },
-    );
-
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error retrieving kyc records:", error);
-    throw new Error("Failed to retrieve kyc records");
-  }
-};
-
-export const GetKycRecordsBySearch = async (
-  docNumber: string,
-  jwtToken: string,
-) => {
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${jwtToken}`,
-  };
-
-  try {
-    const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/findId/${docNumber}`,
-      { headers },
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error retrieving KYC records:", error);
-    throw new Error("Failed to retrieve KYC records");
-  }
-};
-
-export const getKycDocuments = async (
-  publicKeyHash: string,
-  jwtToken: string,
-) => {
+export const getKycDocuments = async (accountId: string, jwtToken: string) => {
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${jwtToken}`,
   };
 
   const requestBody = {
-    publicKeyHash,
+    accountId,
   };
 
   try {
@@ -529,10 +468,52 @@ export const getKycDocuments = async (
   }
 };
 
+export const GetKycRecordsByStatusPending = async (jwtToken: string) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/pending`,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving KYC records:", error);
+    throw new Error("Failed to retrieve KYC records");
+  }
+};
+
+export const GetKycRecordsBySearch = async (
+  docNumber: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    const response = await axios.get(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/findById/${docNumber}`,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error retrieving KYC records:", error);
+    throw new Error("Failed to retrieve KYC records");
+  }
+};
+
 export const UpdateKycStatus = async (
-  publicKeyHash: string,
+  accountId: string,
+  docNumber: string,
+  expiryDate: string,
   status: string,
   jwtToken: string,
+  reason: string,
 ) => {
   // Update the KYC status for a particular account
   const headers = {
@@ -540,16 +521,25 @@ export const UpdateKycStatus = async (
     "Content-Type": "application/json",
   };
 
+  const requestBody = {
+    idNumber: docNumber,
+    expiryDate,
+    accountId,
+    ...(status === "REJECTED" && {
+      rejectionReason: reason,
+    }),
+  };
+
   try {
     const response = await axios.patch(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${publicKeyHash}/${status}`,
-      {},
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${accountId}/${status}`,
+      requestBody,
       { headers },
     );
 
     console.log(response.data);
     console.log(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${publicKeyHash}/${status}`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/${accountId}/${status}`,
       "url",
     );
 
@@ -560,7 +550,7 @@ export const UpdateKycStatus = async (
   }
 };
 
-export const getKycCert = async (jwtToken: string) => {
+export const getKycCert = async (accountId: string, jwtToken: string) => {
   const headers = {
     Authorization: `Bearer ${jwtToken}`,
   };
@@ -569,7 +559,7 @@ export const getKycCert = async (jwtToken: string) => {
   try {
     // get the kyc Cert
     const response = await axios.get(
-      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/cert`,
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/cert/${accountId}`,
       { headers },
     );
 
@@ -578,5 +568,150 @@ export const getKycCert = async (jwtToken: string) => {
   } catch (error) {
     console.error("Error retrieving kyc Cert:", error);
     throw new Error("Failed to retrieve kyc Cert");
+  }
+};
+
+export const requestToGetRecoveryToken = async (
+  oldAccountId: string,
+  newAccountId: string,
+  jwtToken: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  const requestBody = {
+    oldAccountId,
+    newAccountId,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/token`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error getting recovery token:", error);
+    throw new Error("Failed to get recovery token");
+  }
+};
+
+//Recovery AccountToken
+
+interface RecoveredTokens {
+  oldAccountId: string;
+  newKycCertificate: string;
+  message: string;
+}
+export const submitRecoveryToken = async (
+  newAccountId: string,
+  jwtToken: string,
+) => {
+  const requestBody = {
+    newAccountId,
+  };
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/recovery/validate`,
+      requestBody,
+      { headers },
+    );
+    const data: RecoveredTokens = response.data;
+    console.log(data, "data");
+    return data.oldAccountId + " " + data.newKycCertificate;
+  } catch (error) {
+    console.error("Error submitting recovery token:", error);
+    throw new Error("Failed to submit recovery token");
+  }
+};
+
+//Recover Account cert
+
+export const recoverAccountCert = async (
+  jwtToken: string,
+  accountId: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+  const requestBody = {
+    accountId,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/recovery`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error recovering account certificate:", error);
+    throw new Error("Failed to recover account certificate");
+  }
+};
+
+export const verifyRecoveryFields = async (
+  jwtToken: string,
+  accountId: string,
+  docNumber: string,
+  expiryDate: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${jwtToken}`,
+  };
+  const requestBody = {
+    idNumber: docNumber,
+    expiryDate,
+    accountId,
+  };
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_PRS_URL}/kyc/recovery/${accountId}`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying recovery fields:", error);
+    throw new Error("Failed to verify recovery fields");
+  }
+};
+
+export const agentTopup = async (
+  accountId: string,
+  amount: number,
+  agentAccountCert: string,
+) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${agentAccountCert}`,
+  };
+
+  const requestBody = {
+    accountId,
+    amount,
+  };
+
+  try {
+    const response = await axios.post(
+      `${envVariables.VITE_WEBANK_OBS_URL}/accounts/agent/topup`,
+      requestBody,
+      { headers },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error processing agent top-up:", error);
+    throw new Error("Failed to process agent top-up");
   }
 };

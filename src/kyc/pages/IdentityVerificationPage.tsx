@@ -1,150 +1,82 @@
-import { useState } from "react";
-import {
-  FaUserEdit,
-  FaIdCard,
-  FaCameraRetro,
-  FaFileInvoice,
-} from "react-icons/fa";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import FrontId from "./FrontId";
-import SelfieId from "./SelfieId";
-import BackId from "./BackId";
-import TaxpayerId from "./TaxpayerId";
-import VerificationModal from "../components/VerificationModal";
-import { RequestToStoreKycDocument } from "../../services/keyManagement/requestService.ts";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 import { RootState } from "../../store/Store.ts";
-import { toast, ToastContainer } from "react-toastify";
+import VerificationModal from "../components/VerificationModal";
+
+// Import FontAwesome instead of react-icons
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUserEdit,
+  faCloudUploadAlt,
+  faCheck,
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface VerificationStep {
   id: number;
   title: string;
   description: string;
-  icon: JSX.Element;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: any;
   onClick: () => void;
 }
 
-type FileOrBlob = File | Blob | null;
-
 export default function IdentityVerification() {
   const navigate = useNavigate();
-  const [showFrontIdPopup, setShowFrontIdPopup] = useState(false);
-  const [showBackIdPopup, setShowBackIdPopup] = useState(false);
-  const [showSelfieIdPopup, setShowSelfieIdPopup] = useState(false);
-  const [showTaxpayerIdPopup, setShowTaxpayerIdPopup] = useState(false);
   const [showVerificationModalPopup, setShowVerificationModalPopup] =
     useState(false);
+  const [personalInfoSubmitted, setPersonalInfoSubmitted] = useState(false);
+  const [documentsSubmitted, setDocumentsSubmitted] = useState(false);
 
-  // State to store each document file
-  const [frontIdFile, setFrontIdFile] = useState<FileOrBlob>(null);
-  const [backIdFile, setBackIdFile] = useState<FileOrBlob>(null);
-  const [selfieIdFile, setSelfieIdFile] = useState<FileOrBlob>(null);
-  const [taxpayerIdFile, setTaxpayerIdFile] = useState<FileOrBlob>(null);
+  const accountCert = useSelector(
+    (state: RootState) => state.account.accountCert,
+  );
+  const status = useSelector((state: RootState) => state.account.status);
+  const documentStatus = useSelector(
+    (state: RootState) => state.account.documentStatus,
+  );
+  const accountId = useSelector((state: RootState) => state.account.accountId);
+
+  // Check if both statuses are "PENDING" to enable the submit button
+  const bothStatusesPending =
+    status === "PENDING" && documentStatus === "PENDING";
+
+  useEffect(() => {
+    if (status === "PENDING") {
+      setPersonalInfoSubmitted(true);
+    }
+    if (documentStatus === "PENDING") {
+      setDocumentsSubmitted(true);
+    }
+  }, [documentStatus, status]);
 
   const steps: VerificationStep[] = [
     {
       id: 1,
       title: "Personal Info",
-      description: "Enter your address and ID details and upload",
-      icon: <FaUserEdit className="w-6 h-6 text-[#20B2AA]" />,
+      description: "Enter your address and ID details",
+      icon: faUserEdit,
       onClick: () => setShowVerificationModalPopup(true),
     },
     {
       id: 2,
-      title: "Upload your Front ID",
+      title: "Upload Documents",
       description:
-        "Take a clear photo of the front of your government-issued ID",
-      icon: <FaIdCard className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowFrontIdPopup(true),
-    },
-    {
-      id: 3,
-      title: "Upload your Back ID",
-      description:
-        "Take a clear photo of the back of your government-issued ID",
-      icon: (
-        <FaIdCard className="w-6 h-6 text-[#20B2AA] transform rotate-180" />
-      ),
-      onClick: () => setShowBackIdPopup(true),
-    },
-    {
-      id: 4,
-      title: "Take a photo with your ID",
-      description:
-        "Take a clear photo of you holding your government-issued ID",
-      icon: <FaCameraRetro className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowSelfieIdPopup(true),
-    },
-    {
-      id: 5,
-      title: "Tax Identifier Document",
-      description: "Upload your government-issued tax identification document.",
-      icon: <FaFileInvoice className="w-6 h-6 text-[#20B2AA]" />,
-      onClick: () => setShowTaxpayerIdPopup(true),
+        "Follow instructions to upload your ID and verification documents",
+      icon: faCloudUploadAlt,
+      onClick: () => navigate("/guidelines"),
     },
   ];
 
-  // Utility function to convert a file to a base64 string
-  const fileToBase64 = (file: File | Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result as string;
-        resolve(dataUrl);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-
-  // Handle submission to the backend
-  const handleSubmit = async () => {
-    // Check if all files are uploaded
-    if (!frontIdFile || !backIdFile || !selfieIdFile || !taxpayerIdFile) {
-      toast.warn("Please upload all required documents");
+  const handleSubmit = () => {
+    if (!accountCert || !accountId) {
+      toast.error("Account information is missing");
       return;
     }
-
-    try {
-      if (!accountCert || !accountId) {
-        console.error("Account certificate or account ID is missing");
-        return;
-      }
-      // Convert files to base64 strings
-      const frontIdBase64 = await fileToBase64(frontIdFile);
-      const backIdBase64 = await fileToBase64(backIdFile);
-      const selfieIdBase64 = await fileToBase64(selfieIdFile);
-      const taxpayerIdBase64 = await fileToBase64(taxpayerIdFile);
-
-      // Call RequestToStoreKycDocument with base64 strings
-      const response = await RequestToStoreKycDocument(
-        frontIdBase64,
-        backIdBase64,
-        selfieIdBase64,
-        taxpayerIdBase64,
-        accountCert,
-        accountId,
-      );
-
-      if (response === "KYC Document sent successfully and saved") {
-        toast.success("KYC Document submitted successfully");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
-      } else {
-        toast.error("Error submitting KYC, please try again later");
-      }
-    } catch (error) {
-      console.error("Error submitting KYC:", error);
-      toast.error("Error submitting KYC, please try again later");
-    }
+    navigate("/verification/location");
   };
 
   return (
@@ -154,11 +86,14 @@ export default function IdentityVerification() {
     >
       <button
         type="button"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/settings")}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
-        <FiChevronLeft className="w-6 h-6 text-gray-500 group-hover:text-[#20B2AA] transition-colors" />
-        <span className="text-gray-600 group-hover:text-[#20B2AA] transition-colors text-sm font-medium">
+        <FontAwesomeIcon
+          icon={faChevronLeft}
+          className="w-6 h-6 text-gray-500 group-hover:text-blue-500 transition-colors"
+        />
+        <span className="text-gray-600 group-hover:text-blue-500 transition-colors text-sm font-medium">
           Back
         </span>
       </button>
@@ -166,7 +101,7 @@ export default function IdentityVerification() {
       <div className="text-center space-y-4 mb-6 md:mb-8 pt-12">
         <div className="flex items-center justify-center">
           <img
-            src="https://img.icons8.com/?size=100&id=qs973rWPpRhU&format=png&color=20B2AA"
+            src="https://img.icons8.com/?size=100&id=qs973rWPpRhU&format=png&color=3B82F6"
             alt="Verification Icon"
             className="w-15 h-15 md:w-10 md:h-10 object-contain"
           />
@@ -180,76 +115,73 @@ export default function IdentityVerification() {
         </p>
       </div>
 
-      <div className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
-        {steps.map((step) => (
-          <button
-            key={step.id}
-            type="button"
-            onClick={step.onClick}
-            className="group p-4 md:p-6 rounded-xl border transition-all cursor-pointer
-                       flex items-center justify-between
-                       transform hover:scale-[1.005] hover:border-[#20B2AA]
-                       w-full text-left"
-          >
-            <div className="flex items-center space-x-4 flex-1 min-w-0">
-              <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100 flex-shrink-0">
-                {step.icon}
+      <div className="space-y-4 overflow-y-auto overflow-x-hidden pb-4 w-full">
+        {steps.map((step) => {
+          const isCompleted =
+            step.id === 1 ? personalInfoSubmitted : documentsSubmitted;
+          return (
+            <button
+              key={step.id}
+              type="button"
+              onClick={isCompleted ? undefined : step.onClick}
+              disabled={isCompleted}
+              className={`group p-4 md:p-6 rounded-xl border transition-all
+                         flex items-center justify-between
+                         w-full text-left ${
+                           isCompleted
+                             ? "bg-gray-50 cursor-not-allowed opacity-75"
+                             : "cursor-pointer hover:scale-[1.005] hover:border-blue-500"
+                         }`}
+            >
+              <div className="flex items-center space-x-4 flex-1 min-w-0">
+                <div className="w-12 h-12 rounded-lg flex-shrink-0 flex items-center justify-center bg-blue-100 text-blue-500">
+                  <FontAwesomeIcon icon={step.icon} className="text-xl" />
+                </div>
+                <div className="space-y-1 flex-1 min-w-0">
+                  <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
+                    {step.description}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1 flex-1 min-w-0">
-                <h3 className="text-base md:text-lg font-semibold tracking-tight text-gray-900 truncate">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600 text-sm md:text-base leading-snug line-clamp-2">
-                  {step.description}
-                </p>
-              </div>
-            </div>
-            <FiChevronRight className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
-          </button>
-        ))}
+              {isCompleted ? (
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  className="w-5 h-5 text-blue-500 flex-shrink-0"
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="w-6 h-6 flex-shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors"
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="pt-4 border-t border-gray-100 bg-white w-full">
+      <div className="pt-4 border-gray-100 bg-white w-full mt-15">
         <button
           type="button"
           onClick={handleSubmit}
-          className="w-full py-4 bg-[#20B2AA] hover:bg-[#1C8C8A] text-white font-semibold text-base md:text-lg rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg hover:shadow-[#20B2AA]/50"
+          disabled={!bothStatusesPending}
+          className={`w-full py-4 text-white font-semibold text-base md:text-lg rounded-xl transition-all flex items-center justify-center space-x-2 shadow-lg ${
+            bothStatusesPending
+              ? "bg-blue-500 hover:bg-blue-600 hover:shadow-blue-500/50"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
         >
           <span>Secure My Account</span>
-          <FiChevronRight className="w-5 h-5" />
         </button>
       </div>
 
-      {showFrontIdPopup && (
-        <FrontId
-          onClose={() => setShowFrontIdPopup(false)}
-          onFileCaptured={(file) => setFrontIdFile(file)}
-        />
-      )}
-      {showBackIdPopup && (
-        <BackId
-          onClose={() => setShowBackIdPopup(false)}
-          onFileCaptured={(file) => setBackIdFile(file)}
-        />
-      )}
-      {showSelfieIdPopup && (
-        <SelfieId
-          onClose={() => setShowSelfieIdPopup(false)}
-          onFileCaptured={(file) => setSelfieIdFile(file)}
-        />
-      )}
-      {showTaxpayerIdPopup && (
-        <TaxpayerId
-          onClose={() => setShowTaxpayerIdPopup(false)}
-          onFileCaptured={(file) => setTaxpayerIdFile(file)}
-        />
-      )}
       {showVerificationModalPopup && (
         <VerificationModal
           onClose={() => setShowVerificationModalPopup(false)}
         />
       )}
-      <ToastContainer />
     </div>
   );
 }

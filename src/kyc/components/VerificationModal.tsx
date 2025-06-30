@@ -1,5 +1,4 @@
-// VerificationModal.tsx (third file)
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -7,14 +6,11 @@ interface VerificationModalProps {
   onClose: () => void;
 }
 
-const VerificationModal: React.FC<VerificationModalProps> = () => {
-  const [isOpen, setIsOpen] = useState(true);
+const VerificationModal: React.FC<VerificationModalProps> = ({ onClose }) => {
   const navigate = useNavigate();
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-[9999]">
       <div
         className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md transform transition-all duration-300 ease-in-out relative"
         style={{ fontFamily: "Poppins, sans-serif" }}
@@ -24,7 +20,7 @@ const VerificationModal: React.FC<VerificationModalProps> = () => {
             <h2 className="text-lg font-bold">Verification Option</h2>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={onClose} // Changed from setIsOpen(false) to onClose
             className="text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
           >
             ×
@@ -36,8 +32,11 @@ const VerificationModal: React.FC<VerificationModalProps> = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/verification/id-card")}
-              className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-[#20B2AA]/10 transition duration-200"
+              onClick={() => {
+                navigate("/verification/id-card");
+                onClose();
+              }}
+              className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-blue-100 transition duration-200"
             >
               ID CARD
             </motion.button>
@@ -46,8 +45,11 @@ const VerificationModal: React.FC<VerificationModalProps> = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/verification/passport")}
-              className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-[#20B2AA]/10 transition duration-200"
+              onClick={() => {
+                navigate("/verification/passport");
+                onClose();
+              }}
+              className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-blue-100 transition duration-200"
             >
               PASSPORT
             </motion.button>
@@ -56,8 +58,11 @@ const VerificationModal: React.FC<VerificationModalProps> = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/verification/driving-license")}
-              className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-[#20B2AA]/10 transition duration-200"
+              onClick={() => {
+                navigate("/verification/driving-license");
+                onClose();
+              }}
+              className="w-full py-3 px-4 border border-gray-300 rounded-full hover:bg-blue-100 transition duration-200"
             >
               DRIVING LICENSE
             </motion.button>
