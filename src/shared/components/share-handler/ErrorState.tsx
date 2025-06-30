@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 
 interface ErrorStateProps {
   error: string;
@@ -45,7 +45,7 @@ export default function ErrorState({
             ⚙️ Open Browser Settings
           </button>
           <button
-            onClick={() => navigate({ to: '/' })}
+            onClick={() => navigate({ to: "/" })}
             className="bg-[#20B2AA] text-white p-3 rounded-lg hover:bg-[#1C8C8A]"
           >
             ← Return to Home

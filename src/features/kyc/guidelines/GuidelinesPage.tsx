@@ -8,7 +8,7 @@ import {
   FaArrowLeft,
   FaLightbulb,
 } from "react-icons/fa";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 
 // Define proper TypeScript interfaces for the component props
 interface MarkdownHeadingProps
@@ -168,11 +168,11 @@ const GuidelinesPage: React.FC = () => {
   `;
 
   const handleAdvance = () => {
-    navigate({ to: '/kyc/imgs' });
+    navigate({ to: "/kyc/imgs" });
   };
 
   const handleBack = () => {
-    navigate({ to: -1 as any });
+    window.history.back();
   };
 
   // Define custom components for ReactMarkdown with proper typing

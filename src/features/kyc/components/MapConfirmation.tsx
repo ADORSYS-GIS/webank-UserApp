@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { RequestToGetUserLocation } from "@services/keyManagement/requestService";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
@@ -23,7 +23,7 @@ const MapConfirmation = () => {
   const accountId = useSelector((state: RootState) => state.account.accountId);
 
   useEffect(() => {
-    if (!coords) navigate({ to: '/location-verification' });
+    if (!coords) navigate({ to: "/location-verification" });
 
     // Get city name using reverse geocoding
     const getCityName = async () => {
@@ -53,7 +53,7 @@ const MapConfirmation = () => {
       );
       toast.success("Location verified!");
       setTimeout(() => {
-        navigate({ to: '/under-review' });
+        navigate({ to: "/under-review" });
       }, 3000);
     } catch (error) {
       setError("Verification failed. Please try again.");
@@ -77,7 +77,11 @@ const MapConfirmation = () => {
               width="100%"
               height="100%"
               title="OSM Map"
-              src={coords ? `https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.02}%2C${coords.lat - 0.02}%2C${coords.lng + 0.02}%2C${coords.lat + 0.02}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}` : ""}
+              src={
+                coords
+                  ? `https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.02}%2C${coords.lat - 0.02}%2C${coords.lng + 0.02}%2C${coords.lat + 0.02}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`
+                  : ""
+              }
             />
           </div>
           {city && (
@@ -106,7 +110,7 @@ const MapConfirmation = () => {
             {isSubmitting ? "Verifying..." : "Yes, this is my location"}
           </button>
           <button
-            onClick={() => navigate({ to: '/verification/location' })}
+            onClick={() => navigate({ to: "/verification/location" })}
             className="text-gray-600 px-6 py-3 rounded-md hover:bg-gray-100 transition-colors"
           >
             No, this is incorrect

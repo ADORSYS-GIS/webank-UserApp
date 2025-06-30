@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 
 interface GeoLocation {
   lat: number;
@@ -95,7 +95,7 @@ const LocationComponent = () => {
               : "Continue with KYC Verification"}
           </button>
           <button
-            onClick={() => navigate({ to: '/kyc' })}
+            onClick={() => navigate({ to: "/kyc" })}
             className="text-gray-600 px-6 py-3 rounded-md hover:bg-gray-100 transition-colors"
           >
             Cancel

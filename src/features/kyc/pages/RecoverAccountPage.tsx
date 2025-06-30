@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
@@ -99,7 +99,7 @@ const RecoverAccountPage: React.FC = () => {
         dispatch(setAccountCert(certResponse));
         toast.success("Account recovery successful!");
         setTimeout(() => {
-          navigate({ to: '/dashboard' });
+          navigate({ to: "/dashboard" });
         }, 1500);
       } else {
         toast.error("Failed to recover account certificate. Please try again.");
@@ -113,7 +113,7 @@ const RecoverAccountPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate({ to: '/settings' });
+    navigate({ to: "/settings" });
   };
 
   return (

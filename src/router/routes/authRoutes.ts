@@ -1,34 +1,36 @@
-import { createRoute } from '@tanstack/react-router';
-import { rootRoute } from './routeTree';
-import AppLayout from '../../layouts/AppLayout';
-import React, { lazy } from 'react';
+import { createRoute } from "@tanstack/react-router";
+import { rootRoute } from "./routeTree";
+import AppLayout from "../../layouts/AppLayout";
+import { lazy } from "react";
 
-const Login = lazy(() => import('@features/auth/pages/Login'));
-const PhoneInput = lazy(() => import('@features/auth/pages/PhoneInput'));
-const PhoneVerification = lazy(() => import('@features/auth/pages/PhoneVerification'));
+const Login = lazy(() => import("@features/auth/pages/Login"));
+const PhoneInput = lazy(() => import("@features/auth/pages/PhoneInput"));
+const PhoneVerification = lazy(
+  () => import("@features/auth/pages/PhoneVerification"),
+);
 
 const authParentRoute = createRoute({
   getParentRoute: () => rootRoute,
-  id: 'auth',
+  id: "auth",
   component: AppLayout,
 });
 
 const authRoutes = [
   createRoute({
-    path: '/login',
+    path: "/login",
     getParentRoute: () => authParentRoute,
     component: Login,
   }),
   createRoute({
-    path: '/phone',
+    path: "/phone",
     getParentRoute: () => authParentRoute,
     component: PhoneInput,
   }),
   createRoute({
-    path: '/phone/verification',
+    path: "/phone/verification",
     getParentRoute: () => authParentRoute,
     component: PhoneVerification,
   }),
 ];
 
-export const authRoutesGroup = authParentRoute.addChildren(authRoutes); 
+export const authRoutesGroup = authParentRoute.addChildren(authRoutes);

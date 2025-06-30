@@ -3,7 +3,7 @@ import countryOptions from "@assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "@shared/constants.ts";
 import { RequestToSendOTP } from "@services/keyManagement/requestService.ts";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -81,7 +81,7 @@ const PhoneInput: React.FC = () => {
           duration: 5000,
         });
         navigate({
-          to: '/phone/verification',
+          to: "/phone/verification",
           state: { otpHash, fullPhoneNumber } as any,
         });
       }
@@ -99,7 +99,7 @@ const PhoneInput: React.FC = () => {
         <div className="w-full max-w-md mx-auto">
           <div className="flex items-center mb-6">
             <button
-              onClick={() => navigate({ to: '/settings' })}
+              onClick={() => navigate({ to: "/settings" })}
               className="text-xl cursor-pointer p-2 focus:outline-none"
               aria-label="Back"
             >

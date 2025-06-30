@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -27,7 +27,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   const handleTopUpClick = () =>
     handleActionClick(() => {
       navigate({
-        to: '/top-up',
+        to: "/top-up",
         state: {
           show: "Top up",
           clientAccountId: accountId,
@@ -41,7 +41,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   const handleWithdrawClick = () =>
     handleActionClick(() => {
       navigate({
-        to: '/payment-selection',
+        to: "/payment-selection",
         state: {
           show: "Withdraw",
           clientAccountId: accountId,
@@ -54,7 +54,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   const handleTransferClick = () =>
     handleActionClick(() => {
       navigate({
-        to: '/payment-selection',
+        to: "/payment-selection",
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,
@@ -67,7 +67,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   const handlePayClick = () =>
     handleActionClick(() => {
       navigate({
-        to: '/payment-selection',
+        to: "/payment-selection",
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,

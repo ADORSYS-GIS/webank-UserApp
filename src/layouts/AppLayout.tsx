@@ -1,9 +1,8 @@
-import Layout from '@shared/components/Layout';
-import Header from '@shared/components/Header';
-import KycCertChecker from '@features/kyc/pages/KycCertChecker';
-import KYCReminderPopup from '@shared/components/KYCReminderPopup';
-import { Toaster } from 'sonner';
-import { ReactNode } from 'react';
+import Layout from "@shared/components/Layout";
+import Header from "@shared/components/Header";
+import KycCertChecker from "@features/kyc/pages/KycCertChecker";
+import { Toaster } from "sonner";
+import { ReactNode } from "react";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -22,4 +21,4 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   );
 };
 
-export default AppLayout; 
+export default AppLayout;

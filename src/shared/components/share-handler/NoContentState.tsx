@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 
 interface NoContentStateProps {
   storeTestData: () => void;
@@ -21,7 +21,7 @@ export default function NoContentState({
           Load Test Data
         </button>
         <button
-          onClick={() => navigate({ to: '/' })}
+          onClick={() => navigate({ to: "/" })}
           className="bg-[#20B2AA] text-white px-6 py-2 rounded-lg hover:bg-[#1C8C8A] transition"
         >
           Return to Home

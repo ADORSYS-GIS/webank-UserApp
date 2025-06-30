@@ -1,6 +1,5 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import AgentPage from "../AgentPage";
@@ -20,8 +19,8 @@ const mockStore = configureStore({
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
+vi.mock("@tanstack/react-router", async () => {
+  const actual = await vi.importActual("@tanstack/react-router");
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -30,16 +29,13 @@ vi.mock("react-router-dom", async () => {
 
 describe("AgentPage", () => {
   beforeEach(() => {
-    // Clear all mocks before each test
     vi.clearAllMocks();
   });
 
   test("renders Agent Services heading", () => {
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <AgentPage />
-        </MemoryRouter>
+        <AgentPage />
       </Provider>,
     );
 
@@ -49,9 +45,7 @@ describe("AgentPage", () => {
   test("renders Cash-In button and description", () => {
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <AgentPage />
-        </MemoryRouter>
+        <AgentPage />
       </Provider>,
     );
 
@@ -64,9 +58,7 @@ describe("AgentPage", () => {
   test("renders Pay-out button and description", () => {
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <AgentPage />
-        </MemoryRouter>
+        <AgentPage />
       </Provider>,
     );
 
@@ -76,12 +68,10 @@ describe("AgentPage", () => {
     ).toBeInTheDocument();
   });
 
-  test("Cash-In button navigates to /qr-scan", async () => {
+  test("Cash-In button triggers navigation", async () => {
     render(
       <Provider store={mockStore}>
-        <MemoryRouter>
-          <AgentPage />
-        </MemoryRouter>
+        <AgentPage />
       </Provider>,
     );
 
@@ -91,7 +81,9 @@ describe("AgentPage", () => {
     // Wait for the handleClose callback to execute
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    expect(mockNavigate).toHaveBeenCalledWith("/qr-scan/top-up", {
+    // Check if navigate was called with the correct arguments
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/qr-scan/top-up",
       state: {
         agentAccountId: "test-account-id",
         agentAccountCert: "test-account-cert",

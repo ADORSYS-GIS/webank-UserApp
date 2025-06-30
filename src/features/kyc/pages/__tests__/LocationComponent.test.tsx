@@ -1,52 +1,62 @@
 import { render, screen } from "@testing-library/react";
 import LocationComponent from "../../components/LocationComponent";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
-vi.mock("react-redux", () => ({
-  useSelector: vi.fn(),
-}));
-
-vi.mock("react-router-dom", () => ({
-  useNavigate: vi.fn(),
-}));
-
-describe("LocationComponent - Basic Rendering", () => {
-  beforeEach(() => {
-    // Mock Redux state
-    (useSelector as unknown as jest.Mock).mockReturnValue("test-cert");
-    // Mock navigation
-    (useNavigate as jest.Mock).mockReturnValue(vi.fn());
-    // Mock geolocation
-    Object.defineProperty(global.navigator, "geolocation", {
-      value: {
-        getCurrentPosition: vi.fn(),
-        watchPosition: vi.fn(),
-        clearWatch: vi.fn(),
+// Create a mock store with account state
+const mockStore = configureStore({
+  reducer: {
+    account: (
+      state = {
+        accountId: "test-account-id",
+        accountCert: "test-cert",
       },
-      configurable: true,
-    });
+    ) => state,
+  },
+});
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock("@tanstack/react-router", async () => {
+  const actual = await vi.importActual("@tanstack/react-router");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
+
+// Mock geolocation
+Object.defineProperty(global.navigator, "geolocation", {
+  value: {
+    getCurrentPosition: vi.fn(),
+    watchPosition: vi.fn(),
+    clearWatch: vi.fn(),
+  },
+  configurable: true,
+});
+
+describe("LocationComponent", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   it("renders all text elements correctly", () => {
-    render(<LocationComponent />);
+    render(
+      <Provider store={mockStore}>
+        <LocationComponent />
+      </Provider>,
+    );
 
-    // Check main title
     expect(screen.getByText("Location Verification")).toBeInTheDocument();
-
-    // Check description text
     expect(
       screen.getByText(/primary residence\? We need to verify/i),
     ).toBeInTheDocument();
-
-    // Check buttons
     expect(
       screen.getByText("Continue with KYC Verification"),
     ).toBeInTheDocument();
     expect(screen.getByText("Cancel")).toBeInTheDocument();
-
-    // Check no error message initially
     expect(
       screen.queryByText("Location access denied"),
     ).not.toBeInTheDocument();

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { calculateTransactionFee } from "@services/computation/transactionFeeCalculator";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { RootState } from "@state/Store";
@@ -13,7 +13,23 @@ const TopUpPage: React.FC = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
   const location = useRouterState().location;
-  const { clientAccountId, show, isClientOffline, isClientOnline, agentAccountCert, agentAccountId, clientName } = location.state as { clientAccountId?: string; show?: string; isClientOffline?: boolean; isClientOnline?: boolean; agentAccountCert?: string; agentAccountId?: string; clientName?: string };
+  const {
+    clientAccountId,
+    show,
+    isClientOffline,
+    isClientOnline,
+    agentAccountCert,
+    agentAccountId,
+    clientName,
+  } = location.state as {
+    clientAccountId?: string;
+    show?: string;
+    isClientOffline?: boolean;
+    isClientOnline?: boolean;
+    agentAccountCert?: string;
+    agentAccountId?: string;
+    clientName?: string;
+  };
   const kycCert = useSelector((state: RootState) => state.account.kycCert);
   const status = useSelector((state: RootState) => state.account.status);
 
@@ -21,7 +37,10 @@ const TopUpPage: React.FC = () => {
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
 
   const handleCancel = () => {
-    navigate({ to: '/dashboard', state: { accountId: clientAccountId } as any });
+    navigate({
+      to: "/dashboard",
+      state: { accountId: clientAccountId } as any,
+    });
   };
 
   const handleConfirmationDismiss = () => {
@@ -49,7 +68,16 @@ const TopUpPage: React.FC = () => {
       // Instead of navigating to the confirmation page, show the bottom sheet
       setShowConfirmation(true);
     } else {
-      navigate({ to: '/qrcode', state: { totalAmount, accountId: clientAccountId, isClientOffline, isClientOnline, show } as any });
+      navigate({
+        to: "/qrcode",
+        state: {
+          totalAmount,
+          accountId: clientAccountId,
+          isClientOffline,
+          isClientOnline,
+          show,
+        } as any,
+      });
     }
   };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faShieldAlt,
@@ -17,7 +17,7 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
 
   const handleVerify = () => {
     onClose(); // Close the popup before navigation
-    navigate({ to: '/kyc' });
+    navigate({ to: "/kyc" });
   };
 
   return (

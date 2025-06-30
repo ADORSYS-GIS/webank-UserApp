@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faQrcode,
@@ -83,7 +83,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               onClick={() =>
                 handleClose(() =>
                   navigate({
-                    to: '/qr-scan/top-up',
+                    to: "/qr-scan/top-up",
                     state: {
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
@@ -95,7 +95,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleClose(() =>
                     navigate({
-                      to: '/qr-scan/top-up',
+                      to: "/qr-scan/top-up",
                       state: {
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,
@@ -123,7 +123,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
               onClick={() =>
                 handleClose(() =>
                   navigate({
-                    to: '/qr-scan/offline',
+                    to: "/qr-scan/offline",
                     state: {
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
@@ -135,7 +135,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleClose(() =>
                     navigate({
-                      to: '/qr-scan/offline',
+                      to: "/qr-scan/offline",
                       state: {
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,

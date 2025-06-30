@@ -1,5 +1,5 @@
-import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { routeTree } from './routes/routeTree.ts';
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { routeTree } from "./routes/routeTree.ts";
 
 const router = createRouter({
   routeTree,
@@ -7,4 +7,4 @@ const router = createRouter({
 
 export default function AppRouterProvider() {
   return <RouterProvider router={router} />;
-} 
+}

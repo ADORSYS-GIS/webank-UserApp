@@ -14,7 +14,7 @@ import {
 import KYCSubmissionCompleted from "../components/share-handler/KYCSubmissionCompleted";
 
 import jsQR from "jsqr";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { RootState } from "@state/Store";
 
 // prettier-ignore

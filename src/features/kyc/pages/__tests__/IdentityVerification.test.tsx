@@ -1,45 +1,60 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import IdentityVerification from "../IdentityVerificationPage";
 import "@testing-library/jest-dom";
-import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import { store } from "@state/Store.ts";
+import { configureStore } from "@reduxjs/toolkit";
+import { vi } from "vitest";
+
+// Create a mock store with account state
+const mockStore = configureStore({
+  reducer: {
+    account: (
+      state = {
+        accountId: "test-account-id",
+        accountCert: "test-account-cert",
+      },
+    ) => state,
+  },
+});
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock("@tanstack/react-router", async () => {
+  const actual = await vi.importActual("@tanstack/react-router");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe("IdentityVerification Component", () => {
   const renderComponent = () =>
     render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <IdentityVerification />
-        </MemoryRouter>
+      <Provider store={mockStore}>
+        <IdentityVerification />
       </Provider>,
     );
 
+  beforeEach(() => {
+    // Clear all mocks before each test
+    vi.clearAllMocks();
+  });
+
   test("renders all verification steps", () => {
     renderComponent();
-
-    // Verify that each step is displayed
     expect(screen.getByText("Personal Info")).toBeInTheDocument();
   });
 
   test("clicking on a step opens the corresponding popup", () => {
     renderComponent();
-
-    // Click on "Personal Info" step
     fireEvent.click(screen.getByText("Personal Info"));
     expect(screen.getByText("Personal Info")).toBeInTheDocument();
   });
 
   test("Back button resets to step selection", () => {
     renderComponent();
-
-    // Click on a step
     fireEvent.click(screen.getByText("Personal Info"));
-
-    // Click the Back button
     fireEvent.click(screen.getByText("Back"));
-
-    // Check if the steps are displayed again
     expect(screen.getByText("Personal Info")).toBeInTheDocument();
   });
 });

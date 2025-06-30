@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
@@ -10,7 +10,13 @@ const QRGenerator: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useRouterState().location;
-  const { totalAmount, isClientOffline, isClientOnline, show } = location.state as { totalAmount?: number; isClientOffline?: boolean; isClientOnline?: boolean; show?: string };
+  const { totalAmount, isClientOffline, isClientOnline, show } =
+    location.state as {
+      totalAmount?: number;
+      isClientOffline?: boolean;
+      isClientOnline?: boolean;
+      show?: string;
+    };
   const accountId = useSelector((state: RootState) => state.account.accountId);
   const accountJwt = useSelector(
     (state: RootState) => state.account.accountCert,
@@ -108,7 +114,10 @@ const QRGenerator: React.FC = () => {
           {show == "Pay out" && (
             <button
               onClick={() =>
-                navigate({ to: '/qr-scan/top-up', state: { isClientOffline } as any })
+                navigate({
+                  to: "/qr-scan/top-up",
+                  state: { isClientOffline } as any,
+                })
               }
               className="w-full px-6 py-3 text-white bg-amber-600 rounded-lg shadow-md transition hover:bg-amber-700 active:scale-95"
             >

@@ -1,6 +1,6 @@
 import { CheckCircle } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 
 // Define the type of the decoded JWT payload
 interface TransactionDetails {
@@ -84,7 +84,7 @@ export default function SuccessPage() {
         </div>
 
         <button
-          onClick={() => navigate({ to: '/dashboard' })}
+          onClick={() => navigate({ to: "/dashboard" })}
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 transform hover:scale-[1.02]"
         >
           Return to Dashboard

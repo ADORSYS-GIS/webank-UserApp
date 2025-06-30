@@ -11,7 +11,7 @@ import {
   faKey,
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 
@@ -90,15 +90,15 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate({ to: '/dashboard' });
+    navigate({ to: "/dashboard" });
   };
 
   const handleSecureAccount = () => {
-    navigate({ to: '/kyc' });
+    navigate({ to: "/kyc" });
   };
 
   const handleRecoverAccount = () => {
-    navigate({ to: '/recoverAccount' });
+    navigate({ to: "/recoverAccount" });
   };
 
   return (
@@ -208,7 +208,7 @@ const SettingsPage: React.FC = () => {
                   ? "Email successfully verified"
                   : "Secure your account with email verification"
               }
-              onClick={() => navigate({ to: '/inputEmail' })}
+              onClick={() => navigate({ to: "/inputEmail" })}
               disabled={emailStatus === "APPROVED"}
               iconType="fa"
             />
@@ -223,7 +223,7 @@ const SettingsPage: React.FC = () => {
                   ? "Phone number successfully verified"
                   : "Secure your account with phone verification"
               }
-              onClick={() => navigate({ to: '/phone' })}
+              onClick={() => navigate({ to: "/phone" })}
               disabled={phoneStatus === "APPROVED"}
               iconType="fa"
             />

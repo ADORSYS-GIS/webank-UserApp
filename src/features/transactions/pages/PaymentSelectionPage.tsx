@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { FaQrcode, FaAddressBook } from "react-icons/fa";
 
 const PaymentSelectionPage: React.FC = () => {
@@ -17,7 +17,7 @@ const PaymentSelectionPage: React.FC = () => {
         <div className="space-y-4">
           <button
             onClick={() =>
-              navigate({ to: '/contacts', state: { show: "Payment" } as any })
+              navigate({ to: "/contacts", state: { show: "Payment" } as any })
             }
             className="w-full flex items-center justify-center space-x-3 bg-blue-500 text-white py-4 px-6 rounded-lg hover:bg-blue-600 transition-colors"
           >
@@ -27,7 +27,10 @@ const PaymentSelectionPage: React.FC = () => {
 
           <button
             onClick={() =>
-              navigate({ to: show === "Top Up" ? '/qr-scan/top-up' : '/qr-scan', state: { show } as any })
+              navigate({
+                to: show === "Top Up" ? "/qr-scan/top-up" : "/qr-scan",
+                state: { show } as any,
+              })
             }
             className="w-full flex items-center justify-center space-x-3 bg-green-500 text-white py-4 px-6 rounded-lg hover:bg-green-600 transition-colors"
           >
@@ -36,7 +39,7 @@ const PaymentSelectionPage: React.FC = () => {
           </button>
 
           <button
-            onClick={() => navigate({ to: '/dashboard' })}
+            onClick={() => navigate({ to: "/dashboard" })}
             className="w-full flex items-center justify-center space-x-3 bg-gray-200 text-gray-700 py-4 px-6 rounded-lg hover:bg-gray-300 transition-colors mt-4"
           >
             <span>Cancel</span>

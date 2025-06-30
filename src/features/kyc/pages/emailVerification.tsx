@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { RequestToSendEmailOTP } from "@services/keyManagement/requestService";
 import { useSelector } from "react-redux";
@@ -27,7 +27,7 @@ const InputEmail: React.FC = () => {
   // Validate account information
   const hasValidAccountInfo = (): boolean => {
     if (!accountId || !accountCert) {
-      navigate({ to: '/dashboard' });
+      navigate({ to: "/dashboard" });
       toast.error("Account information is missing.");
       return false;
     }
@@ -62,7 +62,7 @@ const InputEmail: React.FC = () => {
     try {
       if (!accountId || !accountCert) {
         toast.error("Account information is missing.");
-        navigate({ to: '/dashboard' });
+        navigate({ to: "/dashboard" });
         return;
       }
       const response = await RequestToSendEmailOTP(
@@ -73,7 +73,7 @@ const InputEmail: React.FC = () => {
       if (response.startsWith("OTP sent successfully")) {
         toast.success("OTP sent, please check your email.", { duration: 5000 });
       }
-      navigate({ to: '/emailCode', state: { email, accountCert } as any });
+      navigate({ to: "/emailCode", state: { email, accountCert } as any });
     } catch (error: unknown) {
       handleOtpError(error);
     }
@@ -88,7 +88,7 @@ const InputEmail: React.FC = () => {
       <header className="p-4 bg-white shadow-sm">
         <div className="max-w-md mx-auto flex items-center space-x-4">
           <button
-            onClick={() => navigate({ to: '/settings' })}
+            onClick={() => navigate({ to: "/settings" })}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Go Back"
           >

@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ClipboardCopy } from "lucide-react";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
@@ -24,7 +24,7 @@ const RecoveryToken: React.FC = () => {
   };
 
   const goToDashboard = () => {
-    navigate({ to: '/account-recovery' });
+    navigate({ to: "/account-recovery" });
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useRouterState } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { getProjectEnvVariables } from "@shared/projectEnvVariables.ts";
 
@@ -31,7 +31,7 @@ export default function Login() {
   };
 
   const close = () => {
-    navigate({ to: '/dashboard' });
+    navigate({ to: "/dashboard" });
   };
 
   return (

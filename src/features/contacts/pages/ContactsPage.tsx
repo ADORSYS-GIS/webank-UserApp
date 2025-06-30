@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import ContactList from "@shared/components/ContactList";
@@ -17,7 +17,7 @@ const ContactsPage: React.FC = () => {
   const handleSelectContact = (contact: Contact) => {
     // Navigate to the appropriate page with the contact's account ID and name
     navigate({
-      to: '/top-up',
+      to: "/top-up",
       state: {
         agentAccountId,
         agentAccountCert,

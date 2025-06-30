@@ -1,104 +1,111 @@
-import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import InputEmail from "../emailVerification";
-import { MemoryRouter, Routes, Route } from "react-router-dom";
 import "@testing-library/jest-dom";
 import { Provider } from "react-redux";
-import configureStore from "redux-mock-store";
-import { vi } from "vitest";
+import { configureStore } from "@reduxjs/toolkit";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const navigateMock = vi.fn();
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
+// Create a mock store with account state
+const mockStore = configureStore({
+  reducer: {
+    account: (
+      state = {
+        accountId: "test-account-id",
+        accountCert: "test-cert",
+      },
+    ) => state,
+  },
+});
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock("@tanstack/react-router", async () => {
+  const actual = await vi.importActual("@tanstack/react-router");
   return {
     ...actual,
-    useNavigate: () => navigateMock,
+    useNavigate: () => mockNavigate,
   };
 });
 
+// Mock the RequestToSendEmailOTP service
 vi.mock("@services/keyManagement/requestService", () => ({
   RequestToSendEmailOTP: vi.fn(() => Promise.resolve("OTP sent successfully")),
 }));
 
 import { RequestToSendEmailOTP } from "@services/keyManagement/requestService";
 
-const mockStore = configureStore();
-const store = mockStore({
-  account: { accountCert: "mockCert123", accountId: "1" }, // Fixed accountId type to string
-});
-
-const renderWithProviders = (
-  ui: React.ReactElement,
-  initialEntry = "/inputEmail",
-) => {
-  return render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={[initialEntry]}>
-        <Routes>
-          <Route path="/inputEmail" element={ui} />
-          <Route path="/emailCode" element={<div>EmailCode Page</div>} />
-        </Routes>
-      </MemoryRouter>
-    </Provider>,
-  );
-};
-
 describe("InputEmail Component", () => {
+  const renderComponent = () => {
+    return render(
+      <Provider store={mockStore}>
+        <InputEmail />
+      </Provider>,
+    );
+  };
+
   beforeEach(() => {
-    navigateMock.mockClear();
     vi.clearAllMocks();
   });
 
-  test("renders email input and proceed button", () => {
-    renderWithProviders(<InputEmail />);
+  it("renders email input and proceed button", () => {
+    renderComponent();
     expect(screen.getByPlaceholderText("name@example.com")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Send Verification Code" }),
+      screen.getByRole("button", { name: /Send Verification Code/i }),
     ).toBeInTheDocument();
   });
 
-  test("navigates to /emailCode for a valid email", async () => {
-    renderWithProviders(<InputEmail />);
+  it("validates email format before submission", async () => {
+    renderComponent();
     const emailInput = screen.getByPlaceholderText("name@example.com");
     const proceedButton = screen.getByRole("button", {
-      name: "Send Verification Code",
+      name: /Send Verification Code/i,
     });
 
-    fireEvent.change(emailInput, { target: { value: "name@example.com" } });
-    fireEvent.click(proceedButton);
-
-    await waitFor(() => {
-      expect(RequestToSendEmailOTP).toHaveBeenCalledWith(
-        "name@example.com",
-        "mockCert123",
-        "1", // Now matches the string type from the store
-      );
-      expect(navigateMock).toHaveBeenCalledWith("/emailCode", {
-        state: { email: "name@example.com", accountCert: "mockCert123" },
-      });
-    });
-  });
-
-  test("shows error toast for an invalid email", async () => {
-    renderWithProviders(<InputEmail />);
-    const emailInput = screen.getByPlaceholderText("name@example.com");
-    const proceedButton = screen.getByRole("button", {
-      name: "Send Verification Code",
-    });
-
+    // Test invalid email
     fireEvent.change(emailInput, { target: { value: "invalid-email" } });
     fireEvent.click(proceedButton);
 
+    // Should not call the API
+    expect(RequestToSendEmailOTP).not.toHaveBeenCalled();
+  });
+
+  it("navigates to email code page on successful email submission", async () => {
+    renderComponent();
+    const emailInput = screen.getByPlaceholderText("name@example.com");
+    const proceedButton = screen.getByRole("button", {
+      name: /Send Verification Code/i,
+    });
+
+    // Enter valid email and submit
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.click(proceedButton);
+
+    // Should call the API with correct parameters
     await waitFor(() => {
-      expect(navigateMock).not.toHaveBeenCalled();
-      expect(RequestToSendEmailOTP).not.toHaveBeenCalled();
+      expect(RequestToSendEmailOTP).toHaveBeenCalledWith(
+        "test@example.com",
+        "test-cert",
+        "test-account-id",
+      );
+    });
+
+    // Should navigate to email code page
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/emailCode",
+      state: {
+        email: "test@example.com",
+        accountCert: "test-cert",
+      },
     });
   });
 
-  test("navigates back when back button is clicked", () => {
-    renderWithProviders(<InputEmail />);
+  it("handles back button click", () => {
+    renderComponent();
     const backButton = screen.getByRole("button", { name: /Go Back/i });
     fireEvent.click(backButton);
-    expect(navigateMock).toHaveBeenCalledWith("/settings");
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: "/settings",
+    });
   });
 });

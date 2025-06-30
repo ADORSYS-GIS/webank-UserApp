@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import {
   Shield,
   Zap,
@@ -70,7 +70,7 @@ const OnboardingFlow: React.FC = () => {
       localStorage.setItem("onboardingCompleted", "true");
       // Show success toast
       toast.success("Account creation successful");
-      navigate({ to: '/dashboard' });
+      navigate({ to: "/dashboard" });
     }
   };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoneyCheckAlt,
@@ -35,7 +35,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       label: "Teller Services",
       onClick: () =>
         navigate({
-          to: '/login',
+          to: "/login",
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
@@ -49,7 +49,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       label: "KYC Verification",
       onClick: () =>
         navigate({
-          to: '/login',
+          to: "/login",
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
@@ -63,7 +63,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       label: "KYC Recovery Agency",
       onClick: () =>
         navigate({
-          to: '/login',
+          to: "/login",
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
@@ -77,7 +77,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       label: "Top Up Account",
       onClick: () =>
         navigate({
-          to: '/login',
+          to: "/login",
           state: {
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,

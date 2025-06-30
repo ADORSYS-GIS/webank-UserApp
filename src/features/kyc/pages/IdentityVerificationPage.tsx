@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { RootState } from "@state/Store";
@@ -67,7 +67,7 @@ export default function IdentityVerification() {
       description:
         "Follow instructions to upload your ID and verification documents",
       icon: faCloudUploadAlt,
-      onClick: () => navigate({ to: '/guidelines' }),
+      onClick: () => navigate({ to: "/guidelines" }),
     },
   ];
 
@@ -76,7 +76,7 @@ export default function IdentityVerification() {
       toast.error("Account information is missing");
       return;
     }
-    navigate({ to: '/verification/location' });
+    navigate({ to: "/verification/location" });
   };
 
   return (
@@ -86,7 +86,7 @@ export default function IdentityVerification() {
     >
       <button
         type="button"
-        onClick={() => navigate({ to: '/settings' })}
+        onClick={() => navigate({ to: "/settings" })}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
         <FontAwesomeIcon

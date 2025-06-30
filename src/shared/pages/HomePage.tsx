@@ -1,11 +1,11 @@
 import React from "react";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 
 const OnboardingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleStart = () => {
-    navigate({ to: '/loading' });
+    navigate({ to: "/loading" });
   };
 
   return (

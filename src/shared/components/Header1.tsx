@@ -5,7 +5,7 @@ import {
   faInfoCircle,
   faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 
 interface HeaderProps {
   onNotificationClick?: () => void;
@@ -24,7 +24,7 @@ const Header1: React.FC<HeaderProps> = ({
     if (onNotificationClick) {
       onNotificationClick();
     } else {
-      navigate({ to: '/notifications' });
+      navigate({ to: "/notifications" });
     }
   };
 
@@ -32,7 +32,7 @@ const Header1: React.FC<HeaderProps> = ({
     if (onAboutClick) {
       onAboutClick();
     } else {
-      navigate({ to: '/about' });
+      navigate({ to: "/about" });
     }
   };
 

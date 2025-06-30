@@ -1,19 +1,41 @@
-// src/kyc/pages/__tests__/RecoverAccountPage.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { BrowserRouter as Router } from "react-router-dom";
+import { configureStore } from "@reduxjs/toolkit";
 import RecoverAccountPage from "../RecoverAccountPage";
 import "@testing-library/jest-dom";
-import { store } from "@state/Store";
-import jest from "jest-mock";
+import { vi } from "vitest";
+
+// Create a mock store with account state
+const mockStore = configureStore({
+  reducer: {
+    account: (
+      state = {
+        accountId: "test-account-id",
+        accountCert: "test-cert",
+      },
+    ) => state,
+  },
+});
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock("@tanstack/react-router", async () => {
+  const actual = await vi.importActual("@tanstack/react-router");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe("RecoverAccountPage", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test("renders Recover Account page and handles KYC recovery", () => {
     render(
-      <Provider store={store}>
-        <Router>
-          <RecoverAccountPage />
-        </Router>
+      <Provider store={mockStore}>
+        <RecoverAccountPage />
       </Provider>,
     );
 
@@ -25,7 +47,7 @@ describe("RecoverAccountPage", () => {
 
     // Mock window.open
     const originalOpen = window.open;
-    const openMock = jest.spyOn(window, "open").mockImplementation(() => null);
+    const openMock = vi.spyOn(window, "open").mockImplementation(() => null);
 
     // Simulate clicking the Initiate KYC Recovery button
     fireEvent.click(kycButton);
@@ -43,10 +65,8 @@ describe("RecoverAccountPage", () => {
 
   test("handles token submission", async () => {
     render(
-      <Provider store={store}>
-        <Router>
-          <RecoverAccountPage />
-        </Router>
+      <Provider store={mockStore}>
+        <RecoverAccountPage />
       </Provider>,
     );
 

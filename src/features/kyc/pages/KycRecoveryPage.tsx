@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { FiArrowLeft } from "react-icons/fi";
 import {
   RequestToGetKycRecordsBySearch,
@@ -142,7 +142,10 @@ export default function RecoveryDashboard() {
         toast.error("Validation failed, details do not match");
         return;
       }
-      navigate({ to: '/recovery/recovery-scanner', state: { oldAccountId: foundRecord.oldAccountId } as any });
+      navigate({
+        to: "/recovery/recovery-scanner",
+        state: { oldAccountId: foundRecord.oldAccountId } as any,
+      });
     } catch (err) {
       console.error(err);
       toast.error("Validation request failed");
@@ -162,7 +165,7 @@ export default function RecoveryDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
       <button
-        onClick={() => navigate({ to: '/dashboard' })}
+        onClick={() => navigate({ to: "/dashboard" })}
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Close form"
       >

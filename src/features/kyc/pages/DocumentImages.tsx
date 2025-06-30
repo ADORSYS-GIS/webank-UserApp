@@ -8,7 +8,7 @@ import { RequestToStoreKycDocument } from "@services/keyManagement/requestServic
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate } from "@tanstack/react-router";
 import { setDocumentStatus } from "@state/accountSlice";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
 
@@ -35,7 +35,7 @@ const DocumentImages = () => {
     try {
       if (!accountCert || !accountId) {
         toast.error("Account information is missing.");
-        navigate({ to: '/guidelines' });
+        navigate({ to: "/guidelines" });
         return;
       }
       const response = await RequestToStoreKycDocument(
@@ -50,7 +50,7 @@ const DocumentImages = () => {
       if (response.includes("saved")) {
         dispatch(setDocumentStatus("PENDING"));
         toast.success("Documents submitted successfully");
-        navigate({ to: '/kyc' });
+        navigate({ to: "/kyc" });
       }
     } catch (error) {
       console.error("Error submitting documents:", error);
@@ -101,7 +101,7 @@ const DocumentImages = () => {
       {/* Header Section */}
       <div className="flex items-center justify-between mb-8">
         <button
-          onClick={() => navigate({ to: -1 as any })}
+          onClick={() => window.history.back()}
           className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
         >
           <FaArrowLeft className="mr-2" />
