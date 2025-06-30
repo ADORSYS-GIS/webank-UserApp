@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { RootState } from "@state/Store";
 import VerificationModal from "@features/kyc/components/VerificationModal";
 
-// Import FontAwesome instead of react-icons
+// Import icons from react-feather for verification steps
 import {
   User,
   UploadCloud,
