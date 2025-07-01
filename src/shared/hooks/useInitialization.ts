@@ -68,7 +68,7 @@ const useInitialization = () => {
     return () => {
       cancelled = true;
     };
-  }, );
+  });
 
   return { devCert, error };
 };
