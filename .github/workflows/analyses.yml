@@ -137,6 +137,12 @@ jobs:
         with:
           path: node_modules
           key: ${{ github.sha }}
+      # Cache openapi generated files
+      - name: Cache openapi generated files
+        uses: actions/cache@v4
+        with:
+          path: openapi/generated
+          key: ${{ github.sha }}
 
       # Add env variables
       - name: add env variables

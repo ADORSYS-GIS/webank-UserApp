@@ -88,6 +88,7 @@ OpenAPI.interceptors.request.use(async (config) => {
       email,
       accountId,
     );
+    console.log("Generated JWT for PRS email-otp send:", jwt);
   } else if (url.includes("/email-otp/validate")) {
     const email = data.email;
     const otpInput = data.otpInput;

@@ -25,25 +25,41 @@ OpenAPI.interceptors.request.use(async (config) => {
     );
     console.log("Generated JWT for OBS registration:", jwt);
   } else if (url.includes("/accounts/balance")) {
-    const accId = data.accountId;
-    const accountCertVal = accountCert;
+    const accId = data.accountID;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
       publicKey,
       null,
       null,
-      accountCertVal,
+      accountCert,
       null,
       null,
       null,
       accId,
     );
-  } else if (url.includes("/accounts/payout")) {
+    console.log("Generated JWT for OBS account balance:", jwt);
+  } else if (url.includes("/accounts/transactions")) {
+    const accId = data.accountID;
+    const { publicKey, privateKey } = await KeyManagement();
+    jwt = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null,
+      null,
+      null,
+      accId,
+    );
+    console.log("Generated JWT for OBS account transactions:", jwt);
+  }
+  
+  else if (url.includes("/accounts/payout")) {
     const clientAccountId = data.clientAccountId;
     const amount = data.amount;
     const agentAccountId = data.agentAccountId;
-    const accountCertVal = accountCert;
     const kycCertVal = kycCert;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
@@ -51,7 +67,7 @@ OpenAPI.interceptors.request.use(async (config) => {
       publicKey,
       null,
       null,
-      accountCertVal,
+      accountCert,
       null,
       kycCertVal,
       null,
@@ -63,7 +79,6 @@ OpenAPI.interceptors.request.use(async (config) => {
     const clientAccountId = data.clientAccountId;
     const amount = data.amount;
     const agentAccountId = data.agentAccountId;
-    const accountCertVal = accountCert;
     const transactionJwt = data.transactionJwt;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
@@ -71,7 +86,7 @@ OpenAPI.interceptors.request.use(async (config) => {
       publicKey,
       null,
       null,
-      accountCertVal,
+      accountCert,
       transactionJwt,
       null,
       null,
@@ -82,14 +97,13 @@ OpenAPI.interceptors.request.use(async (config) => {
   } else if (url.includes("/kyc/agent/topup")) {
     const agentId = data.agentId;
     const amount = data.amount;
-    const accountCertVal = accountCert;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
       publicKey,
       null,
       null,
-      accountCertVal,
+      accountCert,
       null,
       null,
       null,
