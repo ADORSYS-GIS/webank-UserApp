@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-// TODO: Migrate location verification to OpenAPI-generated TanStack Query hook once available.
-// import { useLocationServicePostApiLocationVerify } from 'openapi/generated/obs/queries/queries';
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
-import { RequestToGetUserLocation } from "@services/keyManagement/requestService";
+import { useKycManagementServicePostApiPrsKycLocation } from "@openapi/generated/prs/queries/queries";
 
 interface GeoLocation {
   lat: number;
@@ -19,10 +17,8 @@ const MapConfirmation = () => {
   const [error, setError] = useState<string | null>(null);
   const [city, setCity] = useState<string | null>(null);
   const coords = (location.state as { coords: GeoLocation })?.coords;
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const locationMutation = useKycManagementServicePostApiPrsKycLocation();
 
   useEffect(() => {
     if (!coords) navigate("/location-verification");
@@ -34,7 +30,7 @@ const MapConfirmation = () => {
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}`,
         );
         const data = await response.json();
-        setCity(data.address.city || data.address.town || data.address.village);
+        setCity(data.address.city ?? data.address.town ?? data.address.village);
       } catch (error) {
         console.error("Error fetching city name:", error);
       }
@@ -44,20 +40,21 @@ const MapConfirmation = () => {
   }, [coords, navigate]);
 
   const sendToBackend = async () => {
-    if (!accountCert || !accountId || !coords) return;
-
+    if (!accountId || !coords) return;
     try {
       setIsSubmitting(true);
-      await RequestToGetUserLocation(
-        accountCert,
-        `${coords.lat},${coords.lng}`,
-        accountId,
-      );
+      await locationMutation.mutateAsync({
+        requestBody: {
+          accountId,
+          location: `${coords.lat},${coords.lng}`,
+        },
+      });
       toast.success("Location verified!");
       setTimeout(() => {
         navigate("/under-review");
       }, 3000);
     } catch (error) {
+      console.error("Error verifying location:", error);
       setError("Verification failed. Please try again.");
     } finally {
       setIsSubmitting(false);

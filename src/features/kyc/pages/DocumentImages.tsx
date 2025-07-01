@@ -4,7 +4,7 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
-import { RequestToStoreKycDocument } from "@services/keyManagement/requestService";
+import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
@@ -25,35 +25,51 @@ const DocumentImages = () => {
   const [activePopup, setActivePopup] = useState<ActivePopup>(null);
 
   const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const submitDocumentsMutation =
+    useKycManagementServicePostApiPrsKycDocuments();
+
   const handleSubmitDocuments = async () => {
     try {
-      if (!accountCert || !accountId) {
+      if (!accountId) {
         toast.error("Account information is missing.");
         navigate("/guidelines");
         return;
       }
-      const response = await RequestToStoreKycDocument(
-        images.frontID ?? "",
-        images.backID ?? "",
-        images.selfieID ?? "",
-        images.taxDoc ?? "",
-        accountCert,
+      const requestBody = {
+        frontId: images.frontID ?? "",
+        backId: images.backID ?? "",
+        selfieId: images.selfieID ?? "",
+        taxId: images.taxDoc ?? undefined,
         accountId,
-      );
-
-      if (response.includes("saved")) {
+      };
+      const response = await submitDocumentsMutation.mutateAsync({
+        requestBody,
+      });
+      if (
+        response?.status === "PENDING" ||
+        response?.status === "IN_REVIEW" ||
+        response?.status === "APPROVED"
+      ) {
         dispatch(setDocumentStatus("PENDING"));
         toast.success("Documents submitted successfully");
         navigate("/kyc");
+      } else {
+        toast.error(response?.message ?? "Failed to submit documents");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error submitting documents:", error);
+      if (typeof error === "object" && error !== null && "message" in error) {
+        toast.error(
+          (error as { message?: string }).message ??
+            "Error submitting documents",
+        );
+      } else {
+        toast.error("Error submitting documents");
+      }
     }
   };
 

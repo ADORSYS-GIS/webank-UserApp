@@ -3,7 +3,7 @@ import { Send, Search } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
-import { RequestToGetOtps } from "@services/keyManagement/requestService";
+import { useOtpRetrievalServiceGetApiPrsOtpPending } from "@openapi/generated/prs/queries/queries";
 
 export default function TellerDashboard() {
   const [data, setData] = useState<
@@ -18,33 +18,54 @@ export default function TellerDashboard() {
     (state: RootState) => state.account.accountCert,
   );
 
+  const {
+    data: fetchedData,
+    isLoading: isOtpLoading,
+    error: otpError,
+  } = useOtpRetrievalServiceGetApiPrsOtpPending([], {
+    enabled: !!accountCert,
+    refetchOnWindowFocus: true,
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!accountCert) {
-          toast.error("Account information is missing.");
-          setLoading(false);
-          return;
+    if (!accountCert) {
+      toast.error("Account information is missing.");
+      setLoading(false);
+      return;
+    }
+    setLoading(isOtpLoading);
+    if (otpError) {
+      toast.error("Failed to retrieve otpCode requests. Please try again.");
+    }
+    if (fetchedData) {
+      let parsedData: {
+        phoneNumber: string;
+        otpCode: string;
+        status: string;
+      }[] = [];
+      if (Array.isArray(fetchedData)) {
+        parsedData = fetchedData.map((item) => ({
+          phoneNumber: item.phoneNumber ?? "",
+          otpCode: item.otpCode ?? "",
+          status: item.status ?? "",
+        }));
+      } else {
+        try {
+          const arr = JSON.parse(fetchedData || "[]");
+          parsedData = Array.isArray(arr)
+            ? arr.map((item) => ({
+                phoneNumber: item.phoneNumber ?? "",
+                otpCode: item.otpCode ?? "",
+                status: item.status ?? "",
+              }))
+            : [];
+        } catch {
+          parsedData = [];
         }
-        const fetchedData = await RequestToGetOtps(accountCert);
-        const parsedData = Array.isArray(fetchedData)
-          ? fetchedData
-          : (JSON.parse(fetchedData || "[]") as {
-              phoneNumber: string;
-              otpCode: string;
-              status: string;
-            }[]);
-
-        setData(parsedData);
-      } catch (error) {
-        toast.error("Failed to retrieve otpCode requests. Please try again.");
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchData();
-  }, [accountCert]);
+      setData(parsedData);
+    }
+  }, [accountCert, fetchedData, otpError, isOtpLoading]);
 
   const handleSendWhatsApp = (phoneNumber: string, otpCode: string) => {
     const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=Your%20otpCode%20is%20${otpCode}`;
