@@ -1,5 +1,6 @@
 // src/kyc/pages/__tests__/RecoverAccountPage.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import RecoverAccountPage from "../RecoverAccountPage";
@@ -8,8 +9,15 @@ import { store } from "@state/Store";
 import jest from "jest-mock";
 
 describe("RecoverAccountPage", () => {
+  const renderWithQueryClient = (ui: React.ReactElement) => {
+    const queryClient = new QueryClient();
+    return render(
+      <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    );
+  };
+
   test("renders Recover Account page and handles KYC recovery", () => {
-    render(
+    renderWithQueryClient(
       <Provider store={store}>
         <Router>
           <RecoverAccountPage />
@@ -42,7 +50,7 @@ describe("RecoverAccountPage", () => {
   });
 
   test("handles token submission", async () => {
-    render(
+    renderWithQueryClient(
       <Provider store={store}>
         <Router>
           <RecoverAccountPage />

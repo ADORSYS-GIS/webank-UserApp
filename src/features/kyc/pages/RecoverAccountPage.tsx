@@ -7,7 +7,7 @@ import { setAccountCert, setAccountId, setKycCert } from "@state/accountSlice";
 import {
   useRecoveryServicePostApiPrsKycRecoveryToken,
   useAccountRecoveryServicePostApiPrsKycRecoveryValidate,
-} from "openapi/generated/prs/queries/queries";
+} from "@openapi/generated/prs/queries/queries";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faKey,

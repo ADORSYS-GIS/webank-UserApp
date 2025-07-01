@@ -15,7 +15,6 @@
       "@services/*": ["src/services/*"],
       "@state/*": ["src/state/*"],
       "@assets/*": ["src/assets/*"],
-      "@openapi/*": ["src/openapi/*"],
       "@openapi/generated/*": ["openapi/generated/*"]
     },
 

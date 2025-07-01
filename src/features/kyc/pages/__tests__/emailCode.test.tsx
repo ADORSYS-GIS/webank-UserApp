@@ -4,7 +4,7 @@ import EmailCode from "../emailCode";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import "@testing-library/jest-dom";
 import { vi, test, expect, beforeEach } from "vitest";
-import { RequestToVerifyEmailCode } from "@services/keyManagement/requestService";
+import { useEmailOtpServicePostApiPrsEmailOtpValidate } from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 
@@ -40,8 +40,9 @@ vi.mock("react-router-dom", async () => ({
 }));
 
 // Mock service directly
-vi.mock("@services/keyManagement/requestService", () => ({
-  RequestToVerifyEmailCode: vi.fn(),
+vi.mock("@openapi/generated/prs/queries/queries", () => ({
+  useEmailOtpServicePostApiPrsEmailOtpValidate: vi.fn(),
+  useKycManagementServicePostApiPrsKycEmail: vi.fn(),
 }));
 
 const renderWithRouter = (ui: React.ReactElement) => {
@@ -57,7 +58,7 @@ const renderWithRouter = (ui: React.ReactElement) => {
 describe("EmailCode Component", () => {
   beforeEach(() => {
     navigateMock.mockClear();
-    vi.mocked(RequestToVerifyEmailCode).mockClear();
+    vi.mocked(useEmailOtpServicePostApiPrsEmailOtpValidate).mockClear();
     vi.mocked(toast.error).mockClear();
     vi.mocked(useSelector).mockReturnValue(1); // Mock accountId
   });

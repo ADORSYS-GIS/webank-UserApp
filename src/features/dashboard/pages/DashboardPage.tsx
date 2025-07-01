@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   useAccountBalanceServicePostApiAccountsBalance,
   useTransactionHistoryServicePostApiAccountsTransactions,
-} from "openapi/generated/obs/queries/queries";
+} from "@openapi/generated/obs/queries/queries";
 import Header1 from "@shared/components/Header1";
 import BalanceCard from "../components/BalanceCard";
 import TransactionsSection from "../components/TransactionsSection";
