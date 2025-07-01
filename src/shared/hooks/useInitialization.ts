@@ -17,7 +17,6 @@ const useInitialization = () => {
 
   // I intentionally do NOT add devInitMutation/devValidateMutation to the dependency array
   // because they are stable (from TanStack Query) and adding them would cause infinite loops.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let cancelled = false;
     const performInitialization = async () => {
@@ -71,6 +70,7 @@ const useInitialization = () => {
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { devCert, error };
