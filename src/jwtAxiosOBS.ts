@@ -1,4 +1,4 @@
-import { OpenAPI } from "@openapi/generated/prs/requests/core/OpenAPI";
+import { OpenAPI } from "@openapi/generated/obs/requests/core/OpenAPI";
 import { generateJWT } from "@services/keyManagement/jwtService";
 import { KeyManagement } from "@services/keyManagement/keyManagement";
 
