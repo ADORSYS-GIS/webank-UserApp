@@ -89,7 +89,7 @@ const GeneralQRScannerPage: React.FC = () => {
         clientAccountId: data.accountId,
         agentAccountId,
         agentAccountCert,
-        show: show || "",
+        show: show ?? "",
         clientName: data.name ?? "Anonymous",
       };
 

@@ -88,7 +88,7 @@ const TopUpPage: React.FC = () => {
     agentAccountId: agentAccountId ?? "",
     agentAccountCert: agentAccountCert ?? "",
     show: show ?? "",
-    clientName: clientName || "Anonymous",
+    clientName: clientName ?? "Anonymous",
   };
   console.log("Confirmation Data:", confirmationData);
 
