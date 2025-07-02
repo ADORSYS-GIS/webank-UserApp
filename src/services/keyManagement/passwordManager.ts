@@ -1,12 +1,30 @@
-import {
-  handleRegister,
-  handleAuthenticate,
-  saveMessage,
-} from "@adorsys-gis/web-auth-prf";
+import webAuth from "@adorsys-gis/web-auth";
+import { LogLevel } from "@adorsys-gis/web-auth-logger";
+import { toast } from "sonner";
 
 export class PasswordManager {
   private static isRegistering = false;
   private static isAuthenticating = false;
+
+  private static webAuthInstance = webAuth({
+    credentialOptions: {
+      rp: {
+        id: window.location.hostname,
+        name: "WeBank User App",
+      },
+      creationOptions: {
+        authenticatorSelection: {
+          residentKey: "required",
+          requireResidentKey: true,
+          userVerification: "required",
+        },
+      },
+    },
+    encryptionOptions: {
+      tagLength: 128,
+    },
+    logLevel: LogLevel.debug,
+  });
 
   static async initializeDOMElements() {
     if (!document.querySelector("#messageInput")) {
@@ -31,8 +49,6 @@ export class PasswordManager {
       return storedPassword;
     }
 
-    await this.initializeDOMElements();
-
     try {
       const messages = JSON.parse(localStorage.getItem("messages") ?? "[]");
       let password: string | undefined;
@@ -48,6 +64,7 @@ export class PasswordManager {
       return password;
     } catch (error) {
       console.error("Password retrieval error:", error);
+      toast.error("Failed to retrieve password");
       return undefined;
     }
   }
@@ -58,10 +75,29 @@ export class PasswordManager {
 
     try {
       await this.cancelPendingRequests();
-      const decryptedPassword = await handleAuthenticate();
-      return decryptedPassword?.[0];
+      const { credential } = this.webAuthInstance;
+
+      // Get the credential
+      const result = await credential.authenticate();
+      if (!result?.userHandle) {
+        toast.error("Authentication failed");
+        return undefined;
+      }
+
+      // Get the stored password
+      const storedPassword = await this.webAuthInstance.storage.get("password");
+      if (!storedPassword?.data) {
+        toast.error("Password not found");
+        return undefined;
+      }
+
+      // Convert ArrayBuffer to string
+      const decoder = new TextDecoder();
+      const passwordArray = new Uint8Array(storedPassword.data as ArrayBuffer);
+      return decoder.decode(passwordArray);
     } catch (error) {
       console.error("Authentication failed:", error);
+      toast.error("Failed to authenticate with password manager");
       return undefined;
     } finally {
       this.isAuthenticating = false;
@@ -76,16 +112,35 @@ export class PasswordManager {
 
     try {
       await this.cancelPendingRequests();
-      await handleRegister();
+      const { credential } = this.webAuthInstance;
 
+      // Generate a new password
       const newPassword = this.generateSecurePassword();
-      const input = document.querySelector<HTMLInputElement>("#messageInput")!;
-      input.value = newPassword;
-      await saveMessage();
 
+      // Register new credential
+      const result = await credential.register({
+        user: {
+          name: "webank-user",
+          displayName: "WeBank User",
+        },
+      });
+
+      if (!result) {
+        throw new Error("Registration failed");
+      }
+
+      // Convert password to ArrayBuffer and store it
+      const encoder = new TextEncoder();
+      const passwordArray = encoder.encode(newPassword);
+      await this.webAuthInstance.storage.save("password", {
+        data: passwordArray.buffer as ArrayBuffer,
+      });
+
+      toast.success("Password saved to password manager");
       return newPassword;
     } catch (error) {
       console.error("Registration failed:", error);
+      toast.error("Failed to register with password manager");
       return undefined;
     } finally {
       this.isRegistering = false;
