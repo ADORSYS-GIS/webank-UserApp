@@ -8,7 +8,7 @@ import { KeyManagement } from "@services/keyManagement/keyManagement";
 // and account recovery, generating the appropriate JWT based on the request data.
 
 // prettier-ignore
-OpenAPI.interceptors.request.use(async (config) => { // NO SONAR
+OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
   const url = config.url ?? "";
   const data = config.data ?? {};
   const accountCert = localStorage.getItem("accountCert");
