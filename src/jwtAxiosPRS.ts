@@ -130,9 +130,8 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       accId,
     );
   } else if (url.includes("/kyc/info")) {
-    const docNumber = data.docNumber;
+    const docNumber = data.idNumber;
     const expiryDate = data.expiryDate;
-    const accountCertVal = accountCert;
     const accountIdVal = data.accountId;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
@@ -140,7 +139,7 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       publicKey,
       null,
       null,
-      accountCertVal,
+      accountCert,
       null,
       null,
       null,

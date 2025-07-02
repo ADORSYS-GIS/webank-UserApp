@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  useAccountTopUpServicePostApiAccountsAgentTopup,
+  useMoneyTransferServicePostApiTransfersPayout,
   useAccountWithdrawalServicePostApiAccountsWithdraw,
 } from "openapi/generated/obs/queries/queries";
 import { toast } from "sonner";
@@ -62,7 +62,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const topUpMutation = useAccountTopUpServicePostApiAccountsAgentTopup();
+  const topUpMutation = useMoneyTransferServicePostApiTransfersPayout();
 
   // Helper: handle offline navigation for different show types
   function handleOfflineNavigation(type: string) {
@@ -95,7 +95,8 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     try {
       const response = await topUpMutation.mutateAsync({
         requestBody: {
-          accountId: clientAccountId,
+          senderAccountId: agentAccountId,
+          recipientAccountId: clientAccountId,
           amount,
         },
       });
