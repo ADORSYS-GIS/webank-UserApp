@@ -73,9 +73,9 @@ OpenAPI.interceptors.request.use(async (config) => {
       agentAccountId,
     );
   } else if (url.includes("/accounts/withdraw")) {
-    const clientAccountId = data.clientAccountId;
+    const clientAccountId = data.recipientAccountId;
     const amount = data.amount;
-    const agentAccountId = data.agentAccountId;
+    const agentAccountId = data.senderAccountId;
     const transactionJwt = data.transactionJwt;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
@@ -87,9 +87,9 @@ OpenAPI.interceptors.request.use(async (config) => {
       transactionJwt,
       null,
       null,
-      clientAccountId,
-      amount,
       agentAccountId,
+      amount,
+      clientAccountId,
     );
   } else if (url.includes("/agent/topup")) {
     const agentId = data.accountId;
