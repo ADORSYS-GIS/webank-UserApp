@@ -74,8 +74,12 @@ describe("Register component", () => {
   };
 
   it("sends OTP on button click", async () => {
-    const mockMutateAsync = vi.fn().mockResolvedValueOnce({ otpHash: "otp-hash" });
-    (useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock).mockReturnValue({ mutateAsync: mockMutateAsync });
+    const mockMutateAsync = vi
+      .fn()
+      .mockResolvedValueOnce({ otpHash: "otp-hash" });
+    (
+      useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock
+    ).mockReturnValue({ mutateAsync: mockMutateAsync });
 
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
@@ -93,8 +97,12 @@ describe("Register component", () => {
   });
 
   it("displays error message on invalid phone number", async () => {
-    const mockMutateAsync = vi.fn().mockRejectedValueOnce(new Error("Invalid number"));
-    (useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock).mockReturnValue({ mutateAsync: mockMutateAsync });
+    const mockMutateAsync = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Invalid number"));
+    (
+      useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock
+    ).mockReturnValue({ mutateAsync: mockMutateAsync });
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
@@ -113,7 +121,9 @@ describe("Register component", () => {
   it("handles API errors gracefully", async () => {
     const mockError = new Error("Network error");
     const mockMutateAsync = vi.fn().mockRejectedValueOnce(mockError);
-    (useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock).mockReturnValue({ mutateAsync: mockMutateAsync });
+    (
+      useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock
+    ).mockReturnValue({ mutateAsync: mockMutateAsync });
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
 
     fireEvent.change(getByPlaceholderText("Phone number"), {
