@@ -95,23 +95,21 @@ export default function OtpInput({
         </header>
       )}
       <form className="flex justify-center gap-x-1 sm:gap-x-2 md:gap-x-3 lg:gap-x-4 w-full max-w-[90%]">
-        <div className="relative flex w-full items-center justify-center">
-          {valueItems.map((digit, idx) => (
-            <input
-              key={`otp-input-${idx}`}
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              pattern="\d{1}"
-              maxLength={1}
-              className="min-w-8 sm:min-w-10 md:min-w-12 lg:min-w-14 h-12 text-center text-2xl font-bold text-slate-900 bg-white border border-slate-300 hover:border-slate-400 rounded-lg outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 flex-grow"
-              value={digit}
-              onChange={(e) => handleOTPInputChange(e, idx)}
-              onKeyDown={inputOnKeyDown}
-              onFocus={inputOnFocus}
-            />
-          ))}
-        </div>
+        {valueItems.map((digit, idx) => (
+          <input
+            key={idx}
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            pattern="\d{1}"
+            maxLength={1}
+            className="min-w-8 sm:min-w-10 md:min-w-12 lg:min-w-14 h-12 text-center text-2xl font-bold text-slate-900 bg-white border border-slate-300 hover:border-slate-400 rounded-lg outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 flex-grow"
+            value={digit}
+            onChange={(e) => handleOTPInputChange(e, idx)}
+            onKeyDown={inputOnKeyDown}
+            onFocus={inputOnFocus}
+          />
+        ))}
       </form>
 
       {/* <div className="text-sm text-slate-500 mt-4">
