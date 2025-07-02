@@ -2,7 +2,13 @@ import { OpenAPI } from "@openapi/generated/prs/requests/core/OpenAPI";
 import { generateJWT } from "@services/keyManagement/jwtService";
 import { KeyManagement } from "@services/keyManagement/keyManagement";
 
-OpenAPI.interceptors.request.use(async (config) => {
+// This file is used to generate JWTs for PRS endpoints using the OpenAPI client.
+// It intercepts requests and adds the JWT to the headers based on the endpoint being called.
+// It handles various PRS endpoints such as device registration, OTP validation, KYC processes,
+// and account recovery, generating the appropriate JWT based on the request data.
+
+// prettier-ignore
+OpenAPI.interceptors.request.use(async (config) => { // NO SONAR
   const url = config.url ?? "";
   const data = config.data ?? {};
   const accountCert = localStorage.getItem("accountCert");

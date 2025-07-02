@@ -95,38 +95,51 @@ export default function RecoveryDashboard() {
     setSearchDocId(searchTerm);
   };
 
+  // Helper: handle when no user is found
+  function handleNoUserFound() {
+    toast.info("No user found with the provided document number");
+    setSearchDocId(null);
+  }
+
+  // Helper: handle when there is a query error
+  function handleQueryError() {
+    toast.error("Search failed");
+    setSearchDocId(null);
+  }
+
+  // Helper: process found KYC info
+  function processKycInfo(info: any) {
+    setFoundRecord({
+      id: info.id ?? info.documentUniqueId,
+      oldAccountId: info.accountId,
+      docNumber: info.idNumber ?? info.documentUniqueId,
+      expirationDate: info.expirationDate,
+      location: info.location ?? "N/A",
+      email: info.email ?? "N/A",
+      status: info.status ?? "PENDING",
+      frontID: info.frontID ?? "",
+      backID: info.backID ?? "",
+      selfie: info.selfie ?? "",
+      taxDocument: info.taxDocument ?? "",
+    });
+    setFormData({ docNumber: "", expirationDate: "" });
+    setSearchDocId(null);
+  }
+
   // Effect: update foundRecord when KYC query returns
   useEffect(() => {
-    if (!kycQuery.isFetching && searchDocId) {
-      setLoading(false);
-      if (kycQuery.error) {
-        toast.error("Search failed");
-        setSearchDocId(null);
-        return;
-      }
-      const kycData = kycQuery.data;
-      if (!kycData || !Array.isArray(kycData) || !kycData.length) {
-        toast.info("No user found with the provided document number");
-        setSearchDocId(null);
-        return;
-      }
-      const info = kycData[0];
-      setFoundRecord({
-        id: info.id ?? info.documentUniqueId,
-        oldAccountId: info.accountId,
-        docNumber: info.idNumber ?? info.documentUniqueId,
-        expirationDate: info.expirationDate,
-        location: info.location ?? "N/A",
-        email: info.email ?? "N/A",
-        status: info.status ?? "PENDING",
-        frontID: info.frontID ?? "",
-        backID: info.backID ?? "",
-        selfie: info.selfie ?? "",
-        taxDocument: info.taxDocument ?? "",
-      });
-      setFormData({ docNumber: "", expirationDate: "" });
-      setSearchDocId(null);
+    if (kycQuery.isFetching || !searchDocId) return;
+    setLoading(false);
+    if (kycQuery.error) {
+      handleQueryError();
+      return;
     }
+    const kycData = kycQuery.data;
+    if (!kycData || !Array.isArray(kycData) || !kycData.length) {
+      handleNoUserFound();
+      return;
+    }
+    processKycInfo(kycData[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kycQuery.data, kycQuery.error, kycQuery.isFetching, searchDocId]);
 
