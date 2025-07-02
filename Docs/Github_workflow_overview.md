@@ -92,8 +92,7 @@ The workflow is set to run on:
 - **Dependency Installation Failures**: If `npm ci` fails during the install step, verify the integrity of `package-lock.json` or try clearing the cache.
 - **Cache Issues**: If the cached `node_modules` is outdated or causing build failures, clear the cache by changing the cache key.
 - **Build Failures**: Ensure code changes do not introduce syntax errors or unsupported constructs. Check for environment-specific build configurations.
-- **Lint/Prettier Errors**: Ensure that the code follows the project's style guide and run  locally to auto-correct issues.
-- **TypeScript Errors**: Resolve any type errors reported in the `typescript` step by fixing the type definitions in the code.
+- **Lint/Prettier Errors**: Ensure that the code follows the project's style guide and run `npm run prettier:check -- --write "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}"` locally to auto-correct issues.- **TypeScript Errors**: Resolve any type errors reported in the `typescript` step by fixing the type definitions in the code.
 - **Test Failures**: Debug failing tests locally using `npm run test:unit`.
 
 ---
