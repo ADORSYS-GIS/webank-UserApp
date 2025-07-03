@@ -6,7 +6,7 @@ export class PasswordManager {
   private static isRegistering = false;
   private static isAuthenticating = false;
 
-  private static webAuthInstance = webAuth({
+  private static readonly webAuthInstance = webAuth({
     credentialOptions: {
       rp: {
         id: window.location.hostname,
