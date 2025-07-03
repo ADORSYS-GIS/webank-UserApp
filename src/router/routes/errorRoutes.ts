@@ -1,22 +1,12 @@
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./routeTree";
-import AppLayout from "../../layouts/AppLayout";
 import { lazy } from "react";
+import type { LazyExoticComponent, ComponentType } from "react";
 
 const NotFoundPage = lazy(() => import("@shared/pages/NotFoundPage"));
 
-const errorParentRoute = createRoute({
+export const errorRoute = createRoute({
   getParentRoute: () => rootRoute,
-  id: "error",
-  component: AppLayout,
+  path: "$not-found",
+  component: NotFoundPage as unknown as LazyExoticComponent<ComponentType<unknown>>,
 });
-
-const errorRoutes = [
-  createRoute({
-    path: "*",
-    getParentRoute: () => errorParentRoute,
-    component: NotFoundPage,
-  }),
-];
-
-export const errorRoutesGroup = errorParentRoute.addChildren(errorRoutes);
