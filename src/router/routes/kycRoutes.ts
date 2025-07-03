@@ -19,27 +19,16 @@ const PassportForm = lazy(() => import("@features/kyc/pages/PassportForm"));
 const LocationComponent = lazy(
   () => import("@features/kyc/components/LocationComponent"),
 );
-const KYCPage = lazy(() => import("@features/kyc/pages/KycVerificationPage"));
 const RecoverAccountPage = lazy(
   () => import("@features/kyc/pages/RecoverAccountPage"),
 );
-const RecoveryDashboard = lazy(
-  () => import("@features/kyc/pages/KycRecoveryPage"),
-);
-const AccountRecoveryScannerPage = lazy(
-  () => import("@features/kyc/pages/AccountRecoveryScannerPage"),
-);
-const RecoveryToken = lazy(() => import("@features/kyc/pages/RecoveryToken"));
-const AccountConfirmation = lazy(
-  () => import("@features/kyc/pages/AccountConfirmation"),
+const GuidelinesPage = lazy(
+  () => import("@features/kyc/guidelines/GuidelinesPage"),
 );
 const MapConfirmation = lazy(
   () => import("@features/kyc/components/MapConfirmation"),
 );
 const DocumentImages = lazy(() => import("@features/kyc/pages/DocumentImages"));
-const GuidelinesPage = lazy(
-  () => import("@features/kyc/guidelines/GuidelinesPage"),
-);
 
 const kycParentRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -99,11 +88,6 @@ const kycRoutes = [
     component: DriverLicenseForm,
   }),
   createRoute({
-    path: "/recovery/recoverytoken",
-    getParentRoute: () => kycParentRoute,
-    component: RecoveryToken,
-  }),
-  createRoute({
     path: "/map-confirmation",
     getParentRoute: () => kycParentRoute,
     component: MapConfirmation,
@@ -112,26 +96,6 @@ const kycRoutes = [
     path: "/kyc/imgs",
     getParentRoute: () => kycParentRoute,
     component: DocumentImages,
-  }),
-  createRoute({
-    path: "/agency",
-    getParentRoute: () => kycParentRoute,
-    component: KYCPage,
-  }),
-  createRoute({
-    path: "/account-recovery",
-    getParentRoute: () => kycParentRoute,
-    component: RecoveryDashboard,
-  }),
-  createRoute({
-    path: "/recovery/recovery-scanner",
-    getParentRoute: () => kycParentRoute,
-    component: AccountRecoveryScannerPage,
-  }),
-  createRoute({
-    path: "/recovery/account-confirmation",
-    getParentRoute: () => kycParentRoute,
-    component: AccountConfirmation,
   }),
 ];
 

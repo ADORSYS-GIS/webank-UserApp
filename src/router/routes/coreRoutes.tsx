@@ -3,28 +3,27 @@ import { rootRoute } from "./routeTree";
 import AppLayout from "../../layouts/AppLayout";
 import { lazy } from "react";
 
-const DashboardPage = lazy(
-  () => import("@features/dashboard/pages/DashboardPage"),
-);
-const OnboardingPage = lazy(() => import("@shared/pages/HomePage"));
+// Import HomePage from the new file
+import HomePage from "../../layouts/HomePage";
+
 const AboutPage = lazy(() => import("@shared/pages/AboutPage"));
 const AccountLoadingPage = lazy(
-  () => import("@shared/pages/AccountLoadingPage"),
+  () => import("@shared/pages/AccountLoadingPage")
 );
 const ShareHandlerPage = lazy(() => import("@shared/pages/ShareHandlerPage"));
 const AgentPage = lazy(() => import("@features/teller/pages/AgentPage"));
 const AgentTopUpPage = lazy(
-  () => import("@features/teller/pages/AgentTopUpPage"),
+  () => import("@features/teller/pages/AgentTopUpPage")
 );
 const TellerDashboard = lazy(() => import("@features/teller/pages/TellerPage"));
 const ContactsPage = lazy(
-  () => import("@features/contacts/pages/ContactsPage"),
+  () => import("@features/contacts/pages/ContactsPage")
 );
 const PaymentSelectionPage = lazy(
-  () => import("@features/transactions/pages/PaymentSelectionPage"),
+  () => import("@features/transactions/pages/PaymentSelectionPage")
 );
 const SuccessPage = lazy(
-  () => import("@features/transactions/pages/SuccessPage"),
+  () => import("@features/transactions/pages/SuccessPage")
 );
 const TopUpPage = lazy(() => import("@features/transactions/pages/TopUpPage"));
 
@@ -38,12 +37,12 @@ const coreRoutes = [
   createRoute({
     path: "/",
     getParentRoute: () => coreParentRoute,
-    component: DashboardPage,
+    component: HomePage, // Use the imported HomePage
   }),
   createRoute({
     path: "/onboarding",
     getParentRoute: () => coreParentRoute,
-    component: OnboardingPage,
+    component: lazy(() => import("@shared/pages/HomePage")),
   }),
   createRoute({
     path: "/about",
