@@ -165,8 +165,7 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       taxId,
       accId,
     );
-  } else if (url.includes("/kyc/status")) {
-    const { docNumber, expiryDate, accountId: accId, status, reason } = data;
+  } else if (url.includes("/otp/pending")) {
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
@@ -177,12 +176,41 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       null,
       null,
       null,
-      docNumber,
-      expiryDate,
-      accId,
-      status,
-      reason,
     );
+  }
+  else if (url.includes("/kyc/pending")) {
+    const { publicKey, privateKey } = await KeyManagement();
+    jwt = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null,
+      null,
+      null,
+    );
+
+  } else if (url.includes("/kyc/status")) {
+    const { idNumber, expiryDate, accountId , status} = data;
+    console.log("KYC status data:", data);
+    const { publicKey, privateKey } = await KeyManagement();
+    jwt = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null,
+      null,
+      null,
+      idNumber,
+      expiryDate,
+      accountId,
+      status,
+     
+    );
+    console.log("Generated JWT for PRS KYC status update:", jwt);
   } else if (url.includes("/kyc/findById")) {
      // Extract documentUniqueId from URL path
   const urlParts = url.split('/');
