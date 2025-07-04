@@ -183,8 +183,10 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       status,
       reason,
     );
-  } else if (url.includes("/kyc/pending") || url.includes("/kyc/search")) {
-    const docNumber = data.docNumber;
+  } else if (url.includes("/kyc/findById")) {
+     // Extract documentUniqueId from URL path
+  const urlParts = url.split('/');
+  const docNumber = urlParts[urlParts.length - 1];
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
@@ -212,14 +214,13 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
   } else if (url.includes("/recovery/token")) {
     const oldAccountId = data.oldAccountId;
     const newAccountId = data.newAccountId;
-    const accountCertVal = accountCert;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
       publicKey,
       null,
       null,
-      accountCertVal,
+      accountCert,
       null,
       null,
       null,
@@ -229,14 +230,13 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
   } else if (url.includes("/recovery/validate")) {
     const newAccountId = data.newAccountId;
     const recoveryToken = data.recoveryToken;
-    const accountCertVal = accountCert;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
       publicKey,
       null,
       null,
-      accountCertVal,
+      accountCert,
       null,
       null,
       recoveryToken,
