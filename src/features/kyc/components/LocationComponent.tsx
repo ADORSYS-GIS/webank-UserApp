@@ -24,7 +24,7 @@ const LocationComponent = () => {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-        navigate({ to: '/map-confirmation', state: { coords } as any });
+        navigate({ to: '/map-confirmation', state: { coords } as never });
         setIsLoading(false);
         setLocation(coords);
       },

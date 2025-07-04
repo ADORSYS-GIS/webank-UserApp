@@ -85,7 +85,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             amount,
             isClientOffline: true,
             clientName, // Pass the client name in navigation
-          } as any,
+          } as never,
         });
       }, 4000);
     } else if (!navigator.onLine && show === "Transfer") {
@@ -122,7 +122,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
               accountId: agentAccountId,
               accountCert: agentAccountCert,
               clientName, // Include client name in success state
-            } as any,
+            } as never,
           });
         } else if (response?.includes("Insufficient")) {
           toast.error("Insufficient funds. Please add funds to your account.");
@@ -153,7 +153,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             accountId: agentAccountId,
             accountCert: agentAccountCert,
             clientName, // Include client name in success state
-          } as any,
+          } as never,
         });
       } else if (response?.includes("Insufficient")) {
         toast.error(

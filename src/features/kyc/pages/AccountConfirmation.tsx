@@ -52,7 +52,7 @@ const AccountConfirmation: React.FC = () => {
           oldAccountId,
           newAccountId,
           recoveryToken,
-        } as any,
+        } as never,
       });
     } catch (error) {
       toast.error("Failed to get recovery token. Please try again.");

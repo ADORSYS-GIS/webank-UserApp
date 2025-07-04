@@ -33,7 +33,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           clientAccountId: accountId,
           clientAccountCert: accountCert,
           isClientOnline: true,
-        } as any,
+        } as never,
       });
       console.log("Top Up button clicked", accountId);
     });
@@ -46,7 +46,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           show: "Withdraw",
           clientAccountId: accountId,
           clientAccountCert: accountCert,
-        } as any,
+        } as never,
       });
       console.log("Withdrawal", accountId);
     });
@@ -59,7 +59,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           clientAccountId: accountId,
           clientAccountCert: accountCert,
           show: "Transfer",
-        } as any,
+        } as never,
       });
       console.log("Transfer", accountId);
     });
@@ -72,7 +72,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
           clientAccountId: accountId,
           clientAccountCert: accountCert,
           show: "Payment",
-        } as any,
+        } as never,
       });
       console.log("Payment", accountId);
     });

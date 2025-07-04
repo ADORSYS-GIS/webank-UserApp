@@ -261,7 +261,7 @@ export default function ShareHandlerPage() {
                 state: {
                   sharedImage: files[0].base64,
                   show: "Transfer",
-                } as any,
+                } as never,
               });
               return;
             }

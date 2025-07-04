@@ -144,7 +144,7 @@ export default function RecoveryDashboard() {
       }
       navigate({
         to: "/recovery/recovery-scanner",
-        state: { oldAccountId: foundRecord.oldAccountId } as any,
+        state: { oldAccountId: foundRecord.oldAccountId } as never,
       });
     } catch (err) {
       console.error(err);

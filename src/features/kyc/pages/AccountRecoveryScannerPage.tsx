@@ -33,7 +33,7 @@ const GetNewAccountId: React.FC = () => {
           stopScanner();
           navigate({
             to: "/recovery/account-confirmation",
-            state: { accountId: data.accountId, oldAccountId } as any,
+            state: { accountId: data.accountId, oldAccountId } as never,
           });
         } else {
           throw new Error("Invalid QR Code: Missing accountId");

@@ -116,7 +116,7 @@ const QRGenerator: React.FC = () => {
               onClick={() =>
                 navigate({
                   to: "/qr-scan/top-up",
-                  state: { isClientOffline } as any,
+                  state: { isClientOffline } as never,
                 })
               }
               className="w-full px-6 py-3 text-white bg-amber-600 rounded-lg shadow-md transition hover:bg-amber-700 active:scale-95"

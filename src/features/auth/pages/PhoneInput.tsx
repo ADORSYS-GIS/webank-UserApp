@@ -82,7 +82,7 @@ const PhoneInput: React.FC = () => {
         });
         navigate({
           to: "/phone/verification",
-          state: { otpHash, fullPhoneNumber } as any,
+          state: { otpHash, fullPhoneNumber } as never,
         });
       }
     } catch (error) {

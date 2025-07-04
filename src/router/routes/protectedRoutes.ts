@@ -35,16 +35,14 @@ export const protectedRoutesGroup = protectedParent.addChildren([
   createRoute({
     getParentRoute: () => protectedParent,
     path: "/recovery/recovery-scanner",
-    component: lazy(() =>
-      import("@features/kyc/pages/AccountRecoveryScannerPage")
+    component: lazy(
+      () => import("@features/kyc/pages/AccountRecoveryScannerPage"),
     ),
   }),
   createRoute({
     getParentRoute: () => protectedParent,
     path: "/recovery/account-confirmation",
-    component: lazy(() =>
-      import("@features/kyc/pages/AccountConfirmation")
-    ),
+    component: lazy(() => import("@features/kyc/pages/AccountConfirmation")),
   }),
   createRoute({
     getParentRoute: () => protectedParent,

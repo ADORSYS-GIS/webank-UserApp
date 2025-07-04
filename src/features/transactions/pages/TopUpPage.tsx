@@ -39,7 +39,7 @@ const TopUpPage: React.FC = () => {
   const handleCancel = () => {
     navigate({
       to: "/dashboard",
-      state: { accountId: clientAccountId } as any,
+      state: { accountId: clientAccountId } as never,
     });
   };
 
@@ -76,7 +76,7 @@ const TopUpPage: React.FC = () => {
           isClientOffline,
           isClientOnline,
           show,
-        } as any,
+        } as never,
       });
     }
   };

@@ -51,14 +51,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate({
                 to: "/dashboard",
-                state: { accountId, accountCert } as any,
+                state: { accountId, accountCert } as never,
               })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 navigate({
                   to: "/dashboard",
-                  state: { accountId, accountCert } as any,
+                  state: { accountId, accountCert } as never,
                 });
               }
             }}
@@ -117,14 +117,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate({
                 to: "/settings",
-                state: { accountId, accountCert } as any,
+                state: { accountId, accountCert } as never,
               })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 navigate({
                   to: "/settings",
-                  state: { accountId, accountCert } as any,
+                  state: { accountId, accountCert } as never,
                 });
               }
             }}
@@ -156,14 +156,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate({
                 to: "/contacts",
-                state: { accountId, accountCert } as any,
+                state: { accountId, accountCert } as never,
               })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 navigate({
                   to: "/contacts",
-                  state: { accountId, accountCert } as any,
+                  state: { accountId, accountCert } as never,
                 });
               }
             }}

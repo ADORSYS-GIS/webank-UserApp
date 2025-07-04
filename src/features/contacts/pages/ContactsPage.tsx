@@ -25,7 +25,7 @@ const ContactsPage: React.FC = () => {
         clientName: contact.name,
         fromContacts: true,
         show: "Payment",
-      } as any,
+      } as never,
     });
   };
 

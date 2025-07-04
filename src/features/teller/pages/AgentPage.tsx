@@ -87,7 +87,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                     state: {
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
-                    } as any,
+                    } as never,
                   }),
                 )
               }
@@ -99,7 +99,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                       state: {
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,
-                      } as any,
+                      } as never,
                     }),
                   );
                 }
@@ -127,7 +127,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                     state: {
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
-                    } as any,
+                    } as never,
                   }),
                 )
               }
@@ -139,7 +139,7 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
                       state: {
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,
-                      } as any,
+                      } as never,
                     }),
                   );
                 }

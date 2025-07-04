@@ -40,7 +40,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/teller",
-          } as any,
+          } as never,
         }),
     },
     {
@@ -54,7 +54,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/agency",
-          } as any,
+          } as never,
         }),
     },
     {
@@ -68,7 +68,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/account-recovery",
-          } as any,
+          } as never,
         }),
     },
     {
@@ -82,7 +82,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             tellerAccountId: accountId,
             tellerAccountCert: accountCert,
             redirectTo: "/agent-topup",
-          } as any,
+          } as never,
         }),
     },
   ];

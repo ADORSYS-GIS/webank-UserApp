@@ -71,7 +71,7 @@ const GeneralQRScannerPage: React.FC = () => {
           agentAccountCert,
           show,
           clientName: data.name,
-        } as any,
+        } as never,
       });
     },
     [agentAccountId, agentAccountCert, navigate, show],
@@ -112,7 +112,7 @@ const GeneralQRScannerPage: React.FC = () => {
           agentAccountCert,
           show,
           clientName: scannedName ?? "Anonymous",
-        } as any,
+        } as never,
       });
     }
   };
@@ -129,7 +129,7 @@ const GeneralQRScannerPage: React.FC = () => {
           agentAccountCert,
           show,
           clientName: scannedName ?? "Anonymous",
-        } as any,
+        } as never,
       });
     }
   };

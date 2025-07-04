@@ -73,7 +73,7 @@ const InputEmail: React.FC = () => {
       if (response.startsWith("OTP sent successfully")) {
         toast.success("OTP sent, please check your email.", { duration: 5000 });
       }
-      navigate({ to: "/emailCode", state: { email, accountCert } as any });
+      navigate({ to: "/emailCode", state: { email, accountCert } as never });
     } catch (error: unknown) {
       handleOtpError(error);
     }

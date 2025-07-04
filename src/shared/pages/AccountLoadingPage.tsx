@@ -50,7 +50,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
           // Redirect to dashboard
           navigate({
             to: "/onboarding",
-            state: { accountId, accountCert } as any,
+            state: { accountId, accountCert } as never,
           });
         } else {
           throw new Error("Account creation failed");
