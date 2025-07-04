@@ -42,7 +42,7 @@ vi.mock("react-router-dom", async () => ({
 // Mock service directly
 vi.mock("@openapi/generated/prs/queries/queries", () => ({
   useEmailOtpServicePostApiPrsEmailOtpValidate: vi.fn(),
-  useKycManagementServicePostApiPrsKycEmail: vi.fn(),
+  useEmailOtpServicePostApiPrsEmailOtpSend: vi.fn(),
 }));
 
 const renderWithRouter = (ui: React.ReactElement) => {

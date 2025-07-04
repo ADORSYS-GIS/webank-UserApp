@@ -19,7 +19,7 @@ vi.mock("react-router-dom", async () => {
 // Mock for OpenAPI email mutation
 const mockEmailMutation = vi.fn();
 vi.mock("@openapi/generated/prs/queries/queries", () => ({
-  useKycManagementServicePostApiPrsKycEmail: () => ({
+  useEmailOtpServicePostApiPrsEmailOtpSend: () => ({
     mutateAsync: mockEmailMutation,
   }),
   RequestToSendEmailOTP: vi.fn(() => Promise.resolve("OTP sent successfully")),
