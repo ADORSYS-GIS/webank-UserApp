@@ -165,20 +165,8 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       taxId,
       accId,
     );
-  } else if (url.includes("/otp/pending")) {
-    const { publicKey, privateKey } = await KeyManagement();
-    jwt = await generateJWT(
-      privateKey,
-      publicKey,
-      null,
-      null,
-      accountCert,
-      null,
-      null,
-      null,
-    );
   }
-  else if (url.includes("/kyc/pending")) {
+  else if (url.includes("/kyc/pending") || url.includes("/kyc/cert") || url.includes("/otp/pending")) {
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
@@ -226,18 +214,6 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       null,
       null,
       docNumber,
-    );
-  } else if (url.includes("/kyc/cert")) {
-    const { publicKey, privateKey } = await KeyManagement();
-    jwt = await generateJWT(
-      privateKey,
-      publicKey,
-      null,
-      null,
-      accountCert,
-      null,
-      null,
-      null,
     );
   } else if (url.includes("/recovery/token")) {
     const oldAccountId = data.oldAccountId;
