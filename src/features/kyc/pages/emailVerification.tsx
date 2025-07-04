@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useSelector } from "react-redux";
-import { useKycManagementServicePostApiPrsKycEmail } from "@openapi/generated/prs/queries/queries";
+import { useEmailOtpServicePostApiPrsEmailOtpSend } from "@openapi/generated/prs/queries/queries";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,7 +17,7 @@ const InputEmail: React.FC = () => {
     (state: RootState) => state.account.accountCert,
   );
   const accountId = useSelector((state: RootState) => state.account.accountId);
-  const emailMutation = useKycManagementServicePostApiPrsKycEmail();
+  const emailMutation = useEmailOtpServicePostApiPrsEmailOtpSend();
 
   // Validate email format
   const isValidEmail = (email: string): boolean => {

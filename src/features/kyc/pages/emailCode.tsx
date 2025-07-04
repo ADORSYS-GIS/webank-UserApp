@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setEmailStatus } from "@state/accountSlice";
 import {
-  useKycManagementServicePostApiPrsKycEmail,
+  useEmailOtpServicePostApiPrsEmailOtpSend,
   useEmailOtpServicePostApiPrsEmailOtpValidate,
 } from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
@@ -22,7 +22,7 @@ const EmailCode: React.FC = () => {
   const location = useLocation();
   const { email } = location.state ?? {};
   const accountId = useSelector((state: RootState) => state.account.accountId);
-  const resendEmailMutation = useKycManagementServicePostApiPrsKycEmail();
+  const resendEmailMutation = useEmailOtpServicePostApiPrsEmailOtpSend();
   const verifyEmailOtpMutation = useEmailOtpServicePostApiPrsEmailOtpValidate();
 
   const resendOTP = async () => {
@@ -39,7 +39,7 @@ const EmailCode: React.FC = () => {
             accountId,
           },
         });
-        if (result?.status === "PENDING" || result?.status === "APPROVED") {
+        if (result?.status === "PENDING") {
           toast.success("OTP Resend, please check your email.", {
             duration: 5000,
           });
