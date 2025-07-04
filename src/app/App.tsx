@@ -186,7 +186,12 @@ const App: React.FC = () => {
           />
         )}
 
-      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} accountId={accountId || undefined} accountCert={accountCert || undefined} />
+      <BottomSheet
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        accountId={accountId || undefined}
+        accountCert={accountCert || undefined}
+      />
 
       {/* KYC Reminder Popup */}
       {showReminder && <KYCReminderPopup onClose={handleClose} />}
