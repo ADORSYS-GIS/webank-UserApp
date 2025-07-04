@@ -8,6 +8,7 @@ OpenAPI.interceptors.request.use(async (config) => {
   const deviceCert = localStorage.getItem("devCert");
   const accountCert = localStorage.getItem("accountCert");
   const kycCert = localStorage.getItem("kycCert");
+  const transactionCert = localStorage.getItem("transactionCert");
   let jwt: string | null = null;
 
   // OBS endpoints only
@@ -76,7 +77,6 @@ OpenAPI.interceptors.request.use(async (config) => {
     const clientAccountId = data.recipientAccountId;
     const amount = data.amount;
     const agentAccountId = data.senderAccountId;
-    const transactionJwt = data.transactionJwt;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,
@@ -84,13 +84,14 @@ OpenAPI.interceptors.request.use(async (config) => {
       null,
       null,
       accountCert,
-      transactionJwt,
+      transactionCert,
       null,
       null,
       agentAccountId,
       amount,
       clientAccountId,
     );
+    console.log("Generated JWT for OBS account withdrawal:", jwt);
   } else if (url.includes("/agent/topup")) {
     const agentId = data.accountId;
     const amount = data.amount;

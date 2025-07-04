@@ -50,7 +50,9 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     show,
     clientName,
   } = safeData;
-
+  if (transactionJwt) {
+    localStorage.setItem("transactionCert", transactionJwt);
+  }
   console.log("Confirmation Page Data:", safeData);
   console.log("Client Name in Confirmation:", clientName);
 
