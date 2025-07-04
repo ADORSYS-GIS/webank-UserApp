@@ -44,36 +44,16 @@ const MarkdownH2: React.FC<MarkdownHeadingProps> = ({ children, ...props }) => {
       {...props}
     >
       {typeof firstChild === "string" && firstChild.startsWith("Step 1") && (
-        <Info
-          size={20}
-          color="#2563EB"
-          style={{ marginRight: 12 }}
-          aria-hidden="true"
-        />
+        <Info size={20} className="text-blue-600 mr-3" aria-hidden="true" />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Step 2") && (
-        <Info
-          size={20}
-          color="#2563EB"
-          style={{ marginRight: 12 }}
-          aria-hidden="true"
-        />
+        <Info size={20} className="text-blue-600 mr-3" aria-hidden="true" />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Step 3") && (
-        <Info
-          size={20}
-          color="#2563EB"
-          style={{ marginRight: 12 }}
-          aria-hidden="true"
-        />
+        <Info size={20} className="text-blue-600 mr-3" aria-hidden="true" />
       )}
       {typeof firstChild === "string" && firstChild.startsWith("Pro Tips") && (
-        <Info
-          size={20}
-          color="#F59E42"
-          style={{ marginRight: 12 }}
-          aria-hidden="true"
-        />
+        <Info size={20} className="text-orange-400 mr-3" aria-hidden="true" />
       )}
       {children || "Untitled"} {/* Fallback content for accessibility */}
     </h2>
@@ -206,12 +186,7 @@ const GuidelinesPage: React.FC = () => {
 
         <div className="text-center mb-8 md:mb-10">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center justify-center mb-4 tracking-tight">
-            <Info
-              size={20}
-              color="#2563EB"
-              style={{ marginRight: 12 }}
-              aria-hidden="true"
-            />{" "}
+            <Info size={20} className="text-blue-600 mr-3" aria-hidden="true" />{" "}
             Document Upload Guide
           </h1>
           <div className="w-16 h-1 bg-blue-600 mx-auto mb-6 rounded-full"></div>

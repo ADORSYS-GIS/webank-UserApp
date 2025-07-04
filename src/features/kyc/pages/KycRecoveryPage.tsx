@@ -168,11 +168,7 @@ export default function RecoveryDashboard() {
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Close form"
       >
-        <ArrowLeft
-          size={24}
-          color="#6B7280"
-          style={{ width: "1.5rem", height: "1.5rem" }}
-        />
+        <ArrowLeft size={24} className="text-gray-400 h-6 w-6" />
       </button>
 
       <div className="max-w-3xl mx-auto">
@@ -217,11 +213,7 @@ export default function RecoveryDashboard() {
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-800
                   p-2 rounded-full hover:bg-gray-100 transition"
               >
-                <ArrowLeft
-                  size={24}
-                  color="#6B7280"
-                  style={{ width: "1.5rem", height: "1.5rem" }}
-                />
+                <ArrowLeft size={24} className="text-gray-400 h-6 w-6" />
                 Back to Search
               </button>
               <span

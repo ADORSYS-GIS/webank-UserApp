@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { CreditCard, Shield, Home } from "react-feather";
+import { CheckCircle, User, Shield, Home } from "react-feather";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -26,7 +26,7 @@ export default function KYCSubmissionCompleted() {
         {/* Success banner */}
         <div className="bg-blue-500 py-6 px-6 flex items-center justify-center">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-            <CreditCard className="text-blue-500" size={32} />
+            <CheckCircle className="text-blue-500 text-4xl" size={40} />
           </div>
         </div>
 
@@ -35,27 +35,34 @@ export default function KYCSubmissionCompleted() {
             KYC Documents Already Submitted
           </h1>
 
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CreditCard className="text-green-500" size={32} />
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              KYC Submission Completed
-            </h2>
-            <p className="text-gray-600">
-              Your identity verification has been submitted successfully. We'll
-              review your documents and get back to you within 24-48 hours.
-            </p>
-          </div>
+          <p className="text-gray-600 text-center mb-6">
+            Your identity verification documents have been successfully
+            submitted. There's no need to resubmit your information.
+          </p>
 
-          <div className="space-y-4 mb-6">
-            <div className="flex items-center space-x-3">
-              <Shield className="text-blue-500" size={20} />
-              <span className="text-gray-700">Enhanced security features</span>
+          <div className="bg-blue-50 rounded-xl p-6 mb-8">
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center">
+                <User size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-800">Identity Verified</h3>
+                <p className="text-sm text-gray-600">
+                  Your docs information has been submitted
+                </p>
+              </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Home className="mr-2" size={20} />
-              <span className="text-gray-700">Access to all services</span>
+
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center">
+                <Shield size={20} />
+              </div>
+              <div>
+                <h3 className="font-medium text-gray-800">Account Secured</h3>
+                <p className="text-sm text-gray-600">
+                  Please wait for your kyc to be Approved
+                </p>
+              </div>
             </div>
           </div>
 

@@ -143,7 +143,7 @@ const Dashboard: React.FC = () => {
       />
 
       {/* Bottom Sheet Menu */}
-      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} accountId={accountId || undefined} accountCert={accountCert || undefined} />
     </div>
   );
 };

@@ -14,11 +14,11 @@ jobs:
     steps:
       # Check out the code from the repository
       - uses: actions/checkout@v4
-      
+
       # Install project dependencies using npm ci for clean install
       - name: Install Dependencies
         run: npm ci
-      
+
       # Cache node_modules for future jobs to speed up workflow
       - name: Cache node modules
         uses: actions/cache@v4
@@ -27,12 +27,12 @@ jobs:
           key: ${{ github.sha }}
 
   build:
-    needs: install 
+    needs: install
     runs-on: ubuntu-latest
     steps:
       # Check out the code from the repository
       - uses: actions/checkout@v4
-      
+
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
         uses: actions/cache@v4
@@ -43,7 +43,6 @@ jobs:
       # Run the build command
       - name: Build
         run: npm run build
-        
 
   # Step 2: Run lint checks with ESLint
   lint:
@@ -52,7 +51,7 @@ jobs:
     steps:
       # Check out the code from the repository
       - uses: actions/checkout@v4
-      
+
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
         uses: actions/cache@v4
@@ -71,7 +70,7 @@ jobs:
     steps:
       # Check out the code from the repository
       - uses: actions/checkout@v4
-      
+
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
         uses: actions/cache@v4
@@ -90,7 +89,7 @@ jobs:
     steps:
       # Check out the code from the repository
       - uses: actions/checkout@v4
-      
+
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
         uses: actions/cache@v4
@@ -102,7 +101,6 @@ jobs:
       - name: TypeScript
         run: npm run ts:check
 
-
   # Step 5: Run unit tests
   unit_tests:
     needs: install # Depends on the install job
@@ -110,7 +108,7 @@ jobs:
     steps:
       # Check out the code from the repository
       - uses: actions/checkout@v4
-      
+
       # Use cached node_modules to avoid reinstalling dependencies
       - name: Cached node modules
         uses: actions/cache@v4
@@ -121,7 +119,7 @@ jobs:
       # Add env variables
       - name: add env variables
         run: export VITE_BACKEND_URL=https://backend.com
-      
+
       # Run unit tests
       - name: Unit tests
         run: npm run test:unit
@@ -155,20 +153,20 @@ jobs:
           name: coverage-report
           path: coverage
 
-     # Run SonarQube analysis
+      # Run SonarQube analysis
       - uses: sonarsource/sonarqube-scan-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
-            args: |
-              -Dsonar.projectKey=Webank-Userapp
-              -Dsonar.source=src
-              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-              -Dsonar.qualitygate.wait=true 
+          args: |
+            -Dsonar.projectKey=Webank-Userapp
+            -Dsonar.source=src
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.qualitygate.wait=true
 
       #If you wish to fail your job when the Quality Gate is red
       - uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
-           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

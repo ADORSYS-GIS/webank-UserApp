@@ -32,12 +32,7 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": [
-    "src",
-    "node_modules/vitest/globals.d.ts"
-  ],
-  "exclude": [
-    "vite.config.ts"
-  ],
+  "include": ["src", "node_modules/vitest/globals.d.ts"],
+  "exclude": ["vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

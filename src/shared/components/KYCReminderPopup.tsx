@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, CheckCircle, X } from "react-feather";
+import { Shield, CheckCircle, Lock, AlertTriangle } from "react-feather";
 
 interface KYCReminderPopupProps {
   onClose: () => void;
@@ -18,30 +18,58 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
         <div className="text-center mb-6">
-          <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4">
-            <Lock className="text-blue-500" size={24} />
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Shield className="text-blue-500" size={32} />
           </div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            KYC Verification Required
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Verify Your Identity
           </h2>
-          <p className="text-gray-600 text-center mb-6">
-            To continue using our services, please complete your identity
-            verification.
+          <p className="text-gray-600 text-sm">
+            Complete your KYC verification for enhanced security and better
+            experience
           </p>
         </div>
 
-        <div className="space-y-3 mb-6">
-          <div className="flex items-center space-x-3">
-            <X className="text-red-500" size={20} />
-            <span className="text-gray-700">Access to advanced features</span>
+        {/* Transaction Limit Warning */}
+        <div className="bg-amber-50 rounded-xl p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
+              <AlertTriangle className="text-amber-500" size={20} />
+            </div>
+            <div>
+              <h3 className="font-medium text-amber-800">Transaction Limit</h3>
+              <p className="text-sm text-amber-700">
+                Without KYC verification, you can only perform transactions up
+                to 1,000 XAF
+              </p>
+            </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <X className="text-red-500" size={20} />
-            <span className="text-gray-700">Higher transaction limits</span>
+        </div>
+
+        {/* Benefits */}
+        <div className="space-y-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+              <Lock className="text-blue-500" size={20} />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900">Enhanced Security</h3>
+              <p className="text-sm text-gray-600">
+                Protect your account with verified identity
+              </p>
+            </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <CheckCircle className="text-blue-500" size={20} />
-            <span className="text-gray-700">Basic account features</span>
+
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+              <CheckCircle className="text-blue-500" size={20} />
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-900">Better Experience</h3>
+              <p className="text-sm text-gray-600">
+                Access all features without restrictions
+              </p>
+            </div>
           </div>
         </div>
 

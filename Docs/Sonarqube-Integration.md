@@ -3,6 +3,7 @@
 This guide covers the setup, configuration, and usage of SonarQube to analyze code quality, detect bugs, and identify security vulnerabilities in your project. The document includes instructions for both local and organization-hosted SonarQube server setups, as well as CI/CD integration with GitHub Actions.
 
 ## Contents
+
 1. [Overview](#1-overview)
 2. [Prerequisites](#2-prerequisites)
 3. [SonarQube Installation Options](#3-sonarqube-installation-options)
@@ -32,50 +33,57 @@ Adhering to standard best practices ensures code readability, maintainability, a
 If your organization provides a hosted SonarQube server, you can connect directly to it:
 
 1. Log into the Hosted Server:
-    - Access the URL provided by your organization (e.g., https://sonarqube.companydomain.com).
-    - Use your organization credentials to log in.
 
-    * ![reference image](/Docs/sonarqube-images/log.png)
+   - Access the URL provided by your organization (e.g., https://sonarqube.companydomain.com).
+   - Use your organization credentials to log in.
+
+   * ![reference image](/Docs/sonarqube-images/log.png)
 
 2. Create a Project in SonarQube:
-    - Go to Projects > Create Project.
 
-    - Provide a unique Project Key and Display Name.
+   - Go to Projects > Create Project.
 
-    * ![reference image](/Docs/sonarqube-images/proj.png)
+   - Provide a unique Project Key and Display Name.
 
-    - Complete the project creation wizard.
+   * ![reference image](/Docs/sonarqube-images/proj.png)
+
+   - Complete the project creation wizard.
 
 3. Generate a SonarQube Token:
-4.
-    - Go to My Account > Security > Generate Token.
-    - Copy the token for later use in CI/CD and local analysis.
+4. - Go to My Account > Security > Generate Token.
+   - Copy the token for later use in CI/CD and local analysis.
 
 Alternatively,you can also install SonarQube locally using Docker.
 
 ### Local Installation with Docker
 
 1. Run SonarQube with Docker:
+
    ```bash
    docker pull sonarqube
    docker run -d --name sonarqube -p 9000:9000 sonarqube
 
+   ```
+
 2. Access SonarQube
+
 - Open a browser and navigate to http://localhost:9000.
 - Default login: admin / admin.
 
 3. Change Default Password:
-- Go to My Account > Security and change the admin password for security.
 
+- Go to My Account > Security and change the admin password for security.
 
 ## 4. React Project Configuration
 
 To configure SonarQube analysis for your React project,
+
 - Start by installing Sonar-Scanner dependency using npm:
-- ```bash 
+- ```bash
   npm install sonar-scanner --save-dev
   ```
 - Create a `sonar-project.properties` file in the root of your React project.This file is a configuration file for SonarQube that specifies the analysis parameters for a project. It defines the necessary settings SonarQube needs to locate, analyze, and report on the project’s code.
+
 ### sonar-project.properties Example:
 
 ```properties
@@ -87,7 +95,9 @@ sonar.javascript.lcov.reportPaths=coverage/lcov.info
 sonar.exclusions= **/*.test.jsx,**/*.css, src/reportWebVitals.js, src/index.js
 
 ```
+
 ### Explanation of properties
+
 - **sonar.projectKey:** Specifies the unique identifier for the SonarQube project. This key is used to differentiate this project from others in SonarQube.
 - **sonar.host.url:** SonarQube server URL (use your organization’s URL if hosted).
 - **sonar.source:** Specifies the path to the source code files to be analyzed. In this case, the source code is located in the "src" directory.
@@ -103,8 +113,11 @@ Next, let’s edit the test script on our package.json so the React will have a 
   --------
 }
 ```
+
 Next, add the coverage folder to .gitignore so it won’t be pushed to the git repo:
+
 # package directories .gitignore
+
 ..
 node_modules
 jspm_packages
@@ -114,11 +127,14 @@ coverage
 ## 5. Running SonarQube Analysis Locally
 
 ### Option A: Using an Organization-Hosted SonarQube Server
-* If your organization hosts SonarQube, adjust the URL and token accordingly:*
+
+- If your organization hosts SonarQube, adjust the URL and token accordingly:\*
+
 1. Run the analysis with the SonarScanner CLI:
+
 ```bash
-sonar-scanner -Dsonar.projectKey=webank-Userapp(use your own project key) 
--Dsonar.host.url=https://sonarqube.companydomain.com 
+sonar-scanner -Dsonar.projectKey=webank-Userapp(use your own project key)
+-Dsonar.host.url=https://sonarqube.companydomain.com
 -Dsonar.login=your_sonarqube_token(use the token generated from SonarQube)
 
 ```
@@ -130,12 +146,15 @@ sonar-scanner -Dsonar.projectKey=webank-Userapp(use your own project key)
 2. Run the analysis with the SonarScanner CLI:
 
    ```bash
-   sonar-scanner -Dsonar.projectKey=my-awesome-app 
+   sonar-scanner -Dsonar.projectKey=my-awesome-app
    -Dsonar.login=your_sonarqube_token
-   
+
    ```
+
 ## 6. GitHub Actions CI/CD Integration
+
 ### GitHub Secrets
+
 In your repository settings, add the SonarQube token as a secret:
 To create secrets for a repository, you must be the repository owner or have admin access for organization repositories. Here are the steps to create a secret:
 
@@ -144,8 +163,8 @@ To create secrets for a repository, you must be the repository owner or have adm
 3. **Select Secrets**: In the "Security" section of the sidebar, select **Secrets and variables**, then click **Actions**.
 4. **Add New Secret**: Click on **New repository secret**.
 5. **Enter Secret Details**:
-    - In the **Name** field, type a name for your secret , Add `SONAR_TOKEN` with the generated token value.
-    - In the **Secret** field, enter the value for your secret (the actual token).
+   - In the **Name** field, type a name for your secret , Add `SONAR_TOKEN` with the generated token value.
+   - In the **Secret** field, enter the value for your secret (the actual token).
 6. **Save Secret**: Click **Add secret**.
 
 ### Using Secrets in Your Workflow
@@ -158,6 +177,7 @@ env:
 ```
 
 ### GitHub Actions Workflow Example
+
 Create a `.github/workflows/sonarqube-analysis.yml` file in your repository:
 
 Automate code analysis by integrating SonarQube with GitHub Actions. This workflow will run SonarQube analysis on every push and pull request to the main branch.
@@ -184,7 +204,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "16"
 
       - name: Install dependencies
         run: npm install
@@ -213,7 +233,9 @@ jobs:
         if: steps.qualitygate.outputs.status != 'PASSED'
         run: exit 1
 ```
-### Workflow Jobs 
+
+### Workflow Jobs
+
 1. **Check out the code**: This step clones the code from your repository and fetches the latest changes.
 2. **Install dependencies**: This step installs the project dependencies using `npm ci`.
 3. **Run Tests and Generate Coverage Report**: This step runs tests and generates a coverage report using `npm run coverage`.
@@ -221,10 +243,9 @@ jobs:
 5. **Quality Gate Check**: This step checks the quality gate status using the SonarQube Quality Gate Action.
 6. **Fail Workflow if Quality Gate Fails**: This step fails the workflow if the quality gate status is not "PASSED".
 
-
 ## 7. Troubleshooting Common Issues
 
-1. **Invalid Project Key**: Ensure the project key in `sonar-project.properties` contains only allowed characters (-, _, ., :).
+1. **Invalid Project Key**: Ensure the project key in `sonar-project.properties` contains only allowed characters (-, \_, ., :).
 
 2. **Coverage Not Detected**: Verify the path specified in `sonar.javascript.lcov.reportPaths` is correct, and ensure coverage files are generated before SonarQube analysis.
 
