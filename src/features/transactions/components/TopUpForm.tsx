@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { RequestToAgentTopup } from "@services/keyManagement/requestService";
+import { useAccountTopUpServicePostApiAccountsAgentTopup } from "openapi/generated/obs/queries/queries";
 
 interface TopUpFormProps {
   tellerAccountCert: string;
 }
 
-const TopUpForm: React.FC<TopUpFormProps> = ({ tellerAccountCert }) => {
+const TopUpForm: React.FC<TopUpFormProps> = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     clientAccountId: "",
@@ -23,29 +23,34 @@ const TopUpForm: React.FC<TopUpFormProps> = ({ tellerAccountCert }) => {
     }));
   };
 
+  const topUpMutation = useAccountTopUpServicePostApiAccountsAgentTopup();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const amount = parseFloat(formData.amount);
       if (isNaN(amount) || amount <= 0) {
         toast.error("Please enter a valid amount");
+        setLoading(false);
         return;
       }
 
-      const response = await RequestToAgentTopup(
-        formData.clientAccountId,
-        amount,
-        tellerAccountCert,
-      );
+      const response = await topUpMutation.mutateAsync({
+        requestBody: {
+          accountId: formData.clientAccountId,
+          amount,
+        },
+      });
 
-      if (response.includes("successfully")) {
+      if (response?.status === "COMPLETED" || response?.status === "PENDING") {
         toast.success("Top-up successful!");
         navigate("/dashboard");
         setFormData({ clientAccountId: "", amount: "" });
       } else {
-        toast.error("Failed to process top-up. Please try again.");
+        toast.error(
+          response?.message ?? "Failed to process top-up. Please try again.",
+        );
       }
     } catch (error) {
       console.error("Top-up error:", error);

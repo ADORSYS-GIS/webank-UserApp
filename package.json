@@ -15,7 +15,10 @@
     "preview": "vite preview",
     "coverage": "vitest run --coverage",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "codegen:prs": "openapi-rq -i ./openapi/prs-api.json -o ./openapi/generated/prs -c axios --format prettier --lint eslint",
+    "codegen:obs": "openapi-rq -i ./openapi/obs-api.json -o ./openapi/generated/obs -c axios --format prettier --lint eslint",
+    "postinstall": "npm run codegen:prs && npm run codegen:obs"
   },
   "dependencies": {
     "@adorsys-gis/storage": "^1.0.3",
@@ -29,6 +32,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@reduxjs/toolkit": "^2.6.0",
+    "@tanstack/react-query": "^5.81.2",
     "@testing-library/user-event": "^14.6.1",
     "axios": "^1.7.7",
     "axios-mock-adapter": "^2.1.0",
@@ -61,6 +65,7 @@
     "use-pwa": "^2.2.0"
   },
   "devDependencies": {
+    "@7nohe/openapi-react-query-codegen": "^1.6.2",
     "@faker-js/faker": "^9.0.3",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",

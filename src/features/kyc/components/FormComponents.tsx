@@ -5,12 +5,12 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { RequestToStoreKYCInfo } from "@services/keyManagement/requestService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { setStatus } from "@state/accountSlice";
+import { useKycManagementServicePostApiPrsKycInfo } from "@openapi/generated/prs/queries/queries";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -42,6 +42,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
     (state: RootState) => state.account.accountCert,
   );
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const kycInfoMutation = useKycManagementServicePostApiPrsKycInfo();
 
   const navigate = useNavigate();
 
@@ -75,20 +76,16 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         return;
       }
 
-      const response = await RequestToStoreKYCInfo(
-        documentNumber,
-        expiry,
-        accountCert,
-        accountId,
-      );
-
-      if (response === "KYC Info sent successfully and saved.") {
-        dispatch(setStatus("PENDING"));
-        toast.success("KYC Info sent successfully and saved.");
-        navigate("/kyc");
-      } else {
-        toast.error("Error submitting data, please try again later");
-      }
+      await kycInfoMutation.mutateAsync({
+        requestBody: {
+          idNumber: documentNumber,
+          expiryDate: expiry,
+          accountId,
+        },
+      });
+      dispatch(setStatus("PENDING"));
+      toast.success("KYC information submitted successfully!");
+      navigate("/under-review");
     } catch (error) {
       console.error("Error submitting data:", error);
       toast.error("Error submitting data, please try again later");

@@ -2,7 +2,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import Register from "@features/auth/pages/PhoneInput";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import { RequestToSendOTP } from "@services/keyManagement/requestService";
+import { useOtpManagementServicePostApiPrsOtpSend } from "@openapi/generated/prs/queries/queries";
 import {
   describe,
   it,
@@ -40,9 +40,11 @@ const createMockStore = () => {
   });
 };
 
-// Mock the service directly
-vi.mock("@services/keyManagement/requestService", () => ({
-  RequestToSendOTP: vi.fn(),
+// Mock the OpenAPI OTP hook
+vi.mock("@openapi/generated/prs/queries/queries", () => ({
+  useOtpManagementServicePostApiPrsOtpSend: vi.fn(() => ({
+    mutateAsync: vi.fn(),
+  })),
 }));
 
 describe("Register component", () => {
@@ -72,8 +74,12 @@ describe("Register component", () => {
   };
 
   it("sends OTP on button click", async () => {
-    const mockResponse = "otp-hash";
-    vi.mocked(RequestToSendOTP).mockResolvedValueOnce(mockResponse);
+    const mockMutateAsync = vi
+      .fn()
+      .mockResolvedValueOnce({ otpHash: "otp-hash" });
+    (
+      useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock
+    ).mockReturnValue({ mutateAsync: mockMutateAsync });
 
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
@@ -82,17 +88,21 @@ describe("Register component", () => {
     fireEvent.click(getByText("Send Verification Code"));
 
     await waitFor(() => {
-      expect(RequestToSendOTP).toHaveBeenCalledWith(
-        "+237657040277",
-        "mock-cert",
-      );
+      expect(mockMutateAsync).toHaveBeenCalledWith({
+        requestBody: {
+          phoneNumber: "+237657040277",
+        },
+      });
     });
   });
 
   it("displays error message on invalid phone number", async () => {
-    vi.mocked(RequestToSendOTP).mockRejectedValueOnce(
-      new Error("Invalid number"),
-    );
+    const mockMutateAsync = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Invalid number"));
+    (
+      useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock
+    ).mockReturnValue({ mutateAsync: mockMutateAsync });
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
     const phoneNumberInput = getByPlaceholderText("Phone number");
 
@@ -110,7 +120,10 @@ describe("Register component", () => {
 
   it("handles API errors gracefully", async () => {
     const mockError = new Error("Network error");
-    vi.mocked(RequestToSendOTP).mockRejectedValueOnce(mockError);
+    const mockMutateAsync = vi.fn().mockRejectedValueOnce(mockError);
+    (
+      useOtpManagementServicePostApiPrsOtpSend as unknown as jest.Mock
+    ).mockReturnValue({ mutateAsync: mockMutateAsync });
     const { getByText, getByPlaceholderText } = renderWithRouter(<Register />);
 
     fireEvent.change(getByPlaceholderText("Phone number"), {
