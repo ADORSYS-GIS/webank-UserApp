@@ -5,7 +5,6 @@ This document describes the `analyses` workflow used in the UserApp project. The
 ## Workflow Trigger
 
 The workflow is set to run on:
-
 - **Push events**: Direct commits to the `main` branch.
 - **Pull requests**: PRs targeting the `main` branch.
 
@@ -17,10 +16,9 @@ The workflow is set to run on:
 - **Purpose**: Sets up the development environment by installing project dependencies and caching them for future jobs.
 
 **Steps**:
-
-- **Checkout Code**: Uses `actions/checkout@v2` to pull the latest code from the repository.
-- **Install Dependencies**: Runs `npm ci` to install dependencies with a clean slate.
-- **Cache node_modules**: Caches `node_modules` for faster builds in subsequent jobs. The cache key uses `${{ github.sha }}`, ensuring cache validity for each unique commit.
+  - **Checkout Code**: Uses `actions/checkout@v2` to pull the latest code from the repository.
+  - **Install Dependencies**: Runs `npm ci` to install dependencies with a clean slate.
+  - **Cache node_modules**: Caches `node_modules` for faster builds in subsequent jobs. The cache key uses `${{ github.sha }}`, ensuring cache validity for each unique commit.
 
 ---
 
@@ -31,10 +29,9 @@ The workflow is set to run on:
 - **Purpose**: Builds the project to ensure code compiles correctly and prepares it for deployment or further testing.
 
 **Steps**:
-
-- **Checkout Code**: Pulls the latest code.
-- **Use Cached node_modules**: Uses the cached `node_modules` for a faster setup.
-- **Run Build Command**: Executes `npm run build` to compile the application.
+  - **Checkout Code**: Pulls the latest code.
+  - **Use Cached node_modules**: Uses the cached `node_modules` for a faster setup.
+  - **Run Build Command**: Executes `npm run build` to compile the application.
 
 ---
 
@@ -45,10 +42,9 @@ The workflow is set to run on:
 - **Purpose**: Checks code quality using ESLint to detect syntax or stylistic issues.
 
 **Steps**:
-
-- **Checkout Code**: Pulls the latest code.
-- **Use Cached node_modules**: Uses the cached `node_modules` for faster installation.
-- **Run ESLint**: Runs `npm run lint:check` to verify code quality and catch common coding issues.
+  - **Checkout Code**: Pulls the latest code.
+  - **Use Cached node_modules**: Uses the cached `node_modules` for faster installation.
+  - **Run ESLint**: Runs `npm run lint:check` to verify code quality and catch common coding issues.
 
 ---
 
@@ -59,10 +55,9 @@ The workflow is set to run on:
 - **Purpose**: Ensures consistent code formatting using Prettier.
 
 **Steps**:
-
-- **Checkout Code**: Pulls the latest code.
-- **Use Cached node_modules**: Uses the cached `node_modules`.
-- **Run Prettier**: Executes `npm run prettier:check` to validate code formatting.
+  - **Checkout Code**: Pulls the latest code.
+  - **Use Cached node_modules**: Uses the cached `node_modules`.
+  - **Run Prettier**: Executes `npm run prettier:check` to validate code formatting.
 
 ---
 
@@ -73,10 +68,9 @@ The workflow is set to run on:
 - **Purpose**: Ensures there are no type errors by running TypeScript checks.
 
 **Steps**:
-
-- **Checkout Code**: Pulls the latest code.
-- **Use Cached node_modules**: Utilizes the cached dependencies.
-- **Run TypeScript Check**: Runs `npm run ts:check` to verify there are no TypeScript type errors.
+  - **Checkout Code**: Pulls the latest code.
+  - **Use Cached node_modules**: Utilizes the cached dependencies.
+  - **Run TypeScript Check**: Runs `npm run ts:check` to verify there are no TypeScript type errors.
 
 ---
 
@@ -87,10 +81,9 @@ The workflow is set to run on:
 - **Purpose**: Runs unit tests to validate the correctness of code logic.
 
 **Steps**:
-
-- **Checkout Code**: Pulls the latest code.
-- **Use Cached node_modules**: Utilizes cached dependencies.
-- **Run Unit Tests**: Executes `npm run test:unit` to run unit tests on the project.
+  - **Checkout Code**: Pulls the latest code.
+  - **Use Cached node_modules**: Utilizes cached dependencies.
+  - **Run Unit Tests**: Executes `npm run test:unit` to run unit tests on the project.
 
 ---
 
@@ -99,7 +92,8 @@ The workflow is set to run on:
 - **Dependency Installation Failures**: If `npm ci` fails during the install step, verify the integrity of `package-lock.json` or try clearing the cache.
 - **Cache Issues**: If the cached `node_modules` is outdated or causing build failures, clear the cache by changing the cache key.
 - **Build Failures**: Ensure code changes do not introduce syntax errors or unsupported constructs. Check for environment-specific build configurations.
-- **Lint/Prettier Errors**: Ensure that the code follows the project's style guide and run `npm run prettier:check -- --write "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}"` locally to auto-correct issues.- **TypeScript Errors**: Resolve any type errors reported in the `typescript` step by fixing the type definitions in the code.
+- **Lint/Prettier Errors**: Ensure that the code follows the project's style guide and run `npm run prettier:check -- --write "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}"` locally to auto-correct issues.
+- **TypeScript Errors**: Resolve any type errors reported in the `typescript` step by fixing the type definitions in the code.
 - **Test Failures**: Debug failing tests locally using `npm run test:unit`.
 
 ---
