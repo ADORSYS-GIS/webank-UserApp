@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import {
-  RequestToGetKycRecordsBySearch,
-  RequestToValidateRecoveryDetails,
-} from "@services/keyManagement/requestService";
+  useKycManagementServiceGetApiPrsKycFindByIdByDocumentUniqueId,
+  useAccountRecoveryServicePostApiPrsKycRecoveryValidate,
+} from "openapi/generated/prs/queries/queries";
 import { ImageModal } from "@features/kyc/components/ImageModal";
 import { DocumentCard } from "@features/kyc/components/DocumentCard";
 
@@ -39,6 +39,17 @@ export default function RecoveryDashboard() {
   });
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // TanStack Query hooks (called at top level)
+  const [searchDocId, setSearchDocId] = useState<string | null>(null);
+  const kycQuery =
+    useKycManagementServiceGetApiPrsKycFindByIdByDocumentUniqueId(
+      { documentUniqueId: searchDocId ?? "" },
+      undefined,
+      { enabled: !!searchDocId },
+    );
+  const recoveryValidateMutation =
+    useAccountRecoveryServicePostApiPrsKycRecoveryValidate();
 
   // Helper to pick badge styles
   const getStatusStyles = (status: string) => {
@@ -79,45 +90,58 @@ export default function RecoveryDashboard() {
       toast.error("Account authentication missing");
       return;
     }
-    try {
-      setLoading(true);
-      setFoundRecord(null);
-
-      const response = await RequestToGetKycRecordsBySearch(
-        searchTerm,
-        accountCert,
-      );
-      const parsed = Array.isArray(response)
-        ? response
-        : JSON.parse(response ?? "[]");
-
-      if (!parsed.length) {
-        toast.info("No user found with the provided document number");
-        return;
-      }
-
-      const info = parsed[0];
-      setFoundRecord({
-        id: info.id ?? info.documentUniqueId,
-        oldAccountId: info.accountId,
-        docNumber: info.idNumber ?? info.documentUniqueId,
-        expirationDate: info.expirationDate,
-        location: info.location ?? "N/A",
-        email: info.email ?? "N/A",
-        status: info.status ?? "PENDING",
-        frontID: info.frontID ?? "",
-        backID: info.backID ?? "",
-        selfie: info.selfie ?? "",
-        taxDocument: info.taxDocument ?? "",
-      });
-      setFormData({ docNumber: "", expirationDate: "" });
-    } catch (err) {
-      console.error(err);
-      toast.error("Search failed");
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    setFoundRecord(null);
+    setSearchDocId(searchTerm);
   };
+
+  // Helper: handle when no user is found
+  function handleNoUserFound() {
+    toast.info("No user found with the provided document number");
+    setSearchDocId(null);
+  }
+
+  // Helper: handle when there is a query error
+  function handleQueryError() {
+    toast.error("Search failed");
+    setSearchDocId(null);
+  }
+
+  // Helper: process found KYC info
+  function processKycInfo(info: any) {
+    setFoundRecord({
+      id: info.id ?? info.documentUniqueId,
+      oldAccountId: info.accountId,
+      docNumber: info.idNumber ?? info.documentUniqueId,
+      expirationDate: info.expirationDate,
+      location: info.location ?? "N/A",
+      email: info.email ?? "N/A",
+      status: info.status ?? "PENDING",
+      frontID: info.frontID ?? "",
+      backID: info.backID ?? "",
+      selfie: info.selfie ?? "",
+      taxDocument: info.taxDocument ?? "",
+    });
+    setFormData({ docNumber: "", expirationDate: "" });
+    setSearchDocId(null);
+  }
+
+  // Effect: update foundRecord when KYC query returns
+  useEffect(() => {
+    if (kycQuery.isFetching || !searchDocId) return;
+    setLoading(false);
+    if (kycQuery.error) {
+      handleQueryError();
+      return;
+    }
+    const kycData = kycQuery.data;
+    if (!kycData || !Array.isArray(kycData) || !kycData.length) {
+      handleNoUserFound();
+      return;
+    }
+    processKycInfo(kycData[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kycQuery.data, kycQuery.error, kycQuery.isFetching, searchDocId]);
 
   /** Step2: validate docNumber + expirationDate only */
   const handleContinueRecovery = async (e: React.FormEvent) => {
@@ -130,24 +154,19 @@ export default function RecoveryDashboard() {
       toast.error("Unexpected error, please start over");
       return;
     }
+    setLoading(true);
     try {
-      setLoading(true);
-      const result = await RequestToValidateRecoveryDetails(
-        foundRecord.oldAccountId,
-        formData.docNumber,
-        formData.expirationDate,
-        accountCert,
-      );
-      if (result.startsWith("Failed")) {
-        toast.error("Validation failed, details do not match");
-        return;
-      }
+      // The OpenAPI expects { newAccountId: string }
+      await recoveryValidateMutation.mutateAsync({
+        requestBody: {
+          newAccountId: foundRecord.oldAccountId, // Use the correct property
+        },
+      });
       navigate("/recovery/recovery-scanner", {
         state: { oldAccountId: foundRecord.oldAccountId },
       });
-    } catch (err) {
-      console.error(err);
-      toast.error("Validation request failed");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Validation request failed");
     } finally {
       setLoading(false);
     }

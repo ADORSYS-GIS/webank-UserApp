@@ -27,3 +27,6 @@ dev-dist
 *.njsproj
 *.sln
 *.sw?
+
+# Tanstack specific
+/openapi/generated

@@ -1,4 +1,4 @@
-import { KeyManagement } from "./requestService";
+import { KeyManagement } from "@services/keyManagement/keyManagement";
 import { generateSignedSignatureJWT } from "./signedSigntaureJwt";
 
 export async function signTransaction(

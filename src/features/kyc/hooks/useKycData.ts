@@ -4,9 +4,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
 import {
-  RequestToGetPendingKycRecords,
-  RequestToUpdateKycStatus,
-} from "@services/keyManagement/requestService";
+  useKycManagementServiceGetApiPrsKycPending,
+  useOtpStatusUpdateServicePostApiPrsKycStatusUpdate,
+} from "@openapi/generated/prs/queries/queries";
 import {
   KycBackendResponse,
   UserKYC,
@@ -57,31 +57,27 @@ export const useKycData = () => {
     [],
   );
 
-  const fetchUsers = useCallback(async () => {
-    if (!accountCert) return;
-
-    try {
-      setLoading(true);
-      const response = await RequestToGetPendingKycRecords(accountCert);
-
-      const parsedInfo = Array.isArray(response)
-        ? (response as KycBackendResponse[])
-        : (JSON.parse(response || "[]") as KycBackendResponse[]);
-
-      setUsers(parsedInfo.map((info, index) => convertToUserKYC(info, index)));
-    } catch (error) {
-      toast.error("Failed to load pending KYC records");
-      console.error("Error fetching KYC records:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [accountCert, convertToUserKYC]);
+  // OpenAPI query for pending KYC records
+  const {
+    data: pendingKycData,
+    isLoading: kycLoading,
+    refetch: refetchPendingKyc,
+  } = useKycManagementServiceGetApiPrsKycPending();
 
   useEffect(() => {
-    if (accountCert) {
-      fetchUsers();
+    if (pendingKycData) {
+      const parsedInfo: KycBackendResponse[] = Array.isArray(pendingKycData)
+        ? pendingKycData
+        : [pendingKycData];
+
+      setUsers(parsedInfo.map((info, index) => convertToUserKYC(info, index)));
     }
-  }, [accountCert, fetchUsers]);
+    setLoading(kycLoading);
+  }, [pendingKycData, kycLoading, convertToUserKYC]);
+
+  const fetchUsers = useCallback(async () => {
+    await refetchPendingKyc();
+  }, [refetchPendingKyc]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { id, value } = e.target;
@@ -91,9 +87,13 @@ export const useKycData = () => {
     }));
   };
 
+  // OpenAPI mutation for KYC status update
+  const kycStatusMutation =
+    useOtpStatusUpdateServicePostApiPrsKycStatusUpdate();
+
   const updateKycStatus = async (
     status: KycStatus,
-    reason: string = status === "APPROVED"
+    rejectionReason: string = status === "APPROVED"
       ? "Approved by teller"
       : "Rejected by teller",
   ): Promise<boolean> => {
@@ -103,14 +103,15 @@ export const useKycData = () => {
     }
 
     try {
-      const response = await RequestToUpdateKycStatus(
-        selectedUser.accountId,
-        formData.docNumber || selectedUser.docNumber,
-        formData.expirationDate || selectedUser.expirationDate,
-        status,
-        accountCert,
-        reason,
-      );
+      const response = await kycStatusMutation.mutateAsync({
+        requestBody: {
+          accountId: selectedUser.accountId,
+          idNumber: formData.docNumber || selectedUser.docNumber,
+          expiryDate: formData.expirationDate || selectedUser.expirationDate,
+          status,
+          rejectionReason,
+        },
+      });
 
       if (
         response &&

@@ -1,15 +1,13 @@
 import { vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import Dashboard from "../DashboardPage";
-import {
-  RequestToGetBalance,
-  RequestToGetTransactionHistory,
-} from "@services/keyManagement/requestService.ts";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
 import { configureStore } from "@reduxjs/toolkit";
 import accountReducer from "@state/accountSlice.ts";
+
+import { useTransactionHistoryServicePostApiAccountsTransactions } from "@openapi/generated/obs/queries/queries";
 
 // Mock FontAwesome
 vi.mock("@fortawesome/react-fontawesome", () => ({
@@ -28,10 +26,13 @@ vi.mock("react-router-dom", () => ({
   }),
 }));
 
-// Mock RequestToGetBalance and RequestToGetTransactionHistory
-vi.mock("@services/keyManagement/requestService.ts", () => ({
-  RequestToGetBalance: vi.fn(),
-  RequestToGetTransactionHistory: vi.fn(),
+// Provide mock mutateAsync for balance queries (for correct assertions)
+const mockBalanceMutateAsync = vi.fn();
+vi.mock("@openapi/generated/obs/queries/queries", () => ({
+  useAccountBalanceServicePostApiAccountsBalance: () => ({
+    mutateAsync: mockBalanceMutateAsync,
+  }),
+  useTransactionHistoryServicePostApiAccountsTransactions: vi.fn(),
 }));
 
 const createMockStore = () => {
@@ -68,12 +69,11 @@ describe("Dashboard", () => {
     );
     expect(screen.getByText("Balance")).toBeInTheDocument();
   });
-
   it("calls RequestToGetBalance and shows toast on error", async () => {
     const mockError = new Error("API error");
 
-    // Mock RequestToGetBalance to reject with the mock error
-    (RequestToGetBalance as jest.Mock).mockRejectedValueOnce(mockError);
+    // Mock mutateAsync to reject with the mock error
+    mockBalanceMutateAsync.mockRejectedValueOnce(mockError);
 
     render(
       <Provider store={createMockStore()}>
@@ -82,11 +82,8 @@ describe("Dashboard", () => {
         </MemoryRouter>
       </Provider>,
     );
-
-    // Ensure the RequestToGetBalance was called 0 times as per the original logic
-    await waitFor(() => {
-      expect(RequestToGetBalance).toHaveBeenCalledTimes(0);
-    });
+    // Ensure the balance API was not called automatically
+    expect(mockBalanceMutateAsync).toHaveBeenCalledTimes(0);
   });
 
   it("renders transaction items correctly", async () => {
@@ -109,9 +106,13 @@ describe("Dashboard", () => {
     ];
 
     // Mock RequestToGetTransactionHistory to resolve with mock data
-    (RequestToGetTransactionHistory as jest.Mock).mockResolvedValueOnce(
-      JSON.stringify(mockTransactions),
-    );
+    (
+      useTransactionHistoryServicePostApiAccountsTransactions as jest.Mock
+    ).mockReturnValue({
+      mutateAsync: vi.fn().mockResolvedValue({
+        data: JSON.stringify(mockTransactions),
+      }),
+    });
 
     render(
       <Provider store={createMockStore()}>

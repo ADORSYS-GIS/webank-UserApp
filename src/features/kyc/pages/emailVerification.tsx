@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { RequestToSendEmailOTP } from "@services/keyManagement/requestService";
 import { useSelector } from "react-redux";
+import { useEmailOtpServicePostApiPrsEmailOtpSend } from "@openapi/generated/prs/queries/queries";
 import { RootState } from "@state/Store";
 import { toast } from "sonner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,6 +17,7 @@ const InputEmail: React.FC = () => {
     (state: RootState) => state.account.accountCert,
   );
   const accountId = useSelector((state: RootState) => state.account.accountId);
+  const emailMutation = useEmailOtpServicePostApiPrsEmailOtpSend();
 
   // Validate email format
   const isValidEmail = (email: string): boolean => {
@@ -54,23 +55,22 @@ const InputEmail: React.FC = () => {
       toast.error("Please enter a valid email address.");
       return;
     }
-
     if (!hasValidAccountInfo()) {
       return;
     }
-
     try {
-      if (!accountId || !accountCert) {
+      if (!accountId) {
         toast.error("Account information is missing.");
         navigate("/dashboard");
         return;
       }
-      const response = await RequestToSendEmailOTP(
-        email,
-        accountCert,
-        accountId,
-      );
-      if (response.startsWith("OTP sent successfully")) {
+      const result = await emailMutation.mutateAsync({
+        requestBody: {
+          email,
+          accountId,
+        },
+      });
+      if (result?.status) {
         toast.success("OTP sent, please check your email.", { duration: 5000 });
       }
       navigate("/emailCode", { state: { email, accountCert } });

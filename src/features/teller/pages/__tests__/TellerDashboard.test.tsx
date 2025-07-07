@@ -3,7 +3,7 @@ import TellerDashboard from "../TellerPage";
 import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
 import { toast } from "sonner";
-import { RequestToGetOtps } from "@services/keyManagement/requestService";
+import { useOtpRetrievalServiceGetApiPrsOtpPending } from "@openapi/generated/prs/queries/queries";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
 
@@ -13,8 +13,12 @@ vi.mock("sonner", () => ({
   },
 }));
 
-vi.mock("@services/keyManagement/requestService", () => ({
-  RequestToGetOtps: vi.fn(),
+vi.mock("@openapi/generated/prs/queries/queries", () => ({
+  useOtpRetrievalServiceGetApiPrsOtpPending: vi.fn(() => ({
+    data: mockData,
+    isLoading: false,
+    isError: false,
+  })),
 }));
 
 const mockStore = configureStore();
@@ -32,7 +36,12 @@ describe("TellerDashboard Component", () => {
       account: { accountId: "testAccount", accountCert: "testCert" },
     });
 
-    (RequestToGetOtps as jest.Mock).mockResolvedValue(JSON.stringify(mockData));
+    // Correctly mock the hook to return expected data structure
+    (useOtpRetrievalServiceGetApiPrsOtpPending as jest.Mock).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    });
   });
 
   const renderComponent = () =>

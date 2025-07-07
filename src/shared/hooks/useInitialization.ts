@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import {
-  RequestToSendPowJWT,
-  RequestToSendNonce,
-} from "@services/keyManagement/requestService.ts";
+  useDeviceRegistrationServicePostApiPrsDevInit,
+  useDeviceRegistrationServicePostApiPrsDevValidate,
+} from "@openapi/generated/prs/queries/queries";
 import { performProofOfWork } from "@services/computation/proofOfWork.ts";
 import { retrieveKeyPair } from "@services/keyManagement/storeKey.ts";
 
@@ -10,54 +10,67 @@ const useInitialization = () => {
   const [devCert, setDevCert] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Use TanStack Query mutations for device registration
+  const devInitMutation = useDeviceRegistrationServicePostApiPrsDevInit();
+  const devValidateMutation =
+    useDeviceRegistrationServicePostApiPrsDevValidate();
+
+  // I intentionally do NOT add devInitMutation/devValidateMutation to the dependency array
+  // because they are stable (from TanStack Query) and adding them would cause infinite loops.
   useEffect(() => {
+    let cancelled = false;
     const performInitialization = async () => {
       try {
-        console.log("Requesting initiation nonce...");
-
-        // Request initiation nonce from backend
-        const initiationNonce = await RequestToSendNonce();
-
+        // Step 1: Request initiation nonce from backend
+        const date = new Date();
+        const timeStamp = date.toISOString();
+        const initRes = await devInitMutation.mutateAsync({
+          requestBody: { timeStamp },
+        });
+        console.log("Requesting initiation nonce from backend", initRes);
+        const initiationNonce = initRes?.nonce;
         if (!initiationNonce) {
           throw new Error(
             "Failed to receive initiation nonce from the server.",
           );
         }
-        console.log("Initiation nonce received:", initiationNonce);
         const { publicKey } = await retrieveKeyPair(1);
-        // Step 3: Perform Proof of Work
-        console.log("Starting Proof of Work...");
+        // Step 2: Perform Proof of Work
         const powDifficulty = 4;
-        console.time();
-
         const result = await performProofOfWork(
           initiationNonce,
           publicKey,
           powDifficulty,
         );
-
-        console.log("Proof of Work completed:", result);
-        console.timeEnd();
-        //
-
         const powNonceString = result.powNonce.toString();
-        console.log("Pow Nonce:", powNonceString);
-        const devCert = await RequestToSendPowJWT(
-          initiationNonce,
-          result.powHash,
-          powNonceString,
-        );
-
-        console.log(devCert);
-        setDevCert(devCert);
-        return devCert;
+        // Step 3: Validate device (get devCert)
+        const validateRes = await devValidateMutation.mutateAsync({
+          requestBody: {
+            initiationNonce,
+            powHash: result.powHash,
+            powNonce: powNonceString,
+          },
+        });
+        console.log("Validating device with nonce", validateRes);
+        const devCert = validateRes?.certificate;
+        if (!devCert) {
+          throw new Error(
+            "Failed to receive device certificate from the server.",
+          );
+        }
+        // Write devCert to localStorage immediately after validation
+        localStorage.setItem("devCert", devCert);
+        if (!cancelled) setDevCert(devCert);
       } catch (err) {
-        console.error("Initialization failed:", err);
-        setError((err as Error).message || "Unknown error occurred.");
+        if (!cancelled)
+          setError((err as Error).message || "Unknown error occurred.");
       }
     };
-
     performInitialization();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { devCert, error };
