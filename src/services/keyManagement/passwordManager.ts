@@ -1,6 +1,10 @@
 import webAuth from "@adorsys-gis/web-auth";
 import { LogLevel } from "@adorsys-gis/web-auth-logger";
 import { toast } from "sonner";
+import { getProjectEnvVariables } from "../../shared/projectEnvVariables";
+
+const { VITE_WEBANK_WEBAUTH_RP_ID, VITE_WEBANK_WEBAUTH_RP_NAME } =
+  getProjectEnvVariables().envVariables;
 
 export class PasswordManager {
   private static isRegistering = false;
@@ -9,8 +13,8 @@ export class PasswordManager {
   private static readonly webAuthInstance = webAuth({
     credentialOptions: {
       rp: {
-        id: window.location.hostname,
-        name: "WeBank User App",
+        id: VITE_WEBANK_WEBAUTH_RP_ID || "localhost",
+        name: VITE_WEBANK_WEBAUTH_RP_NAME || "WeBank",
       },
       creationOptions: {
         authenticatorSelection: {
@@ -121,7 +125,7 @@ export class PasswordManager {
       const result = await credential.register({
         user: {
           name: "webank-user",
-          displayName: "WeBank User",
+          displayName: "WeBank",
         },
       });
 
