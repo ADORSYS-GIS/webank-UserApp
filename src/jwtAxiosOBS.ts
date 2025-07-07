@@ -25,7 +25,10 @@ OpenAPI.interceptors.request.use(async (config) => {
       null,
     );
     console.log("Generated JWT for OBS registration:", jwt);
-  } else if (url.includes("/accounts/balance")) {
+  } else if (
+    url.includes("/accounts/balance") ||
+    url.includes("/accounts/transactions")
+  ) {
     const accId = data.accountID;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
@@ -39,22 +42,6 @@ OpenAPI.interceptors.request.use(async (config) => {
       null,
       accId,
     );
-    console.log("Generated JWT for OBS account balance:", jwt);
-  } else if (url.includes("/accounts/transactions")) {
-    const accId = data.accountID;
-    const { publicKey, privateKey } = await KeyManagement();
-    jwt = await generateJWT(
-      privateKey,
-      publicKey,
-      null,
-      null,
-      accountCert,
-      null,
-      null,
-      null,
-      accId,
-    );
-    console.log("Generated JWT for OBS account transactions:", jwt);
   } else if (url.includes("/transfers/payout")) {
     const clientAccountId = data.recipientAccountId;
     const amount = data.amount;
