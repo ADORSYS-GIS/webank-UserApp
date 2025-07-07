@@ -213,7 +213,7 @@ const SelectWithPopup: React.FC<{
 };
 
 // Re-exporting the components we still need
-export { SelectWithPopup };
+// export { SelectWithPopup }; // Removed as unused
 
 interface DateInputProps {
   label: string;

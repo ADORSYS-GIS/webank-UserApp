@@ -1,83 +1,36 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React from "react";
 import { calculateTransactionFee } from "@services/computation/transactionFeeCalculator";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { RootState } from "@state/Store";
-import { useSelector } from "react-redux";
-import { toast } from "sonner";
 import ConfirmationBottomSheet from "../pages/ConfirmationPage";
+import { useTopUpPage } from "../hooks/useTopUpPage";
 
 const TopUpPage: React.FC = () => {
   useDisableScroll();
-  const [amount, setAmount] = useState<number | string>("");
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const clientAccountId = location.state?.clientAccountId;
-  const show = location.state?.show;
-  const isClientOffline = location.state?.isClientOffline;
-  const isClientOnline = location.state?.isClientOnline;
-  const agentAccountCert = location.state?.agentAccountCert;
-  const agentAccountId = location.state?.agentAccountId;
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const status = useSelector((state: RootState) => state.account.status);
+  const {
+    amount,
+    setAmount,
+    showConfirmation,
+    handleContinue,
+    handleCancel,
+    handleConfirmationDismiss,
+    clientAccountId,
+    show,
+    agentAccountCert,
+    agentAccountId,
+  } = useTopUpPage();
 
-  // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
 
-  const handleCancel = () => {
-    navigate("/dashboard", {
-      state: { accountId: clientAccountId },
-    }); // Go back to the previous page
-  };
-
-  const handleConfirmationDismiss = () => {
-    setShowConfirmation(false);
-  };
-
-  const handleContinue = () => {
-    const numericAmount = Number(amount);
-    if (numericAmount <= 0) {
-      toast.info("Please enter a valid amount.");
-      return;
-    }
-
-    if (numericAmount > 1000 && kycCert == null && status !== "APPROVED") {
-      toast.info("KYC is required for transfers over 1000 XAF.");
-      return;
-    }
-
-    if (numericAmount > 500000) {
-      toast.info("Maximum top-up amount is 500,000 XAF.");
-      return;
-    }
-
-    if (show === "Transfer" || show === "Payment" || show === "Withdraw") {
-      // Instead of navigating to the confirmation page, show the bottom sheet
-      setShowConfirmation(true);
-    } else {
-      navigate("/qrcode", {
-        state: {
-          totalAmount,
-          accountId: clientAccountId,
-          isClientOffline,
-          isClientOnline,
-          show,
-        },
-      });
-    }
-  };
-
-  // Prepare the confirmation data that would have been passed via location state
   const confirmationData = {
     amount: totalAmount,
-    clientAccountId,
-    agentAccountId,
-    agentAccountCert,
-    show,
-    clientName: location.state?.clientName || "Anonymous",
+    clientAccountId: clientAccountId || "",
+    agentAccountId: agentAccountId || "",
+    agentAccountCert: agentAccountCert || "",
+    show: show || "",
+    clientName: "Anonymous", // Optionally pass clientName from state if needed
   };
-  console.log("Confirmation Data:", confirmationData);
+
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">

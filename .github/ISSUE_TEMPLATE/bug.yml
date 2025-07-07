@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a non-security sensitive bug in Keycloak
+description: Report a non-security sensitive bug in webank
 labels: ["kind/bug", "status/triage"]
 body:
   - type: checkboxes

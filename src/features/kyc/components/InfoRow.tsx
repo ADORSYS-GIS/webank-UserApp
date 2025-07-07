@@ -6,7 +6,7 @@ interface InfoRowProps {
   value: string;
 }
 
-export const InfoRow = ({ icon, label, value }: InfoRowProps) => (
+// export const InfoRow = ({ icon, label, value }: InfoRowProps) => ( // Removed as unused
   <div className="flex justify-between items-center py-2 border-b border-gray-100">
     <div className="flex items-center gap-2">
       <span className="text-gray-400">{icon}</span>

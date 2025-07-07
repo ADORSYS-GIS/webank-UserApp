@@ -1,12 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  RequestToTopup,
-  RequestToWithdrawOffline,
-} from "@services/keyManagement/requestService";
-import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -14,6 +6,7 @@ import {
   faCoins,
   faIdCard,
 } from "@fortawesome/free-solid-svg-icons";
+import { useConfirmationBottomSheet } from "../hooks/useConfirmationBottomSheet";
 
 interface ConfirmationData {
   clientAccountId: string;
@@ -34,141 +27,24 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   data,
   onDismiss,
 }) => {
-  const navigate = useNavigate();
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Make sure data has a clientName property even if it wasn't passed
-  const safeData = {
-    ...data,
-    clientName: data.clientName || "Anonymous",
-  };
-
   const {
+    isVisible,
+    setIsVisible,
+    handleDismiss,
+    handleTopUp,
+    handleOfflineWithdrawal,
     clientAccountId,
     amount,
-    agentAccountId,
-    agentAccountCert,
     transactionJwt,
-    show,
     clientName,
-  } = safeData;
-
-  console.log("Confirmation Page Data:", safeData);
-  console.log("Client Name in Confirmation:", clientName);
+  } = useConfirmationBottomSheet({ data, onDismiss });
 
   useEffect(() => {
-    // Animate the bottom sheet entry
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 100);
     return () => clearTimeout(timer);
-  }, []);
-
-  const handleTopUp = async () => {
-    // Offline handling based on show type
-    if (
-      !navigator.onLine &&
-      show !== "Transfer" &&
-      show !== "Payment" &&
-      show !== "Top up"
-    ) {
-      toast.info("Oops, you are offline. Redirecting to the amount page...");
-      setTimeout(() => {
-        navigate("/top-up", {
-          state: {
-            clientAccountId,
-            amount,
-            isClientOffline: true,
-            clientName, // Pass the client name in navigation
-          },
-        });
-      }, 4000);
-    } else if (!navigator.onLine && show === "Transfer") {
-      toast.error("Cannot transfer offline. Redirecting you to dashboard...");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 4000);
-    } else if (!navigator.onLine && show === "Top up") {
-      toast.error("Cannot top up offline. Redirecting you to dashboard...");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 4000);
-    } else if (!navigator.onLine && show === "Payment") {
-      toast.error("Cannot do payment offline. Redirecting you to dashboard...");
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 4000);
-    } else {
-      try {
-        const response = await RequestToTopup(
-          clientAccountId,
-          amount,
-          agentAccountId,
-          accountCert,
-          kycCert,
-        );
-        if (response?.includes("Success")) {
-          const transactionCert = response.replace(" Success", "");
-          toast.success("Account successfully topped up.");
-          navigate("/success", {
-            state: {
-              transactionCert,
-              accountId: agentAccountId,
-              accountCert: agentAccountCert,
-              clientName, // Include client name in success state
-            },
-          });
-        } else if (response?.includes("Insufficient")) {
-          toast.error("Insufficient funds. Please add funds to your account.");
-        }
-      } catch (error) {
-        toast.error("An error occurred while processing the transaction");
-        console.error(error);
-      }
-    }
-  };
-
-  const handleOfflineWithdrawal = async () => {
-    try {
-      const response = await RequestToWithdrawOffline(
-        clientAccountId,
-        amount,
-        agentAccountId,
-        accountCert,
-        transactionJwt,
-      );
-      if (response?.includes("Success")) {
-        const transactionCert = response.replace(" Success", "");
-        toast.success("Account successfully topped up.");
-        navigate("/success", {
-          state: {
-            transactionCert,
-            accountId: agentAccountId,
-            accountCert: agentAccountCert,
-            clientName, // Include client name in success state
-          },
-        });
-      } else if (response?.includes("Insufficient")) {
-        toast.error(
-          "Insufficient funds. Please ask the client to add funds to his account.",
-        );
-      }
-    } catch (error) {
-      toast.error("An error occurred while processing the transaction");
-      console.error(error);
-    }
-  };
-
-  const handleDismiss = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      onDismiss();
-    }, 300);
-  };
+  }, [setIsVisible]);
 
   return (
     <div className="fixed inset-0 flex items-end justify-center bg-black bg-opacity-50 z-50">

@@ -1,91 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { useLocation, useNavigate } from "react-router-dom";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
-import { signTransaction } from "@services/keyManagement/signTransaction";
+import { useQRGenerator } from "../hooks/useQRGenerator";
 
 const QRGenerator: React.FC = () => {
   useDisableScroll();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const totalamount = location.state?.totalAmount;
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const isClientOffline = location.state?.isClientOffline;
-  const isClientOnline = location.state?.isClientOnline;
-  const show = location.state?.show;
-
-  const [signatureValue, setSignatureValue] = useState<string | null>(null);
-  const qrRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const generateSignature = async () => {
-      try {
-        if (accountId && totalamount && accountJwt) {
-          const signature = await signTransaction(
-            accountId,
-            totalamount,
-            accountJwt,
-          );
-          setSignatureValue(signature);
-          console.log("Generated Signature:", signature);
-        } else {
-          console.warn("Missing data, cannot generate signature.");
-        }
-      } catch (error) {
-        console.error("Error generating signature:", error);
-      }
-    };
-    generateSignature();
-  }, [accountId, totalamount, accountJwt]);
-
-  const qrValue = JSON.stringify({
-    accountId: accountId,
-    amount: totalamount,
-    timeGenerated: Date.now(),
-    ...(signatureValue && isClientOffline ? { signature: signatureValue } : {}),
-  });
-
-  // Function to download QR code with size 350
-  const downloadQRCode = () => {
-    const originalCanvas = qrRef.current;
-    if (!originalCanvas) {
-      console.error("QR code canvas not found.");
-      return;
-    }
-
-    // Create an off-screen canvas with 350x350 size
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-
-    if (!context) {
-      console.error("Failed to create canvas context.");
-      return;
-    }
-
-    canvas.width = 350;
-    canvas.height = 350;
-
-    // Draw the original QR code onto the new canvas, scaling it up
-    const img = new Image();
-    img.src = originalCanvas.toDataURL("image/png");
-    img.onload = () => {
-      context.drawImage(img, 0, 0, 350, 350);
-
-      // Convert to PNG and trigger download
-      const url = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "qrcode.png";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    };
-  };
+  const {
+    qrRef,
+    qrValue,
+    isClientOnline,
+    isClientOffline,
+    show,
+    navigate,
+    downloadQRCode,
+  } = useQRGenerator();
 
   return (
     <div className="h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50">

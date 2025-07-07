@@ -1,66 +1,29 @@
 // DocumentImages.tsx
-import { useEffect, useState } from "react";
+
+
+import * as React from "react";
+import { toast } from "sonner";
 import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
-import { RequestToStoreKycDocument } from "@services/keyManagement/requestService";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@state/Store";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { setDocumentStatus } from "@state/accountSlice";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
-
-type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
-type ActivePopup = DocumentType | null;
+import { useDocumentImages } from "../hooks/useDocumentImages";
 
 const DocumentImages = () => {
-  const [images, setImages] = useState<Record<DocumentType, string | null>>({
-    frontID: null,
-    backID: null,
-    selfieID: null,
-    taxDoc: null,
-  });
-  const [activePopup, setActivePopup] = useState<ActivePopup>(null);
+  const {
+    images,
+    setImages,
+    activePopup,
+    setActivePopup,
+    handleSubmitDocuments,
+    navigate,
+  } = useDocumentImages();
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const handleSubmitDocuments = async () => {
-    try {
-      if (!accountCert || !accountId) {
-        toast.error("Account information is missing.");
-        navigate("/guidelines");
-        return;
-      }
-      const response = await RequestToStoreKycDocument(
-        images.frontID ?? "",
-        images.backID ?? "",
-        images.selfieID ?? "",
-        images.taxDoc ?? "",
-        accountCert,
-        accountId,
-      );
-
-      if (response.includes("saved")) {
-        dispatch(setDocumentStatus("PENDING"));
-        toast.success("Documents submitted successfully");
-        navigate("/kyc");
-      }
-    } catch (error) {
-      console.error("Error submitting documents:", error);
-    }
-  };
-
-  useEffect(() => {
+  React.useEffect(() => {
     const loadImagesFromDB = async () => {
       try {
-        const mockDB: Record<DocumentType, string> = {
+        const mockDB: Record<"frontID" | "backID" | "selfieID" | "taxDoc", string> = {
           frontID: localStorage.getItem("frontID") ?? "",
           backID: localStorage.getItem("backID") ?? "",
           selfieID: localStorage.getItem("selfieID") ?? "",
@@ -77,11 +40,10 @@ const DocumentImages = () => {
         console.error("Error loading images from DB:", error);
       }
     };
-
     loadImagesFromDB();
-  }, []);
+  }, [setImages]);
 
-  const getDocumentLabel = (type: DocumentType): string => {
+  const getDocumentLabel = (type: string): string => {
     switch (type) {
       case "frontID":
         return "Front of ID Card";
@@ -118,13 +80,13 @@ const DocumentImages = () => {
 
       {/* Documents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 mb-8">
-        {(Object.keys(images) as DocumentType[]).map((type) => (
+        {Object.keys(images).map((type) => (
           <div key={type} className="space-y-2">
             <h3 className="text-gray-800 font-medium text-sm">
               {getDocumentLabel(type)}
             </h3>
             <button
-              onClick={() => !images[type] && setActivePopup(type)}
+              onClick={() => !images[type] && setActivePopup(type as keyof typeof images)}
               className={`relative group w-full h-64 bg-white rounded-xl border-2 ${
                 !images[type]
                   ? "border-dashed cursor-pointer hover:border-blue-500"
@@ -133,7 +95,7 @@ const DocumentImages = () => {
             >
               {images[type] ? (
                 <img
-                  src={images[type]}
+                  src={images[type] as string}
                   alt={getDocumentLabel(type)}
                   className="w-full h-full object-contain"
                 />
@@ -187,8 +149,9 @@ const DocumentImages = () => {
           }
           handleSubmitDocuments();
         }}
-        className="self-center"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed self-center"
       >
+        Submit Documents
         <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
           Submit Documents
         </button>

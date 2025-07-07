@@ -1,11 +1,9 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
 import TopUpForm from "@features/transactions/components/TopUpForm";
+import { useAgentTopUpPage } from "../hooks/useAgentTopUpPage";
 
 const AgentTopUpPage: React.FC = () => {
-  const location = useLocation();
-  const { tellerAccountCert } = location.state || {};
-
+  const { tellerAccountCert } = useAgentTopUpPage();
   return <TopUpForm tellerAccountCert={tellerAccountCert} />;
 };
 

@@ -1,41 +1,8 @@
 import { CheckCircle } from "lucide-react";
-import { jwtDecode } from "jwt-decode";
-import { useLocation, useNavigate } from "react-router-dom";
-
-// Define the type of the decoded JWT payload
-interface TransactionDetails {
-  amount: number;
-  TransactionID: string;
-  paymentTime: number;
-  paymentMethod: string;
-}
+import { useSuccessPage } from "../hooks/useSuccessPage";
 
 export default function SuccessPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { transactionCert } = location.state || {};
-
-  // Define transaction details object with proper types
-  let transactionDetails: TransactionDetails = {
-    amount: 0,
-    TransactionID: "N/A",
-    paymentTime: 0,
-    paymentMethod: "N/A",
-  };
-
-  if (transactionCert) {
-    try {
-      const decoded = jwtDecode<TransactionDetails>(transactionCert); // Decode the JWT and infer the type
-      transactionDetails = decoded; // Set the decoded transaction details
-    } catch (error) {
-      console.error("Failed to decode JWT:", error);
-    }
-  }
-
-  const { amount, TransactionID, paymentTime, paymentMethod } =
-    transactionDetails;
-
-  // Format payment time to a readable string
+  const { amount, TransactionID, paymentTime, paymentMethod, handleReturnToDashboard } = useSuccessPage();
   const formattedPaymentTime = new Date(paymentTime).toLocaleString();
 
   return (
@@ -84,7 +51,7 @@ export default function SuccessPage() {
         </div>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={handleReturnToDashboard}
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 transform hover:scale-[1.02]"
         >
           Return to Dashboard

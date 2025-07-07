@@ -1,27 +1,13 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { ClipboardCopy } from "lucide-react";
-import useDisableScroll from "@shared/hooks/useDisableScroll";
+import { useRecoveryToken } from "../hooks/useRecoveryToken";
 
 const RecoveryToken: React.FC = () => {
-  useDisableScroll();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const recoveryToken = location.state?.recoveryToken || "N/A";
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(recoveryToken);
-      toast.success("Copied to clipboard!");
-    } catch (error) {
-      toast.error("Failed to copy!");
-    }
-  };
-
-  const goToDashboard = () => {
-    navigate("/account-recovery");
-  };
+  const {
+    recoveryToken,
+    handleCopy,
+    goToDashboard,
+  } = useRecoveryToken();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">

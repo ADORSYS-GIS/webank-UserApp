@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
-export const useCapture = (
+// export const useCapture = ( // Removed as unused
   defaultFacingMode: "user" | "environment" = "user",
-) => {
-  const [showCamera, setShowCamera] = useState(false);
+) => {const [showCamera, setShowCamera] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [facingMode, setFacingMode] = useState<"user" | "environment">(
     defaultFacingMode,
@@ -111,4 +110,4 @@ export const useCapture = (
   };
 };
 
-export default useCapture;
+// export default useCapture; // Removed as unused

@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faQrcode,
@@ -6,33 +5,15 @@ import {
   faArrowLeft,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import React from "react";
+import { useAgentPage } from "../hooks/useAgentPage";
 
 interface AgentPageProps {
   onClose?: () => void;
 }
 
 const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
-  const navigate = useNavigate();
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const [isOpen, setIsOpen] = useState(true);
-
-  const handleClose = (callback?: () => void) => {
-    setIsOpen(false);
-    setTimeout(() => {
-      onClose?.();
-      callback?.();
-    }, 300);
-  };
-
-  useEffect(() => {
-    setIsOpen(true);
-  }, []);
+  const { navigate, accountId, accountCert, isOpen, handleClose } = useAgentPage({ onClose });
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-end justify-center">
