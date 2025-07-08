@@ -6,15 +6,8 @@ import { useOtpManagementServicePostApiPrsOtpSend } from "@openapi/generated/prs
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
-<<<<<<< HEAD
-import { ArrowLeft } from "react-feather";
-import { RootState } from "@state/Store.ts";
-import { useSelector } from "react-redux";
-=======
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useAccountStore } from "@state/accountStore";
->>>>>>> develop
+import { ArrowLeft } from "react-feather";
 
 type CountryOption = {
   value: string;

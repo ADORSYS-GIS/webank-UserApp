@@ -140,9 +140,11 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
             tabIndex={0}
           >
             <User
-              className={`text-lg ${location.pathname === "/agent"
+              className={`text-lg ${
+                location.pathname === "/agent"
                   ? "text-blue-500"
-                  : "text-gray-500"}`}
+                  : "text-gray-500"
+              }`}
             />
             <span
               className={`text-xs mt-1 ${

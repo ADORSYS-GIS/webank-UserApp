@@ -11,7 +11,6 @@ import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
 import { ArrowLeft } from "react-feather";
 import { useAccountStore } from "@state/accountStore";
 
-
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
