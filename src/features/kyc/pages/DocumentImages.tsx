@@ -28,14 +28,21 @@ const DocumentImages = () => {
   const submitDocumentsMutation =
     useKycManagementServicePostApiPrsKycDocuments();
 
+  // Helper utilities to simplify handleSubmitDocuments and lower cognitive complexity
+  const isSuccessfulStatus = (status?: string) =>
+    ["PENDING", "IN_REVIEW", "APPROVED"].includes(status ?? "");
+
+  const showErrorToast = (message: string) => toast.error(message);
+
   const handleSubmitDocuments = async () => {
+    const { accountId, accountCert } = useAccountStore.getState();
+    if (!accountCert || !accountId) {
+      showErrorToast("Account information is missing.");
+      navigate("/guidelines");
+      return;
+    }
+
     try {
-      const { accountId, accountCert } = useAccountStore.getState();
-      if (!accountCert || !accountId) {
-        toast.error("Account information is missing.");
-        navigate("/guidelines");
-        return;
-      }
       const requestBody = {
         frontId: images.frontID ?? "",
         backId: images.backID ?? "",
@@ -43,30 +50,27 @@ const DocumentImages = () => {
         taxId: images.taxDoc ?? undefined,
         accountId,
       };
+
       const response = await submitDocumentsMutation.mutateAsync({
         requestBody,
       });
-      if (
-        response?.status === "PENDING" ||
-        response?.status === "IN_REVIEW" ||
-        response?.status === "APPROVED"
-      ) {
+
+      if (isSuccessfulStatus(response?.status)) {
         setDocumentStatus("PENDING");
         toast.success("Documents submitted successfully");
         navigate("/kyc");
-      } else {
-        toast.error(response?.message ?? "Failed to submit documents");
+        return;
       }
+
+      showErrorToast(response?.message ?? "Failed to submit documents");
     } catch (error: unknown) {
       console.error("Error submitting documents:", error);
-      if (typeof error === "object" && error !== null && "message" in error) {
-        toast.error(
-          (error as { message?: string }).message ??
-            "Error submitting documents",
-        );
-      } else {
-        toast.error("Error submitting documents");
-      }
+      const errorMsg =
+        typeof error === "object" && error !== null && "message" in error
+          ? ((error as { message?: string }).message ??
+            "Error submitting documents")
+          : "Error submitting documents";
+      showErrorToast(errorMsg);
     }
   };
 

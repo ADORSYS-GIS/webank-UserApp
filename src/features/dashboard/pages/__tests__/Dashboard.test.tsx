@@ -95,7 +95,8 @@ describe("Dashboard", () => {
     fireEvent.click(viewAllButton);
 
     // Wait for the transactions to be rendered
-    await screen.findByText("Apple");
-    await screen.findByText("Fiverr");
+    // Assertions: ensure the mocked transactions appear in the document
+    expect(await screen.findByText("Apple")).toBeInTheDocument();
+    expect(await screen.findByText("Fiverr")).toBeInTheDocument();
   });
 });
