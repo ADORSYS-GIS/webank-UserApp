@@ -5,8 +5,7 @@ import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import ConfirmationBottomSheet from "@features/transactions/pages/ConfirmationPage";
 import SaveContactModal from "@shared/components/SaveContactModal";
 import { ContactService } from "@services/contacts/contactService";
@@ -43,12 +42,7 @@ const GeneralQRScannerPage: React.FC = () => {
   const show = location.state?.show;
   const sharedImage = location.state?.sharedImage;
 
-  const agentAccountId = useSelector(
-    (state: RootState) => state.account.accountId,
-  );
-  const agentAccountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountId, accountCert } = useAccountStore();
 
   const handleConfirmationDismiss = () => {
     setShowConfirmation(false);
@@ -56,7 +50,7 @@ const GeneralQRScannerPage: React.FC = () => {
 
   const handleTransferOrPayment = useCallback(
     (data: QRData) => {
-      if (data.accountId === agentAccountId) {
+      if (data.accountId === accountId) {
         toast.error("Self-transfer not allowed.");
         window.location.reload();
         return;
@@ -64,19 +58,19 @@ const GeneralQRScannerPage: React.FC = () => {
       navigate("/top-up", {
         state: {
           clientAccountId: data.accountId,
-          agentAccountId,
-          agentAccountCert,
+          agentAccountId: accountId,
+          agentAccountCert: accountCert,
           show,
           clientName: data.name,
         },
       });
     },
-    [agentAccountId, agentAccountCert, navigate, show],
+    [accountId, accountCert, navigate, show],
   );
 
   const showConfirmationSheet = useCallback(
     (data: QRData) => {
-      if (!agentAccountId || !agentAccountCert) {
+      if (!accountId || !accountCert) {
         toast.error("Missing account information. Please try again.");
         return;
       }
@@ -84,8 +78,8 @@ const GeneralQRScannerPage: React.FC = () => {
       const confirmationData = {
         amount: data.amount ?? 0,
         clientAccountId: data.accountId,
-        agentAccountId,
-        agentAccountCert,
+        agentAccountId: accountId,
+        agentAccountCert: accountCert,
         show: show || "",
         clientName: data.name ?? "Anonymous",
       };
@@ -93,7 +87,7 @@ const GeneralQRScannerPage: React.FC = () => {
       setConfirmationData(confirmationData);
       setShowConfirmation(true);
     },
-    [agentAccountId, agentAccountCert, show],
+    [accountId, accountCert, show],
   );
 
   const handleContactSave = () => {
@@ -104,8 +98,8 @@ const GeneralQRScannerPage: React.FC = () => {
       navigate("/top-up", {
         state: {
           clientAccountId: scannedAccountId,
-          agentAccountId,
-          agentAccountCert,
+          agentAccountId: accountId,
+          agentAccountCert: accountCert,
           show,
           clientName: scannedName ?? "Anonymous",
         },
@@ -120,8 +114,8 @@ const GeneralQRScannerPage: React.FC = () => {
       navigate("/top-up", {
         state: {
           clientAccountId: scannedAccountId,
-          agentAccountId,
-          agentAccountCert,
+          agentAccountId: accountId,
+          agentAccountCert: accountCert,
           show,
           clientName: scannedName ?? "Anonymous",
         },
@@ -154,7 +148,7 @@ const GeneralQRScannerPage: React.FC = () => {
         );
       }
 
-      if (data.accountId === agentAccountId) {
+      if (data.accountId === accountId) {
         toast.error("Self-transfer not allowed.");
         window.location.reload();
         return false;
@@ -162,7 +156,7 @@ const GeneralQRScannerPage: React.FC = () => {
 
       return true;
     },
-    [agentAccountId],
+    [accountId],
   );
 
   const handleDecodedText = useCallback(

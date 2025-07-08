@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@state/Store";
-import { setStatus, setKycCert, setDocumentStatus } from "@state/accountSlice";
+import { useAccountStore } from "@state/accountStore";
 import KycRejectionPopup from "../components/KycRejectionPopup";
-import { useKycServiceGetApiPrsKycCertByAccountId } from "openapi/generated/prs/queries/queries";
+import { useKycServiceGetApiPrsKycCertByAccountId } from "@openapi/generated/prs/queries/queries";
 
 const KycCertChecker = () => {
-  const dispatch = useDispatch();
-  const status = useSelector((state: RootState) => state.account.status);
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const { status, accountId, setStatus, setKycCert, setDocumentStatus } =
+    useAccountStore();
   const [showRejectionPopup, setShowRejectionPopup] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -33,18 +30,18 @@ const KycCertChecker = () => {
       if (certData.includes("certificate")) {
         const certificate = certData.replace("Your certificate is:", "").trim();
         if (certificate) {
-          dispatch(setKycCert(certificate));
-          dispatch(setStatus("APPROVED"));
-          dispatch(setDocumentStatus("APPROVED"));
+          setKycCert(certificate);
+          setStatus("APPROVED");
+          setDocumentStatus("APPROVED");
         }
       } else if (certData.includes("REJECTED")) {
-        dispatch(setStatus("REJECTED"));
-        dispatch(setDocumentStatus("REJECTED"));
+        setStatus("REJECTED");
+        setDocumentStatus("REJECTED");
         setRejectionReason(certData.replace("REJECTED: ", ""));
         setShowRejectionPopup(true);
       }
     }
-  }, [certData, status, dispatch]);
+  }, [certData, status, setKycCert, setStatus, setDocumentStatus]);
 
   useEffect(() => {
     if (isError && error) {

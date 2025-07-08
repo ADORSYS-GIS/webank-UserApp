@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
-import { setAccountCert, setAccountId, setKycCert } from "@state/accountSlice";
 import {
   useRecoveryServicePostApiPrsKycRecoveryToken,
   useAccountRecoveryServicePostApiPrsKycRecoveryValidate,
@@ -22,11 +20,9 @@ const RecoverAccountPage: React.FC = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const dispatch = useDispatch();
+  const { accountId, accountCert, setAccountId, setAccountCert, setKycCert } =
+    useAccountStore();
+
   const supportPhoneNumber = "+237654066316";
   const { mutate: submitRecoveryToken } =
     useRecoveryServicePostApiPrsKycRecoveryToken();
@@ -61,18 +57,21 @@ const RecoverAccountPage: React.FC = () => {
       {
         onSuccess: (data: string) => {
           // Parse the response (assume data is "oldAccountId kycCert")
-          const [oldAccountId, kycCert] =
-            typeof data === "string" ? data.split(" ") : [null, null];
-          const isInvalidToken = (value: string | null | undefined): boolean =>
-            value === "null" || !value;
-          if (isInvalidToken(oldAccountId) || isInvalidToken(kycCert)) {
+          const [oldAccountIdRaw, kycCertRaw] =
+            typeof data === "string"
+              ? (data.split(" ") as [string, string])
+              : ["", ""];
+
+          // Validate parsed values
+          const isInvalidToken = (value: string): boolean =>
+            value === "null" || value.trim() === "";
+          if (isInvalidToken(oldAccountIdRaw) || isInvalidToken(kycCertRaw)) {
             toast.error("Invalid token. Please try again.");
             return;
           }
-          localStorage.setItem("accountId", oldAccountId!);
-          localStorage.setItem("kycCert", kycCert!);
-          dispatch(setKycCert(kycCert!));
-          dispatch(setAccountId(oldAccountId!));
+          // Values are valid non-empty strings
+          setAccountId(oldAccountIdRaw);
+          setKycCert(kycCertRaw);
           setShowTokenInput(false);
           setShowConfirmation(true);
         },
@@ -103,8 +102,7 @@ const RecoverAccountPage: React.FC = () => {
           message?: string;
         }) => {
           if (certResponse?.kycCertificate) {
-            localStorage.setItem("accountCert", certResponse.kycCertificate);
-            dispatch(setAccountCert(certResponse.kycCertificate));
+            setAccountCert(certResponse.kycCertificate);
             toast.success("Account recovery successful!");
             setTimeout(() => {
               navigate("/dashboard");

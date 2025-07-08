@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useEffect, useState } from "react";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
@@ -27,9 +26,7 @@ interface UserKYC {
 }
 
 export default function RecoveryDashboard() {
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountCert } = useAccountStore();
   const [foundRecord, setFoundRecord] = useState<UserKYC | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");

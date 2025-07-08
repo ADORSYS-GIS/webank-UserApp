@@ -1,25 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
 import ContactList from "@shared/components/ContactList";
 import { Contact } from "@services/contacts/contactService";
 
 const ContactsPage: React.FC = () => {
   const navigate = useNavigate();
-  const agentAccountId = useSelector(
-    (state: RootState) => state.account.accountId,
-  );
-  const agentAccountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
 
   const handleSelectContact = (contact: Contact) => {
-    // Navigate to the appropriate page with the contact's account ID and name
     navigate("/top-up", {
       state: {
-        agentAccountId,
-        agentAccountCert,
         clientAccountId: contact.accountId,
         clientName: contact.name,
         fromContacts: true,

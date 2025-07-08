@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setEmailStatus } from "@state/accountSlice";
+import { useAccountStore } from "@state/accountStore";
 import {
   useEmailOtpServicePostApiPrsEmailOtpSend,
   useEmailOtpServicePostApiPrsEmailOtpValidate,
 } from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { RootState } from "@state/Store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import OtpInput from "@features/auth/components/OtpInput";
@@ -17,11 +15,10 @@ const EmailCode: React.FC = () => {
   useDisableScroll();
   const [otp, setOtp] = useState<string>("".padStart(6, " "));
   const [showSuccess, setShowSuccess] = useState(false);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { email } = location.state ?? {};
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const { accountId, setEmailStatus } = useAccountStore();
   const resendEmailMutation = useEmailOtpServicePostApiPrsEmailOtpSend();
   const verifyEmailOtpMutation = useEmailOtpServicePostApiPrsEmailOtpValidate();
 
@@ -95,7 +92,7 @@ const EmailCode: React.FC = () => {
       });
       if (result?.status === "SUCCESS") {
         setShowSuccess(true);
-        dispatch(setEmailStatus("APPROVED"));
+        setEmailStatus("APPROVED");
         setTimeout(() => {
           navigate("/kyc");
         }, 2000);

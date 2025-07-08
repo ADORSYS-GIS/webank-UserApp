@@ -11,8 +11,7 @@ import TransactionsSection from "../components/TransactionsSection";
 import ActionButtons from "@shared/components/ActionButtons";
 import BottomNavigation from "@shared/components/BottomNavigation";
 import BottomSheet from "@shared/components/SideBar";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -27,10 +26,7 @@ const Dashboard = () => {
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountId, accountCert } = useAccountStore();
 
   // Toggle menu
   const toggleMenu = () => {
@@ -137,19 +133,10 @@ const Dashboard = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-        toggleMenu={toggleMenu}
-      />
+      <BottomNavigation toggleMenu={toggleMenu} />
 
       {/* Bottom Sheet Menu */}
-      <BottomSheet
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-      />
+      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </div>
   );
 };

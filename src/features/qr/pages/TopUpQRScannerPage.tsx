@@ -3,10 +3,9 @@
 
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
 import ConfirmationBottomSheet from "@features/transactions/pages/ConfirmationPage";
 import SaveContactModal from "@shared/components/SaveContactModal";
 import { ContactService } from "@services/contacts/contactService";
@@ -43,12 +42,7 @@ const TopUpQRScannerPage: React.FC = () => {
   const isClientOffline = location.state?.isClientOffline;
   const sharedImage = location.state?.sharedImage;
 
-  const agentAccountId = useSelector(
-    (state: RootState) => state.account.accountId,
-  );
-  const agentAccountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountId, accountCert } = useAccountStore();
 
   const handleConfirmationDismiss = () => {
     setShowConfirmation(false);
@@ -56,7 +50,7 @@ const TopUpQRScannerPage: React.FC = () => {
 
   const showConfirmationSheet = useCallback(
     (data: QRData) => {
-      if (!agentAccountId || !agentAccountCert) {
+      if (!accountId || !accountCert) {
         toast.error("Missing account information. Please try again.");
         return;
       }
@@ -64,16 +58,16 @@ const TopUpQRScannerPage: React.FC = () => {
       const confirmationData = {
         amount: data.amount,
         clientAccountId: data.accountId,
-        agentAccountId,
-        agentAccountCert,
-        show: "Top Up",
+        agentAccountId: accountId,
+        agentAccountCert: accountCert,
+        show: "Top up",
         clientName: data.name ?? "Anonymous",
       };
 
       setConfirmationData(confirmationData);
       setShowConfirmation(true);
     },
-    [agentAccountId, agentAccountCert],
+    [accountId, accountCert],
   );
 
   const handleContactSave = () => {
@@ -143,7 +137,7 @@ const TopUpQRScannerPage: React.FC = () => {
         return false;
       }
 
-      if (data.accountId === agentAccountId) {
+      if (data.accountId === accountId) {
         toast.error("Self-transfer not allowed.");
         window.location.reload();
         return false;
@@ -151,7 +145,7 @@ const TopUpQRScannerPage: React.FC = () => {
 
       return true;
     },
-    [agentAccountId],
+    [accountId],
   );
 
   const handleDecodedText = useCallback(

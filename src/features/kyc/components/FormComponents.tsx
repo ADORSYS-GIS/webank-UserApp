@@ -5,11 +5,9 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { setStatus } from "@state/accountSlice";
 import { useKycManagementServicePostApiPrsKycInfo } from "@openapi/generated/prs/queries/queries";
 
 type FormData = Record<string, string>;
@@ -38,15 +36,9 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   onCancel,
 }) => {
   const [formData, setFormData] = useState<FormData>({});
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const { accountId, accountCert, setStatus } = useAccountStore();
   const kycInfoMutation = useKycManagementServicePostApiPrsKycInfo();
-
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
@@ -83,7 +75,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
           accountId,
         },
       });
-      dispatch(setStatus("PENDING"));
+      setStatus("PENDING");
       toast.success("KYC information submitted successfully!");
       navigate("/under-review");
     } catch (error) {

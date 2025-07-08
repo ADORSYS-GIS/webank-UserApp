@@ -1,7 +1,6 @@
 // hooks/useKycData.ts - Custom hook for KYC data fetching and manipulation
 import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import {
   useKycManagementServiceGetApiPrsKycPending,
@@ -15,9 +14,7 @@ import {
 } from "@features/kyc/types/types";
 
 export const useKycData = () => {
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountCert } = useAccountStore();
   const [users, setUsers] = useState<UserKYC[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserKYC | null>(null);
   const [loading, setLoading] = useState(false);
