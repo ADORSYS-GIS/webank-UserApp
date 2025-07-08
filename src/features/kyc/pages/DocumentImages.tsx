@@ -51,7 +51,9 @@ const DocumentImages = () => {
         accountId,
       };
 
-      const response = await submitDocumentsMutation.mutateAsync({ requestBody });
+      const response = await submitDocumentsMutation.mutateAsync({
+        requestBody,
+      });
 
       if (isSuccessfulStatus(response?.status)) {
         setDocumentStatus("PENDING");
@@ -65,7 +67,8 @@ const DocumentImages = () => {
       console.error("Error submitting documents:", error);
       const errorMsg =
         typeof error === "object" && error !== null && "message" in error
-          ? (error as { message?: string }).message ?? "Error submitting documents"
+          ? ((error as { message?: string }).message ??
+            "Error submitting documents")
           : "Error submitting documents";
       showErrorToast(errorMsg);
     }
