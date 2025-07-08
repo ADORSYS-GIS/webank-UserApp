@@ -58,7 +58,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
 
         const accountId = response?.accountId ?? "";
         const accountCert = response?.accountCertificate ?? "";
-        
+
         if (accountId && accountCert) {
           setAccountId(accountId);
           setAccountCert(accountCert);
