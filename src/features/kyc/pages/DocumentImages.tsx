@@ -4,11 +4,11 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
-import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
+import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
@@ -51,9 +51,7 @@ const DocumentImages = () => {
         accountId,
       };
 
-      const response = await submitDocumentsMutation.mutateAsync({
-        requestBody,
-      });
+      const response = await submitDocumentsMutation.mutateAsync({ requestBody });
 
       if (isSuccessfulStatus(response?.status)) {
         setDocumentStatus("PENDING");
@@ -67,8 +65,7 @@ const DocumentImages = () => {
       console.error("Error submitting documents:", error);
       const errorMsg =
         typeof error === "object" && error !== null && "message" in error
-          ? ((error as { message?: string }).message ??
-            "Error submitting documents")
+          ? (error as { message?: string }).message ?? "Error submitting documents"
           : "Error submitting documents";
       showErrorToast(errorMsg);
     }
