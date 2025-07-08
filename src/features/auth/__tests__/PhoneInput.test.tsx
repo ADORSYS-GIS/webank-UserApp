@@ -3,6 +3,7 @@ import Register from "@features/auth/pages/PhoneInput";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, beforeEach, vi, expect } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock global objects and methods
 global.alert = vi.fn();
@@ -33,6 +34,8 @@ vi.mock("@services/keyManagement/requestService", () => ({
   RequestToSendOTP: vi.fn(),
 }));
 
+const queryClient = new QueryClient();
+
 describe("PhoneInput Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -40,12 +43,12 @@ describe("PhoneInput Component", () => {
 
   it("renders phone input form", () => {
     render(
-      <MemoryRouter>
-        <Register />
-      </MemoryRouter>,
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <Register />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
     expect(screen.getByPlaceholderText(/phone number/i)).toBeInTheDocument();
   });
-
-  // Add more test cases as needed
 });

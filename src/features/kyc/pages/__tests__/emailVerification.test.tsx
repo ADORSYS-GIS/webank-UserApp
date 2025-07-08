@@ -14,7 +14,12 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("@services/keyManagement/requestService", () => ({
+// Mock for OpenAPI email mutation
+const mockEmailMutation = vi.fn();
+vi.mock("@openapi/generated/prs/queries/queries", () => ({
+  useEmailOtpServicePostApiPrsEmailOtpSend: () => ({
+    mutateAsync: mockEmailMutation,
+  }),
   RequestToSendEmailOTP: vi.fn(() => Promise.resolve("OTP sent successfully")),
 }));
 
@@ -24,8 +29,6 @@ vi.mock("@state/accountStore", () => ({
     accountId: "1",
   })),
 }));
-
-import { RequestToSendEmailOTP } from "@services/keyManagement/requestService";
 
 const renderWithProviders = (
   ui: React.ReactElement,
@@ -66,11 +69,12 @@ describe("InputEmail Component", () => {
     fireEvent.click(proceedButton);
 
     await waitFor(() => {
-      expect(RequestToSendEmailOTP).toHaveBeenCalledWith(
-        "name@example.com",
-        "mockCert123",
-        "1", // Now matches the string type from the store
-      );
+      expect(mockEmailMutation).toHaveBeenCalledWith({
+        requestBody: {
+          accountId: "1",
+          email: "name@example.com",
+        },
+      });
       expect(navigateMock).toHaveBeenCalledWith("/emailCode", {
         state: { email: "name@example.com", accountCert: "mockCert123" },
       });
@@ -89,7 +93,7 @@ describe("InputEmail Component", () => {
 
     await waitFor(() => {
       expect(navigateMock).not.toHaveBeenCalled();
-      expect(RequestToSendEmailOTP).not.toHaveBeenCalled();
+      expect(mockEmailMutation).not.toHaveBeenCalled();
     });
   });
 

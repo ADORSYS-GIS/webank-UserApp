@@ -3,6 +3,7 @@ import { MemoryRouter } from "react-router-dom";
 import TellerDashboard from "../TellerPage";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock Zustand store
 vi.mock("@state/accountStore", () => ({
@@ -27,6 +28,8 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
+const queryClient = new QueryClient();
+
 describe("TellerDashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,12 +37,12 @@ describe("TellerDashboard", () => {
 
   it("renders teller dashboard", () => {
     render(
-      <MemoryRouter>
-        <TellerDashboard />
-      </MemoryRouter>,
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <TellerDashboard />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
     expect(screen.getByText(/Teller Dashboard/i)).toBeInTheDocument();
   });
-
-  // Add more test cases as needed
 });

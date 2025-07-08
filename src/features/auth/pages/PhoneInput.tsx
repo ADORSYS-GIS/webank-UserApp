@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import countryOptions from "@assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "@shared/constants.ts";
-import { RequestToSendOTP } from "@services/keyManagement/requestService.ts";
+import { useOtpManagementServicePostApiPrsOtpSend } from "@openapi/generated/prs/queries/queries";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
@@ -27,6 +27,9 @@ const PhoneInput: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const otpMutation = useOtpManagementServicePostApiPrsOtpSend();
+  useDisableScroll();
 
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
@@ -69,9 +72,15 @@ const PhoneInput: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountCert);
-
-      if (otpHash.includes("exists")) {
+      // Use OpenAPI mutation
+      const result = await otpMutation.mutateAsync({
+        requestBody: {
+          phoneNumber: fullPhoneNumber,
+        },
+      });
+      // Assume result contains an otpHash or error string (adapt as needed)
+      const otpHash = result?.otpHash || result;
+      if (typeof otpHash === "string" && otpHash.includes("exists")) {
         toast.error("Phone number already registered.");
       } else {
         toast.info("One-time code sent. Please check your whatsapp.", {

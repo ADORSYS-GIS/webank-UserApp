@@ -15,16 +15,23 @@
     "preview": "vite preview",
     "coverage": "vitest run --coverage",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "codegen:prs": "openapi-rq -i ./openapi/prs-api.json -o ./openapi/generated/prs -c axios --format prettier --lint eslint",
+    "codegen:obs": "openapi-rq -i ./openapi/obs-api.json -o ./openapi/generated/obs -c axios --format prettier --lint eslint",
+    "postinstall": "npm run codegen:prs && npm run codegen:obs"
   },
   "dependencies": {
     "@adorsys-gis/storage": "^1.0.3",
-    "@adorsys-gis/web-auth": "file:.yalc/@adorsys-gis/web-auth",
-    "@adorsys-gis/web-auth-prf": "^1.1.3",
-    "@adorsys-gis/web-auth1": "file:.yalc/@adorsys-gis/web-auth1",
+    "@adorsys-gis/web-auth": "^1.2.0",
+    "@adorsys-gis/web-auth-core": "^1.2.0",
+    "@adorsys-gis/web-auth-credential": "^1.2.0",
+    "@adorsys-gis/web-auth-encryption": "^1.2.0",
+    "@adorsys-gis/web-auth-logger": "^1.2.0",
+    "@adorsys-gis/web-auth-storage": "^1.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@tanstack/react-query": "^5.51.1",
     "@testing-library/user-event": "^14.6.1",
     "axios": "^1.7.7",
     "axios-mock-adapter": "^2.1.0",
@@ -57,6 +64,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
+    "@7nohe/openapi-react-query-codegen": "^1.6.2",
     "@faker-js/faker": "^9.0.3",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",

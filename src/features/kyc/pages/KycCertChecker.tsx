@@ -1,108 +1,54 @@
 import { useEffect, useState } from "react";
 import { useAccountStore } from "@state/accountStore";
-import { RequestToGetCert } from "@services/keyManagement/requestService";
 import KycRejectionPopup from "../components/KycRejectionPopup";
+import { useKycServiceGetApiPrsKycCertByAccountId } from "@openapi/generated/prs/queries/queries";
 
 const KycCertChecker = () => {
-  const {
-    status,
-    documentStatus,
-    accountCert,
-    accountId,
-    setKycCert: setKycCertState,
-    setStatus: setStatusState,
-    setDocumentStatus: setDocumentStatusState,
-  } = useAccountStore();
-
+  const { status, accountId, setStatus, setKycCert, setDocumentStatus } =
+    useAccountStore();
   const [showRejectionPopup, setShowRejectionPopup] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
 
+  // Use OpenAPI TanStack Query hook with polling
+  const {
+    data: certData,
+    error,
+    isError,
+  } = useKycServiceGetApiPrsKycCertByAccountId(
+    { accountId: accountId || "" },
+    undefined,
+    {
+      enabled: !!accountId && status === "PENDING",
+      refetchInterval: status === "PENDING" ? 60000 : false, // poll every 1 min
+      retry: false,
+    },
+  );
+
   useEffect(() => {
-    // If status is null or approved, stop execution
-    if (status === null || status === "APPROVED") {
-      console.log(
-        "[KycCertChecker] Status is null or APPROVED. Stopping execution.",
-      );
-      return;
-    }
-
-    console.log(
-      "[KycCertChecker] Status is PENDING, starting certificate polling...",
-    );
-
-    const interval = setInterval(
-      async () => {
-        console.log("[KycCertChecker] Sending request to get certificate...");
-
-        try {
-          if (!accountCert || !accountId) {
-            console.log(
-              "[KycCertChecker] Account authentication missing. Stopping polling.",
-            );
-            clearInterval(interval);
-            return;
-          } else
-            console.log(
-              "[KycCertChecker] Account authentication present. Fetching certificate...",
-            );
-          const response = await RequestToGetCert(accountId, accountCert);
-          console.log("[KycCertChecker] Response received:", response);
-
-          if (response && typeof response === "string") {
-            if (response.includes("certificate")) {
-              // Extract the certificate by trimming the response
-              const certificate = response
-                .replace("Your certificate is:", "")
-                .trim();
-
-              if (certificate) {
-                console.log(
-                  "[KycCertChecker] Certificate found. Updating state...",
-                );
-                setKycCertState(certificate); // Store the certificate
-                setStatusState("APPROVED"); // Change status to APPROVED
-                setDocumentStatusState("APPROVED"); // Change status to APPROVED
-                clearInterval(interval); // Stop making requests
-                console.log(
-                  "[KycCertChecker] Polling stopped as certificate is received.",
-                );
-              }
-            } else if (response.includes("REJECTED")) {
-              console.log(
-                "[KycCertChecker] Application rejected. Updating state...",
-              );
-              setStatusState("REJECTED");
-              setDocumentStatusState("REJECTED");
-              setRejectionReason(response.replace("REJECTED: ", ""));
-              setShowRejectionPopup(true);
-              clearInterval(interval);
-              console.log(
-                "[KycCertChecker] Polling stopped as application is rejected.",
-              );
-            }
-          }
-        } catch (error) {
-          console.error("[KycCertChecker] Error fetching certificate:", error);
+    if (!certData || status !== "PENDING") return;
+    if (typeof certData === "string") {
+      if (certData.includes("certificate")) {
+        const certificate = certData.replace("Your certificate is:", "").trim();
+        if (certificate) {
+          setKycCert(certificate);
+          setStatus("APPROVED");
+          setDocumentStatus("APPROVED");
         }
-      },
-      1 * 60 * 1000,
-    ); // 1 minutes
+      } else if (certData.includes("REJECTED")) {
+        setStatus("REJECTED");
+        setDocumentStatus("REJECTED");
+        setRejectionReason(certData.replace("REJECTED: ", ""));
+        setShowRejectionPopup(true);
+      }
+    }
+  }, [certData, status, setKycCert, setStatus, setDocumentStatus]);
 
-    return () => {
-      console.log(
-        "[KycCertChecker] Cleaning up interval on component unmount.",
-      );
-      clearInterval(interval);
-    };
-  }, [
-    status,
-    accountCert,
-    accountId,
-    documentStatus,
-    setKycCertState,
-    setStatusState,
-    setDocumentStatusState,
-  ]);
+  useEffect(() => {
+    if (isError && error) {
+      // Optionally show a toast or log error
+      console.error("[KycCertChecker] Error fetching certificate:", error);
+    }
+  }, [isError, error]);
 
   return showRejectionPopup ? (
     <KycRejectionPopup

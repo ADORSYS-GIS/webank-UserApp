@@ -44,6 +44,4 @@ describe("AgentPage", () => {
     expect(screen.getByText("Cash-In")).toBeInTheDocument();
     expect(screen.getByText("Pay-out")).toBeInTheDocument();
   });
-
-  // Add more test cases as needed
 });

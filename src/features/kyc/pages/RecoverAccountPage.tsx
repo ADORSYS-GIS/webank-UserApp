@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import {
-  RequestToSubmitRecoveryToken,
-  RequestToRecoverAccountCert,
-} from "@services/keyManagement/requestService";
+  useRecoveryServicePostApiPrsKycRecoveryToken,
+  useAccountRecoveryServicePostApiPrsKycRecoveryValidate,
+} from "@openapi/generated/prs/queries/queries";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faKey,
@@ -24,9 +24,10 @@ const RecoverAccountPage: React.FC = () => {
     useAccountStore();
 
   const supportPhoneNumber = "+237654066316";
-  let data = "";
-  let oldAccountId = "";
-  let kycCert = "";
+  const { mutate: submitRecoveryToken } =
+    useRecoveryServicePostApiPrsKycRecoveryToken();
+  const { mutate: recoverAccountCert } =
+    useAccountRecoveryServicePostApiPrsKycRecoveryValidate();
 
   const handleKYCRecovery = () => {
     const accountIdText = accountId ? `Account ID: ${accountId}\n\n` : "";
@@ -37,71 +38,91 @@ const RecoverAccountPage: React.FC = () => {
     window.open(whatsappLink, "_blank");
   };
 
-  const handleTokenSubmit = async () => {
-    try {
-      // Validate token input
-      if (!token.trim()) {
-        toast.error("Please enter a valid recovery token.");
-        return;
-      }
-
-      if (!accountId || !accountCert) {
-        toast.error("Account information is missing.");
-        return;
-      }
-
-      // Call the API to submit the recovery token
-      data = await RequestToSubmitRecoveryToken(accountId, token, accountCert);
-      console.log(data, "response");
-
-      // Parse the response
-      oldAccountId = data?.split(" ")[0];
-      kycCert = data?.split(" ")[1];
-
-      // Check for invalid or missing response values
-      const isInvalidToken = (value: string | null | undefined): boolean =>
-        value === "null" || !value;
-
-      if (isInvalidToken(oldAccountId) || isInvalidToken(kycCert)) {
-        toast.error("Invalid token. Please try again.");
-        return;
-      }
-
-      setKycCert(kycCert);
-      setAccountId(oldAccountId);
-
-      // Proceed to the next step
-      setShowTokenInput(false);
-      setShowConfirmation(true);
-    } catch (error) {
-      console.error("Error submitting token:", error);
-      toast.error("An error occurred. Please try again.");
+  const handleTokenSubmit = () => {
+    if (!token.trim()) {
+      toast.error("Please enter a valid recovery token.");
+      return;
     }
+    if (!accountId || !accountCert) {
+      toast.error("Account information is missing.");
+      return;
+    }
+    submitRecoveryToken(
+      {
+        requestBody: {
+          oldAccountId: accountId, // OpenAPI expects oldAccountId
+          // accountCert is not in TokenRequest, but if needed, add as custom field
+        },
+      },
+      {
+        onSuccess: (data: string) => {
+          // Parse the response (assume data is "oldAccountId kycCert")
+          const [oldAccountIdRaw, kycCertRaw] =
+            typeof data === "string"
+              ? (data.split(" ") as [string, string])
+              : ["", ""];
+
+          // Validate parsed values
+          const isInvalidToken = (value: string): boolean =>
+            value === "null" || value.trim() === "";
+          if (isInvalidToken(oldAccountIdRaw) || isInvalidToken(kycCertRaw)) {
+            toast.error("Invalid token. Please try again.");
+            return;
+          }
+          // Values are valid non-empty strings
+          setAccountId(oldAccountIdRaw);
+          setKycCert(kycCertRaw);
+          setShowTokenInput(false);
+          setShowConfirmation(true);
+        },
+        onError: (error: unknown) => {
+          toast.error(
+            "Token submission failed: " +
+              (error instanceof Error ? error.message : String(error)),
+          );
+        },
+      },
+    );
   };
 
-  const handleYesClick = async () => {
-    try {
-      if (!accountId) {
-        toast.error("Account information is missing.");
-        return;
-      }
-
-      const certResponse = await RequestToRecoverAccountCert(accountId);
-      if (certResponse) {
-        setAccountCert(certResponse);
-        toast.success("Account recovery successful!");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1500);
-      } else {
-        toast.error("Failed to recover account certificate. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error recovering account certificate:", error);
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setShowConfirmation(false);
+  const handleYesClick = () => {
+    if (!accountId) {
+      toast.error("Account information is missing.");
+      return;
     }
+    recoverAccountCert(
+      {
+        requestBody: { newAccountId: accountId }, // OpenAPI expects newAccountId
+      },
+      {
+        onSuccess: (certResponse: {
+          accountId: string;
+          kycCertificate?: string;
+          status: string;
+          message?: string;
+        }) => {
+          if (certResponse?.kycCertificate) {
+            setAccountCert(certResponse.kycCertificate);
+            toast.success("Account recovery successful!");
+            setTimeout(() => {
+              navigate("/dashboard");
+            }, 1500);
+          } else {
+            toast.error(
+              "Failed to recover account certificate. Please try again.",
+            );
+          }
+          setShowConfirmation(false);
+        },
+        onError: (error: unknown) => {
+          toast.error(
+            "Account cert recovery failed: " +
+              (error instanceof Error ? error.message : String(error)),
+          );
+          setShowConfirmation(false);
+        },
+      },
+    );
   };
 
   const handleCancel = () => {

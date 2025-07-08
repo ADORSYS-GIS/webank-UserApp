@@ -4,8 +4,8 @@ import { BrowserRouter as Router } from "react-router-dom";
 import RecoverAccountPage from "../RecoverAccountPage";
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
-import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock the Zustand store
 vi.mock("@state/accountStore", () => ({
@@ -17,13 +17,19 @@ vi.mock("@state/accountStore", () => ({
   })),
 }));
 
+const queryClient = new QueryClient();
+
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <Router>{ui}</Router>
+    </QueryClientProvider>,
+  );
+};
+
 describe("RecoverAccountPage", () => {
   it("renders the recover account page", () => {
-    render(
-      <MemoryRouter>
-        <RecoverAccountPage />
-      </MemoryRouter>,
-    );
+    renderWithProviders(<RecoverAccountPage />);
     const heading = screen.getByText((content, element) => {
       return (
         element?.tagName.toLowerCase() === "h2" &&
@@ -34,11 +40,7 @@ describe("RecoverAccountPage", () => {
   });
 
   test("renders Recover Account page and handles KYC recovery", () => {
-    render(
-      <Router>
-        <RecoverAccountPage />
-      </Router>,
-    );
+    renderWithProviders(<RecoverAccountPage />);
 
     // Check if the Initiate KYC Recovery button is rendered
     const kycButton = screen.getByText("Initiate KYC Recovery");
@@ -63,11 +65,7 @@ describe("RecoverAccountPage", () => {
   });
 
   test("handles token submission", async () => {
-    render(
-      <Router>
-        <RecoverAccountPage />
-      </Router>,
-    );
+    renderWithProviders(<RecoverAccountPage />);
 
     // Check if the Input Recovery Token button is rendered
     const tokenButton = screen.getByText("Input Recovery Token");

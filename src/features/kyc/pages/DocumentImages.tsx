@@ -4,7 +4,7 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
-import { RequestToStoreKycDocument } from "@services/keyManagement/requestService";
+import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +25,9 @@ const DocumentImages = () => {
   const { setDocumentStatus } = useAccountStore();
   const navigate = useNavigate();
 
+  const submitDocumentsMutation =
+    useKycManagementServicePostApiPrsKycDocuments();
+
   const handleSubmitDocuments = async () => {
     try {
       const { accountId, accountCert } = useAccountStore.getState();
@@ -33,22 +36,37 @@ const DocumentImages = () => {
         navigate("/guidelines");
         return;
       }
-      const response = await RequestToStoreKycDocument(
-        images.frontID ?? "",
-        images.backID ?? "",
-        images.selfieID ?? "",
-        images.taxDoc ?? "",
-        accountCert,
+      const requestBody = {
+        frontId: images.frontID ?? "",
+        backId: images.backID ?? "",
+        selfieId: images.selfieID ?? "",
+        taxId: images.taxDoc ?? undefined,
         accountId,
-      );
-
-      if (response.includes("saved")) {
+      };
+      const response = await submitDocumentsMutation.mutateAsync({
+        requestBody,
+      });
+      if (
+        response?.status === "PENDING" ||
+        response?.status === "IN_REVIEW" ||
+        response?.status === "APPROVED"
+      ) {
         setDocumentStatus("PENDING");
         toast.success("Documents submitted successfully");
         navigate("/kyc");
+      } else {
+        toast.error(response?.message ?? "Failed to submit documents");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error submitting documents:", error);
+      if (typeof error === "object" && error !== null && "message" in error) {
+        toast.error(
+          (error as { message?: string }).message ??
+            "Error submitting documents",
+        );
+      } else {
+        toast.error("Error submitting documents");
+      }
     }
   };
 
