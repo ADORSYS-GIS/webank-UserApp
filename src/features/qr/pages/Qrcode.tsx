@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { signTransaction } from "@services/keyManagement/signTransaction";
 
 const QRGenerator: React.FC = () => {
@@ -11,10 +10,8 @@ const QRGenerator: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const totalamount = location.state?.totalAmount;
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountId } = useAccountStore();
+  const accountJwt = location.state?.accountCert;
   const isClientOffline = location.state?.isClientOffline;
   const isClientOnline = location.state?.isClientOnline;
   const show = location.state?.show;

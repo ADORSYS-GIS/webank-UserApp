@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useKycManagementServicePostApiPrsKycLocation } from "@openapi/generated/prs/queries/queries";
 
@@ -17,7 +16,7 @@ const MapConfirmation = () => {
   const [error, setError] = useState<string | null>(null);
   const [city, setCity] = useState<string | null>(null);
   const coords = (location.state as { coords: GeoLocation })?.coords;
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const { accountId } = useAccountStore();
   const locationMutation = useKycManagementServicePostApiPrsKycLocation();
 
   useEffect(() => {

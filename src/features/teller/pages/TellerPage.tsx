@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Send, Search } from "lucide-react";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
 import { toast } from "sonner";
 import { useOtpRetrievalServiceGetApiPrsOtpPending } from "@openapi/generated/prs/queries/queries";
+import { useAccountStore } from "@state/accountStore";
 
 export default function TellerDashboard() {
   const [data, setData] = useState<
@@ -14,9 +13,7 @@ export default function TellerDashboard() {
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 10;
 
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountCert } = useAccountStore();
 
   const {
     data: fetchedData,

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useRecoveryServicePostApiPrsKycRecoveryToken } from "@openapi/generated/prs/queries/queries";
 
@@ -10,8 +9,6 @@ const AccountConfirmation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Get account certificate from Redux store
 
   // Extract state values
   const newAccountId = location.state?.accountId as string | undefined;

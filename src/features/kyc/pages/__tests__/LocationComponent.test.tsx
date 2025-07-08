@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import LocationComponent from "../../components/LocationComponent";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
-vi.mock("react-redux", () => ({
-  useSelector: vi.fn(),
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: vi.fn(() => ({
+    accountCert: "test-cert",
+  })),
 }));
 
 vi.mock("react-router-dom", () => ({
@@ -14,8 +16,6 @@ vi.mock("react-router-dom", () => ({
 
 describe("LocationComponent - Basic Rendering", () => {
   beforeEach(() => {
-    // Mock Redux state
-    (useSelector as unknown as jest.Mock).mockReturnValue("test-cert");
     // Mock navigation
     (useNavigate as jest.Mock).mockReturnValue(vi.fn());
     // Mock geolocation

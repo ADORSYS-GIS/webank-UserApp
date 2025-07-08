@@ -2,17 +2,26 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import IdentityVerification from "../IdentityVerificationPage";
 import "@testing-library/jest-dom";
 import { MemoryRouter } from "react-router-dom";
-import { Provider } from "react-redux";
-import { store } from "@state/Store.ts";
+import { vi } from "vitest";
+
+// Mock the Zustand store
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: vi.fn(() => ({
+    accountId: "1",
+    accountCert: "mockCert123",
+    status: "PENDING",
+    documentStatus: null,
+    setStatus: vi.fn(),
+    setDocumentStatus: vi.fn(),
+  })),
+}));
 
 describe("IdentityVerification Component", () => {
   const renderComponent = () =>
     render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <IdentityVerification />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <IdentityVerification />
+      </MemoryRouter>,
     );
 
   test("renders all verification steps", () => {

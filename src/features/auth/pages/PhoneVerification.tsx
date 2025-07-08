@@ -8,16 +8,14 @@ import {
 } from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { setPhoneStatus } from "@state/accountSlice.ts";
+import { useAccountStore } from "@state/accountStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { RootState } from "@state/Store.ts";
+
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
 
   // Initialize state from location
   const { otpHash: initialOtpHash, fullPhoneNumber } = location.state ?? {};
@@ -26,9 +24,7 @@ const PhoneVerification: React.FC = () => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(30);
 
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountCert: accountJwt, setPhoneStatus } = useAccountStore();
 
   // Use TanStack Query mutations for OTP
   const otpSendMutation = useOtpManagementServicePostApiPrsOtpSend();
@@ -76,7 +72,7 @@ const PhoneVerification: React.FC = () => {
       });
       if (response?.valid) {
         toast.success("Phone number successfully verified!");
-        dispatch(setPhoneStatus("APPROVED"));
+        setPhoneStatus("APPROVED");
         setTimeout(() => navigate("/settings"), 2000);
       } else {
         toast.error(response?.message ?? "The code is invalid", {

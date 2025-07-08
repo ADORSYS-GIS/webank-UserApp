@@ -4,13 +4,11 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
-import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { setDocumentStatus } from "@state/accountSlice";
 import { FaArrowLeft, FaUpload } from "react-icons/fa";
+import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
@@ -24,21 +22,27 @@ const DocumentImages = () => {
   });
   const [activePopup, setActivePopup] = useState<ActivePopup>(null);
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-
+  const { setDocumentStatus } = useAccountStore();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const submitDocumentsMutation =
     useKycManagementServicePostApiPrsKycDocuments();
 
+  // Helper utilities to simplify handleSubmitDocuments and lower cognitive complexity
+  const isSuccessfulStatus = (status?: string) =>
+    ["PENDING", "IN_REVIEW", "APPROVED"].includes(status ?? "");
+
+  const showErrorToast = (message: string) => toast.error(message);
+
   const handleSubmitDocuments = async () => {
+    const { accountId, accountCert } = useAccountStore.getState();
+    if (!accountCert || !accountId) {
+      showErrorToast("Account information is missing.");
+      navigate("/guidelines");
+      return;
+    }
+
     try {
-      if (!accountId) {
-        toast.error("Account information is missing.");
-        navigate("/guidelines");
-        return;
-      }
       const requestBody = {
         frontId: images.frontID ?? "",
         backId: images.backID ?? "",
@@ -46,30 +50,27 @@ const DocumentImages = () => {
         taxId: images.taxDoc ?? undefined,
         accountId,
       };
+
       const response = await submitDocumentsMutation.mutateAsync({
         requestBody,
       });
-      if (
-        response?.status === "PENDING" ||
-        response?.status === "IN_REVIEW" ||
-        response?.status === "APPROVED"
-      ) {
-        dispatch(setDocumentStatus("PENDING"));
+
+      if (isSuccessfulStatus(response?.status)) {
+        setDocumentStatus("PENDING");
         toast.success("Documents submitted successfully");
         navigate("/kyc");
-      } else {
-        toast.error(response?.message ?? "Failed to submit documents");
+        return;
       }
+
+      showErrorToast(response?.message ?? "Failed to submit documents");
     } catch (error: unknown) {
       console.error("Error submitting documents:", error);
-      if (typeof error === "object" && error !== null && "message" in error) {
-        toast.error(
-          (error as { message?: string }).message ??
-            "Error submitting documents",
-        );
-      } else {
-        toast.error("Error submitting documents");
-      }
+      const errorMsg =
+        typeof error === "object" && error !== null && "message" in error
+          ? ((error as { message?: string }).message ??
+            "Error submitting documents")
+          : "Error submitting documents";
+      showErrorToast(errorMsg);
     }
   };
 

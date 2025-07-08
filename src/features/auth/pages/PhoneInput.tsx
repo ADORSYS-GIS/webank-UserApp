@@ -8,8 +8,7 @@ import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { RootState } from "@state/Store.ts";
-import { useSelector } from "react-redux";
+import { useAccountStore } from "@state/accountStore";
 
 type CountryOption = {
   value: string;
@@ -20,6 +19,7 @@ type CountryOption = {
 const PhoneInput: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
+  const { accountCert } = useAccountStore();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
   );
@@ -27,9 +27,7 @@ const PhoneInput: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+
   const otpMutation = useOtpManagementServicePostApiPrsOtpSend();
   useDisableScroll();
 
@@ -57,7 +55,7 @@ const PhoneInput: React.FC = () => {
       return;
     }
 
-    if (!accountJwt) {
+    if (!accountCert) {
       toast.error("Authentication error. Please try again.");
       return;
     }

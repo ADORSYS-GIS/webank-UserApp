@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import QRGenerator from "../Qrcode";
 import { QRCodeCanvas } from "qrcode.react";
 import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import "@testing-library/jest-dom";
 
 // Mock QRCodeCanvas component
 vi.mock("qrcode.react", () => ({
@@ -16,17 +16,19 @@ vi.mock("react-router-dom", () => ({
   useNavigate: vi.fn(),
 }));
 
-// Mock useSelector to return a predefined accountId
-vi.mock("react-redux", () => ({
-  useSelector: vi.fn(),
+// Mock Zustand store
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: () => ({
+    accountId: "mock-account-id",
+    accountCert: "mock-cert",
+  }),
 }));
 
 describe("QRGenerator Component", () => {
   const mockTotalAmount = "100";
-  const mockAccountID = "12345ABC";
   const mockTimeGenerated = Date.now() - 60000;
   const expectedQrValue = JSON.stringify({
-    accountId: mockAccountID,
+    accountId: "mock-account-id",
     amount: mockTotalAmount,
     timeGenerated: mockTimeGenerated,
   });
@@ -39,8 +41,6 @@ describe("QRGenerator Component", () => {
     });
 
     vi.spyOn(Date, "now").mockReturnValue(mockTimeGenerated);
-
-    (useSelector as unknown as jest.Mock).mockReturnValue(mockAccountID);
   });
 
   it("renders QR code with correct values", () => {
@@ -52,15 +52,7 @@ describe("QRGenerator Component", () => {
         level: "L",
         size: 250,
       }),
-      expect.anything(),
-    );
-    expect(QRCodeCanvas).toHaveBeenCalledWith(
-      expect.objectContaining({
-        value: expectedQrValue,
-        level: "L",
-        size: 250,
-      }),
-      expect.anything(),
+      {},
     );
   });
 

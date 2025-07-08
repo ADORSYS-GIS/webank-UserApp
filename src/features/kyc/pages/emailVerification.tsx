@@ -1,22 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { useEmailOtpServicePostApiPrsEmailOtpSend } from "@openapi/generated/prs/queries/queries";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { useEmailOtpServicePostApiPrsEmailOtpSend } from "@openapi/generated/prs/queries/queries";
 
 const InputEmail: React.FC = () => {
   useDisableScroll();
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const { accountId, accountCert } = useAccountStore();
   const emailMutation = useEmailOtpServicePostApiPrsEmailOtpSend();
 
   // Validate email format

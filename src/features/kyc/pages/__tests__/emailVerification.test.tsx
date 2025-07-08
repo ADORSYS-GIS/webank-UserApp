@@ -3,8 +3,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import InputEmail from "../emailVerification";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import "@testing-library/jest-dom";
-import { Provider } from "react-redux";
-import configureStore from "redux-mock-store";
 import { vi } from "vitest";
 
 const navigateMock = vi.fn();
@@ -25,24 +23,24 @@ vi.mock("@openapi/generated/prs/queries/queries", () => ({
   RequestToSendEmailOTP: vi.fn(() => Promise.resolve("OTP sent successfully")),
 }));
 
-const mockStore = configureStore();
-const store = mockStore({
-  account: { accountCert: "mockCert123", accountId: "1" }, // Fixed accountId type to string
-});
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: vi.fn(() => ({
+    accountCert: "mockCert123",
+    accountId: "1",
+  })),
+}));
 
 const renderWithProviders = (
   ui: React.ReactElement,
   initialEntry = "/inputEmail",
 ) => {
   return render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={[initialEntry]}>
-        <Routes>
-          <Route path="/inputEmail" element={ui} />
-          <Route path="/emailCode" element={<div>EmailCode Page</div>} />
-        </Routes>
-      </MemoryRouter>
-    </Provider>,
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route path="/inputEmail" element={ui} />
+        <Route path="/emailCode" element={<div>EmailCode Page</div>} />
+      </Routes>
+    </MemoryRouter>,
   );
 };
 
