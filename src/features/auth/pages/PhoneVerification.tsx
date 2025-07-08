@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
+// NOTE: If you need to pass JWT to the generated queries, ensure your Axios interceptor attaches it correctly based on endpoint, as per your project setup.
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  RequestToSendOTP,
-  RequestToValidateOTP,
-} from "@services/keyManagement/requestService.ts";
+  useOtpManagementServicePostApiPrsOtpSend,
+  useOtpManagementServicePostApiPrsOtpValidate,
+} from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
-import { useDispatch, useSelector } from "react-redux";
-import { setPhoneStatus } from "@state/accountSlice.ts";
 import { ArrowLeft } from "react-feather";
-import { RootState } from "@state/Store.ts";
+import { useAccountStore } from "@state/accountStore";
+
+
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
 
   // Initialize state from location
   const { otpHash: initialOtpHash, fullPhoneNumber } = location.state ?? {};
@@ -24,24 +24,26 @@ const PhoneVerification: React.FC = () => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(30);
 
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountCert: accountJwt, setPhoneStatus } = useAccountStore();
+
+  // Use TanStack Query mutations for OTP
+  const otpSendMutation = useOtpManagementServicePostApiPrsOtpSend();
+  const otpValidateMutation = useOtpManagementServicePostApiPrsOtpValidate();
 
   const handleResendOTP = async () => {
     if (!fullPhoneNumber) {
       toast.error("Required data is missing. Please try again.");
       return;
     }
-
     if (!accountJwt) {
       toast.error("Authentication error. Please try again.");
       return;
     }
-
     try {
-      const newOtpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt);
-      setOtpHash(newOtpHash);
+      const response = await otpSendMutation.mutateAsync({
+        requestBody: { phoneNumber: fullPhoneNumber },
+      });
+      setOtpHash(response?.otpHash ?? "");
       setOtp(""); // Clear current OTP input
       setMinutes(1); // Reset timer
       setSeconds(30);
@@ -58,31 +60,30 @@ const PhoneVerification: React.FC = () => {
         toast.info("Required data is missing!");
         return;
       }
-
       if (!accountJwt) {
         toast.error("Authentication error. Please try again.");
         return;
       }
-
-      const response = await RequestToValidateOTP(
-        fullPhoneNumber,
-        otp,
-        accountJwt,
-      );
-
-      if (response.startsWith("Otp Validated Successfully")) {
+      const response = await otpValidateMutation.mutateAsync({
+        requestBody: {
+          phoneNumber: fullPhoneNumber,
+          otpInput: otp,
+        },
+      });
+      if (response?.valid) {
         toast.success("Phone number successfully verified!");
-        dispatch(setPhoneStatus("APPROVED"));
+        setPhoneStatus("APPROVED");
         setTimeout(() => navigate("/settings"), 2000);
       } else {
-        toast.error("The code is invalid", { duration: 5000 });
+        toast.error(response?.message ?? "The code is invalid", {
+          duration: 5000,
+        });
       }
     } catch (error) {
-      console.error("Error during OTP validation:", error);
+      console.error("Error verifying OTP:", error);
       toast.error("Phone number verification failed");
     }
   };
-
   // Timer useEffect
   useEffect(() => {
     const interval = setInterval(() => {

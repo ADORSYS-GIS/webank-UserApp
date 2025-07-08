@@ -3,22 +3,15 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, Code, Settings, User, Book } from "react-feather";
 import AccountQRModal from "@features/qr/pages/AccountQr";
-import AgentPage from "@features/teller/pages/AgentPage";
 
 interface BottomNavigationProps {
-  accountId: string | undefined;
-  accountCert: string | undefined;
-  toggleMenu: () => void; // NOSONAR
+  toggleMenu: () => void;
 }
 
-const BottomNavigation: React.FC<BottomNavigationProps> = ({
-  accountId,
-  accountCert,
-}) => {
+const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
-  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const openQRModal = () => {
     setIsQRModalOpen(true);
@@ -28,25 +21,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
     setIsQRModalOpen(false);
   };
 
-  const openAgentModal = () => {
-    setIsAgentModalOpen(true);
-  };
-
-  const closeAgentModal = () => {
-    setIsAgentModalOpen(false);
-  };
-
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 md:left-auto md:right-auto md:w-[750px] md:mx-auto bg-white shadow-lg border-t border-gray-200 z-10">
         <div className="flex justify-around items-center h-16">
           <button
-            onClick={() =>
-              navigate("/dashboard", { state: { accountId, accountCert } })
-            }
+            onClick={() => navigate("/dashboard")}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/dashboard", { state: { accountId, accountCert } });
+                navigate("/dashboard");
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
@@ -93,12 +76,10 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </button>
 
           <button
-            onClick={() =>
-              navigate("/settings", { state: { accountId, accountCert } })
-            }
+            onClick={() => navigate("/settings")}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/settings", { state: { accountId, accountCert } });
+                navigate("/settings");
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
@@ -121,12 +102,10 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </button>
 
           <button
-            onClick={() =>
-              navigate("/contacts", { state: { accountId, accountCert } })
-            }
+            onClick={() => navigate("/contacts")}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/contacts", { state: { accountId, accountCert } });
+                navigate("/contacts");
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
@@ -149,23 +128,27 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </button>
 
           <button
-            onClick={openAgentModal}
+            onClick={toggleMenu}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                openAgentModal();
+                toggleMenu();
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
             role="tab"
-            aria-selected={isAgentModalOpen}
+            aria-selected={location.pathname === "/agent"}
             tabIndex={0}
           >
             <User
-              className={`text-lg ${isAgentModalOpen ? "text-blue-500" : "text-gray-500"}`}
+              className={`text-lg ${location.pathname === "/agent"
+                  ? "text-blue-500"
+                  : "text-gray-500"}`}
             />
             <span
               className={`text-xs mt-1 ${
-                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+                location.pathname === "/agent"
+                  ? "text-blue-500"
+                  : "text-gray-500"
               }`}
             >
               Agent
@@ -176,9 +159,6 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
       {/* QR Code Modal */}
       <AccountQRModal isOpen={isQRModalOpen} onClose={closeQRModal} />
-
-      {/* Agent Modal - Pass the onClose prop */}
-      {isAgentModalOpen && <AgentPage onClose={closeAgentModal} />}
     </>
   );
 };

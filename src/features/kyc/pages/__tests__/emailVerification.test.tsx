@@ -3,8 +3,6 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import InputEmail from "../emailVerification";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import "@testing-library/jest-dom";
-import { Provider } from "react-redux";
-import configureStore from "redux-mock-store";
 import { vi } from "vitest";
 
 const navigateMock = vi.fn();
@@ -16,30 +14,33 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("@services/keyManagement/requestService", () => ({
+// Mock for OpenAPI email mutation
+const mockEmailMutation = vi.fn();
+vi.mock("@openapi/generated/prs/queries/queries", () => ({
+  useEmailOtpServicePostApiPrsEmailOtpSend: () => ({
+    mutateAsync: mockEmailMutation,
+  }),
   RequestToSendEmailOTP: vi.fn(() => Promise.resolve("OTP sent successfully")),
 }));
 
-import { RequestToSendEmailOTP } from "@services/keyManagement/requestService";
-
-const mockStore = configureStore();
-const store = mockStore({
-  account: { accountCert: "mockCert123", accountId: "1" }, // Fixed accountId type to string
-});
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: vi.fn(() => ({
+    accountCert: "mockCert123",
+    accountId: "1",
+  })),
+}));
 
 const renderWithProviders = (
   ui: React.ReactElement,
   initialEntry = "/inputEmail",
 ) => {
   return render(
-    <Provider store={store}>
-      <MemoryRouter initialEntries={[initialEntry]}>
-        <Routes>
-          <Route path="/inputEmail" element={ui} />
-          <Route path="/emailCode" element={<div>EmailCode Page</div>} />
-        </Routes>
-      </MemoryRouter>
-    </Provider>,
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <Routes>
+        <Route path="/inputEmail" element={ui} />
+        <Route path="/emailCode" element={<div>EmailCode Page</div>} />
+      </Routes>
+    </MemoryRouter>,
   );
 };
 
@@ -68,11 +69,12 @@ describe("InputEmail Component", () => {
     fireEvent.click(proceedButton);
 
     await waitFor(() => {
-      expect(RequestToSendEmailOTP).toHaveBeenCalledWith(
-        "name@example.com",
-        "mockCert123",
-        "1", // Now matches the string type from the store
-      );
+      expect(mockEmailMutation).toHaveBeenCalledWith({
+        requestBody: {
+          accountId: "1",
+          email: "name@example.com",
+        },
+      });
       expect(navigateMock).toHaveBeenCalledWith("/emailCode", {
         state: { email: "name@example.com", accountCert: "mockCert123" },
       });
@@ -91,7 +93,7 @@ describe("InputEmail Component", () => {
 
     await waitFor(() => {
       expect(navigateMock).not.toHaveBeenCalled();
-      expect(RequestToSendEmailOTP).not.toHaveBeenCalled();
+      expect(mockEmailMutation).not.toHaveBeenCalled();
     });
   });
 

@@ -4,12 +4,10 @@ import FrontId from "./FrontId";
 import BackId from "./BackId";
 import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
-import { RequestToStoreKycDocument } from "@services/keyManagement/requestService";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { setDocumentStatus } from "@state/accountSlice";
+import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
 import { ArrowLeft, Upload } from "react-feather";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
@@ -24,36 +22,55 @@ const DocumentImages = () => {
   });
   const [activePopup, setActivePopup] = useState<ActivePopup>(null);
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { setDocumentStatus } = useAccountStore();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
+  const submitDocumentsMutation =
+    useKycManagementServicePostApiPrsKycDocuments();
+
+  // Helper utilities to simplify handleSubmitDocuments and lower cognitive complexity
+  const isSuccessfulStatus = (status?: string) =>
+    ["PENDING", "IN_REVIEW", "APPROVED"].includes(status ?? "");
+
+  const showErrorToast = (message: string) => toast.error(message);
 
   const handleSubmitDocuments = async () => {
-    try {
-      if (!accountCert || !accountId) {
-        toast.error("Account information is missing.");
-        navigate("/guidelines");
-        return;
-      }
-      const response = await RequestToStoreKycDocument(
-        images.frontID ?? "",
-        images.backID ?? "",
-        images.selfieID ?? "",
-        images.taxDoc ?? "",
-        accountCert,
-        accountId,
-      );
+    const { accountId, accountCert } = useAccountStore.getState();
+    if (!accountCert || !accountId) {
+      showErrorToast("Account information is missing.");
+      navigate("/guidelines");
+      return;
+    }
 
-      if (response.includes("saved")) {
-        dispatch(setDocumentStatus("PENDING"));
+    try {
+      const requestBody = {
+        frontId: images.frontID ?? "",
+        backId: images.backID ?? "",
+        selfieId: images.selfieID ?? "",
+        taxId: images.taxDoc ?? undefined,
+        accountId,
+      };
+
+      const response = await submitDocumentsMutation.mutateAsync({
+        requestBody,
+      });
+
+      if (isSuccessfulStatus(response?.status)) {
+        setDocumentStatus("PENDING");
         toast.success("Documents submitted successfully");
         navigate("/kyc");
+        return;
       }
-    } catch (error) {
+
+      showErrorToast(response?.message ?? "Failed to submit documents");
+    } catch (error: unknown) {
       console.error("Error submitting documents:", error);
+      const errorMsg =
+        typeof error === "object" && error !== null && "message" in error
+          ? ((error as { message?: string }).message ??
+            "Error submitting documents")
+          : "Error submitting documents";
+      showErrorToast(errorMsg);
     }
   };
 

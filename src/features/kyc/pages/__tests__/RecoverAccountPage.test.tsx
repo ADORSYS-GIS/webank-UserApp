@@ -1,23 +1,46 @@
 // src/kyc/pages/__tests__/RecoverAccountPage.test.tsx
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import RecoverAccountPage from "../RecoverAccountPage";
 import "@testing-library/jest-dom";
-import { store } from "@state/Store";
-import jest from "jest-mock";
+import { vi } from "vitest";
+import { describe, it, expect } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Mock the Zustand store
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: vi.fn(() => ({
+    accountId: "1",
+    accountCert: "mockCert123",
+    setAccountId: vi.fn(),
+    setAccountCert: vi.fn(),
+  })),
+}));
+
+const queryClient = new QueryClient();
+
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <Router>{ui}</Router>
+    </QueryClientProvider>,
+  );
+};
 
 describe("RecoverAccountPage", () => {
-  test("renders Recover Account page and handles KYC recovery", () => {
-    render(
-      <Provider store={store}>
-        <Router>
-          <RecoverAccountPage />
-        </Router>
-      </Provider>,
-    );
+  it("renders the recover account page", () => {
+    renderWithProviders(<RecoverAccountPage />);
+    const heading = screen.getByText((content, element) => {
+      return (
+        element?.tagName.toLowerCase() === "h2" &&
+        content === "Recover Your Account"
+      );
+    });
+    expect(heading).toBeInTheDocument();
+  });
 
-    // Check if the page title is rendered
+  test("renders Recover Account page and handles KYC recovery", () => {
+    renderWithProviders(<RecoverAccountPage />);
 
     // Check if the Initiate KYC Recovery button is rendered
     const kycButton = screen.getByText("Initiate KYC Recovery");
@@ -25,7 +48,7 @@ describe("RecoverAccountPage", () => {
 
     // Mock window.open
     const originalOpen = window.open;
-    const openMock = jest.spyOn(window, "open").mockImplementation(() => null);
+    const openMock = vi.spyOn(window, "open").mockImplementation(() => null);
 
     // Simulate clicking the Initiate KYC Recovery button
     fireEvent.click(kycButton);
@@ -42,13 +65,7 @@ describe("RecoverAccountPage", () => {
   });
 
   test("handles token submission", async () => {
-    render(
-      <Provider store={store}>
-        <Router>
-          <RecoverAccountPage />
-        </Router>
-      </Provider>,
-    );
+    renderWithProviders(<RecoverAccountPage />);
 
     // Check if the Input Recovery Token button is rendered
     const tokenButton = screen.getByText("Input Recovery Token");

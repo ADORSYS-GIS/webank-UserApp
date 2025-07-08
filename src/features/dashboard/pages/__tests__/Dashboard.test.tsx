@@ -1,96 +1,70 @@
 import { vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import Dashboard from "../DashboardPage";
-import {
-  RequestToGetBalance,
-  RequestToGetTransactionHistory,
-} from "@services/keyManagement/requestService.ts";
 import { MemoryRouter } from "react-router-dom";
-import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
-import { configureStore } from "@reduxjs/toolkit";
-import accountReducer from "@state/accountSlice.ts";
 
 // Mock FontAwesome
 vi.mock("@fortawesome/react-fontawesome", () => ({
   FontAwesomeIcon: () => null,
 }));
 
-// Mock necessary external modules
-vi.mock("react-router-dom", () => ({
-  ...require("react-router-dom"),
-  useLocation: () => ({
-    pathname: "/dashboard",
-    state: {
-      accountId: "12345",
-      accountCert: "cert123",
-    },
+// Mock Zustand store
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: vi.fn(() => ({
+    accountId: "mock-account-id",
+    accountCert: "mock-account-cert",
+    status: null,
+    documentStatus: null,
+    kycCert: null,
+    emailStatus: null,
+    phoneStatus: null,
+  })),
+}));
+
+// Provide mock mutateAsync for balance queries (for correct assertions)
+const mockBalanceMutateAsync = vi.fn();
+const mockTransactionsMutateAsync = vi.fn();
+vi.mock("@openapi/generated/obs/queries/queries", () => ({
+  useAccountBalanceServicePostApiAccountsBalance: () => ({
+    mutateAsync: mockBalanceMutateAsync,
+  }),
+  useTransactionHistoryServicePostApiAccountsTransactions: () => ({
+    mutateAsync: mockTransactionsMutateAsync,
   }),
 }));
-
-// Mock RequestToGetBalance and RequestToGetTransactionHistory
-vi.mock("@services/keyManagement/requestService.ts", () => ({
-  RequestToGetBalance: vi.fn(),
-  RequestToGetTransactionHistory: vi.fn(),
-}));
-
-const createMockStore = () => {
-  return configureStore({
-    reducer: {
-      account: accountReducer,
-    },
-    preloadedState: {
-      account: {
-        accountId: "mock-account-id",
-        accountCert: "mock-account-cert",
-        status: null,
-        documentStatus: null,
-        kycCert: null,
-        emailStatus: null,
-        phoneStatus: null,
-      },
-    },
-  });
-};
 
 describe("Dashboard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders the logo and header", () => {
+  it("renders dashboard with account information", async () => {
     render(
-      <Provider store={createMockStore()}>
-        <MemoryRouter>
-          <Dashboard />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
     );
-    expect(screen.getByText("Balance")).toBeInTheDocument();
+
+    // Add your assertions here
+    expect(screen.getByText(/Balance/i)).toBeInTheDocument();
   });
 
-  it("calls RequestToGetBalance and shows toast on error", async () => {
+  it("calls balance API and shows toast on error", async () => {
     const mockError = new Error("API error");
-
-    // Mock RequestToGetBalance to reject with the mock error
-    (RequestToGetBalance as jest.Mock).mockRejectedValueOnce(mockError);
+    mockBalanceMutateAsync.mockRejectedValueOnce(mockError);
 
     render(
-      <Provider store={createMockStore()}>
-        <MemoryRouter>
-          <Dashboard />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
     );
-
-    // Ensure the RequestToGetBalance was called 0 times as per the original logic
-    await waitFor(() => {
-      expect(RequestToGetBalance).toHaveBeenCalledTimes(0);
-    });
+    // Try to trigger balance fetch (simulate user click if needed)
+    // For now, just check if not called automatically
+    expect(mockBalanceMutateAsync).toHaveBeenCalledTimes(0);
   });
 
   it("renders transaction items correctly", async () => {
-    // Mock transaction data
     const mockTransactions = [
       {
         id: 1,
@@ -107,28 +81,22 @@ describe("Dashboard", () => {
         icon: "shopping-cart",
       },
     ];
-
-    // Mock RequestToGetTransactionHistory to resolve with mock data
-    (RequestToGetTransactionHistory as jest.Mock).mockResolvedValueOnce(
-      JSON.stringify(mockTransactions),
-    );
-
+    mockTransactionsMutateAsync.mockResolvedValueOnce({
+      data: JSON.stringify(mockTransactions),
+    });
     render(
-      <Provider store={createMockStore()}>
-        <MemoryRouter>
-          <Dashboard />
-        </MemoryRouter>
-      </Provider>,
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>,
     );
 
-    // Click the "View Last Transactions" button to fetch and display transactions
-    const viewTransactionsButton = screen.getByText("View All");
-    viewTransactionsButton.click();
+    // Click the "View All" button to fetch transactions
+    const viewAllButton = screen.getByRole("button", { name: /view all/i });
+    fireEvent.click(viewAllButton);
 
     // Wait for the transactions to be rendered
-    await waitFor(() => {
-      expect(screen.getByText("Apple")).toBeInTheDocument();
-      expect(screen.getByText("Fiverr")).toBeInTheDocument();
-    });
+    // Assertions: ensure the mocked transactions appear in the document
+    expect(await screen.findByText("Apple")).toBeInTheDocument();
+    expect(await screen.findByText("Fiverr")).toBeInTheDocument();
   });
 });

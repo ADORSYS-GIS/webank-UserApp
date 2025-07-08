@@ -31,7 +31,7 @@
     * Tailwind CSS:  Utility-first CSS framework for rapid UI development and responsive design.
     * React Router (v6.x): Declarative routing for navigation within the single-page application.
     * Axios: Promise-based HTTP client for making API requests to the backend.
-    * Redux:  State management library for predictable state updates and a single source of truth.
+    * Zustand: Lightweight state management library for predictable state updates and a single source of truth.
 
 
 **3. Context and Scope**
@@ -60,7 +60,7 @@
 * **4.1 Architectural Decisions**
     * **Component-Based Architecture (ReactJS):** React's component model allows breaking down the UI into reusable and independent units. This promotes code organization, maintainability, and testability.
     * **Mobile-First Design:**  The UI is designed with a mobile-first approach to prioritize the user experience on smaller screens and ensure responsiveness across devices.
-    * **Centralized State Management (Redux):** Redux provides a single source of truth for application state, making it easier to manage data flow, handle updates, and debug the application.
+    * **Centralized State Management (Zustand):** Zustand provides a simple and lightweight solution for application state, making it easier to manage data flow, handle updates, and debug the application.
     * **Clear Separation of Concerns:** Components are designed with distinct responsibilities (presentation, data fetching, user interaction) to improve code organization and maintainability.
     * **Layered Design:** The application separates between a UI-Layer and a Service-Layer in the front-end. There is no static binding between the UI layer and the service layer. An event bus allow the Service-Layer to propagate responses back to the UI-Layer. 
 
@@ -92,7 +92,7 @@ Below is a Sequence Diagram that gives an concrete flow and a clear picture of t
 2. The frontend component sends a `verifyOtpRequest` with the OTP and user information to the API Service Layer.
 3. The API Service Layer forwards this to the Backend API for OTP verification.
 4. Once verified, the Backend API sends a success status back to the frontend.
-5. The frontend updates the Redux store to reflect that the user is verified, and the store then updates the frontend.
+5. The frontend updates the Zustand store to reflect that the user is verified, and the store then updates the frontend.
 
 * ***5.3.3 Balance Inquiry***
 
@@ -100,10 +100,10 @@ Below is a Sequence Diagram that gives an concrete flow and a clear picture of t
 
 
 1. The user requests to view their account balance.
-2. The frontend component sends a `balanceInquiryRequest` with the user’s ID to the API Service Layer.
+2. The frontend component sends a `balanceInquiryRequest` with the user's ID to the API Service Layer.
 3. The API Service Layer requests the balance from the Backend API.
 4. The Backend API returns the balance, which the API Service Layer passes back to the frontend.
-5. The frontend component updates the Redux store with the balance data, which triggers the frontend to display the balance to the user in the UI.
+5. The frontend component updates the Zustand store with the balance data, which triggers the frontend to display the balance to the user in the UI.
 
 ---
 
@@ -184,9 +184,9 @@ Below is a Sequence Diagram that gives an concrete flow and a clear picture of t
         * The frontend handles errors returned by the backend API (e.g., 400 Bad Request, 404 Not Found) by displaying informative messages to the user.
 
 * **8.2 State Management:**
-    *  Redux is used as the central state management library.
-    *  Components dispatch actions to update the Redux store, which triggers re-renders of the necessary parts of the UI.
-    *  (Optional: Describe any patterns used with Redux, such as thunks or sagas, for handling asynchronous actions.)
+    *  Zustand is used as the central state management library.
+    *  Components use hooks to update the Zustand store, which triggers re-renders of the necessary parts of the UI.
+    *  (Optional: Describe any patterns used with Zustand, such as middleware or persist, for handling state persistence.)
 
 * **8.3 Security**
     * The application relies on verifiable credentials to authenticate and authorize the device.
@@ -212,7 +212,7 @@ Below is a Sequence Diagram that gives an concrete flow and a clear picture of t
 
 **11. Risks and Technical Debt**
 
-* **State Management Complexity:** As the application grows, managing state with Redux can become complex. Consider strategies to mitigate this (e.g., careful planning of the store structure, using Redux Toolkit).
+* **State Management Complexity:** As the application grows, managing state with Zustand remains simple due to its minimalistic API. Consider strategies to maintain this simplicity (e.g., careful planning of the store structure, using middleware when needed).
 * **Keeping Dependencies Up-to-Date:**  Regularly updating dependencies is important for security and performance but can introduce breaking changes. A clear update strategy is needed.
 
 **12. Glossary**
@@ -220,6 +220,5 @@ Below is a Sequence Diagram that gives an concrete flow and a clear picture of t
 * **CDN:** Content Delivery Network.
 * **JWT:** JSON Web Token.
 * **SD-JWT:** Selective Disclosure JSON Web Token
-* **Redux:** A predictable state container for JavaScript apps.
-* **SPA:** Single-Page Application.
+* **Zustand:** A minimalistic state management solution for React apps.
 * **XSS:** Cross-Site Scripting.

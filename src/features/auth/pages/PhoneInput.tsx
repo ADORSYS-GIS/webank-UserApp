@@ -2,13 +2,19 @@ import React, { useState } from "react";
 import countryOptions from "@assets/countries.json";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import { PHONE_NUMBER_REGEX } from "@shared/constants.ts";
-import { RequestToSendOTP } from "@services/keyManagement/requestService.ts";
+import { useOtpManagementServicePostApiPrsOtpSend } from "@openapi/generated/prs/queries/queries";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
+<<<<<<< HEAD
 import { ArrowLeft } from "react-feather";
 import { RootState } from "@state/Store.ts";
 import { useSelector } from "react-redux";
+=======
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useAccountStore } from "@state/accountStore";
+>>>>>>> develop
 
 type CountryOption = {
   value: string;
@@ -19,6 +25,7 @@ type CountryOption = {
 const PhoneInput: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
+  const { accountCert } = useAccountStore();
   const [selectedCountry, setSelectedCountry] = useState<CountryOption | null>(
     countryOptions[0],
   );
@@ -27,9 +34,9 @@ const PhoneInput: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const accountJwt = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const otpMutation = useOtpManagementServicePostApiPrsOtpSend();
+  useDisableScroll();
+
   const handleCountryChange = (option: CountryOption) => {
     setSelectedCountry(option);
     setIsOpen(false);
@@ -54,7 +61,7 @@ const PhoneInput: React.FC = () => {
       return;
     }
 
-    if (!accountJwt) {
+    if (!accountCert) {
       toast.error("Authentication error. Please try again.");
       return;
     }
@@ -71,9 +78,15 @@ const PhoneInput: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const otpHash = await RequestToSendOTP(fullPhoneNumber, accountJwt);
-
-      if (otpHash.includes("exists")) {
+      // Use OpenAPI mutation
+      const result = await otpMutation.mutateAsync({
+        requestBody: {
+          phoneNumber: fullPhoneNumber,
+        },
+      });
+      // Assume result contains an otpHash or error string (adapt as needed)
+      const otpHash = result?.otpHash || result;
+      if (typeof otpHash === "string" && otpHash.includes("exists")) {
         toast.error("Phone number already registered.");
       } else {
         toast.info("One-time code sent. Please check your whatsapp.", {

@@ -14,7 +14,8 @@
       "@shared/*": ["src/shared/*"],
       "@services/*": ["src/services/*"],
       "@state/*": ["src/state/*"],
-      "@assets/*": ["src/assets/*"]
+      "@assets/*": ["src/assets/*"],
+      "@openapi/generated/*": ["openapi/generated/*"]
     },
 
     /* Bundler mode */
@@ -32,7 +33,13 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src", "node_modules/vitest/globals.d.ts"],
-  "exclude": ["vite.config.ts"],
+  "include": [
+    "src",
+    "node_modules/vitest/globals.d.ts",
+    "openapi/generated/*"
+  ],
+  "exclude": [
+    "vite.config.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

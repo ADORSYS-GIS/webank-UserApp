@@ -1,8 +1,7 @@
 import React from "react";
 import { ChevronRight, LogOut, User, Shield, HelpCircle } from "react-feather";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 
 interface MenuItemProps {
   title: string;
@@ -52,12 +51,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
 };
 
 const SettingsPage: React.FC = () => {
-  const emailStatus = useSelector(
-    (state: RootState) => state.account.emailStatus,
-  );
-  const phoneStatus = useSelector(
-    (state: RootState) => state.account.phoneStatus,
-  );
+  const { emailStatus, phoneStatus } = useAccountStore();
   const navigate = useNavigate();
 
   const supportPhoneNumber = "+237674388690";

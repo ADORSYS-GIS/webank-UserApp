@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setAccountId, setAccountCert } from "@state/accountSlice";
-import { RequestToCreateBankAccount } from "@services/keyManagement/requestService.ts";
+import { useAccountStore } from "@state/accountStore";
+import { useAccountRegistrationServicePostApiRegistration } from "@openapi/generated/obs/queries/queries";
 import { toast } from "sonner";
-import useInitialization from "../hooks/useInitialization.ts";
+import useInitialization from "../hooks/useInitialization";
 
 interface AccountLoadingPageProps {
   message?: string;
@@ -14,55 +13,83 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
   message = "Please wait while we initiate the bank account process. This might take some time...",
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { setAccountId, setAccountCert } = useAccountStore();
   const { devCert, error } = useInitialization();
+  const accountRegistrationMutation =
+    useAccountRegistrationServicePostApiRegistration();
+  const hasRegistered = useRef(false);
 
   useEffect(() => {
-    const initializeAccount = async () => {
+    if (hasRegistered.current) return;
+
+    if (error) {
+      toast.error(error);
+      navigate("/");
+      return;
+    }
+
+    if (!devCert || typeof devCert !== "string" || devCert.trim() === "") {
+      // devCert not ready yet; wait for it
+      return;
+    }
+
+    const devCertFromStorage = localStorage.getItem("devCert");
+    if (!devCertFromStorage || devCertFromStorage !== devCert) {
+      toast.error(
+        "Device certificate missing or out of sync. Please restart onboarding.",
+      );
+      console.error(
+        "devCert in state:",
+        devCert,
+        "devCert in localStorage:",
+        devCertFromStorage,
+      );
+      navigate("/");
+      return;
+    }
+
+    const register = async () => {
+      if (hasRegistered.current) return;
+      hasRegistered.current = true;
+
       try {
-        if (error) {
-          throw new Error(error);
-        }
+        console.log("Proceeding to registration with devCert:", devCert);
+        const response = await accountRegistrationMutation.mutateAsync();
 
-        if (!devCert) {
-          return; // Wait for devCert to be available
-        }
+        const accountId = response?.accountId ?? "";
+        const accountCert = response?.message?.split("\n")[4];
 
-        // Create bank account using device certificate
-        const accountCreationResponse = await RequestToCreateBankAccount(
-          devCert, // Use the devCert from initialization
-        );
-
-        if (
-          accountCreationResponse.startsWith(
-            "Bank account successfully created.",
-          )
-        ) {
-          const accountId = accountCreationResponse.split("\n")[2];
-          const accountCert = accountCreationResponse.split("\n")[4];
-
-          // Store account details
+        if (accountId && accountCert) {
+          setAccountId(accountId);
+          setAccountCert(accountCert);
           localStorage.setItem("accountId", accountId);
           localStorage.setItem("accountCert", accountCert);
-          dispatch(setAccountId(accountId));
-          dispatch(setAccountCert(accountCert));
-
-          // Redirect to dashboard
           navigate("/onboarding", {
             state: { accountId, accountCert },
           });
         } else {
-          throw new Error("Account creation failed");
+          throw new Error(
+            "Account creation failed: Missing accountId or accountCert",
+          );
         }
-      } catch (error) {
-        console.error("Error during account creation:", error);
-        toast.error("Account creation failed. Please try again.");
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
+        toast.error(`Registration failed: ${errorMessage}`);
+        console.error("Registration error:", err);
         navigate("/");
       }
     };
 
-    initializeAccount();
-  }, [navigate, dispatch, devCert, error]);
+    register();
+  }, [
+    devCert,
+    error,
+    navigate,
+    setAccountId,
+    setAccountCert,
+    accountRegistrationMutation,
+  ]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white space-y-6">
