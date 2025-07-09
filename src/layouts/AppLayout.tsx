@@ -35,10 +35,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     setIsMenuOpen(false);
   }, [location]);
 
-  const toggleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
-  };
-
   return (
     <Layout>
       <KycCertChecker />
@@ -55,7 +51,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {accountId &&
         !["/onboarding", "/phone", "/phone/verification"].includes(
           location.pathname,
-        ) && <BottomNavigation toggleMenu={toggleMenu} />}
+        ) && <BottomNavigation />}
 
       <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 

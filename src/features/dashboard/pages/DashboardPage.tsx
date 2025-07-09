@@ -133,7 +133,7 @@ const Dashboard = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation toggleMenu={toggleMenu} />
+      <BottomNavigation />
 
       {/* Bottom Sheet Menu */}
       <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />

@@ -24,7 +24,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
 
     if (error) {
       toast.error(error);
-      navigate("/");
+      navigate({ to: "/" });
       return;
     }
 
@@ -44,7 +44,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
         "devCert in localStorage:",
         devCertFromStorage,
       );
-      navigate("/");
+      navigate({ to: "/" });
       return;
     }
 

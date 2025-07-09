@@ -1,5 +1,5 @@
 //NO
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,15 +10,13 @@ import {
   faAddressBook,
 } from "@fortawesome/free-solid-svg-icons";
 import AccountQRModal from "@features/qr/pages/AccountQr";
+import AgentPage from "@features/teller/pages/AgentPage";
 
-interface BottomNavigationProps {
-  toggleMenu: () => void;
-}
-
-const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
+const BottomNavigation = () => {
   const location = useRouterState().location;
   const navigate = useNavigate();
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const openQRModal = () => {
     setIsQRModalOpen(true);
@@ -26,6 +24,14 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
 
   const closeQRModal = () => {
     setIsQRModalOpen(false);
+  };
+
+  const openAgentModal = () => {
+    setIsAgentModalOpen(true);
+  };
+
+  const closeAgentModal = () => {
+    setIsAgentModalOpen(false);
   };
 
   return (
@@ -171,30 +177,26 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
           </button>
 
           <button
-            onClick={toggleMenu}
+            onClick={openAgentModal}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                toggleMenu();
+                openAgentModal();
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
             role="tab"
-            aria-selected={location.pathname === "/agent"}
+            aria-selected={isAgentModalOpen}
             tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faUserTie}
               className={`text-lg ${
-                location.pathname === "/agent"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/agent"
-                  ? "text-blue-500"
-                   : "text-gray-500"
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
               }`}
             >
               Agent
@@ -205,6 +207,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
 
       {/* QR Code Modal */}
       <AccountQRModal isOpen={isQRModalOpen} onClose={closeQRModal} />
+
+      {/* Agent Modal - Pass the onClose prop */}
+      {isAgentModalOpen && <AgentPage onClose={closeAgentModal} />}
     </>
   );
 };

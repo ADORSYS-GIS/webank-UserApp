@@ -101,7 +101,7 @@ const EmailCode: React.FC = () => {
         setShowSuccess(true);
         setEmailStatus("APPROVED");
         setTimeout(() => {
-          navigate("/kyc");
+          navigate({ to: "/kyc" });
         }, 2000);
       } else {
         showOtpErrorMessage(result?.message ?? "Failed to verify OTP.");
