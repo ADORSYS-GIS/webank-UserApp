@@ -57,7 +57,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
         const response = await accountRegistrationMutation.mutateAsync();
 
         const accountId = response?.accountId ?? "";
-        const accountCert = response?.message?.split("\n")[4];
+        const accountCert = response?.accountCertificate ?? "";
 
         if (accountId && accountCert) {
           setAccountId(accountId);
