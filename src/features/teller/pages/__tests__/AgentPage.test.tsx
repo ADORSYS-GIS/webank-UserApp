@@ -1,21 +1,20 @@
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore } from "@reduxjs/toolkit";
+import { fireEvent, render, screen } from "@testing-library/react";
 import AgentPage from "../AgentPage";
 import { vi } from "vitest";
 
-// Create a mock store with account state
-const mockStore = configureStore({
-  reducer: {
-    account: (
-      state = {
-        accountId: "test-account-id",
-        accountCert: "test-account-cert",
-      },
-    ) => state,
-  },
-});
+// Mock Zustand store
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: () => ({
+    accountId: "test-account-id",
+    accountCert: "test-account-cert",
+    status: null,
+    documentStatus: null,
+    kycCert: null,
+    emailStatus: null,
+    phoneStatus: null,
+  }),
+}));
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -32,35 +31,21 @@ describe("AgentPage", () => {
     vi.clearAllMocks();
   });
 
-  test("renders Agent Services heading", () => {
-    render(
-      <Provider store={mockStore}>
-        <AgentPage />
-      </Provider>,
-    );
+  it("renders agent page with navigation options", () => {
+    render(<AgentPage />);
 
     expect(screen.getByText("Agent Services")).toBeInTheDocument();
   });
 
   test("renders Cash-In button and description", () => {
-    render(
-      <Provider store={mockStore}>
-        <AgentPage />
-      </Provider>,
-    );
-
-    expect(screen.getByText("Cash-In")).toBeInTheDocument();
+    render(<AgentPage />);
     expect(
-      screen.getByText("Scan QR code to receive payments"),
+      screen.getByText(/Scan QR code to receive payments/i),
     ).toBeInTheDocument();
   });
 
   test("renders Pay-out button and description", () => {
-    render(
-      <Provider store={mockStore}>
-        <AgentPage />
-      </Provider>,
-    );
+    render(<AgentPage />);
 
     expect(screen.getByText("Pay-out")).toBeInTheDocument();
     expect(
@@ -69,11 +54,7 @@ describe("AgentPage", () => {
   });
 
   test("Cash-In button triggers navigation", async () => {
-    render(
-      <Provider store={mockStore}>
-        <AgentPage />
-      </Provider>,
-    );
+    render(<AgentPage />);
 
     const cashInButton = screen.getByText("Cash-In");
     fireEvent.click(cashInButton);

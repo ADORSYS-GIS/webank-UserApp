@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { calculateTransactionFee } from "@services/computation/transactionFeeCalculator";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { RootState } from "@state/Store";
-import { useSelector } from "react-redux";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import ConfirmationBottomSheet from "../pages/ConfirmationPage";
 
@@ -13,25 +12,24 @@ const TopUpPage: React.FC = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
   const location = useRouterState().location;
-  const {
-    clientAccountId,
-    show,
-    isClientOffline,
-    isClientOnline,
-    agentAccountCert,
-    agentAccountId,
-    clientName,
-  } = location.state as {
-    clientAccountId?: string;
-    show?: string;
-    isClientOffline?: boolean;
-    isClientOnline?: boolean;
-    agentAccountCert?: string;
-    agentAccountId?: string;
-    clientName?: string;
-  };
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const status = useSelector((state: RootState) => state.account.status);
+  const { clientAccountId, show, isClientOffline, isClientOnline, clientName } =
+    location.state as {
+      clientAccountId?: string;
+      show?: string;
+      isClientOffline?: boolean;
+      isClientOnline?: boolean;
+      clientName?: string;
+    };
+
+  const { kycCert, status, accountId, accountCert } = useAccountStore();
+
+  // Ensure required store values are available
+  useEffect(() => {
+    if (!accountId || !accountCert) {
+      toast.error("Account information not available");
+      navigate({to : "/dashboard"});
+    }
+  }, [accountId, accountCert, navigate]);
 
   // Calculate the total amount (top-up amount + transaction fee)
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
@@ -48,6 +46,11 @@ const TopUpPage: React.FC = () => {
   };
 
   const handleContinue = () => {
+    if (!accountId || !accountCert) {
+      toast.error("Account information not available");
+      return;
+    }
+
     const numericAmount = Number(amount);
     if (numericAmount <= 0) {
       toast.info("Please enter a valid amount.");
@@ -65,7 +68,6 @@ const TopUpPage: React.FC = () => {
     }
 
     if (show === "Transfer" || show === "Payment" || show === "Withdraw") {
-      // Instead of navigating to the confirmation page, show the bottom sheet
       setShowConfirmation(true);
     } else {
       navigate({
@@ -81,16 +83,22 @@ const TopUpPage: React.FC = () => {
     }
   };
 
-  // Prepare the confirmation data that would have been passed via location state
-  const confirmationData = {
-    amount: totalAmount,
-    clientAccountId: clientAccountId ?? "",
-    agentAccountId: agentAccountId ?? "",
-    agentAccountCert: agentAccountCert ?? "",
-    show: show ?? "",
-    clientName: clientName ?? "Anonymous",
-  };
-  console.log("Confirmation Data:", confirmationData);
+  // Only prepare confirmation data if store values are available
+  const confirmationData =
+    accountId && accountCert
+      ? {
+          amount: totalAmount,
+          clientAccountId: clientAccountId ?? "",
+          agentAccountId: accountId,
+          agentAccountCert: accountCert,
+          show: show ?? "",
+          clientName: clientName ?? "Anonymous",
+        }
+      : null;
+
+  if (!accountId || !accountCert) {
+    return null; // or a loading state
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
@@ -108,7 +116,7 @@ const TopUpPage: React.FC = () => {
               Enter {show} Amount (XAF)
             </label>
             <input
-              type="text" // not "number"
+              type="text"
               inputMode="numeric"
               pattern="[0-9]*"
               id="amount"
@@ -153,8 +161,7 @@ const TopUpPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Conditionally render the confirmation bottom sheet */}
-      {showConfirmation && (
+      {showConfirmation && confirmationData && (
         <ConfirmationBottomSheet
           data={confirmationData}
           onDismiss={handleConfirmationDismiss}

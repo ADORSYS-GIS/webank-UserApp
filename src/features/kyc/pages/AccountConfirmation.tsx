@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { RequestToGetRecoveryToken } from "@services/keyManagement/requestService";
+import { useRecoveryServicePostApiPrsKycRecoveryToken } from "@openapi/generated/prs/queries/queries";
 
 interface AccountConfirmationState {
   accountId: string;
@@ -18,14 +16,11 @@ const AccountConfirmation: React.FC = () => {
   const state = location.state as unknown as AccountConfirmationState;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get account certificate from Redux store
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-
   // Extract state values
   const newAccountId = state?.accountId;
   const oldAccountId = state?.oldAccountId;
+
+  const recoveryTokenMutation = useRecoveryServicePostApiPrsKycRecoveryToken();
 
   // Handle confirmation with API call
   const handleConfirm = async () => {
@@ -38,25 +33,46 @@ const AccountConfirmation: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // Get recovery token from API
-      const recoveryToken = await RequestToGetRecoveryToken(
-        oldAccountId,
-        newAccountId,
-        accountCert,
-      );
-
-      // Navigate with the recovery token
-      navigate({
-        to: "/recovery/recoverytoken",
-        state: {
-          oldAccountId,
+      // Call OpenAPI mutation for recovery token
+      const response = await recoveryTokenMutation.mutateAsync({
+        requestBody: {
           newAccountId,
-          recoveryToken,
-        } as never,
+          oldAccountId,
+        },
       });
-    } catch (error) {
-      toast.error("Failed to get recovery token. Please try again.");
+      if (
+        typeof response === "object" &&
+        response !== null &&
+        "token" in response
+      ) {
+        navigate({
+          to: "/recovery/recoverytoken",
+          state: {
+            oldAccountId,
+            newAccountId,
+            recoveryToken: (response as { token: string }).token,
+          } as never,
+        });
+      } else {
+        toast.error(
+          typeof response === "object" &&
+            response !== null &&
+            "message" in response
+            ? ((response as { message?: string }).message ??
+                "Failed to get recovery token.")
+            : "Failed to get recovery token.",
+        );
+      }
+    } catch (error: unknown) {
       console.error("Recovery token error:", error);
+      if (typeof error === "object" && error !== null && "message" in error) {
+        toast.error(
+          (error as { message?: string }).message ??
+            "Failed to get recovery token.",
+        );
+      } else {
+        toast.error("Failed to get recovery token.");
+      }
     } finally {
       setIsSubmitting(false);
     }

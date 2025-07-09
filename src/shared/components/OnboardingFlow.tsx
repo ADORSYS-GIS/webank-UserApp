@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { useAccountStore } from "@state/accountStore";
 
 interface Slide {
   icon: React.ComponentType<LucideProps>;
@@ -60,14 +61,15 @@ const OnboardingFlow: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
   const navigate = useNavigate();
+  const { setOnboardingCompleted } = useAccountStore();
 
   const handleNext = () => {
     setDirection(1);
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      // Set onboarding as completed in localStorage
-      localStorage.setItem("onboardingCompleted", "true");
+      // Set onboarding as completed in Zustand store
+      setOnboardingCompleted(true);
       // Show success toast
       toast.success("Account creation successful");
       navigate({ to: "/dashboard" });

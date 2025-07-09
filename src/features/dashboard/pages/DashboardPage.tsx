@@ -1,21 +1,20 @@
 // src/pages/Dashboard.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
-  RequestToGetBalance,
-  RequestToGetTransactionHistory,
-} from "@services/keyManagement/requestService";
+  useAccountBalanceServicePostApiAccountsBalance,
+  useTransactionHistoryServicePostApiAccountsTransactions,
+} from "@openapi/generated/obs/queries/queries";
 import Header1 from "@shared/components/Header1";
 import BalanceCard from "../components/BalanceCard";
 import TransactionsSection from "../components/TransactionsSection";
 import ActionButtons from "@shared/components/ActionButtons";
 import BottomNavigation from "@shared/components/BottomNavigation";
 import BottomSheet from "@shared/components/SideBar";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { useNavigate } from "@tanstack/react-router";
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const navigate = useNavigate();
   // Bottom sheet state
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,28 +26,30 @@ const Dashboard: React.FC = () => {
   const [transactionsVisible, setTransactionsVisible] = useState(false);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
 
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountId, accountCert } = useAccountStore();
 
   // Toggle menu
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
 
+  // OpenAPI TanStack Query mutation for balance
+  const balanceMutation = useAccountBalanceServicePostApiAccountsBalance();
+
   const viewBalance = async () => {
     if (balanceVisible) {
       setBalanceVisible(false);
       return;
     }
+    if (!accountId || !accountCert) {
+      toast.error("Account information is missing.");
+      return;
+    }
     try {
-      if (!accountId || !accountCert) {
-        toast.error("Account information is missing.");
-        return;
-      }
-      const fetchedBalance = await RequestToGetBalance(accountId, accountCert);
-      setBalance(fetchedBalance);
+      const response = await balanceMutation.mutateAsync({
+        requestBody: { accountID: accountId },
+      });
+      setBalance(response?.balance?.toString() ?? null);
       setBalanceVisible(true);
     } catch (error) {
       console.error("Error retrieving balance:", error);
@@ -56,7 +57,10 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Fetch transactions function
+  // OpenAPI TanStack Query mutation for transactions
+  const transactionsMutation =
+    useTransactionHistoryServicePostApiAccountsTransactions();
+
   const fetchTransactions = async () => {
     if (!accountId || !accountCert) {
       toast.error("Account information is missing.");
@@ -64,25 +68,18 @@ const Dashboard: React.FC = () => {
     }
     try {
       setLoadingTransactions(true);
-      const transactionsResponse = await RequestToGetTransactionHistory(
-        accountId,
-        accountCert,
-      );
-
-      let transactions;
-      if (typeof transactionsResponse === "string") {
-        const trimmedResponse = transactionsResponse.trim();
-        const endIndex = trimmedResponse.lastIndexOf("]");
-        if (endIndex !== -1) {
-          const validJson = trimmedResponse.substring(0, endIndex + 1);
-          transactions = JSON.parse(validJson);
-        } else {
-          transactions = JSON.parse(trimmedResponse);
+      const response = await transactionsMutation.mutateAsync({
+        requestBody: { accountID: accountId },
+      });
+      let transactions = [];
+      if (typeof response?.data === "string") {
+        try {
+          transactions = JSON.parse(response.data);
+        } catch (e) {
+          console.error("Failed to parse transactions data:", e);
+          transactions = [];
         }
-      } else {
-        transactions = transactionsResponse;
       }
-
       setTransactionsData(transactions);
       setTransactionsVisible(true);
     } catch (error) {
@@ -136,19 +133,10 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-        toggleMenu={toggleMenu}
-      />
+      <BottomNavigation toggleMenu={toggleMenu} />
 
       {/* Bottom Sheet Menu */}
-      <BottomSheet
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        accountId={accountId ?? ""}
-        accountCert={accountCert ?? ""}
-      />
+      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </div>
   );
 };

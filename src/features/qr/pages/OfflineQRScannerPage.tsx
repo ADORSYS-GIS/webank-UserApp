@@ -1,9 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
 import ConfirmationBottomSheet from "@features/transactions/pages/ConfirmationPage";
 import { useQRScannerCore } from "./useQRScannerCore";
 
@@ -35,12 +34,7 @@ const OfflineQRScannerPage: React.FC = () => {
   const location = useRouterState().location;
   const { sharedImage } = location.state as { sharedImage?: string };
 
-  const agentAccountId = useSelector(
-    (state: RootState) => state.account.accountId,
-  );
-  const agentAccountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountId, accountCert } = useAccountStore();
 
   const handleConfirmationDismiss = () => {
     setShowConfirmation(false);
@@ -48,7 +42,7 @@ const OfflineQRScannerPage: React.FC = () => {
 
   const showConfirmationSheet = useCallback(
     (data: QRData) => {
-      if (!agentAccountId || !agentAccountCert) {
+      if (!accountId || !accountCert) {
         toast.error("Missing account information. Please try again.");
         return;
       }
@@ -56,8 +50,8 @@ const OfflineQRScannerPage: React.FC = () => {
       const confirmationData = {
         amount: data.amount,
         clientAccountId: data.accountId,
-        agentAccountId,
-        agentAccountCert,
+        agentAccountId: accountId,
+        agentAccountCert: accountCert,
         transactionJwt: data.signature,
         show: "Withdraw",
         clientName: data.name ?? "Anonymous",
@@ -66,7 +60,7 @@ const OfflineQRScannerPage: React.FC = () => {
       setConfirmationData(confirmationData);
       setShowConfirmation(true);
     },
-    [agentAccountId, agentAccountCert],
+    [accountId, accountCert],
   );
 
   const validateQRCode = useCallback(
@@ -118,7 +112,7 @@ const OfflineQRScannerPage: React.FC = () => {
         return false;
       }
 
-      if (data.accountId === agentAccountId) {
+      if (data.accountId === accountId) {
         toast.error("Self-transfer not allowed.");
         window.location.reload();
         return false;
@@ -126,7 +120,7 @@ const OfflineQRScannerPage: React.FC = () => {
 
       return true;
     },
-    [agentAccountId],
+    [accountId],
   );
 
   const handleDecodedText = useCallback(

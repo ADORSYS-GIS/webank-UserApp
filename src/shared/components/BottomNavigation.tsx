@@ -10,22 +10,15 @@ import {
   faAddressBook,
 } from "@fortawesome/free-solid-svg-icons";
 import AccountQRModal from "@features/qr/pages/AccountQr";
-import AgentPage from "@features/teller/pages/AgentPage";
 
 interface BottomNavigationProps {
-  accountId: string | undefined;
-  accountCert: string | undefined;
-  toggleMenu: () => void; // NOSONAR
+  toggleMenu: () => void;
 }
 
-const BottomNavigation: React.FC<BottomNavigationProps> = ({
-  accountId,
-  accountCert,
-}) => {
+const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
   const location = useRouterState().location;
   const navigate = useNavigate();
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
-  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const openQRModal = () => {
     setIsQRModalOpen(true);
@@ -33,14 +26,6 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
   const closeQRModal = () => {
     setIsQRModalOpen(false);
-  };
-
-  const openAgentModal = () => {
-    setIsAgentModalOpen(true);
-  };
-
-  const closeAgentModal = () => {
-    setIsAgentModalOpen(false);
   };
 
   return (
@@ -51,14 +36,12 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate({
                 to: "/dashboard",
-                state: { accountId, accountCert } as never,
               })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 navigate({
                   to: "/dashboard",
-                  state: { accountId, accountCert } as never,
                 });
               }
             }}
@@ -117,14 +100,12 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate({
                 to: "/settings",
-                state: { accountId, accountCert } as never,
               })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 navigate({
                   to: "/settings",
-                  state: { accountId, accountCert } as never,
                 });
               }
             }}
@@ -156,14 +137,12 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() =>
               navigate({
                 to: "/contacts",
-                state: { accountId, accountCert } as never,
               })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 navigate({
                   to: "/contacts",
-                  state: { accountId, accountCert } as never,
                 });
               }
             }}
@@ -192,26 +171,30 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
           </button>
 
           <button
-            onClick={openAgentModal}
+            onClick={toggleMenu}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                openAgentModal();
+                toggleMenu();
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
             role="tab"
-            aria-selected={isAgentModalOpen}
+            aria-selected={location.pathname === "/agent"}
             tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faUserTie}
               className={`text-lg ${
-                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+                location.pathname === "/agent"
+                  ? "text-blue-500"
+                  : "text-gray-500"
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
+                location.pathname === "/agent"
+                  ? "text-blue-500"
+                   : "text-gray-500"
               }`}
             >
               Agent
@@ -222,9 +205,6 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
 
       {/* QR Code Modal */}
       <AccountQRModal isOpen={isQRModalOpen} onClose={closeQRModal} />
-
-      {/* Agent Modal - Pass the onClose prop */}
-      {isAgentModalOpen && <AgentPage onClose={closeAgentModal} />}
     </>
   );
 };

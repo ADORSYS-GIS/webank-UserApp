@@ -5,22 +5,18 @@ import { Toaster } from "sonner";
 import { ReactNode, Suspense, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
 import BottomNavigation from "@shared/components/BottomNavigation";
 import BottomSheet from "@shared/components/SideBar";
 import KYCReminderPopup from "@shared/components/KYCReminderPopup";
 import { useKYCReminder } from "@features/kyc/hooks/useKYCReminder";
+import { useAccountStore } from "@state/accountStore";
 
 interface AppLayoutProps {
   children?: ReactNode;
 }
 
 const AppLayout = ({ children }: AppLayoutProps) => {
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
+  const { accountId } = useAccountStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -59,20 +55,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {accountId &&
         !["/onboarding", "/phone", "/phone/verification"].includes(
           location.pathname,
-        ) && (
-          <BottomNavigation
-            accountId={accountId || ""}
-            accountCert={accountCert || ""}
-            toggleMenu={toggleMenu}
-          />
-        )}
+        ) && <BottomNavigation toggleMenu={toggleMenu} />}
 
-      <BottomSheet
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        accountId={accountId || ""}
-        accountCert={accountCert || ""}
-      />
+      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
       {/* KYC Reminder Popup */}
       {showReminder && <KYCReminderPopup onClose={handleClose} />}

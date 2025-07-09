@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { useRouterState } from "@tanstack/react-router";
 
 // Routes where KYC reminder should appear
@@ -9,8 +8,7 @@ const SESSION_STORAGE_KEY = "kycReminderShown";
 
 export const useKYCReminder = () => {
   const [showReminder, setShowReminder] = useState(false);
-  const kycCert = useSelector((state: RootState) => state.account.kycCert);
-  const status = useSelector((state: RootState) => state.account.status);
+  const { kycCert, status } = useAccountStore();
   const location = useRouterState().location;
 
   useEffect(() => {

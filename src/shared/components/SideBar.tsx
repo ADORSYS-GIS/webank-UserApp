@@ -13,16 +13,9 @@ import {
 interface BottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  accountId: string | undefined;
-  accountCert: string | undefined;
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({
-  isOpen,
-  onClose,
-  accountId,
-  accountCert,
-}) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const [acknowledgedAdmin, setAcknowledgedAdmin] = React.useState(false);
 
@@ -37,8 +30,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         navigate({
           to: "/login",
           state: {
-            tellerAccountId: accountId,
-            tellerAccountCert: accountCert,
             redirectTo: "/teller",
           } as never,
         }),
@@ -51,8 +42,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         navigate({
           to: "/login",
           state: {
-            tellerAccountId: accountId,
-            tellerAccountCert: accountCert,
             redirectTo: "/agency",
           } as never,
         }),
@@ -65,8 +54,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         navigate({
           to: "/login",
           state: {
-            tellerAccountId: accountId,
-            tellerAccountCert: accountCert,
             redirectTo: "/account-recovery",
           } as never,
         }),
@@ -79,8 +66,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         navigate({
           to: "/login",
           state: {
-            tellerAccountId: accountId,
-            tellerAccountCert: accountCert,
             redirectTo: "/agent-topup",
           } as never,
         }),

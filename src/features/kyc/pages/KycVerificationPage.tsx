@@ -9,6 +9,7 @@ import { PendingKycList } from "@features/kyc/components/PendingKycList";
 import { UserDetailsForm } from "@features/kyc/components/UserDetailsForm";
 import { useKycData } from "@features/kyc/hooks/useKycData";
 import { KycStatus } from "@features/kyc/types/types";
+import { toast } from "sonner";
 
 export default function KYCDashboard(): JSX.Element {
   const {
@@ -31,7 +32,15 @@ export default function KYCDashboard(): JSX.Element {
     status: KycStatus,
   ): Promise<void> => {
     e.preventDefault();
-    await updateKycStatus(status);
+    const response = await updateKycStatus(status);
+    console.log("KYC status updated:", response);
+    if (response) {
+      toast.success(`KYC ${status.toLowerCase()} successfully`);
+      console.log("KYC status updated:", response);
+    } else {
+      toast.error(`Failed to ${status.toLowerCase()} KYC`);
+      console.log("Failed KYC status updated:", response);
+    }
   };
 
   const handleRejectWithReason = async (reason: string) => {

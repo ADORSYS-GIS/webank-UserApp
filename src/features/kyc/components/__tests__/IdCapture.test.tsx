@@ -2,8 +2,15 @@
 import { render, screen } from "@testing-library/react";
 import IdCapture from "../IdCapture";
 import "@testing-library/jest-dom";
-import { Provider } from "react-redux";
-import { store } from "@state/Store";
+import { vi } from "vitest";
+
+// Mock Zustand store
+vi.mock("@state/accountStore", () => ({
+  useAccountStore: vi.fn(() => ({
+    accountId: "mock-account-id",
+    accountCert: "mock-cert",
+  })),
+}));
 
 // Mock getUserMedia to avoid errors in jsdom
 beforeAll(() => {
@@ -23,14 +30,12 @@ describe("IdCapture Component", () => {
 
   test("renders initial view with sample image and Open Camera button", () => {
     render(
-      <Provider store={store}>
-        <IdCapture
-          onClose={onClose}
-          title="Front ID"
-          description="Please take a clear picture of the front of your ID card or upload from your device."
-          sampleImageSrc="/front-id.png"
-        />
-      </Provider>,
+      <IdCapture
+        onClose={onClose}
+        title="Front ID"
+        description="Please take a clear picture of the front of your ID card or upload from your device."
+        sampleImageSrc="/front-id.png"
+      />,
     );
     expect(
       screen.getByText(

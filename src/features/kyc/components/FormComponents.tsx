@@ -5,12 +5,10 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { RequestToStoreKYCInfo } from "@services/keyManagement/requestService";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-import { setStatus } from "@state/accountSlice";
+import { useKycManagementServicePostApiPrsKycInfo } from "@openapi/generated/prs/queries/queries";
 
 type FormData = Record<string, string>;
 type SetFormField = (fieldName: string, value: string) => void;
@@ -38,14 +36,9 @@ export const FormContainer: React.FC<FormContainerProps> = ({
   onCancel,
 }) => {
   const [formData, setFormData] = useState<FormData>({});
-  const accountCert = useSelector(
-    (state: RootState) => state.account.accountCert,
-  );
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-
+  const { accountId, accountCert, setStatus } = useAccountStore();
+  const kycInfoMutation = useKycManagementServicePostApiPrsKycInfo();
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   const setFormField: SetFormField = useCallback((fieldName, value) => {
     setFormData((prev) => ({
@@ -75,20 +68,16 @@ export const FormContainer: React.FC<FormContainerProps> = ({
         return;
       }
 
-      const response = await RequestToStoreKYCInfo(
-        documentNumber,
-        expiry,
-        accountCert,
-        accountId,
-      );
-
-      if (response === "KYC Info sent successfully and saved.") {
-        dispatch(setStatus("PENDING"));
-        toast.success("KYC Info sent successfully and saved.");
-        navigate({ to: "/kyc" });
-      } else {
-        toast.error("Error submitting data, please try again later");
-      }
+      await kycInfoMutation.mutateAsync({
+        requestBody: {
+          idNumber: documentNumber,
+          expiryDate: expiry,
+          accountId,
+        },
+      });
+      setStatus("PENDING");
+      toast.success("KYC information submitted successfully!");
+      navigate({ to: "/kyc" });
     } catch (error) {
       console.error("Error submitting data:", error);
       toast.error("Error submitting data, please try again later");

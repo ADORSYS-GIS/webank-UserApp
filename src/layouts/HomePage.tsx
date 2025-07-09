@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@state/Store";
+import { useAccountStore } from "@state/accountStore";
 
 const DashboardPage = lazy(
   () => import("@features/dashboard/pages/DashboardPage"),
@@ -8,8 +7,8 @@ const DashboardPage = lazy(
 const OnboardingPage = lazy(() => import("@shared/pages/HomePage"));
 
 const HomePage = () => {
-  const accountId = useSelector((state: RootState) => state.account.accountId);
-
+  const { accountId } = useAccountStore();
+  console.log(accountId);
   return (
     <Suspense fallback={<div>Loading home page...</div>}>
       {accountId ? <DashboardPage /> : <OnboardingPage />}

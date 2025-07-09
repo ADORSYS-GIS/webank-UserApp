@@ -1,31 +1,29 @@
 import React, { useState } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { setEmailStatus } from "@state/accountSlice";
+import { useAccountStore } from "@state/accountStore";
 import {
-  RequestToSendEmailOTP,
-  RequestToVerifyEmailCode,
-} from "@services/keyManagement/requestService";
+  useEmailOtpServicePostApiPrsEmailOtpSend,
+  useEmailOtpServicePostApiPrsEmailOtpValidate,
+} from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
-import OtpInput from "@features/auth/components/OtpInput";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { RootState } from "@state/Store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios"; // Import axios for error handling
+import OtpInput from "@features/auth/components/OtpInput";
 
 const EmailCode: React.FC = () => {
   useDisableScroll();
   const [otp, setOtp] = useState<string>("".padStart(6, " "));
   const [showSuccess, setShowSuccess] = useState(false);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useRouterState().location;
-  const { email, accountCert } = location.state as {
+  const { email } = location.state as {
     email?: string;
     accountCert?: string;
   };
-  const accountId = useSelector((state: RootState) => state.account.accountId);
+  const { accountId, setEmailStatus } = useAccountStore();
+  const resendEmailMutation = useEmailOtpServicePostApiPrsEmailOtpSend();
+  const verifyEmailOtpMutation = useEmailOtpServicePostApiPrsEmailOtpValidate();
 
   const resendOTP = async () => {
     if (!email) {
@@ -34,18 +32,18 @@ const EmailCode: React.FC = () => {
     }
     if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
       try {
-        if (!accountId || !accountCert) {
+        if (!accountId) {
           toast.error("Account information is missing.");
           navigate({ to: "/dashboard" });
           return;
         }
-        const response = await RequestToSendEmailOTP(
-          email,
-          accountCert,
-          accountId,
-        );
-
-        if (response.startsWith("OTP sent successfully")) {
+        const result = await resendEmailMutation.mutateAsync({
+          requestBody: {
+            email,
+            accountId,
+          },
+        });
+        if (result?.status === "PENDING") {
           toast.success("OTP Resend, please check your email.", {
             duration: 5000,
           });
@@ -87,37 +85,30 @@ const EmailCode: React.FC = () => {
       toast.error("Please enter a valid 6-digit OTP.");
       return;
     }
-    if (!email) {
-      toast.error("Email is missing.");
-      return;
-    }
-    if (!accountId || !accountCert) {
+    if (!accountId || !email) {
       showAccountMissingError();
       return;
     }
     try {
-      const response = await RequestToVerifyEmailCode(
-        email,
-        enteredCode,
-        accountId,
-        accountCert,
-      );
-
-      if (response === "Webank email verified successfully") {
-        dispatch(setEmailStatus("APPROVED"));
+      const result = await verifyEmailOtpMutation.mutateAsync({
+        requestBody: {
+          email,
+          otpInput: enteredCode,
+          accountId,
+        },
+      });
+      if (result?.status === "SUCCESS") {
         setShowSuccess(true);
-      } else if (response === "Invalid Webank OTP") {
-        toast.error("Invalid OTP. Please try again.");
+        setEmailStatus("APPROVED");
+        setTimeout(() => {
+          navigate("/kyc");
+        }, 2000);
       } else {
-        toast.error("OTP validation failed. Please try again.");
+        showOtpErrorMessage(result?.message ?? "Failed to verify OTP.");
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const message = error.response?.data;
-        showOtpErrorMessage(message);
-      } else {
-        toast.error("An unexpected error occurred.");
-      }
+      console.error("Error verifying OTP:", error);
+      toast.error("Failed to verify OTP. Please try again.");
     }
   };
 
