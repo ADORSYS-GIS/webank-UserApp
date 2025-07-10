@@ -4,7 +4,7 @@ import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import {
   useKycManagementServiceGetApiPrsKycPending,
-  useOtpStatusUpdateServicePostApiPrsKycStatusUpdate,
+  useKycStatusUpdateServicePostApiPrsKycStatusUpdate,
 } from "@openapi/generated/prs/queries/queries";
 import {
   KycBackendResponse,
@@ -86,7 +86,7 @@ export const useKycData = () => {
 
   // OpenAPI mutation for KYC status update
   const kycStatusMutation =
-    useOtpStatusUpdateServicePostApiPrsKycStatusUpdate();
+    useKycStatusUpdateServicePostApiPrsKycStatusUpdate();
 
   const updateKycStatus = async (
     status: KycStatus,
@@ -110,26 +110,28 @@ export const useKycData = () => {
         },
       });
 
-      if (
-        response &&
-        typeof response === "string" &&
-        response.startsWith("Failed")
-      ) {
-        toast.error(`${status} failed: User identity mismatch`);
+      console.log("Backend response:", response);
+
+      // Check if the operation was successful
+      if (!response.success) {
+        toast.error(
+          `Failed to ${status.toLowerCase()} KYC: ${response.message}`,
+        );
         return false;
       }
-
+      // If we get here, the operation was successful
+      toast.success(
+        response.message || `KYC ${status.toLowerCase()} successfully`,
+      );
       await fetchUsers();
       setSelectedUser(null);
-      toast.success(`KYC ${status.toLowerCase()} successfully`);
+      resetForm();
       return true;
     } catch (error) {
-      toast.error(`${status} failed: Server error`);
-      console.error(`${status} error:`, error);
+      console.error("Error updating KYC status:", error);
       return false;
     }
   };
-
   const resetForm = () => {
     setFormData({
       accountId: "",
