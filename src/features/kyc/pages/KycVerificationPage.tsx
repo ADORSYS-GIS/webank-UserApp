@@ -9,7 +9,7 @@ import { PendingKycList } from "@features/kyc/components/PendingKycList";
 import { UserDetailsForm } from "@features/kyc/components/UserDetailsForm";
 import { useKycData } from "@features/kyc/hooks/useKycData";
 import { KycStatus } from "@features/kyc/types/types";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 
 export default function KYCDashboard(): JSX.Element {
   const {
@@ -104,6 +104,15 @@ export default function KYCDashboard(): JSX.Element {
           />
         )}
       </div>
+      <Toaster
+        position="top-center"
+        richColors
+        toastOptions={{
+          duration: 2000,
+          className:
+            "px-4 py-3 rounded-lg text-sm shadow-sm w-full animation-slideDown",
+        }}
+      />
     </div>
   );
 }
