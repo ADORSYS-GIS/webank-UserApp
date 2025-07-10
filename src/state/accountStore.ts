@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface AccountState {
+export interface AccountState {
   accountId: string | null;
   accountCert: string | null;
   status: "PENDING" | "APPROVED" | "REJECTED" | null;
