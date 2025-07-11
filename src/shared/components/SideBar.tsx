@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import {
   CreditCard,
   Shield,
@@ -26,10 +26,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
       icon: <CreditCard className="text-blue-500 mr-3" size={20} />,
       label: "Teller Services",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: "/login",
           state: {
             redirectTo: "/teller",
-          },
+          } as never,
         }),
     },
     {
@@ -37,10 +38,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
       icon: <Shield className="text-blue-500 mr-3" size={20} />,
       label: "KYC Verification",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: "/login",
           state: {
             redirectTo: "/agency",
-          },
+          } as never,
         }),
     },
     {
@@ -48,10 +50,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
       icon: <User className="text-blue-500 mr-3" size={20} />,
       label: "KYC Recovery Agency",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: "/login",
           state: {
             redirectTo: "/account-recovery",
-          },
+          } as never,
         }),
     },
     {
@@ -59,10 +62,11 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
       icon: <DollarSign className="text-blue-500 mr-3" size={20} />,
       label: "Top Up Account",
       onClick: () =>
-        navigate("/login", {
+        navigate({
+          to: "/login",
           state: {
             redirectTo: "/agent-topup",
-          },
+          } as never,
         }),
     },
   ];

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ const InputEmail: React.FC = () => {
   // Validate account information
   const hasValidAccountInfo = (): boolean => {
     if (!accountId || !accountCert) {
-      navigate("/dashboard");
+      navigate({ to: "/" });
       toast.error("Account information is missing.");
       return false;
     }
@@ -56,7 +56,7 @@ const InputEmail: React.FC = () => {
     try {
       if (!accountId) {
         toast.error("Account information is missing.");
-        navigate("/dashboard");
+        navigate({ to: "/" });
         return;
       }
       const result = await emailMutation.mutateAsync({
@@ -68,7 +68,7 @@ const InputEmail: React.FC = () => {
       if (result?.status) {
         toast.success("OTP sent, please check your email.", { duration: 5000 });
       }
-      navigate("/emailCode", { state: { email, accountCert } });
+      navigate({ to: "/emailCode", state: { email, accountCert } as never });
     } catch (error: unknown) {
       handleOtpError(error);
     }
@@ -83,7 +83,7 @@ const InputEmail: React.FC = () => {
       <header className="p-4 bg-white shadow-sm">
         <div className="max-w-md mx-auto flex items-center space-x-4">
           <button
-            onClick={() => navigate("/settings")}
+            onClick={() => navigate({ to: "/settings" })}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Go Back"
           >

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useKycManagementServicePostApiPrsKycLocation } from "@openapi/generated/prs/queries/queries";
@@ -11,22 +11,22 @@ interface GeoLocation {
 
 const MapConfirmation = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useRouterState().location;
+  const { coords } = location.state as { coords?: GeoLocation };
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [city, setCity] = useState<string | null>(null);
-  const coords = (location.state as { coords: GeoLocation })?.coords;
   const { accountId } = useAccountStore();
   const locationMutation = useKycManagementServicePostApiPrsKycLocation();
 
   useEffect(() => {
-    if (!coords) navigate("/location-verification");
+    if (!coords) navigate({ to: "/location-verification" });
 
     // Get city name using reverse geocoding
     const getCityName = async () => {
       try {
         const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}`,
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords?.lat}&lon=${coords?.lng}`,
         );
         const data = await response.json();
         setCity(data.address.city ?? data.address.town ?? data.address.village);
@@ -50,7 +50,7 @@ const MapConfirmation = () => {
       });
       toast.success("Location verified!");
       setTimeout(() => {
-        navigate("/under-review");
+        navigate({ to: "/under-review" });
       }, 3000);
     } catch (error) {
       console.error("Error verifying location:", error);
@@ -75,7 +75,11 @@ const MapConfirmation = () => {
               width="100%"
               height="100%"
               title="OSM Map"
-              src={`https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.02}%2C${coords.lat - 0.02}%2C${coords.lng + 0.02}%2C${coords.lat + 0.02}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`}
+              src={
+                coords
+                  ? `https://www.openstreetmap.org/export/embed.html?bbox=${coords.lng - 0.02}%2C${coords.lat - 0.02}%2C${coords.lng + 0.02}%2C${coords.lat + 0.02}&layer=mapnik&marker=${coords.lat}%2C${coords.lng}`
+                  : ""
+              }
             />
           </div>
           {city && (
@@ -104,7 +108,7 @@ const MapConfirmation = () => {
             {isSubmitting ? "Verifying..." : "Yes, this is my location"}
           </button>
           <button
-            onClick={() => navigate("/verification/location")}
+            onClick={() => navigate({ to: "/verification/location" })}
             className="text-gray-600 px-6 py-3 rounded-md hover:bg-gray-100 transition-colors"
           >
             No, this is incorrect

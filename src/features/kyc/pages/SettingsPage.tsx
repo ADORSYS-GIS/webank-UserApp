@@ -1,6 +1,6 @@
 import React from "react";
 import { ChevronRight, LogOut, User, Shield, HelpCircle } from "react-feather";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 
 interface MenuItemProps {
@@ -65,15 +65,15 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate("/dashboard");
+    navigate({ to: "/" });
   };
 
   const handleSecureAccount = () => {
-    navigate("/kyc");
+    navigate({ to: "/kyc" });
   };
 
   const handleRecoverAccount = () => {
-    navigate("/recoverAccount");
+    navigate({ to: "/recoverAccount" });
   };
 
   return (
@@ -166,7 +166,7 @@ const SettingsPage: React.FC = () => {
                   ? "Email successfully verified"
                   : "Secure your account with email verification"
               }
-              onClick={() => navigate("/inputEmail")}
+              onClick={() => navigate({ to: "/inputEmail" })}
               disabled={emailStatus === "APPROVED"}
             />
           </div>
@@ -180,7 +180,7 @@ const SettingsPage: React.FC = () => {
                   ? "Phone number successfully verified"
                   : "Secure your account with phone verification"
               }
-              onClick={() => navigate("/phone")}
+              onClick={() => navigate({ to: "/phone" })}
               disabled={phoneStatus === "APPROVED"}
             />
           </div>

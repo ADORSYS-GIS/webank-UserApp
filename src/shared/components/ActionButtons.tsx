@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { ArrowUp, Repeat, Download, CreditCard } from "react-feather";
 
 interface ActionButtonsProps {
@@ -19,49 +19,53 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
 
   const handleTopUpClick = () =>
     handleActionClick(() => {
-      navigate("/top-up", {
+      navigate({
+        to: "/top-up",
         state: {
           show: "Top up",
           clientAccountId: accountId,
           clientAccountCert: accountCert,
           isClientOnline: true,
-        },
+        } as never,
       });
       console.log("Top Up button clicked", accountId);
     });
 
   const handleWithdrawClick = () =>
     handleActionClick(() => {
-      navigate("/payment-selection", {
+      navigate({
+        to: "/payment-selection",
         state: {
           show: "Withdraw",
           clientAccountId: accountId,
           clientAccountCert: accountCert,
-        },
+        } as never,
       });
       console.log("Withdrawal", accountId);
     });
 
   const handleTransferClick = () =>
     handleActionClick(() => {
-      navigate("/payment-selection", {
+      navigate({
+        to: "/payment-selection",
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,
           show: "Transfer",
-        },
+        } as never,
       });
       console.log("Transfer", accountId);
     });
 
   const handlePayClick = () =>
     handleActionClick(() => {
-      navigate("/payment-selection", {
+      navigate({
+        to: "/payment-selection",
         state: {
           clientAccountId: accountId,
           clientAccountCert: accountCert,
           show: "Payment",
-        },
+        } as never,
       });
       console.log("Payment", accountId);
     });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import {
   useMoneyTransferServicePostApiTransfersPayout,
   useAccountWithdrawalServicePostApiAccountsWithdraw,
@@ -65,24 +65,25 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
     if (type !== "Transfer" && type !== "Payment" && type !== "Top up") {
       toast.info("Oops, you are offline. Redirecting to the amount page...");
       setTimeout(() => {
-        navigate("/top-up", {
+        navigate({
+          to: "/top-up",
           state: {
             clientAccountId,
             amount,
             isClientOffline: true,
             clientName,
-          },
+          } as never,
         });
       }, 4000);
     } else if (type === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
-      setTimeout(() => navigate("/dashboard"), 4000);
+      setTimeout(() => navigate({ to: "/" }), 4000);
     } else if (type === "Top up") {
       toast.error("Cannot top up offline. Redirecting you to dashboard...");
-      setTimeout(() => navigate("/dashboard"), 4000);
+      setTimeout(() => navigate({ to: "/" }), 4000);
     } else if (type === "Payment") {
       toast.error("Cannot do payment offline. Redirecting you to dashboard...");
-      setTimeout(() => navigate("/dashboard"), 4000);
+      setTimeout(() => navigate({ to: "/" }), 4000);
     }
   }
 
@@ -99,13 +100,14 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
       if (response?.status === "COMPLETED" || response?.status === "PENDING") {
         const transactionCert = response?.transactionId ?? "";
         toast.success("Account successfully topped up.");
-        navigate("/success", {
+        navigate({
+          to: "/success",
           state: {
             transactionCert,
             accountId: agentAccountId,
             accountCert: agentAccountCert,
             clientName,
-          },
+          } as never,
         });
       } else {
         toast.error(response?.message ?? "Top up failed.");
@@ -139,13 +141,14 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
       if (response?.status === "COMPLETED" || response?.status === "PENDING") {
         const transactionCert = response?.transactionId ?? "";
         toast.success("Account successfully topped up.");
-        navigate("/success", {
+        navigate({
+          to: "/success",
           state: {
             transactionCert,
             accountId: agentAccountId,
             accountCert: agentAccountCert,
             clientName, // Include client name in success state
-          },
+          } as never,
         });
       } else if (response?.status === "INSUFFICIENT_FUNDS") {
         toast.error(

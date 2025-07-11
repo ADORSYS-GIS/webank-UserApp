@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 
@@ -9,8 +9,8 @@ const GetNewAccountId: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const oldAccountId = location.state.oldAccountId;
+  const location = useRouterState().location;
+  const { oldAccountId } = location.state as { oldAccountId?: string };
 
   // Stop the scanner safely
   const stopScanner = async () => {
@@ -31,8 +31,9 @@ const GetNewAccountId: React.FC = () => {
         const data = JSON.parse(decodedText);
         if (data.accountId) {
           stopScanner();
-          navigate("/recovery/account-confirmation", {
-            state: { accountId: data.accountId, oldAccountId },
+          navigate({
+            to: "/recovery/account-confirmation",
+            state: { accountId: data.accountId, oldAccountId } as never,
           });
         } else {
           throw new Error("Invalid QR Code: Missing accountId");
@@ -136,7 +137,7 @@ const GetNewAccountId: React.FC = () => {
         </label>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate({ to: "/" })}
           className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
         >
           Cancel

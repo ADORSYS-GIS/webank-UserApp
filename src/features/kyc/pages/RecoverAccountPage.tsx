@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import {
@@ -99,7 +99,7 @@ const RecoverAccountPage: React.FC = () => {
             setAccountCert(certResponse.kycCertificate);
             toast.success("Account recovery successful!");
             setTimeout(() => {
-              navigate("/dashboard");
+              navigate({ to: "/" });
             }, 1500);
           } else {
             toast.error(
@@ -120,7 +120,7 @@ const RecoverAccountPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate("/settings");
+    navigate({ to: "/settings" });
   };
 
   return (

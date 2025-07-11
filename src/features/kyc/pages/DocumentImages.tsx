@@ -6,7 +6,7 @@ import SelfieId from "./SelfieId";
 import TaxpayerId from "./TaxpayerId";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
 import { ArrowLeft, Upload } from "react-feather";
 
@@ -38,7 +38,7 @@ const DocumentImages = () => {
     const { accountId, accountCert } = useAccountStore.getState();
     if (!accountCert || !accountId) {
       showErrorToast("Account information is missing.");
-      navigate("/guidelines");
+      navigate({ to: "/guidelines" });
       return;
     }
 
@@ -58,7 +58,7 @@ const DocumentImages = () => {
       if (isSuccessfulStatus(response?.status)) {
         setDocumentStatus("PENDING");
         toast.success("Documents submitted successfully");
-        navigate("/kyc");
+        navigate({ to: "/kyc" });
         return;
       }
 
@@ -118,7 +118,7 @@ const DocumentImages = () => {
       {/* Header Section */}
       <div className="flex items-center justify-between mb-8">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => window.history.back()}
           className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
         >
           <ArrowLeft className="mr-2" />

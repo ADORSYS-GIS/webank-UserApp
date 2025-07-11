@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useAccountStore } from "@state/accountStore";
 import VerificationModal from "@features/kyc/components/VerificationModal";
@@ -58,7 +58,7 @@ export default function IdentityVerification() {
       description:
         "Follow instructions to upload your ID and verification documents",
       icon: UploadCloud,
-      onClick: () => navigate("/guidelines"),
+      onClick: () => navigate({ to: "/guidelines" }),
     },
   ];
 
@@ -67,7 +67,7 @@ export default function IdentityVerification() {
       toast.error("Account information is missing");
       return;
     }
-    navigate("/verification/location");
+    navigate({ to: "/verification/location" });
   };
 
   return (
@@ -77,7 +77,7 @@ export default function IdentityVerification() {
     >
       <button
         type="button"
-        onClick={() => navigate("/settings")}
+        onClick={() => navigate({ to: "/settings" })}
         className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
       >
         <ChevronLeft className="w-6 h-6 group-hover:text-blue-500 transition-colors" />

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 import { useAccountRegistrationServicePostApiRegistration } from "@openapi/generated/obs/queries/queries";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
 
     if (error) {
       toast.error(error);
-      navigate("/");
+      navigate({ to: "/" });
       return;
     }
 
@@ -44,7 +44,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
         "devCert in localStorage:",
         devCertFromStorage,
       );
-      navigate("/");
+      navigate({ to: "/" });
       return;
     }
 
@@ -64,8 +64,9 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
           setAccountCert(accountCert);
           localStorage.setItem("accountId", accountId);
           localStorage.setItem("accountCert", accountCert);
-          navigate("/onboarding", {
-            state: { accountId, accountCert },
+          navigate({
+            to: "/onboarding",
+            state: { accountId, accountCert } as never,
           });
         } else {
           throw new Error(
@@ -77,7 +78,7 @@ const AccountLoadingPage: React.FC<AccountLoadingPageProps> = ({
           err instanceof Error ? err.message : "An unknown error occurred";
         toast.error(`Registration failed: ${errorMessage}`);
         console.error("Registration error:", err);
-        navigate("/");
+        navigate({ to: "/" });
       }
     };
 

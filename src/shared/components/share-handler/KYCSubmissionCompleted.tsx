@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { CheckCircle, User, Shield, Home } from "react-feather";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
@@ -12,7 +12,7 @@ export default function KYCSubmissionCompleted() {
   }, []);
 
   const handleReturnToDashboard = () => {
-    navigate("/dashboard");
+    navigate({ to: "/" });
   };
 
   return (

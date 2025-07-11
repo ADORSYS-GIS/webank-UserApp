@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import ContactList from "@shared/components/ContactList";
 import { Contact } from "@services/contacts/contactService";
 
@@ -7,13 +7,14 @@ const ContactsPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSelectContact = (contact: Contact) => {
-    navigate("/top-up", {
+    navigate({
+      to: "/top-up",
       state: {
         clientAccountId: contact.accountId,
         clientName: contact.name,
         fromContacts: true,
         show: "Payment",
-      },
+      } as never,
     });
   };
 

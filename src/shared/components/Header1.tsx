@@ -1,6 +1,6 @@
 import React from "react";
 import { Bell, Info, User } from "react-feather";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 
 interface HeaderProps {
   onNotificationClick?: () => void;
@@ -19,7 +19,7 @@ const Header1: React.FC<HeaderProps> = ({
     if (onNotificationClick) {
       onNotificationClick();
     } else {
-      navigate("/notifications");
+      navigate({ to: "/notifications" });
     }
   };
 
@@ -27,7 +27,7 @@ const Header1: React.FC<HeaderProps> = ({
     if (onAboutClick) {
       onAboutClick();
     } else {
-      navigate("/about");
+      navigate({ to: "/about" });
     }
   };
 

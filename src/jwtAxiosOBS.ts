@@ -60,6 +60,7 @@ OpenAPI.interceptors.request.use(async (config) => {
       amount,
       agentAccountId,
     );
+    console.log("Generated JWT for OBS payout:", jwt);
   } else if (url.includes("/accounts/withdraw")) {
     const clientAccountId = data.recipientAccountId;
     const amount = data.amount;

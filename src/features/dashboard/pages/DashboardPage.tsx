@@ -12,7 +12,7 @@ import ActionButtons from "@shared/components/ActionButtons";
 import BottomNavigation from "@shared/components/BottomNavigation";
 import BottomSheet from "@shared/components/SideBar";
 import { useAccountStore } from "@state/accountStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -97,7 +97,7 @@ const Dashboard = () => {
 
   // Handler for about clicks
   const handleAboutClick = () => {
-    navigate("/about");
+    navigate({ to: "/about" });
   };
 
   return (
@@ -133,7 +133,7 @@ const Dashboard = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <BottomNavigation toggleMenu={toggleMenu} />
+      <BottomNavigation />
 
       {/* Bottom Sheet Menu */}
       <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />

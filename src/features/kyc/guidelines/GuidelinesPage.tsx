@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import { Info, ArrowLeft } from "react-feather";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 
 // Define proper TypeScript interfaces for the component props
 interface MarkdownHeadingProps
@@ -150,11 +150,11 @@ const GuidelinesPage: React.FC = () => {
   `;
 
   const handleAdvance = () => {
-    navigate("/kyc/imgs");
+    navigate({ to: "/kyc/imgs" });
   };
 
   const handleBack = () => {
-    navigate(-1);
+    window.history.back();
   };
 
   // Define custom components for ReactMarkdown with proper typing

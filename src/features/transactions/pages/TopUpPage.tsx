@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { calculateTransactionFee } from "@services/computation/transactionFeeCalculator";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useAccountStore } from "@state/accountStore";
@@ -11,18 +11,23 @@ const TopUpPage: React.FC = () => {
   const [amount, setAmount] = useState<number | string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useRouterState().location;
+  const { clientAccountId, show, isClientOffline, isClientOnline, clientName } =
+    location.state as {
+      clientAccountId?: string;
+      show?: string;
+      isClientOffline?: boolean;
+      isClientOnline?: boolean;
+      clientName?: string;
+    };
+
   const { kycCert, status, accountId, accountCert } = useAccountStore();
-  const clientAccountId = location.state?.clientAccountId;
-  const show = location.state?.show;
-  const isClientOffline = location.state?.isClientOffline;
-  const isClientOnline = location.state?.isClientOnline;
 
   // Ensure required store values are available
   useEffect(() => {
     if (!accountId || !accountCert) {
       toast.error("Account information not available");
-      navigate("/dashboard");
+      navigate({ to: "/" });
     }
   }, [accountId, accountCert, navigate]);
 
@@ -30,8 +35,9 @@ const TopUpPage: React.FC = () => {
   const totalAmount = Number(amount) + calculateTransactionFee(Number(amount));
 
   const handleCancel = () => {
-    navigate("/dashboard", {
-      state: { accountId: clientAccountId },
+    navigate({
+      to: "/",
+      state: { accountId: clientAccountId } as never,
     });
   };
 
@@ -64,14 +70,15 @@ const TopUpPage: React.FC = () => {
     if (show === "Transfer" || show === "Payment" || show === "Withdraw") {
       setShowConfirmation(true);
     } else {
-      navigate("/qrcode", {
+      navigate({
+        to: "/qrcode",
         state: {
           totalAmount,
           accountId: clientAccountId,
           isClientOffline,
           isClientOnline,
           show,
-        },
+        } as never,
       });
     }
   };
@@ -81,11 +88,11 @@ const TopUpPage: React.FC = () => {
     accountId && accountCert
       ? {
           amount: totalAmount,
-          clientAccountId,
+          clientAccountId: clientAccountId ?? "",
           agentAccountId: accountId,
           agentAccountCert: accountCert,
-          show,
-          clientName: location.state?.clientName || "Anonymous",
+          show: show ?? "",
+          clientName: clientName ?? "Anonymous",
         }
       : null;
 
