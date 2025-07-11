@@ -31,7 +31,7 @@ export default function Login() {
   };
 
   const close = () => {
-    navigate({ to: "/dashboard" });
+    navigate({ to: "/" });
   };
 
   return (

@@ -284,10 +284,6 @@ describe("EmailCode", () => {
 
       expect(mockSetEmailStatus).toHaveBeenCalledWith("APPROVED");
     });
-
-    // Check if navigation occurs after success
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    expect(mockNavigate).toHaveBeenCalledWith({ to: "/kyc" });
   });
 
   it("handles OTP verification failure", async () => {

@@ -181,7 +181,7 @@ export default function RecoveryDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
       <button
-        onClick={() => navigate({ to: "/dashboard" })}
+        onClick={() => navigate({ to: "/" })}
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Close form"
       >

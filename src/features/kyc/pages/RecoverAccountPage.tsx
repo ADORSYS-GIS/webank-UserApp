@@ -105,7 +105,7 @@ const RecoverAccountPage: React.FC = () => {
             setAccountCert(certResponse.kycCertificate);
             toast.success("Account recovery successful!");
             setTimeout(() => {
-              navigate({ to: "/dashboard" });
+              navigate({ to: "/" });
             }, 1500);
           } else {
             toast.error(

@@ -27,7 +27,7 @@ const TopUpPage: React.FC = () => {
   useEffect(() => {
     if (!accountId || !accountCert) {
       toast.error("Account information not available");
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/" });
     }
   }, [accountId, accountCert, navigate]);
 
@@ -36,7 +36,7 @@ const TopUpPage: React.FC = () => {
 
   const handleCancel = () => {
     navigate({
-      to: "/dashboard",
+      to: "/",
       state: { accountId: clientAccountId } as never,
     });
   };

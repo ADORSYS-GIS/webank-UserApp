@@ -164,7 +164,7 @@ describe("SettingsPage", () => {
     const backButton = screen.getByLabelText("Go back");
     fireEvent.click(backButton);
 
-    expect(navigateMock).toHaveBeenCalledWith({ to: "/dashboard" });
+    expect(navigateMock).toHaveBeenCalledWith({ to: "/" });
   });
 
   it("shows verified status for email and phone when they are approved", () => {

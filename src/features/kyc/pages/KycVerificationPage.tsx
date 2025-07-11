@@ -9,7 +9,7 @@ import { PendingKycList } from "@features/kyc/components/PendingKycList";
 import { UserDetailsForm } from "@features/kyc/components/UserDetailsForm";
 import { useKycData } from "@features/kyc/hooks/useKycData";
 import { KycStatus } from "@features/kyc/types/types";
-import { toast, Toaster } from "sonner";
+import { Toaster } from "sonner";
 
 export default function KYCDashboard(): JSX.Element {
   const {
@@ -35,10 +35,8 @@ export default function KYCDashboard(): JSX.Element {
     const response = await updateKycStatus(status);
     console.log("KYC status updated:", response);
     if (response) {
-      toast.success(`KYC ${status.toLowerCase()} successfully`);
       console.log("KYC status updated:", response);
     } else {
-      toast.error(`Failed to ${status.toLowerCase()} KYC`);
       console.log("Failed KYC status updated:", response);
     }
   };
@@ -53,7 +51,7 @@ export default function KYCDashboard(): JSX.Element {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
       <button
-        onClick={() => navigate({ to: "/dashboard" })}
+        onClick={() => navigate({ to: "/" })}
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Back to dashboard"
         type="button"

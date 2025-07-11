@@ -83,13 +83,13 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
       }, 4000);
     } else if (type === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
-      setTimeout(() => navigate({ to: "/dashboard" }), 4000);
+      setTimeout(() => navigate({ to: "/" }), 4000);
     } else if (type === "Top up") {
       toast.error("Cannot top up offline. Redirecting you to dashboard...");
-      setTimeout(() => navigate({ to: "/dashboard" }), 4000);
+      setTimeout(() => navigate({ to: "/" }), 4000);
     } else if (type === "Payment") {
       toast.error("Cannot do payment offline. Redirecting you to dashboard...");
-      setTimeout(() => navigate({ to: "/dashboard" }), 4000);
+      setTimeout(() => navigate({ to: "/" }), 4000);
     }
   }
 

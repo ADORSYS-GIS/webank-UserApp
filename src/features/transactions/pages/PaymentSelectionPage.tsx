@@ -39,7 +39,7 @@ const PaymentSelectionPage: React.FC = () => {
           </button>
 
           <button
-            onClick={() => navigate({ to: "/dashboard" })}
+            onClick={() => navigate({ to: "/" })}
             className="w-full flex items-center justify-center space-x-3 bg-gray-200 text-gray-700 py-4 px-6 rounded-lg hover:bg-gray-300 transition-colors mt-4"
           >
             <span>Cancel</span>

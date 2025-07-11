@@ -400,7 +400,7 @@ describe("RecoverAccountPage", () => {
       await new Promise((resolve) => setTimeout(resolve, 1600));
     });
 
-    expect(navigateMock).toHaveBeenCalledWith({ to: "/dashboard" });
+    expect(navigateMock).toHaveBeenCalledWith({ to: "/" });
   });
 
   it("handles recovery validation error", async () => {

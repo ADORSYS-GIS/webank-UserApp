@@ -41,34 +41,30 @@ const BottomNavigation = () => {
           <button
             onClick={() =>
               navigate({
-                to: "/dashboard",
+                to: "/",
               })
             }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 navigate({
-                  to: "/dashboard",
+                  to: "/",
                 });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
             role="tab"
-            aria-selected={location.pathname === "/dashboard"}
+            aria-selected={location.pathname === "/"}
             tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faHome}
               className={`text-lg ${
-                location.pathname === "/dashboard"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                location.pathname === "/" ? "text-blue-500" : "text-gray-500"
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/dashboard"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                location.pathname === "/" ? "text-blue-500" : "text-gray-500"
               }`}
             >
               Home

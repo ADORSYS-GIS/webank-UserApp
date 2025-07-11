@@ -18,7 +18,7 @@ export default function KYCSubmissionCompleted() {
   }, []);
 
   const handleReturnToDashboard = () => {
-    navigate({ to: "/dashboard" });
+    navigate({ to: "/" });
   };
 
   return (

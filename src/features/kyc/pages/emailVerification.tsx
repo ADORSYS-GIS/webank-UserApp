@@ -24,7 +24,7 @@ const InputEmail: React.FC = () => {
   // Validate account information
   const hasValidAccountInfo = (): boolean => {
     if (!accountId || !accountCert) {
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/" });
       toast.error("Account information is missing.");
       return false;
     }
@@ -57,7 +57,7 @@ const InputEmail: React.FC = () => {
     try {
       if (!accountId) {
         toast.error("Account information is missing.");
-        navigate({ to: "/dashboard" });
+        navigate({ to: "/" });
         return;
       }
       const result = await emailMutation.mutateAsync({

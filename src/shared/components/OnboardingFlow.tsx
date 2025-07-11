@@ -72,7 +72,7 @@ const OnboardingFlow: React.FC = () => {
       setOnboardingCompleted(true);
       // Show success toast
       toast.success("Account creation successful");
-      navigate({ to: "/dashboard" });
+      navigate({ to: "/" });
     }
   };
 

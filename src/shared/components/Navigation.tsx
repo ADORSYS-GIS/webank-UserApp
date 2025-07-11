@@ -6,7 +6,7 @@ const Navigation: React.FC = () => {
       <div className="max-w-md mx-auto px-4">
         <div className="flex justify-around py-3">
           <Link
-            to="/dashboard"
+            to="/"
             className="flex flex-col items-center text-gray-600 hover:text-blue-500"
           >
             <svg

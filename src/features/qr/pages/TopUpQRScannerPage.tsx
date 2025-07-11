@@ -229,7 +229,7 @@ const TopUpQRScannerPage: React.FC = () => {
         </label>
 
         <button
-          onClick={() => navigate({ to: "/dashboard" })}
+          onClick={() => navigate({ to: "/" })}
           className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
         >
           Cancel

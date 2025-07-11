@@ -84,7 +84,7 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleBack = () => {
-    navigate({ to: "/dashboard" });
+    navigate({ to: "/" });
   };
 
   const handleSecureAccount = () => {

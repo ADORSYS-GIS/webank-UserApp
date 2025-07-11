@@ -45,7 +45,7 @@ const TopUpForm: React.FC<TopUpFormProps> = () => {
 
       if (response?.status === "COMPLETED" || response?.status === "PENDING") {
         toast.success("Top-up successful!");
-        navigate({ to: "/dashboard" });
+        navigate({ to: "/" });
         setFormData({ clientAccountId: "", amount: "" });
       } else {
         toast.error(
@@ -64,7 +64,7 @@ const TopUpForm: React.FC<TopUpFormProps> = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         <button
-          onClick={() => navigate({ to: "/dashboard" })}
+          onClick={() => navigate({ to: "/" })}
           className="text-gray-600 hover:text-red-500 transition float-right"
         >
           <svg
