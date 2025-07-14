@@ -40,28 +40,19 @@ const AccountConfirmation: React.FC = () => {
           oldAccountId,
         },
       });
-      if (
-        typeof response === "object" &&
-        response !== null &&
-        "token" in response
-      ) {
+      if (response.status === "SUCCESS") {
+        toast.success("Recovery token generated successfully!");
+        // Navigate to the next step with the recovery token
         navigate({
           to: "/recovery/recoverytoken",
           state: {
             oldAccountId,
             newAccountId,
-            recoveryToken: (response as { token: string }).token,
+            recoveryToken: response.token,
           } as never,
         });
       } else {
-        toast.error(
-          typeof response === "object" &&
-            response !== null &&
-            "message" in response
-            ? ((response as { message?: string }).message ??
-                "Failed to get recovery token.")
-            : "Failed to get recovery token.",
-        );
+        toast.error("Failed to generate recovery token.");
       }
     } catch (error: unknown) {
       console.error("Recovery token error:", error);

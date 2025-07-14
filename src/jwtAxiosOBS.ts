@@ -80,6 +80,21 @@ OpenAPI.interceptors.request.use(async (config) => {
       clientAccountId,
     );
     console.log("Generated JWT for OBS account withdrawal:", jwt);
+  } else if (url.includes("/accounts/recovery")) {
+    const { publicKey, privateKey } = await KeyManagement();
+    const accountId = data.accountId;
+    jwt = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null,
+      null,
+      null,
+      accountId,
+    );
+    console.log("Generated JWT for OBS account deposit:", jwt);
   } else if (url.includes("/agent/topup")) {
     const agentId = data.accountId;
     const amount = data.amount;
