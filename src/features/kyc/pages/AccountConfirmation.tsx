@@ -1,18 +1,24 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useRecoveryServicePostApiPrsKycRecoveryToken } from "@openapi/generated/prs/queries/queries";
 
+interface AccountConfirmationState {
+  accountId: string;
+  oldAccountId: string;
+}
+
 const AccountConfirmation: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useRouterState().location;
+  const state = location.state as unknown as AccountConfirmationState;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Extract state values
-  const newAccountId = location.state?.accountId as string | undefined;
-  const oldAccountId = location.state?.oldAccountId as string | undefined;
+  const newAccountId = state?.accountId;
+  const oldAccountId = state?.oldAccountId;
 
   const recoveryTokenMutation = useRecoveryServicePostApiPrsKycRecoveryToken();
 
@@ -22,7 +28,7 @@ const AccountConfirmation: React.FC = () => {
       toast.error(
         "Missing account details. Please try the scanning process again.",
       );
-      return navigate(-1);
+      window.history.back();
     }
 
     setIsSubmitting(true);
@@ -34,27 +40,19 @@ const AccountConfirmation: React.FC = () => {
           oldAccountId,
         },
       });
-      if (
-        typeof response === "object" &&
-        response !== null &&
-        "token" in response
-      ) {
-        navigate("/recovery/recoverytoken", {
+      if (response.status === "SUCCESS") {
+        toast.success("Recovery token generated successfully!");
+        // Navigate to the next step with the recovery token
+        navigate({
+          to: "/recovery/recoverytoken",
           state: {
             oldAccountId,
             newAccountId,
-            recoveryToken: (response as { token: string }).token,
-          },
+            recoveryToken: response.token,
+          } as never,
         });
       } else {
-        toast.error(
-          typeof response === "object" &&
-            response !== null &&
-            "message" in response
-            ? ((response as { message?: string }).message ??
-                "Failed to get recovery token.")
-            : "Failed to get recovery token.",
-        );
+        toast.error("Failed to generate recovery token.");
       }
     } catch (error: unknown) {
       console.error("Recovery token error:", error);
@@ -106,7 +104,7 @@ const AccountConfirmation: React.FC = () => {
           </button>
 
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => window.history.back()}
             className="w-full py-3 px-6 bg-gray-200 text-gray-700 font-medium rounded-lg
                      hover:bg-gray-300 transition-colors shadow-md"
           >

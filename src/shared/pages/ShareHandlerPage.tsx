@@ -14,7 +14,7 @@ import {
 import KYCSubmissionCompleted from "../components/share-handler/KYCSubmissionCompleted";
 
 import jsQR from "jsqr";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 
 // prettier-ignore
 export default function ShareHandlerPage() {
@@ -252,11 +252,12 @@ export default function ShareHandlerPage() {
             const isQR = await isQRCode(files[0]);
             if (isQR) {
               console.log("QR code detected, redirecting to /qr-scan/top-up");
-              navigate("/qr-scan", {
+              navigate({
+                to: '/qr-scan',
                 state: {
                   sharedImage: files[0].base64,
                   show: "Transfer",
-                },
+                } as never,
               });
               return;
             }
@@ -368,7 +369,7 @@ export default function ShareHandlerPage() {
       const file = sharedData.files[0];
       if (file.base64) {
         localStorage.setItem(docType, file.base64);
-        navigate("/kyc/imgs");
+        navigate({ to: '/kyc/imgs' });
       } else {
         setError("No base64 data available for the file");
       }

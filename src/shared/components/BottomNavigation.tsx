@@ -1,6 +1,6 @@
 //NO
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -10,15 +10,13 @@ import {
   faAddressBook,
 } from "@fortawesome/free-solid-svg-icons";
 import AccountQRModal from "@features/qr/pages/AccountQr";
+import AgentPage from "@features/teller/pages/AgentPage";
 
-interface BottomNavigationProps {
-  toggleMenu: () => void;
-}
-
-const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
-  const location = useLocation();
+const BottomNavigation = () => {
+  const location = useRouterState().location;
   const navigate = useNavigate();
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const openQRModal = () => {
     setIsQRModalOpen(true);
@@ -28,35 +26,45 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
     setIsQRModalOpen(false);
   };
 
+  const openAgentModal = () => {
+    setIsAgentModalOpen(true);
+  };
+
+  const closeAgentModal = () => {
+    setIsAgentModalOpen(false);
+  };
+
   return (
     <>
       <div className="fixed bottom-0 left-0 right-0 md:left-auto md:right-auto md:w-[750px] md:mx-auto bg-white shadow-lg border-t border-gray-200 z-10">
         <div className="flex justify-around items-center h-16">
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() =>
+              navigate({
+                to: "/",
+              })
+            }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/dashboard");
+                navigate({
+                  to: "/",
+                });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
             role="tab"
-            aria-selected={location.pathname === "/dashboard"}
+            aria-selected={location.pathname === "/"}
             tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faHome}
               className={`text-lg ${
-                location.pathname === "/dashboard"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                location.pathname === "/" ? "text-blue-500" : "text-gray-500"
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/dashboard"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                location.pathname === "/" ? "text-blue-500" : "text-gray-500"
               }`}
             >
               Home
@@ -91,10 +99,16 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
           </button>
 
           <button
-            onClick={() => navigate("/settings")}
+            onClick={() =>
+              navigate({
+                to: "/settings",
+              })
+            }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/settings");
+                navigate({
+                  to: "/settings",
+                });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
@@ -122,10 +136,16 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
           </button>
 
           <button
-            onClick={() => navigate("/contacts")}
+            onClick={() =>
+              navigate({
+                to: "/contacts",
+              })
+            }
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate("/contacts");
+                navigate({
+                  to: "/contacts",
+                });
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
@@ -153,30 +173,26 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
           </button>
 
           <button
-            onClick={toggleMenu}
+            onClick={openAgentModal}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                toggleMenu();
+                openAgentModal();
               }
             }}
             className="flex flex-col items-center justify-center w-1/4 h-full text-center"
             role="tab"
-            aria-selected={location.pathname === "/agent"}
+            aria-selected={isAgentModalOpen}
             tabIndex={0}
           >
             <FontAwesomeIcon
               icon={faUserTie}
               className={`text-lg ${
-                location.pathname === "/agent"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
               }`}
             />
             <span
               className={`text-xs mt-1 ${
-                location.pathname === "/agent"
-                  ? "text-blue-500"
-                  : "text-gray-500"
+                isAgentModalOpen ? "text-blue-500" : "text-gray-500"
               }`}
             >
               Agent
@@ -187,6 +203,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ toggleMenu }) => {
 
       {/* QR Code Modal */}
       <AccountQRModal isOpen={isQRModalOpen} onClose={closeQRModal} />
+
+      {/* Agent Modal - Pass the onClose prop */}
+      {isAgentModalOpen && <AgentPage onClose={closeAgentModal} />}
     </>
   );
 };

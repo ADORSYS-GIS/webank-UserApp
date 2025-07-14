@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import OtpInput from "../components/OtpInput.tsx";
-// NOTE: If you need to pass JWT to the generated queries, ensure your Axios interceptor attaches it correctly based on endpoint, as per your project setup.
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   useOtpManagementServicePostApiPrsOtpSend,
   useOtpManagementServicePostApiPrsOtpValidate,
@@ -15,10 +14,13 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 const PhoneVerification: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useRouterState().location;
 
   // Initialize state from location
-  const { otpHash: initialOtpHash, fullPhoneNumber } = location.state ?? {};
+  const { otpHash: initialOtpHash, fullPhoneNumber } = location.state as {
+    otpHash?: string;
+    fullPhoneNumber?: string;
+  };
   const [otpHash, setOtpHash] = useState(initialOtpHash);
   const [otp, setOtp] = useState("");
   const [minutes, setMinutes] = useState(0);
@@ -73,7 +75,7 @@ const PhoneVerification: React.FC = () => {
       if (response?.valid) {
         toast.success("Phone number successfully verified!");
         setPhoneStatus("APPROVED");
-        setTimeout(() => navigate("/settings"), 2000);
+        setTimeout(() => navigate({ to: "/settings" }), 2000);
       } else {
         toast.error(response?.message ?? "The code is invalid", {
           duration: 5000,
@@ -103,7 +105,7 @@ const PhoneVerification: React.FC = () => {
         <div className="w-full max-w-md mx-auto">
           <div className="flex items-center mb-6">
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => window.history.back()}
               className="text-xl cursor-pointer p-2 focus:outline-none"
               aria-label="Back"
             >

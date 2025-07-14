@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -78,22 +78,24 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
             <button
               onClick={() =>
                 handleClose(() =>
-                  navigate("/qr-scan/top-up", {
+                  navigate({
+                    to: "/qr-scan/top-up",
                     state: {
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
-                    },
+                    } as never,
                   }),
                 )
               }
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleClose(() =>
-                    navigate("/qr-scan/top-up", {
+                    navigate({
+                      to: "/qr-scan/top-up",
                       state: {
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,
-                      },
+                      } as never,
                     }),
                   );
                 }
@@ -116,22 +118,24 @@ const AgentPage: React.FC<AgentPageProps> = ({ onClose }) => {
             <button
               onClick={() =>
                 handleClose(() =>
-                  navigate("/qr-scan/offline", {
+                  navigate({
+                    to: "/qr-scan/offline",
                     state: {
                       agentAccountId: accountId,
                       agentAccountCert: accountCert,
-                    },
+                    } as never,
                   }),
                 )
               }
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleClose(() =>
-                    navigate("/qr-scan/offline", {
+                    navigate({
+                      to: "/qr-scan/offline",
                       state: {
                         agentAccountId: accountId,
                         agentAccountCert: accountCert,
-                      },
+                      } as never,
                     }),
                   );
                 }

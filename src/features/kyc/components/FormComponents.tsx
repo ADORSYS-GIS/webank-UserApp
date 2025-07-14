@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useKycManagementServicePostApiPrsKycInfo } from "@openapi/generated/prs/queries/queries";
 
 type FormData = Record<string, string>;
@@ -77,7 +77,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       });
       setStatus("PENDING");
       toast.success("KYC information submitted successfully!");
-      navigate("/under-review");
+      navigate({ to: "/kyc" });
     } catch (error) {
       console.error("Error submitting data:", error);
       toast.error("Error submitting data, please try again later");
@@ -91,7 +91,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
       onCancel(); // Call the custom onCancel function if provided
     } else {
       setFormData({}); // Reset the form data
-      navigate(-1); // Navigate back to the previous page
+      window.history.back(); // Navigate back to the previous page
     }
   };
 

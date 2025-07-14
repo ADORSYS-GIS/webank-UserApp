@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useAccountStore } from "@state/accountStore";
 import { signTransaction } from "@services/keyManagement/signTransaction";
@@ -8,13 +8,16 @@ import { signTransaction } from "@services/keyManagement/signTransaction";
 const QRGenerator: React.FC = () => {
   useDisableScroll();
   const navigate = useNavigate();
-  const location = useLocation();
-  const totalamount = location.state?.totalAmount;
+  const location = useRouterState().location;
+  const { totalAmount, isClientOffline, isClientOnline, show } =
+    location.state as {
+      totalAmount?: number;
+      isClientOffline?: boolean;
+      isClientOnline?: boolean;
+      show?: string;
+    };
   const { accountId } = useAccountStore();
-  const accountJwt = location.state?.accountCert;
-  const isClientOffline = location.state?.isClientOffline;
-  const isClientOnline = location.state?.isClientOnline;
-  const show = location.state?.show;
+  const { accountJwt } = location.state as { accountJwt?: string };
 
   const [signatureValue, setSignatureValue] = useState<string | null>(null);
   const qrRef = useRef<HTMLCanvasElement>(null);
@@ -22,10 +25,10 @@ const QRGenerator: React.FC = () => {
   useEffect(() => {
     const generateSignature = async () => {
       try {
-        if (accountId && totalamount && accountJwt) {
+        if (accountId && totalAmount && accountJwt) {
           const signature = await signTransaction(
             accountId,
-            totalamount,
+            totalAmount,
             accountJwt,
           );
           setSignatureValue(signature);
@@ -38,11 +41,11 @@ const QRGenerator: React.FC = () => {
       }
     };
     generateSignature();
-  }, [accountId, totalamount, accountJwt]);
+  }, [accountId, totalAmount, accountJwt]);
 
   const qrValue = JSON.stringify({
     accountId: accountId,
-    amount: totalamount,
+    amount: totalAmount,
     timeGenerated: Date.now(),
     ...(signatureValue && isClientOffline ? { signature: signatureValue } : {}),
   });
@@ -108,7 +111,10 @@ const QRGenerator: React.FC = () => {
           {show == "Pay out" && (
             <button
               onClick={() =>
-                navigate("/qr-scan/top-up", { state: { isClientOffline } })
+                navigate({
+                  to: "/qr-scan/top-up",
+                  state: { isClientOffline } as never,
+                })
               }
               className="w-full px-6 py-3 text-white bg-amber-600 rounded-lg shadow-md transition hover:bg-amber-700 active:scale-95"
             >

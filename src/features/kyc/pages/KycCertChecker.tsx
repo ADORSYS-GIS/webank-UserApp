@@ -31,6 +31,7 @@ const KycCertChecker = () => {
         const certificate = certData.replace("Your certificate is:", "").trim();
         if (certificate) {
           setKycCert(certificate);
+          localStorage.setItem("kycCert", certificate);
           setStatus("APPROVED");
           setDocumentStatus("APPROVED");
         }

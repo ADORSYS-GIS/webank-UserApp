@@ -2,7 +2,7 @@
 // ... existing code from QRScannerPage.tsx ...
 
 import React, { useState, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useAccountStore } from "@state/accountStore";
@@ -37,10 +37,12 @@ const GeneralQRScannerPage: React.FC = () => {
   const [scannedName, setScannedName] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const isClientOffline = location.state?.isClientOffline;
-  const show = location.state?.show;
-  const sharedImage = location.state?.sharedImage;
+  const location = useRouterState().location;
+  const { isClientOffline, show, sharedImage } = location.state as {
+    isClientOffline?: boolean;
+    show?: string;
+    sharedImage?: string;
+  };
 
   const { accountId, accountCert } = useAccountStore();
 
@@ -55,14 +57,15 @@ const GeneralQRScannerPage: React.FC = () => {
         window.location.reload();
         return;
       }
-      navigate("/top-up", {
+      navigate({
+        to: "/top-up",
         state: {
           clientAccountId: data.accountId,
           agentAccountId: accountId,
           agentAccountCert: accountCert,
           show,
           clientName: data.name,
-        },
+        } as never,
       });
     },
     [accountId, accountCert, navigate, show],
@@ -80,7 +83,7 @@ const GeneralQRScannerPage: React.FC = () => {
         clientAccountId: data.accountId,
         agentAccountId: accountId,
         agentAccountCert: accountCert,
-        show: show || "",
+        show: show ?? "",
         clientName: data.name ?? "Anonymous",
       };
 
@@ -95,14 +98,15 @@ const GeneralQRScannerPage: React.FC = () => {
     setShowSaveContact(false);
 
     if (scannedAccountId) {
-      navigate("/top-up", {
+      navigate({
+        to: "/top-up",
         state: {
           clientAccountId: scannedAccountId,
           agentAccountId: accountId,
           agentAccountCert: accountCert,
           show,
           clientName: scannedName ?? "Anonymous",
-        },
+        } as never,
       });
     }
   };
@@ -111,14 +115,15 @@ const GeneralQRScannerPage: React.FC = () => {
     setShowSaveContact(false);
 
     if (scannedAccountId) {
-      navigate("/top-up", {
+      navigate({
+        to: "/top-up",
         state: {
           clientAccountId: scannedAccountId,
           agentAccountId: accountId,
           agentAccountCert: accountCert,
           show,
           clientName: scannedName ?? "Anonymous",
-        },
+        } as never,
       });
     }
   };
@@ -238,7 +243,7 @@ const GeneralQRScannerPage: React.FC = () => {
         </label>
 
         <button
-          onClick={() => navigate("/dashboard")}
+          onClick={() => navigate({ to: "/" })}
           className="w-full max-w-[280px] mx-auto bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
         >
           Cancel

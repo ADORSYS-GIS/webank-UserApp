@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useAccountStore } from "@state/accountStore";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 import { FiArrowLeft } from "react-icons/fi";
 import {
   useKycManagementServiceGetApiPrsKycFindByIdByDocumentUniqueId,
-  useAccountRecoveryServicePostApiPrsKycRecoveryValidate,
+  useKycRecoveryVerificationServicePostApiPrsKycRecoveryVerify,
 } from "openapi/generated/prs/queries/queries";
 import { ImageModal } from "@features/kyc/components/ImageModal";
 import { DocumentCard } from "@features/kyc/components/DocumentCard";
@@ -46,7 +46,7 @@ export default function RecoveryDashboard() {
       { enabled: !!searchDocId },
     );
   const recoveryValidateMutation =
-    useAccountRecoveryServicePostApiPrsKycRecoveryValidate();
+    useKycRecoveryVerificationServicePostApiPrsKycRecoveryVerify();
 
   // Helper to pick badge styles
   const getStatusStyles = (status: string) => {
@@ -154,14 +154,27 @@ export default function RecoveryDashboard() {
     setLoading(true);
     try {
       // The OpenAPI expects { newAccountId: string }
-      await recoveryValidateMutation.mutateAsync({
+      const response = await recoveryValidateMutation.mutateAsync({
         requestBody: {
-          newAccountId: foundRecord.oldAccountId, // Use the correct property
+          idNumber: formData.docNumber,
+          expiryDate: formData.expirationDate,
+          accountId: foundRecord.oldAccountId,
         },
       });
-      navigate("/recovery/recovery-scanner", {
-        state: { oldAccountId: foundRecord.oldAccountId },
-      });
+      console.log("Recovery validation response:", response);
+      if (
+        response.status == "SUCCESS" &&
+        response.message == "Document verification successful"
+      ) {
+        toast.success("Validation successful");
+        navigate({
+          to: "/recovery/recovery-scanner",
+          state: { oldAccountId: foundRecord.oldAccountId } as never,
+        });
+      } else {
+        console.log("Recovery validation response:", response);
+        toast.error(response.message);
+      }
     } catch (err: any) {
       toast.error(err?.message ?? "Validation request failed");
     } finally {
@@ -180,7 +193,7 @@ export default function RecoveryDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
       <button
-        onClick={() => navigate("/dashboard")}
+        onClick={() => navigate({ to: "/dashboard" })}
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Close form"
       >
@@ -363,6 +376,15 @@ export default function RecoveryDashboard() {
                   </div>
                 )}
               </div>
+              <Toaster
+                position="top-center"
+                richColors
+                toastOptions={{
+                  duration: 2000,
+                  className:
+                    "px-4 py-3 rounded-lg text-sm shadow-sm w-full animation-slideDown",
+                }}
+              />
             </form>
           </div>
         )}

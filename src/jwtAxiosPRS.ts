@@ -12,6 +12,7 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
   const url = config.url ?? "";
   const data = config.data ?? {};
   const accountCert = localStorage.getItem("accountCert");
+  const recoveryToken = localStorage.getItem("recoveryToken");
   let jwt: string | null = null;
 
   // PRS endpoints only
@@ -215,7 +216,26 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
       null,
       docNumber,
     );
-  } else if (url.includes("/recovery/token")) {
+   } else if (url.includes("/kyc/recovery/verify")) {
+    const { idNumber, expiryDate, accountId} = data;
+    console.log("KYC status data:", data);
+    const { publicKey, privateKey } = await KeyManagement();
+    jwt = await generateJWT(
+      privateKey,
+      publicKey,
+      null,
+      null,
+      accountCert,
+      null,
+      null,
+      null,
+      accountId,     
+      idNumber,
+      expiryDate,
+    );
+    console.log("Generated JWT for PRS KYC status update:", jwt);
+  } 
+  else if (url.includes("/recovery/token")) {
     const oldAccountId = data.oldAccountId;
     const newAccountId = data.newAccountId;
     const { publicKey, privateKey } = await KeyManagement();
@@ -233,7 +253,6 @@ OpenAPI.interceptors.request.use(async (config) => {//NOSONAR
     );
   } else if (url.includes("/recovery/validate")) {
     const newAccountId = data.newAccountId;
-    const recoveryToken = data.recoveryToken;
     const { publicKey, privateKey } = await KeyManagement();
     jwt = await generateJWT(
       privateKey,

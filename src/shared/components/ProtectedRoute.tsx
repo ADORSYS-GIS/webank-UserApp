@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "@tanstack/react-router";
 
 const ProtectedRoute = () => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";

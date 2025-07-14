@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
-import {
-  useRecoveryServicePostApiPrsKycRecoveryToken,
-  useAccountRecoveryServicePostApiPrsKycRecoveryValidate,
-} from "@openapi/generated/prs/queries/queries";
+import { useAccountRecoveryServicePostApiPrsKycRecoveryValidate } from "@openapi/generated/prs/queries/queries";
+import { useAccountRecoveryServicePostApiAccountsRecovery } from "@openapi/generated/obs/queries/queries";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faKey,
@@ -13,6 +11,7 @@ import {
   faCheck,
   faArrowLeft,
 } from "@fortawesome/free-solid-svg-icons";
+import { AccountRecoveryResponse } from "@openapi/generated/prs/requests/types.gen";
 
 const RecoverAccountPage: React.FC = () => {
   const [showTokenInput, setShowTokenInput] = useState(false);
@@ -25,9 +24,14 @@ const RecoverAccountPage: React.FC = () => {
 
   const supportPhoneNumber = "+237654066316";
   const { mutate: submitRecoveryToken } =
-    useRecoveryServicePostApiPrsKycRecoveryToken();
-  const { mutate: recoverAccountCert } =
     useAccountRecoveryServicePostApiPrsKycRecoveryValidate();
+  const { mutate: recoverAccountCert } =
+    useAccountRecoveryServicePostApiAccountsRecovery();
+
+  const handleTokenInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setToken(event.target.value);
+    localStorage.setItem("recoveryToken", event.target.value);
+  };
 
   const handleKYCRecovery = () => {
     const accountIdText = accountId ? `Account ID: ${accountId}\n\n` : "";
@@ -50,28 +54,19 @@ const RecoverAccountPage: React.FC = () => {
     submitRecoveryToken(
       {
         requestBody: {
-          oldAccountId: accountId, // OpenAPI expects oldAccountId
+          newAccountId: accountId, // OpenAPI expects oldAccountId
           // accountCert is not in TokenRequest, but if needed, add as custom field
         },
       },
       {
-        onSuccess: (data: string) => {
-          // Parse the response (assume data is "oldAccountId kycCert")
-          const [oldAccountIdRaw, kycCertRaw] =
-            typeof data === "string"
-              ? (data.split(" ") as [string, string])
-              : ["", ""];
+        onSuccess: (data: AccountRecoveryResponse) => {
+          const { accountId, kycCertificate } = data;
 
-          // Validate parsed values
-          const isInvalidToken = (value: string): boolean =>
-            value === "null" || value.trim() === "";
-          if (isInvalidToken(oldAccountIdRaw) || isInvalidToken(kycCertRaw)) {
-            toast.error("Invalid token. Please try again.");
-            return;
-          }
           // Values are valid non-empty strings
-          setAccountId(oldAccountIdRaw);
-          setKycCert(kycCertRaw);
+          setAccountId(accountId);
+          if (kycCertificate) {
+            setKycCert(kycCertificate);
+          }
           setShowTokenInput(false);
           setShowConfirmation(true);
         },
@@ -92,25 +87,20 @@ const RecoverAccountPage: React.FC = () => {
     }
     recoverAccountCert(
       {
-        requestBody: { newAccountId: accountId }, // OpenAPI expects newAccountId
+        requestBody: { accountId: accountId }, // OpenAPI expects newAccountId
       },
       {
-        onSuccess: (certResponse: {
-          accountId: string;
-          kycCertificate?: string;
-          status: string;
-          message?: string;
-        }) => {
-          if (certResponse?.kycCertificate) {
-            setAccountCert(certResponse.kycCertificate);
-            toast.success("Account recovery successful!");
-            setTimeout(() => {
-              navigate("/dashboard");
-            }, 1500);
-          } else {
+        onSuccess: (data: string) => {
+          if (data?.includes("Failed")) {
             toast.error(
               "Failed to recover account certificate. Please try again.",
             );
+          } else if (data?.startsWith("ey")) {
+            setAccountCert(data);
+            toast.success("Account recovery successful!");
+            setTimeout(() => {
+              navigate({ to: "/" });
+            }, 1500);
           }
           setShowConfirmation(false);
         },
@@ -126,7 +116,7 @@ const RecoverAccountPage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate("/settings");
+    navigate({ to: "/settings" });
   };
 
   return (
@@ -211,7 +201,7 @@ const RecoverAccountPage: React.FC = () => {
                   <input
                     type="text"
                     value={token}
-                    onChange={(e) => setToken(e.target.value)}
+                    onChange={handleTokenInput}
                     className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="Recovery Token"
                   />

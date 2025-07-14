@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 import {
   useEmailOtpServicePostApiPrsEmailOtpSend,
@@ -16,18 +16,25 @@ const EmailCode: React.FC = () => {
   const [otp, setOtp] = useState<string>("".padStart(6, " "));
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const { email } = location.state ?? {};
+  const location = useRouterState().location;
+  const { email } = location.state as {
+    email?: string;
+    accountCert?: string;
+  };
   const { accountId, setEmailStatus } = useAccountStore();
   const resendEmailMutation = useEmailOtpServicePostApiPrsEmailOtpSend();
   const verifyEmailOtpMutation = useEmailOtpServicePostApiPrsEmailOtpValidate();
 
   const resendOTP = async () => {
+    if (!email) {
+      toast.error("Email is missing.");
+      return;
+    }
     if (/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
       try {
         if (!accountId) {
           toast.error("Account information is missing.");
-          navigate("/dashboard");
+          navigate({ to: "/" });
           return;
         }
         const result = await resendEmailMutation.mutateAsync({
@@ -52,7 +59,7 @@ const EmailCode: React.FC = () => {
 
   const showAccountMissingError = () => {
     toast.error("Account information is missing.");
-    navigate("/dashboard");
+    navigate({ to: "/" });
   };
 
   const showOtpErrorMessage = (message: string) => {
@@ -85,7 +92,7 @@ const EmailCode: React.FC = () => {
     try {
       const result = await verifyEmailOtpMutation.mutateAsync({
         requestBody: {
-          email,
+          email: email || "",
           otpInput: enteredCode,
           accountId,
         },
@@ -93,9 +100,6 @@ const EmailCode: React.FC = () => {
       if (result?.status === "SUCCESS") {
         setShowSuccess(true);
         setEmailStatus("APPROVED");
-        setTimeout(() => {
-          navigate("/kyc");
-        }, 2000);
       } else {
         showOtpErrorMessage(result?.message ?? "Failed to verify OTP.");
       }
@@ -106,11 +110,11 @@ const EmailCode: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen w-screen bg-white overflow-hidden relative">
-      <div className="w-full max-w-md p-6 mx-auto mt-5 rounded-2xl text-center">
-        <div className="flex items-center mb-6">
+    <div className="min-h-screen w-full flex items-center justify-center bg-white px-0 sm:px-6 md:px-0">
+      <div className="">
+        <div className="flex items-center mb-4 sm:mb-6 w-full">
           <button
-            onClick={() => navigate("/inputEmail")}
+            onClick={() => navigate({ to: "/inputEmail" })}
             className="text-xl cursor-pointer p-2 focus:outline-none"
             aria-label="Back"
           >
@@ -120,68 +124,71 @@ const EmailCode: React.FC = () => {
             />
           </button>
         </div>
-
         {/* Custom Header */}
-        <h1 className="text-3xl font-bold mb-3">Verify Your Email</h1>
-        <p className="text-gray-600 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 text-center text-blue-700">
+          Verify Your Email
+        </h1>
+        <p className="text-gray-600 mb-4 sm:mb-6 text-base sm:text-lg text-center">
           Enter the 6-digit code sent to your email.
         </p>
-
         {/* OTP Input Component */}
-        <OtpInput
-          value={otp}
-          valueLength={6}
-          onChange={setOtp}
-          showHeader={false}
-        />
-
-        <p className="text-gray-600 mb-2">
-          Didn't receive the code? Click below to resend.
+        <div className="mb-4 sm:mb-6 flex justify-center w-full">
+          <OtpInput
+            value={otp}
+            valueLength={6}
+            onChange={setOtp}
+            showHeader={false}
+          />
+        </div>
+        <p className="text-gray-600 mb-2 text-sm sm:text-base text-center">
+          Didn't receive the code?{" "}
+          <span className="block sm:inline">Click below to resend.</span>
         </p>
         <button
-          className="text-blue-500 font-semibold hover:underline mb-6"
+          className="text-blue-600 font-semibold hover:underline mb-4 sm:mb-6 text-sm sm:text-base block mx-auto"
           onClick={resendOTP}
         >
           Resend Code
         </button>
-
-        <div className="flex justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between mt-2 w-full">
           <button
-            className="w-1/3 py-3 bg-gray-300 text-black font-semibold rounded-full shadow-md hover:bg-gray-400 transition"
-            onClick={() => navigate("/inputEmail")}
+            className="w-full py-2 sm:w-1/3 sm:py-3 bg-gray-200 text-black font-semibold rounded-full shadow hover:bg-gray-300 transition text-sm sm:text-base border border-gray-300"
+            onClick={() => navigate({ to: "/inputEmail" })}
           >
             Back
           </button>
           <button
-            className="w-1/3 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition"
+            className="w-full py-2 sm:w-1/3 sm:py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-full shadow hover:from-blue-600 hover:to-blue-700 transition text-sm sm:text-base border border-blue-500"
             onClick={handleVerify}
           >
             Verify
           </button>
         </div>
-      </div>
-
-      {showSuccess && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-            <div className="w-16 h-16 bg-blue-100 text-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <FontAwesomeIcon icon={faCheckCircle} className="text-3xl" />
+        {showSuccess && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-2 sm:px-4">
+            <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-xl text-center w-full max-w-xs sm:max-w-sm mx-auto border border-gray-100">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 text-blue-500 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center">
+                <FontAwesomeIcon
+                  icon={faCheckCircle}
+                  className="text-2xl sm:text-3xl"
+                />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-blue-700">
+                Successful Email Verification
+              </h2>
+              <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">
+                Your email has been successfully verified!
+              </p>
+              <button
+                className="py-2 px-4 w-full sm:w-auto sm:px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-full shadow hover:from-blue-600 hover:to-blue-700 transition text-sm sm:text-base border border-blue-500"
+                onClick={() => navigate({ to: "/settings" })}
+              >
+                OK
+              </button>
             </div>
-            <h2 className="text-2xl font-bold mb-3">
-              Successful Email Verification
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Your email has been successfully verified!
-            </p>
-            <button
-              className="py-2 px-6 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition"
-              onClick={() => navigate("/")}
-            >
-              OK
-            </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

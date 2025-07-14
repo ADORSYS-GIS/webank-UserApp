@@ -1,7 +1,7 @@
 // KYCDashboard.tsx - Main component (significantly simplified)
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { FiArrowLeft } from "react-icons/fi";
 import { ImageModal } from "@features/kyc/components/ImageModal";
 import { RejectionModal } from "@features/kyc/components/RejectionModal";
@@ -9,6 +9,7 @@ import { PendingKycList } from "@features/kyc/components/PendingKycList";
 import { UserDetailsForm } from "@features/kyc/components/UserDetailsForm";
 import { useKycData } from "@features/kyc/hooks/useKycData";
 import { KycStatus } from "@features/kyc/types/types";
+import { Toaster } from "sonner";
 
 export default function KYCDashboard(): JSX.Element {
   const {
@@ -31,7 +32,13 @@ export default function KYCDashboard(): JSX.Element {
     status: KycStatus,
   ): Promise<void> => {
     e.preventDefault();
-    await updateKycStatus(status);
+    const response = await updateKycStatus(status);
+    console.log("KYC status updated:", response);
+    if (response) {
+      console.log("KYC status updated:", response);
+    } else {
+      console.log("Failed KYC status updated:", response);
+    }
   };
 
   const handleRejectWithReason = async (reason: string) => {
@@ -44,7 +51,7 @@ export default function KYCDashboard(): JSX.Element {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 sm:p-8">
       <button
-        onClick={() => navigate("/dashboard")}
+        onClick={() => navigate({ to: "/" })}
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Back to dashboard"
         type="button"
@@ -95,6 +102,15 @@ export default function KYCDashboard(): JSX.Element {
           />
         )}
       </div>
+      <Toaster
+        position="top-center"
+        richColors
+        toastOptions={{
+          duration: 2000,
+          className:
+            "px-4 py-3 rounded-lg text-sm shadow-sm w-full animation-slideDown",
+        }}
+      />
     </div>
   );
 }
