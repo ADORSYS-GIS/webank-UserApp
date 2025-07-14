@@ -101,10 +101,6 @@ const RecoverAccountPage: React.FC = () => {
             setTimeout(() => {
               navigate({ to: "/" });
             }, 1500);
-          } else {
-            toast.error(
-              "Failed to recover account certificate. Please try again.",
-            );
           }
           setShowConfirmation(false);
         },
