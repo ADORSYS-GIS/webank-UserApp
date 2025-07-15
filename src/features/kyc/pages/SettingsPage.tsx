@@ -1,5 +1,14 @@
 import React from "react";
-import { ChevronRight, LogOut, User, Shield, HelpCircle } from "react-feather";
+import {
+  ChevronRight,
+  LogOut,
+  User,
+  Shield,
+  HelpCircle,
+  Mail,
+  Phone,
+  Repeat,
+} from "react-feather";
 import { useNavigate } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
 
@@ -27,7 +36,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
                 ${disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-black-50 active:bg-black-100"}
                 focus:outline-none`}
     >
-      <div className="flex items-center">
+      <div className="flex items-center w-full">
+        {" "}
+        {/* Added w-full here */}
         <div
           className={`w-12 h-12 rounded-lg flex items-center justify-center 
                     mr-4 transition-all duration-200
@@ -36,7 +47,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
         >
           {React.createElement(icon, { size: 20 })}
         </div>
-        <div>
+        <div className="flex-1 text-left">
+          {" "}
+          {/* Added flex-1 and text-left */}
           <p className="font-medium text-black-800">{title}</p>
           <p className="text-sm text-black-500 mt-1">{description}</p>
         </div>
@@ -159,7 +172,7 @@ const SettingsPage: React.FC = () => {
 
           <div className="group">
             <MenuItem
-              icon={User}
+              icon={Mail}
               title="Email verification"
               description={
                 emailStatus === "APPROVED"
@@ -173,7 +186,7 @@ const SettingsPage: React.FC = () => {
 
           <div className="group">
             <MenuItem
-              icon={User}
+              icon={Phone}
               title="Phone number verification"
               description={
                 phoneStatus === "APPROVED"
@@ -187,7 +200,7 @@ const SettingsPage: React.FC = () => {
 
           <div className="group">
             <MenuItem
-              icon={User}
+              icon={Repeat}
               title="Recover your account"
               description="Restore access to your account"
               onClick={handleRecoverAccount}
