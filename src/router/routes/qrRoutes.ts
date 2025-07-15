@@ -1,18 +1,11 @@
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./routeTree";
 import AppLayout from "../../layouts/AppLayout";
-import { lazy } from "react";
 
-const TopUpQRScannerPage = lazy(
-  () => import("@features/qr/pages/TopUpQRScannerPage"),
-);
-const GeneralQRScannerPage = lazy(
-  () => import("@features/qr/pages/GeneralQRScannerPage"),
-);
-const OfflineQRScannerPage = lazy(
-  () => import("@features/qr/pages/OfflineQRScannerPage"),
-);
-const QRGenerator = lazy(() => import("@features/qr/pages/Qrcode"));
+import TopUpQRScannerPage from "@features/qr/pages/TopUpQRScannerPage";
+import GeneralQRScannerPage from "@features/qr/pages/GeneralQRScannerPage";
+import OfflineQRScannerPage from "@features/qr/pages/OfflineQRScannerPage";
+import QRGenerator from "@features/qr/pages/Qrcode";
 
 const qrParentRoute = createRoute({
   getParentRoute: () => rootRoute,

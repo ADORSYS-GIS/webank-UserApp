@@ -13,11 +13,7 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
         },
-        manualChunks(id) {
-          if (/projectEnvVariables.ts/.test(id)) {
-            return "projectEnvVariables";
-          }
-        },
+        chunkFileNames: "assets/[name]-[hash].js",
       },
     },
   },
@@ -102,7 +98,8 @@ export default defineConfig({
         ],
       },
       injectManifest: {
-        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
       },
       devOptions: {
         enabled: true,

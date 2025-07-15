@@ -1,34 +1,19 @@
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./routeTree";
 import AppLayout from "../../layouts/AppLayout";
-import { lazy } from "react";
 
-const SettingsPage = lazy(() => import("@features/kyc/pages/SettingsPage"));
-const EmailVerification = lazy(
-  () => import("@features/kyc/pages/emailVerification"),
-);
-const EmailCode = lazy(() => import("@features/kyc/pages/emailCode"));
-const IdentityVerificationPage = lazy(
-  () => import("@features/kyc/pages/IdentityVerificationPage"),
-);
-const IDCardForm = lazy(() => import("@features/kyc/pages/IDCardForm"));
-const DriverLicenseForm = lazy(
-  () => import("@features/kyc/pages/DriverLicenseForm"),
-);
-const PassportForm = lazy(() => import("@features/kyc/pages/PassportForm"));
-const LocationComponent = lazy(
-  () => import("@features/kyc/components/LocationComponent"),
-);
-const RecoverAccountPage = lazy(
-  () => import("@features/kyc/pages/RecoverAccountPage"),
-);
-const GuidelinesPage = lazy(
-  () => import("@features/kyc/guidelines/GuidelinesPage"),
-);
-const MapConfirmation = lazy(
-  () => import("@features/kyc/components/MapConfirmation"),
-);
-const DocumentImages = lazy(() => import("@features/kyc/pages/DocumentImages"));
+import SettingsPage from "@features/kyc/pages/SettingsPage";
+import EmailVerification from "@features/kyc/pages/emailVerification";
+import EmailCode from "@features/kyc/pages/emailCode";
+import IdentityVerificationPage from "@features/kyc/pages/IdentityVerificationPage";
+import IDCardForm from "@features/kyc/pages/IDCardForm";
+import DriverLicenseForm from "@features/kyc/pages/DriverLicenseForm";
+import PassportForm from "@features/kyc/pages/PassportForm";
+import LocationComponent from "@features/kyc/components/LocationComponent";
+import RecoverAccountPage from "@features/kyc/pages/RecoverAccountPage";
+import GuidelinesPage from "@features/kyc/guidelines/GuidelinesPage";
+import MapConfirmation from "@features/kyc/components/MapConfirmation";
+import DocumentImages from "@features/kyc/pages/DocumentImages";
 
 const kycParentRoute = createRoute({
   getParentRoute: () => rootRoute,

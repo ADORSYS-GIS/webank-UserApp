@@ -1,13 +1,10 @@
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./routeTree";
 import AppLayout from "../../layouts/AppLayout";
-import { lazy } from "react";
 
-const Login = lazy(() => import("@features/auth/pages/Login"));
-const PhoneInput = lazy(() => import("@features/auth/pages/PhoneInput"));
-const PhoneVerification = lazy(
-  () => import("@features/auth/pages/PhoneVerification"),
-);
+import Login from "@features/auth/pages/Login";
+import PhoneInput from "@features/auth/pages/PhoneInput";
+import PhoneVerification from "@features/auth/pages/PhoneVerification";
 
 const authParentRoute = createRoute({
   getParentRoute: () => rootRoute,

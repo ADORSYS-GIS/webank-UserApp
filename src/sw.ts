@@ -5,6 +5,8 @@ import {
   precacheAndRoute,
 } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
+import { StaleWhileRevalidate } from "workbox-strategies";
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -59,6 +61,26 @@ precacheAndRoute(self.__WB_MANIFEST);
 
 let allowlist;
 if (import.meta.env.DEV) allowlist = [/^\/$/];
+
+// ADDED: Runtime caching for JavaScript chunks
+registerRoute(
+  ({ request }) => request.destination === "script",
+  new StaleWhileRevalidate({
+    cacheName: "js-chunks",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+    ],
+  }),
+);
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    console.log("[SW] Skipping waiting");
+    self.skipWaiting();
+  }
+});
 
 registerRoute(
   new NavigationRoute(createHandlerBoundToURL("index.html"), { allowlist }),
