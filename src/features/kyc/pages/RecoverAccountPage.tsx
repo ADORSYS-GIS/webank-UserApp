@@ -4,7 +4,7 @@ import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useAccountRecoveryServicePostApiPrsKycRecoveryValidate } from "@openapi/generated/prs/queries/queries";
 import { useAccountRecoveryServicePostApiAccountsRecovery } from "@openapi/generated/obs/queries/queries";
-import { Repeat, CreditCard, ArrowLeft, Key} from "react-feather";
+import { Repeat, CreditCard, ArrowLeft, Key } from "react-feather";
 import { AccountRecoveryResponse } from "@openapi/generated/prs/requests/types.gen";
 
 const RecoverAccountPage: React.FC = () => {

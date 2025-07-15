@@ -97,43 +97,43 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
   return (
     <FormContext.Provider value={contextValue}>
-     <div className="min-h-screen bg-white flex items-start justify-center">
-      <div
-        className="w-[600px] mx-auto mt-32 p-6 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.1)]"
-        style={{ fontFamily: "Poppins, sans-serif" }}
-      >
-        <div className="flex justify-between items-center mb-6">
-          <h2
-            id="form-title"
-            className="text-2xl font-bold mb-6 text-center text-gray-800"
-          >
-            {title}
-          </h2>
-          <button
-            onClick={handleCancel}
-            className="text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
-            aria-label="Close form"
-            title="Close form"
-          >
-            ×
-          </button>
-        </div>
-        <form
-          className="space-y-5"
-          aria-labelledby="form-title"
-          onSubmit={handleSubmit}
+      <div className="min-h-screen bg-white flex items-start justify-center">
+        <div
+          className="w-[600px] mx-auto mt-32 p-6 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.1)]"
+          style={{ fontFamily: "Poppins, sans-serif" }}
         >
-          {children}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-4 rounded-3xl
-                     font-semibold transition duration-300 ease-in-out shadow-lg mt-2"
+          <div className="flex justify-between items-center mb-6">
+            <h2
+              id="form-title"
+              className="text-2xl font-bold mb-6 text-center text-gray-800"
+            >
+              {title}
+            </h2>
+            <button
+              onClick={handleCancel}
+              className="text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
+              aria-label="Close form"
+              title="Close form"
+            >
+              ×
+            </button>
+          </div>
+          <form
+            className="space-y-5"
+            aria-labelledby="form-title"
+            onSubmit={handleSubmit}
           >
-            Submit
-          </button>
-        </form>
+            {children}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-4 rounded-3xl
+                     font-semibold transition duration-300 ease-in-out shadow-lg mt-2"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
     </FormContext.Provider>
   );
 };
