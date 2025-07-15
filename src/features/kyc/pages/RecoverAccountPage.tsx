@@ -4,7 +4,7 @@ import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useAccountRecoveryServicePostApiPrsKycRecoveryValidate } from "@openapi/generated/prs/queries/queries";
 import { useAccountRecoveryServicePostApiAccountsRecovery } from "@openapi/generated/obs/queries/queries";
-import { Key, CreditCard, ArrowLeft } from "react-feather";
+import { Repeat, CreditCard, ArrowLeft, Key} from "react-feather";
 import { AccountRecoveryResponse } from "@openapi/generated/prs/requests/types.gen";
 
 const RecoverAccountPage: React.FC = () => {
@@ -135,7 +135,7 @@ const RecoverAccountPage: React.FC = () => {
       <main className="flex-1 p-4 max-w-md mx-auto w-full">
         <div className="mb-6 text-center">
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Key className="w-8 h-8 text-blue-500" />
+            <Repeat className="w-8 h-8 text-blue-500" />
           </div>
           <h2 className="text-xl font-bold mb-2">Recover Your Account</h2>
           <p className="text-gray-600 text-sm">

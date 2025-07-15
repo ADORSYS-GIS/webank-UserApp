@@ -97,8 +97,9 @@ export const FormContainer: React.FC<FormContainerProps> = ({
 
   return (
     <FormContext.Provider value={contextValue}>
+     <div className="min-h-screen bg-white flex items-start justify-center">
       <div
-        className="max-w-lg mx-auto items-center mt-32 p-4 md:p-6 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.1)]"
+        className="w-[600px] mx-auto mt-32 p-6 bg-white rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.1)]"
         style={{ fontFamily: "Poppins, sans-serif" }}
       >
         <div className="flex justify-between items-center mb-6">
@@ -132,6 +133,7 @@ export const FormContainer: React.FC<FormContainerProps> = ({
           </button>
         </form>
       </div>
+    </div>
     </FormContext.Provider>
   );
 };
