@@ -8,7 +8,7 @@ const SESSION_STORAGE_KEY = "kycReminderShown";
 
 export const useKYCReminder = () => {
   const [showReminder, setShowReminder] = useState(false);
-  const { kycCert, status } = useAccountStore();
+  const { accountId, kycCert, status } = useAccountStore();
   const location = useRouterState().location;
 
   useEffect(() => {
@@ -20,11 +20,13 @@ export const useKYCReminder = () => {
     }
 
     // Only show reminder if:
-    // 1. KYC is not started (null)
-    // 2. Not in PENDING status
-    // 3. On included routes
-    // 4. Not shown in this session yet
+    // 1. Account is not null (NOT on the onboarding page)
+    // 2. KYC is not started (null)
+    // 3. Not in PENDING status
+    // 4. On included routes
+    // 5. Not shown in this session yet
     if (
+      accountId &&
       kycCert == null &&
       status == null &&
       INCLUDED_ROUTES.includes(location.pathname) &&
@@ -35,7 +37,7 @@ export const useKYCReminder = () => {
     } else {
       setShowReminder(false);
     }
-  }, [kycCert, status, location.pathname]);
+  }, [kycCert, status, location.pathname, accountId]);
 
   const handleClose = () => {
     setShowReminder(false);

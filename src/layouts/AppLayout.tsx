@@ -2,7 +2,7 @@ import Layout from "@shared/components/Layout";
 import Header from "@shared/components/Header";
 import KycCertChecker from "@features/kyc/pages/KycCertChecker";
 import { Toaster } from "sonner";
-import { ReactNode, Suspense, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import BottomNavigation from "@shared/components/BottomNavigation";
@@ -42,9 +42,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Content wrapper with bottom padding */}
       <div className={`${accountId ? "pb-16" : ""}`}>
         {children}
-        <Suspense fallback={<div>Loading...</div>}>
-          <Outlet />
-        </Suspense>
+        <Outlet />
       </div>
 
       {/* Bottom Navigation */}

@@ -1,6 +1,11 @@
 import { createRoute, redirect } from "@tanstack/react-router";
 import { rootRoute } from "./routeTree";
-import { lazy } from "react";
+
+import AccountConfirmation from "@features/kyc/pages/AccountConfirmation";
+import RecoveryToken from "@features/kyc/pages/RecoveryToken";
+import AccountRecoveryScannerPage from "@features/kyc/pages/AccountRecoveryScannerPage";
+import KycRecoveryPage from "@features/kyc/pages/KycRecoveryPage";
+import KycVerificationPage from "@features/kyc/pages/KycVerificationPage";
 
 // Create the protected parent route
 const protectedParent = createRoute({
@@ -25,28 +30,26 @@ export const protectedRoutesGroup = protectedParent.addChildren([
   createRoute({
     getParentRoute: () => protectedParent,
     path: "/agency",
-    component: lazy(() => import("@features/kyc/pages/KycVerificationPage")),
+    component: KycVerificationPage,
   }),
   createRoute({
     getParentRoute: () => protectedParent,
     path: "/account-recovery",
-    component: lazy(() => import("@features/kyc/pages/KycRecoveryPage")),
+    component: KycRecoveryPage,
   }),
   createRoute({
     getParentRoute: () => protectedParent,
     path: "/recovery/recovery-scanner",
-    component: lazy(
-      () => import("@features/kyc/pages/AccountRecoveryScannerPage"),
-    ),
+    component: AccountRecoveryScannerPage,
   }),
   createRoute({
     getParentRoute: () => protectedParent,
     path: "/recovery/account-confirmation",
-    component: lazy(() => import("@features/kyc/pages/AccountConfirmation")),
+    component: AccountConfirmation,
   }),
   createRoute({
     getParentRoute: () => protectedParent,
     path: "/recovery/recoverytoken",
-    component: lazy(() => import("@features/kyc/pages/RecoveryToken")),
+    component: RecoveryToken,
   }),
 ]);
