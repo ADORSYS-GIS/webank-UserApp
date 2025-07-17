@@ -25,7 +25,7 @@ const PhoneVerification: React.FC = () => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(30);
 
-  const { accountCert: accountJwt, setPhoneStatus } = useAccountStore();
+  const { accountCert, setPhoneStatus } = useAccountStore();
 
   // Use TanStack Query mutations for OTP
   const otpSendMutation = useOtpManagementServicePostApiPrsOtpSend();
@@ -36,7 +36,7 @@ const PhoneVerification: React.FC = () => {
       toast.error("Required data is missing. Please try again.");
       return;
     }
-    if (!accountJwt) {
+    if (!accountCert) {
       toast.error("Authentication error. Please try again.");
       return;
     }
@@ -61,7 +61,7 @@ const PhoneVerification: React.FC = () => {
         toast.info("Required data is missing!");
         return;
       }
-      if (!accountJwt) {
+      if (!accountCert) {
         toast.error("Authentication error. Please try again.");
         return;
       }

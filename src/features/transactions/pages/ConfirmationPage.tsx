@@ -63,7 +63,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   // Helper: handle offline navigation for different show types
   function handleOfflineNavigation(type: string) {
     if (type !== "Transfer" && type !== "Payment" && type !== "Top up") {
-      toast.info("Oops, you are offline. Redirecting to the amount page...");
+      toast.info("Oops, you are offline. Initiating offline withdrawal...");
       setTimeout(() => {
         navigate({
           to: "/top-up",
@@ -74,7 +74,8 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             clientName,
           } as never,
         });
-      }, 4000);
+        handleDismiss();
+      }, 5000);
     } else if (type === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
       setTimeout(() => navigate({ to: "/" }), 4000);
