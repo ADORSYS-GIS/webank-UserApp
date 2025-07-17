@@ -57,9 +57,9 @@ const RecoverAccountPage: React.FC = () => {
           const { accountId, kycCertificate } = data;
 
           // Values are valid non-empty strings
-          setAccountId(accountId);
+          localStorage.setItem("accountId", accountId);
           if (kycCertificate) {
-            setKycCert(kycCertificate);
+            localStorage.setItem("kycCertificate", kycCertificate);
           }
           setShowTokenInput(false);
           setShowConfirmation(true);
@@ -91,6 +91,8 @@ const RecoverAccountPage: React.FC = () => {
             );
           } else if (data?.startsWith("ey")) {
             setAccountCert(data);
+            setAccountId(localStorage.getItem("accountId") ?? "");
+            setKycCert(localStorage.getItem("kycCertificate") ?? "");
             toast.success("Account recovery successful!");
             setTimeout(() => {
               navigate({ to: "/" });
