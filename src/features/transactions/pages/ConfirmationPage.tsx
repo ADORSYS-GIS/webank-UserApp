@@ -63,7 +63,9 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   // Helper: handle offline navigation for different show types
   function handleOfflineNavigation(type: string) {
     if (type !== "Transfer" && type !== "Payment" && type !== "Top up") {
-      toast.info("Oops, you are offline. Initiating offline withdrawal...");
+      toast.info("Oops, you are offline. Initiating offline withdrawal...", {
+        duration: 5000,
+      });
       setTimeout(() => {
         navigate({
           to: "/top-up",
@@ -100,7 +102,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
       });
       if (response?.status === "COMPLETED" || response?.status === "PENDING") {
         const transactionCert = response?.transactionId ?? "";
-        toast.success("Account successfully topped up.");
+        toast.success(`${show} successfully completed.`);
         navigate({
           to: "/success",
           state: {

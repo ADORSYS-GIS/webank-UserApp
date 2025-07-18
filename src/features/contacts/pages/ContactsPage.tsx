@@ -2,10 +2,14 @@ import React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import ContactList from "@shared/components/ContactList";
 import { Contact } from "@services/contacts/contactService";
+import { useRouterState } from "@tanstack/react-router";
 
 const ContactsPage: React.FC = () => {
   const navigate = useNavigate();
-
+  const location = useRouterState().location;
+  const { show } = location.state as {
+    show?: string;
+  };
   const handleSelectContact = (contact: Contact) => {
     navigate({
       to: "/top-up",
@@ -13,7 +17,7 @@ const ContactsPage: React.FC = () => {
         clientAccountId: contact.accountId,
         clientName: contact.name,
         fromContacts: true,
-        show: "Payment",
+        show,
       } as never,
     });
   };

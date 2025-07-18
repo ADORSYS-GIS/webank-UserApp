@@ -116,13 +116,20 @@ const TopUpPage: React.FC = () => {
               Enter {show} Amount (XAF)
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
               pattern="[0-9]*"
+              min={0}
+              max={5000000}
+              step={1}
               id="amount"
               placeholder="0"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                // Only allow numbers
+                const val = e.target.value.replace(/[^0-9]/g, "");
+                setAmount(val);
+              }}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"
               autoComplete="off"
               autoFocus

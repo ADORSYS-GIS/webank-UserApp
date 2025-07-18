@@ -141,8 +141,10 @@ const TopUpQRScannerPage: React.FC = () => {
 
       if (data.accountId === accountId) {
         toast.error("Self-transfer not allowed.");
-        window.location.reload();
-        return false;
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+        return;
       }
 
       return true;

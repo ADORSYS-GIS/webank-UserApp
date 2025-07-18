@@ -44,7 +44,7 @@ export default function SuccessPage() {
         <CheckCircle className="text-emerald-600 w-20 h-20 mx-auto mb-6 animate-bounce" />
 
         <h1 className="text-3xl font-bold text-gray-800 mb-2 text-center">
-          Payment Successful
+          Transaction Successful
         </h1>
 
         <p className="text-gray-600 text-center mb-8">
@@ -68,14 +68,14 @@ export default function SuccessPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2 border-b border-gray-200">
-              <dt className="text-gray-600 font-medium">Payment Time</dt>
+              <dt className="text-gray-600 font-medium">Transaction Time</dt>
               <dd className="text-gray-900 break-all whitespace-normal">
                 {formattedPaymentTime}
               </dd>
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-              <dt className="text-gray-600 font-medium">Payment Method</dt>
+              <dt className="text-gray-600 font-medium">Transaction Method</dt>
               <dd className="text-gray-900 break-all whitespace-normal">
                 {paymentMethod}
               </dd>

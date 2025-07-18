@@ -42,8 +42,9 @@ const EmailCode: React.FC = () => {
             accountId,
           },
         });
-        if (result?.status === "PENDING") {
-          toast.success("OTP Resend, please check your email.", {
+        console.log("Result:", result);
+        if (result?.status === "SUCCESS") {
+          toast.success("OTP resent, please check your email.", {
             duration: 5000,
           });
         }

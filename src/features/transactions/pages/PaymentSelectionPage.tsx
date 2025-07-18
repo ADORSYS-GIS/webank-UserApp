@@ -17,7 +17,7 @@ const PaymentSelectionPage: React.FC = () => {
         <div className="space-y-4">
           <button
             onClick={() =>
-              navigate({ to: "/contacts", state: { show: "Payment" } as never })
+              navigate({ to: "/contacts", state: { show } as never })
             }
             className="w-full flex items-center justify-center space-x-3 bg-blue-500 text-white py-4 px-6 rounded-lg hover:bg-blue-600 transition-colors"
           >
