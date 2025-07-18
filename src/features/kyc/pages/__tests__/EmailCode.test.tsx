@@ -223,7 +223,7 @@ describe("EmailCode", () => {
   });
 
   it("handles OTP resend successfully", async () => {
-    mockResendOtp.mockResolvedValueOnce({ status: "PENDING" });
+    mockResendOtp.mockResolvedValueOnce({ status: "SUCCESS" });
 
     render(<EmailCode />);
 
@@ -245,7 +245,7 @@ describe("EmailCode", () => {
       });
 
       expect(toast.success).toHaveBeenCalledWith(
-        "OTP Resend, please check your email.",
+        "OTP resent, please check your email.",
         { duration: 5000 },
       );
     });
