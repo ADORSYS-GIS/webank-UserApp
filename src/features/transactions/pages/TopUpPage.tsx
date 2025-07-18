@@ -127,7 +127,7 @@ const TopUpPage: React.FC = () => {
               value={amount}
               onChange={(e) => {
                 // Only allow numbers
-                const val = e.target.value.replace(/[^0-9]/g, "");
+                const val = e.target.value.replace(/\D/g, "");
                 setAmount(val);
               }}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg"

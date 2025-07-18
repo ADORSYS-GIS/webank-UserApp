@@ -1,8 +1,7 @@
 import React from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useRouterState } from "@tanstack/react-router";
 import ContactList from "@shared/components/ContactList";
 import { Contact } from "@services/contacts/contactService";
-import { useRouterState } from "@tanstack/react-router";
 
 const ContactsPage: React.FC = () => {
   const navigate = useNavigate();
