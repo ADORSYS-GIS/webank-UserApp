@@ -1,5 +1,5 @@
 import React from "react";
-import { FiDownloadCloud } from "react-icons/fi";
+import { DownloadCloud } from "react-feather";
 import { motion } from "framer-motion";
 
 interface InstallButtonProps {
@@ -48,7 +48,7 @@ const InstallButton: React.FC<InstallButtonProps> = ({ deferredPrompt }) => {
 
       {/* Content */}
       <div className="flex items-center space-x-2">
-        <FiDownloadCloud className="w-5 h-5 transform group-hover:scale-110 transition-transform" />
+        <DownloadCloud size={20} className="scale-110" />
         <span className="text-sm bg-gradient-to-r from-cyan-100 to-blue-50 bg-clip-text text-transparent">
           Install Webank
         </span>

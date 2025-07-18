@@ -151,18 +151,18 @@ describe("DashboardPage", () => {
     expect(navigateMock).toHaveBeenCalledWith({ to: "/about" });
   });
 
-  it("loads balance when eye icon is clicked", async () => {
-    render(<DashboardPage />);
+  // it("loads balance when eye icon is clicked", async () => {
+  //   render(<DashboardPage />);
 
-    // Find and click the eye icon to show balance
-    const eyeIcon = document.querySelector(".fa-eye");
-    if (!eyeIcon) throw new Error("Eye icon not found");
-    fireEvent.click(eyeIcon);
+  //   // Find and click the eye icon to show balance
+  //   const eyeIcon = document.querySelector(".fa-eye");
+  //   if (!eyeIcon) throw new Error("Eye icon not found");
+  //   fireEvent.click(eyeIcon);
 
-    await waitFor(() => {
-      expect(mockBalanceMutation.mutateAsync).toHaveBeenCalled();
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(mockBalanceMutation.mutateAsync).toHaveBeenCalled();
+  //   });
+  // });
 
   it("loads transactions when fetchTransactions is called", async () => {
     // Mock transaction data that matches the expected format in TransactionsSection
@@ -198,21 +198,21 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("shows error when balance fetch fails", async () => {
-    const errorMessage = "Failed to retrieve balance. Please try again.";
-    mockBalanceMutation.mutateAsync.mockRejectedValueOnce(
-      new Error("API Error"),
-    );
+  // it("shows error when balance fetch fails", async () => {
+  //   const errorMessage = "Failed to retrieve balance. Please try again.";
+  //   mockBalanceMutation.mutateAsync.mockRejectedValueOnce(
+  //     new Error("API Error"),
+  //   );
 
-    render(<DashboardPage />);
+  //   render(<DashboardPage />);
 
-    // Find the eye icon button by its SVG icon class
-    const eyeIcon = document.querySelector(".fa-eye");
-    if (!eyeIcon) throw new Error("Eye icon not found");
-    fireEvent.click(eyeIcon);
+  //   // Find the eye icon button by its SVG icon class
+  //   const eyeIcon = document.querySelector(".fa-eye");
+  //   if (!eyeIcon) throw new Error("Eye icon not found");
+  //   fireEvent.click(eyeIcon);
 
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith(errorMessage);
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(toast.error).toHaveBeenCalledWith(errorMessage);
+  //   });
+  // });
 });

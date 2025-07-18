@@ -1,10 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBell,
-  faInfoCircle,
-  faUserTie,
-} from "@fortawesome/free-solid-svg-icons";
+import { Bell, Info, User } from "react-feather";
 import { useNavigate } from "@tanstack/react-router";
 
 interface HeaderProps {
@@ -56,7 +51,7 @@ const Header1: React.FC<HeaderProps> = ({
           className="p-2 rounded-full hover:bg-blue-50 text-blue-500"
           aria-label="Service Menu"
         >
-          <FontAwesomeIcon icon={faUserTie} className="text-blue-500" />
+          <User className="text-blue-500" size={20} />
         </button>
 
         <button
@@ -64,7 +59,7 @@ const Header1: React.FC<HeaderProps> = ({
           className="p-2 rounded-full hover:bg-gray-100"
           aria-label="Notifications"
         >
-          <FontAwesomeIcon icon={faBell} className="text-gray-600" />
+          <Bell className="text-gray-600" size={20} />
         </button>
 
         <button
@@ -72,7 +67,7 @@ const Header1: React.FC<HeaderProps> = ({
           className="p-2 rounded-full hover:bg-gray-100"
           aria-label="About"
         >
-          <FontAwesomeIcon icon={faInfoCircle} className="text-gray-600" />
+          <Info className="text-gray-600" size={20} />
         </button>
       </div>
     </div>

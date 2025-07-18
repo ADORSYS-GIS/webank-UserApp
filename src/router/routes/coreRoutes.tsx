@@ -1,31 +1,21 @@
 import { createRoute } from "@tanstack/react-router";
 import { rootRoute } from "./routeTree";
 import AppLayout from "../../layouts/AppLayout";
-import { lazy } from "react";
 
 // Import HomePage from the new file
 import HomePage from "../../layouts/HomePage";
 
-const AboutPage = lazy(() => import("@shared/pages/AboutPage"));
-const AccountLoadingPage = lazy(
-  () => import("@shared/pages/AccountLoadingPage"),
-);
-const ShareHandlerPage = lazy(() => import("@shared/pages/ShareHandlerPage"));
-const AgentPage = lazy(() => import("@features/teller/pages/AgentPage"));
-const AgentTopUpPage = lazy(
-  () => import("@features/teller/pages/AgentTopUpPage"),
-);
-const TellerDashboard = lazy(() => import("@features/teller/pages/TellerPage"));
-const ContactsPage = lazy(
-  () => import("@features/contacts/pages/ContactsPage"),
-);
-const PaymentSelectionPage = lazy(
-  () => import("@features/transactions/pages/PaymentSelectionPage"),
-);
-const SuccessPage = lazy(
-  () => import("@features/transactions/pages/SuccessPage"),
-);
-const TopUpPage = lazy(() => import("@features/transactions/pages/TopUpPage"));
+import AboutPage from "@shared/pages/AboutPage";
+import AccountLoadingPage from "@shared/pages/AccountLoadingPage";
+import ShareHandlerPage from "@shared/pages/ShareHandlerPage";
+import AgentPage from "@features/teller/pages/AgentPage";
+import AgentTopUpPage from "@features/teller/pages/AgentTopUpPage";
+import TellerDashboard from "@features/teller/pages/TellerPage";
+import ContactsPage from "@features/contacts/pages/ContactsPage";
+import PaymentSelectionPage from "@features/transactions/pages/PaymentSelectionPage";
+import SuccessPage from "@features/transactions/pages/SuccessPage";
+import TopUpPage from "@features/transactions/pages/TopUpPage";
+import OnboardingFlow from "@shared/components/OnboardingFlow";
 
 const coreParentRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -42,7 +32,7 @@ const coreRoutes = [
   createRoute({
     path: "/onboarding",
     getParentRoute: () => coreParentRoute,
-    component: lazy(() => import("@shared/components/OnboardingFlow")),
+    component: OnboardingFlow,
   }),
   createRoute({
     path: "/about",

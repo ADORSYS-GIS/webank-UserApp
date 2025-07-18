@@ -5,13 +5,7 @@ import {
   useAccountWithdrawalServicePostApiAccountsWithdraw,
 } from "openapi/generated/obs/queries/queries";
 import { toast } from "sonner";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheckCircle,
-  faTimes,
-  faCoins,
-  faIdCard,
-} from "@fortawesome/free-solid-svg-icons";
+import { CheckCircle, X, DollarSign, CreditCard } from "react-feather";
 
 interface ConfirmationData {
   clientAccountId: string;
@@ -69,7 +63,9 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
   // Helper: handle offline navigation for different show types
   function handleOfflineNavigation(type: string) {
     if (type !== "Transfer" && type !== "Payment" && type !== "Top up") {
-      toast.info("Oops, you are offline. Redirecting to the amount page...");
+      toast.info("Oops, you are offline. Initiating offline withdrawal...", {
+        duration: 5000,
+      });
       setTimeout(() => {
         navigate({
           to: "/top-up",
@@ -80,7 +76,8 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             clientName,
           } as never,
         });
-      }, 4000);
+        handleDismiss();
+      }, 5000);
     } else if (type === "Transfer") {
       toast.error("Cannot transfer offline. Redirecting you to dashboard...");
       setTimeout(() => navigate({ to: "/" }), 4000);
@@ -105,7 +102,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
       });
       if (response?.status === "COMPLETED" || response?.status === "PENDING") {
         const transactionCert = response?.transactionId ?? "";
-        toast.success("Account successfully topped up.");
+        toast.success(`${show} successfully completed.`);
         navigate({
           to: "/success",
           state: {
@@ -191,7 +188,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
           <div className="px-6 pt-4 pb-8">
             <div className="flex flex-col items-center mb-6">
               <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center mb-4">
-                <FontAwesomeIcon icon={faCheckCircle} size="lg" />
+                <CheckCircle className="w-8 h-8" />
               </div>
               <h2 className="text-xl font-bold text-center text-gray-800">
                 Confirm Transaction
@@ -204,7 +201,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
             <div className="bg-blue-50 rounded-2xl p-5 mb-6">
               <div className="flex items-center mb-5 pb-5 border-b border-blue-100">
                 <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center mr-4">
-                  <FontAwesomeIcon icon={faIdCard} />
+                  <CreditCard className="w-6 h-6" />
                 </div>
                 <div>
                   <div className="mb-2">
@@ -228,7 +225,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
 
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center mr-4">
-                  <FontAwesomeIcon icon={faCoins} />
+                  <DollarSign className="w-6 h-6" />
                 </div>
                 <div>
                   <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -246,7 +243,7 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
                 className="py-4 px-4 rounded-xl bg-gray-100 text-gray-600 font-medium hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-gray-300 shadow-sm flex items-center justify-center"
                 onClick={handleDismiss}
               >
-                <FontAwesomeIcon icon={faTimes} className="mr-2" />
+                <X className="mr-2" />
                 Cancel
               </button>
 
@@ -254,7 +251,6 @@ const ConfirmationBottomSheet: React.FC<ConfirmationBottomSheetProps> = ({
                 className="py-4 px-4 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-sm flex items-center justify-center"
                 onClick={transactionJwt ? handleOfflineWithdrawal : handleTopUp}
               >
-                <FontAwesomeIcon icon={faCheckCircle} className="mr-2" />
                 Confirm
               </button>
             </div>

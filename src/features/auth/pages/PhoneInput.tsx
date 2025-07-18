@@ -6,9 +6,8 @@ import { useOtpManagementServicePostApiPrsOtpSend } from "@openapi/generated/prs
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useAccountStore } from "@state/accountStore";
+import { ArrowLeft } from "react-feather";
 
 type CountryOption = {
   value: string;
@@ -109,10 +108,7 @@ const PhoneInput: React.FC = () => {
               className="text-xl cursor-pointer p-2 focus:outline-none"
               aria-label="Back"
             >
-              <FontAwesomeIcon
-                icon={faArrowLeft}
-                className="h-6 w-6 text-gray-600"
-              />
+              <ArrowLeft className="h-6 w-6 text-gray-600" />
             </button>
           </div>
 

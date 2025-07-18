@@ -1,12 +1,6 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faShieldAlt,
-  faCheckCircle,
-  faLock,
-  faExclamationTriangle,
-} from "@fortawesome/free-solid-svg-icons";
+import { Shield, CheckCircle, Lock, AlertTriangle } from "react-feather";
 
 interface KYCReminderPopupProps {
   onClose: () => void;
@@ -25,10 +19,7 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FontAwesomeIcon
-              icon={faShieldAlt}
-              className="text-blue-500 text-2xl"
-            />
+            <Shield className="text-blue-500" size={32} />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Verify Your Identity
@@ -43,10 +34,7 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
         <div className="bg-amber-50 rounded-xl p-4 mb-6">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0">
-              <FontAwesomeIcon
-                icon={faExclamationTriangle}
-                className="text-amber-500"
-              />
+              <AlertTriangle className="text-amber-500" size={20} />
             </div>
             <div>
               <h3 className="font-medium text-amber-800">Transaction Limit</h3>
@@ -62,7 +50,7 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
         <div className="space-y-4 mb-6">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-              <FontAwesomeIcon icon={faLock} className="text-blue-500" />
+              <Lock className="text-blue-500" size={20} />
             </div>
             <div>
               <h3 className="font-medium text-gray-900">Enhanced Security</h3>
@@ -74,7 +62,7 @@ const KYCReminderPopup: React.FC<KYCReminderPopupProps> = ({ onClose }) => {
 
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
-              <FontAwesomeIcon icon={faCheckCircle} className="text-blue-500" />
+              <CheckCircle className="text-blue-500" size={20} />
             </div>
             <div>
               <h3 className="font-medium text-gray-900">Better Experience</h3>

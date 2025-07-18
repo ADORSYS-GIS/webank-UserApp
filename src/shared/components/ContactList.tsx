@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { ContactService, Contact } from "@services/contacts/contactService";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { Edit, Trash } from "react-feather";
 
 interface ContactListProps {
   onSelectContact?: (contact: Contact) => void;
@@ -143,14 +143,14 @@ const ContactList: React.FC<ContactListProps> = ({
                       className="p-2 text-blue-500 hover:text-blue-600 rounded-full"
                       aria-label={`Edit contact ${contact.name}`}
                     >
-                      <FaEdit className="w-4 h-4" />
+                      <Edit className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(contact.id)}
                       className="p-2 text-red-500 hover:text-red-600 rounded-full"
                       aria-label={`Delete contact ${contact.name}`}
                     >
-                      <FaTrash className="w-4 h-4" />
+                      <Trash className="w-4 h-4" />
                     </button>
                   </div>
                 )}

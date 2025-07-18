@@ -3,8 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft, Mail } from "react-feather";
 import axios from "axios";
 import { useEmailOtpServicePostApiPrsEmailOtpSend } from "@openapi/generated/prs/queries/queries";
 
@@ -88,10 +87,7 @@ const InputEmail: React.FC = () => {
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Go Back"
           >
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              className="h-6 w-6 text-gray-600"
-            />
+            <ArrowLeft className="h-6 w-6 text-gray-600" />
           </button>
           <h2 className="text-lg font-semibold text-gray-800">
             Email Verification
@@ -128,10 +124,7 @@ const InputEmail: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <FontAwesomeIcon
-                icon={faEnvelope}
-                className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
-              />
+              <Mail className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
             </div>
           </div>
 

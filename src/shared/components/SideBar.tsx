@@ -1,14 +1,13 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faMoneyCheckAlt,
-  faShieldAlt,
-  faIdCard,
-  faTimes,
-  faExclamationTriangle,
-  faMoneyBillWave,
-} from "@fortawesome/free-solid-svg-icons";
+  CreditCard,
+  Shield,
+  User,
+  X,
+  AlertTriangle,
+  DollarSign,
+} from "react-feather";
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -24,7 +23,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
   const menuItems = [
     {
       id: "teller services",
-      icon: faMoneyCheckAlt,
+      icon: <CreditCard className="text-blue-500 mr-3" size={20} />,
       label: "Teller Services",
       onClick: () =>
         navigate({
@@ -36,7 +35,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
     },
     {
       id: "kyc verification",
-      icon: faShieldAlt,
+      icon: <Shield className="text-blue-500 mr-3" size={20} />,
       label: "KYC Verification",
       onClick: () =>
         navigate({
@@ -48,7 +47,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
     },
     {
       id: "account recovery",
-      icon: faIdCard,
+      icon: <User className="text-blue-500 mr-3" size={20} />,
       label: "KYC Recovery Agency",
       onClick: () =>
         navigate({
@@ -60,7 +59,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
     },
     {
       id: "topup",
-      icon: faMoneyBillWave,
+      icon: <DollarSign className="text-blue-500 mr-3" size={20} />,
       label: "Top Up Account",
       onClick: () =>
         navigate({
@@ -93,7 +92,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
             onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-100"
           >
-            <FontAwesomeIcon icon={faTimes} className="text-gray-600" />
+            <X className="text-gray-600" size={20} />
           </button>
         </div>
         {!acknowledgedAdmin ? (
@@ -101,10 +100,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
             <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4">
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <FontAwesomeIcon
-                    icon={faExclamationTriangle}
-                    className="text-yellow-500"
-                  />
+                  <AlertTriangle className="text-yellow-500" size={20} />
                 </div>
                 <div className="ml-3">
                   <h3 className="text-lg font-medium text-yellow-800">
@@ -144,10 +140,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose }) => {
                 }}
                 className="flex items-center w-full p-4 text-left hover:bg-gray-100 rounded-lg transition-colors mb-2"
               >
-                <FontAwesomeIcon
-                  icon={item.icon}
-                  className="text-blue-500 mr-3"
-                />
+                {item.icon}
                 <span>{item.label}</span>
               </button>
             ))}

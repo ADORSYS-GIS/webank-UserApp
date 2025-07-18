@@ -1,9 +1,8 @@
 import "fake-indexeddb/auto";
 
-import { afterEach, vi } from 'vitest';
-
+import { afterEach, vi } from "vitest";
 
 afterEach(() => {
-    vi.clearAllMocks();
-    vi.restoreAllMocks();
-  });
+  vi.clearAllMocks();
+  vi.restoreAllMocks();
+});

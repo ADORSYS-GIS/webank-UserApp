@@ -1,1 +1,2065 @@
-{"openapi":"3.1.0","info":{"title":"webank-prs","description":"RESTful API for managing pending user registrations, OTP verification, KYC processes, and device registration","contact":{"name":"WeBank Development Team","url":"https://dev.webank.gis.ssegning.com/","email":"support@webank.com"},"license":{"name":"Apache 2.0","url":"http://www.apache.org/licenses/LICENSE-2.0"},"version":"1.0.0"},"servers":[{"url":"http://localhost:8080","description":"Local Development Server"},{"url":"https://dev.webank.gis.ssegning.com/","description":"Production Server"}],"security":[{"bearer-jwt":[]}],"tags":[{"name":"OTP Management","description":"APIs for OTP generation, sending, and validation"},{"name":"Account Recovery","description":"Endpoints for finalizing account recovery requests"},{"name":"Recovery","description":"Operations related to account recovery and token management"},{"name":"OTP Retrieval","description":"Operations related to retrieving pending OTPs for tellers"},{"name":"Device Registration","description":"Operations related to device registration processing"},{"name":"KYC Recovery Verification","description":"Endpoints for verifying user-provided documents during the KYC recovery process"},{"name":"KYC","description":"Operations related to KYC processing"},{"name":"KYC Management","description":"APIs for Know Your Customer (KYC) verification processes"},{"name":"Email OTP","description":"Operations related to email OTP processing"},{"name":"KYC Status Update","description":"APIs to update KYC status for pending registrations"}],"paths":{"/api/prs/otp/validate":{"post":{"tags":["OTP Management"],"summary":"Validate OTP","description":"Validates the provided OTP code against the stored value for the given phone number","operationId":"validateOtp","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/OtpValidationRequest"}}},"required":true},"responses":{"400":{"description":"Invalid request parameters","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"missing-otp":{"description":"missing-otp","value":{"code":"MISSING_OTP","message":"OTP code is required","timestamp":"2025-01-20T15:30:00","path":"/api/prs/otp/validate"}}}}}},"404":{"description":"OTP not found or expired","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"otp-expired":{"description":"otp-expired","value":{"code":"OTP_EXPIRED","message":"OTP has expired or does not exist","timestamp":"2025-01-20T15:30:00"}}}}}},"200":{"description":"OTP validation result","content":{"application/json":{"schema":{"$ref":"#/components/schemas/OtpValidationResponse"},"examples":{"valid-otp":{"description":"valid-otp","value":{"valid":true,"message":"OTP validated successfully","details":null}},"invalid-otp":{"description":"invalid-otp","value":{"valid":false,"message":"Invalid OTP","details":"OTP does not match or has expired"}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/otp/send":{"post":{"tags":["OTP Management"],"summary":"Generate and send OTP","description":"Generates a one-time password and sends it to the provided phone number","operationId":"sendOtp","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/OtpRequest"}}},"required":true},"responses":{"200":{"description":"OTP generated and sent successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/OtpResponse"},"examples":{"successful-otp":{"description":"successful-otp","value":{"otpHash":"a1b2c3d4e5f6","phoneNumber":"+237691234567","expiresAt":"2025-01-20T15:35:00","validitySeconds":300,"sent":true}}}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"unauthorized":{"description":"unauthorized","value":{"code":"UNAUTHORIZED","message":"Invalid or unauthorized JWT","timestamp":"2025-01-20T15:30:00"}}}}}},"400":{"description":"Invalid request parameters","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-phone":{"description":"invalid-phone","value":{"code":"INVALID_PHONE","message":"Phone number format is invalid","details":"Phone number must start with + followed by country code","timestamp":"2025-01-20T15:30:00","path":"/api/prs/otp/send"}}}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/kyc/status/update":{"post":{"tags":["KYC Status Update"],"summary":"Update KYC status","description":"Updates the KYC status for the specified account. Accepts a JSON payload with the new status and related info.","operationId":"updateKycStatus","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycStatusUpdateDto"}}},"required":true},"responses":{"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"404":{"description":"No KYC record found for the given account","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"kyc-record-not-found":{"description":"kyc-record-not-found","value":{"code":"KYC_RECORD_NOT_FOUND","message":"No KYC record found for the provided accountId","timestamp":"2025-01-20T15:30:00"}}}}}},"400":{"description":"Invalid request parameters","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-status":{"description":"invalid-status","value":{"code":"INVALID_STATUS","message":"Invalid KYC status provided","details":"Status must be one of: PENDING, VERIFIED, REJECTED","timestamp":"2025-01-20T15:30:00","path":"/api/prs/kyc/status/update"}},"missing-rejection-reason":{"description":"missing-rejection-reason","value":{"code":"MISSING_REJECTION_REASON","message":"Rejection reason is required when status is REJECTED","timestamp":"2025-01-20T15:30:00","path":"/api/prs/kyc/status/update"}}}}}},"200":{"description":"KYC status updated successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycStatusUpdateResponse"},"examples":{"success-kyc-update":{"description":"success-kyc-update","value":{"success":true,"message":"KYC status updated successfully","details":null,"newStatus":"VERIFIED"}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"unauthorized":{"description":"unauthorized","value":{"code":"UNAUTHORIZED","message":"Invalid or unauthorized JWT","timestamp":"2025-01-20T15:30:00"}}}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/kyc/recovery/verify":{"post":{"tags":["KYC Recovery Verification"],"summary":"Verify User Documents","description":"Verifies the document ID and expiration date provided by the user during the KYC recovery process.","operationId":"verifyKycRecoveryFields","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycRecoveryDto"}}},"required":true},"responses":{"401":{"description":"Unauthorized access","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"200":{"description":"Document verification successful","content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycRecoveryResponse"}}}},"400":{"description":"Invalid document details or account ID","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}}}},"/api/prs/kyc/recovery/validate":{"post":{"tags":["Account Recovery"],"summary":"Validate recovery token","description":"Processes the final step in account recovery by validating the JWT and associating the new account ID.","operationId":"validateRecoveryToken","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AccountRecovery"}}},"required":true},"responses":{"400":{"description":"Invalid token or request data","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-token":{"description":"invalid-token","value":{"code":"INVALID_TOKEN","message":"Recovery token is invalid or has expired","timestamp":"2025-01-20T15:30:00"}}}}}},"500":{"description":"Internal server error during validation process","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"401":{"description":"Unauthorized request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"200":{"description":"Account recovery validated successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AccountRecoveryResponse"},"examples":{"success-recovery":{"description":"success-recovery","value":{"accountId":"acc_123456789","status":"COMPLETED","message":"Account recovery successfully completed"}}}}}}}}},"/api/prs/kyc/recovery/token":{"post":{"tags":["Recovery"],"summary":"Request Recovery Token","description":"Generates and returns a recovery token to reset account credentials or regain access.","operationId":"requestRecoveryToken","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/TokenRequest"}}},"required":true},"responses":{"200":{"description":"Recovery token successfully generated","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TokenResponse"}}}},"400":{"description":"Bad request - Missing or invalid parameters","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TokenResponse"}}}},"401":{"description":"Unauthorized - Invalid or expired authorization token","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TokenResponse"}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TokenResponse"}}}},"404":{"description":"User not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/TokenResponse"}}}}}}},"/api/prs/kyc/location":{"post":{"tags":["KYC Management"],"summary":"Submit KYC Location","description":"Submits user's location/address information for KYC verification","operationId":"sendKyclocation","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycLocationRequest"}}},"required":true},"responses":{"400":{"description":"Invalid location data","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-location":{"description":"invalid-location","value":{"code":"INVALID_LOCATION","message":"Location information is too short","timestamp":"2025-01-20T15:30:00"}}}}}},"200":{"description":"KYC location successfully submitted","content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycLocationResponse"},"examples":{"success":{"description":"success","value":{"kycId":"kyc_loc_123456","status":"PENDING","submittedAt":"2025-01-20T15:30:00","message":"KYC location submitted successfully","accountId":"ACC_123456","location":"123 Main St, Apartment 4B, New York, NY 10001","verificationStatus":"PENDING","notes":null}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/kyc/info":{"post":{"tags":["KYC Management"],"summary":"Submit KYC Personal Information","description":"Submits personal identification information (ID number, expiry date) for KYC verification","operationId":"sendKycinfo","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycInfoRequest"}}},"required":true},"responses":{"200":{"description":"KYC information successfully submitted","content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycInfoResponse"},"examples":{"success":{"description":"success","value":{"kycId":"kyc_info_123456","status":"PENDING","submittedAt":"2025-01-20T15:30:00","message":"KYC information submitted successfully","accountId":"ACC_123456","idNumber":"ID123456789","expiryDate":"2025-12-31","verificationStatus":"PENDING","rejectionReason":null}}}}}},"400":{"description":"Invalid information data","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-id":{"description":"invalid-id","value":{"code":"INVALID_ID_NUMBER","message":"ID number format is invalid","timestamp":"2025-01-20T15:30:00"}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/kyc/email":{"post":{"tags":["KYC Management"],"summary":"Submit KYC Email","description":"Submits and verifies the email address for KYC purposes","operationId":"sendKycEmail","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycEmailRequest"}}},"required":true},"responses":{"400":{"description":"Invalid email data","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-email":{"description":"invalid-email","value":{"code":"INVALID_EMAIL","message":"Email format is invalid","timestamp":"2025-01-20T15:30:00"}}}}}},"200":{"description":"KYC email successfully processed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycEmailResponse"},"examples":{"success":{"description":"success","value":{"kycId":"kyc_email_123456","status":"PENDING","submittedAt":"2025-01-20T15:30:00","message":"Email verification sent to user@example.com","accountId":"ACC_123456","email":"user@example.com","verificationStatus":"VERIFICATION_SENT","verifiedAt":null}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/kyc/documents":{"post":{"tags":["KYC Management"],"summary":"Submit KYC Documents","description":"Submits identity documents (ID front/back, selfie, tax documents) for KYC verification","operationId":"sendKycDocument","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycDocumentRequest"}}},"required":true},"responses":{"400":{"description":"Invalid document data","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-document":{"description":"invalid-document","value":{"code":"INVALID_DOCUMENT","message":"Missing required document: frontId","timestamp":"2025-01-20T15:30:00"}}}}}},"200":{"description":"KYC documents successfully submitted","content":{"application/json":{"schema":{"$ref":"#/components/schemas/KycDocumentResponse"},"examples":{"success":{"description":"success","value":{"kycId":"kyc_doc_123456","status":"PENDING","submittedAt":"2025-01-20T15:30:00","message":"KYC documents submitted successfully","documentStatuses":[{"documentType":"FRONT_ID","status":"PENDING","notes":null}],"accountId":"ACC_123456"}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/email-otp/validate":{"post":{"tags":["Email OTP"],"summary":"Validate Email OTP","description":"Validates the received email OTP against the stored value","operationId":"validateEmailOtp","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/EmailOtpValidationRequest"}}},"required":true},"responses":{"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"200":{"description":"OTP successfully validated","content":{"application/json":{"schema":{"$ref":"#/components/schemas/EmailResponse"},"examples":{"validation-success":{"description":"validation-success","value":{"operationId":"email_op_987654","status":"SUCCESS","timestamp":"2025-01-20T15:30:00","message":"Email OTP validated successfully"}}}}}},"400":{"description":"Invalid OTP","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-otp":{"description":"invalid-otp","value":{"code":"INVALID_OTP","message":"The OTP is invalid or has expired","timestamp":"2025-01-20T15:30:00"}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/email-otp/send":{"post":{"tags":["Email OTP"],"summary":"Send Email OTP","description":"Sends a one-time password to the user's email address for verification","operationId":"sendEmailOtp","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/EmailOtpRequest"}}},"required":true},"responses":{"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"200":{"description":"OTP successfully sent","content":{"application/json":{"schema":{"$ref":"#/components/schemas/EmailResponse"},"examples":{"successful-otp":{"description":"successful-otp","value":{"operationId":"email_op_123456","status":"SUCCESS","timestamp":"2025-01-20T15:30:00","message":"Email OTP sent successfully to user@example.com"}}}}}},"400":{"description":"Invalid email address","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"},"examples":{"invalid-email":{"description":"invalid-email","value":{"code":"INVALID_EMAIL","message":"Email format is invalid","timestamp":"2025-01-20T15:30:00"}}}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/dev/validate":{"post":{"tags":["Device Registration"],"summary":"Validate device","description":"Validates a device during the registration process using proof of work and returns a device certificate","operationId":"validateDeviceRegistration","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/DeviceValidateRequest"}}},"required":true},"responses":{"200":{"description":"Device validated successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/DeviceValidationResponse"},"examples":{"successful-validation":{"description":"successful-validation","value":{"status":"VALIDATED","timestamp":"2025-01-20T15:30:00","certificate":"eyJhbGciOiJFUzI1NiIsImtpZCI6IjEyMzQ1Njc4OTAiLCJ0eXAiOiJKV1QifQ...","message":"Device successfully validated and certificate issued"}}}}}},"400":{"description":"Invalid device validation data","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"404":{"description":"Device not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/dev/init":{"post":{"tags":["Device Registration"],"summary":"Initialize device registration","description":"Starts the device registration process by generating a unique nonce for device validation","operationId":"initiateDeviceRegistration","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/DeviceRegInitRequest"}}},"required":true},"responses":{"200":{"description":"Device registration initialized successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/DeviceResponse"},"examples":{"successful-init":{"description":"successful-init","value":{"status":"INITIALIZED","timestamp":"2025-01-20T15:30:00","message":"Device registration initialized. Use the following nonce for validation: abc123def456"}}}}}},"400":{"description":"Invalid device information","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/otp/pending":{"get":{"tags":["OTP Retrieval"],"summary":"Get pending OTPs","description":"Fetches all pending OTPs where registration is not complete. The response includes the phone number, a masked version of the OTP, and the registration status.","operationId":"getPendingOtps","responses":{"200":{"description":"Pending OTPs successfully retrieved","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/PendingOtpDto"}}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/PendingOtpDto"}}}}},"401":{"description":"Unauthorized","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/PendingOtpDto"}}}}}}}},"/api/prs/kyc/pending":{"get":{"tags":["KYC Management"],"summary":"Get Pending KYC Records","description":"Fetches all KYC records with PENDING status for verification by authorized agents","operationId":"getPendingKycRecords","responses":{"200":{"description":"Pending KYC records retrieved successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserInfoResponse"},"examples":{"pending-records":{"description":"pending-records","value":[{"accountId":"ACC_123","phoneNumber":"+237691234567","email":"user@example.com","idNumber":"ID123456","status":"PENDING","createdAt":"2025-01-20T15:30:00"}]}}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/kyc/findById/{DocumentUniqueId}":{"get":{"tags":["KYC Management"],"summary":"Find KYC Records by Document ID","description":"Retrieves KYC records associated with a specific document unique identifier","operationId":"findByDocumentUniqueId","parameters":[{"name":"DocumentUniqueId","in":"path","description":"Unique document identifier","required":true,"schema":{"type":"string"},"example":"DOC12345678"}],"responses":{"500":{"description":"Internal server error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"200":{"description":"Records found successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserInfoResponse"},"examples":{"found-records":{"description":"found-records","value":[{"accountId":"ACC_123","phoneNumber":"+237691234567","email":"user@example.com","idNumber":"ID123456","status":"PENDING","createdAt":"2025-01-20T15:30:00"}]}}}}},"404":{"description":"No records found with the specified document ID","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}},"401":{"description":"Unauthorized - Invalid or missing JWT","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ErrorResponse"}}}}},"security":[{"bearer-jwt":[]}]}},"/api/prs/kyc/cert/{accountId}":{"get":{"tags":["KYC"],"summary":"Get KYC Certificate","description":"Retrieves the KYC certificate if the user's status is approved.","operationId":"getCert","parameters":[{"name":"accountId","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"KYC certificate successfully retrieved","content":{"application/json":{"schema":{"type":"string"}}}},"404":{"description":"KYC certificate not found","content":{"application/json":{"schema":{"type":"string"}}}},"401":{"description":"Unauthorized - Invalid token","content":{"application/json":{"schema":{"type":"string"}}}},"500":{"description":"Internal server error","content":{"application/json":{"schema":{"type":"string"}}}}}}}},"components":{"schemas":{"OtpValidationRequest":{"type":"object","description":"Request to validate OTP","properties":{"phoneNumber":{"type":"string","description":"Phone number that received the OTP","example":"+237691234567","pattern":"^\\+[1-9]\\d{1,14}$"},"otpInput":{"type":"string","description":"OTP code to validate","example":123456,"pattern":"^\\d{6}$"}},"required":["otpInput","phoneNumber"]},"ErrorResponse":{"type":"object","description":"Standard error response for API errors","properties":{"code":{"type":"string","description":"Error code","example":"INVALID_REQUEST"},"message":{"type":"string","description":"Error message","example":"Invalid request parameters"},"details":{"type":"string","description":"Detailed error description","example":"Phone number format is invalid"},"timestamp":{"type":"string","format":"date-time","description":"Timestamp when the error occurred","example":"2025-01-20T15:30:00"},"path":{"type":"string","description":"API endpoint path where the error occurred","example":"/api/prs/otp/send"}},"required":["code","message"]},"OtpValidationResponse":{"type":"object","description":"Validation response for OTP or other validation operations","properties":{"valid":{"type":"boolean","description":"Indicates if validation was successful","example":true},"message":{"type":"string","description":"Validation message","example":"OTP validated successfully"},"details":{"description":"Additional validation details"}},"required":["valid"]},"OtpRequest":{"type":"object","description":"Request to generate and send OTP","properties":{"phoneNumber":{"type":"string","description":"Phone number to send OTP to","example":"+237691234567","pattern":"^\\+[1-9]\\d{1,14}$"}},"required":["phoneNumber"]},"OtpResponse":{"type":"object","description":"OTP generation response","properties":{"otpHash":{"type":"string","description":"Hashed OTP identifier for validation","example":"a1b2c3d4e5f6"},"phoneNumber":{"type":"string","description":"Phone number where OTP was sent","example":"+237691234567"},"expiresAt":{"type":"string","format":"date-time","description":"OTP expiration time","example":"2025-01-20T15:35:00"},"validitySeconds":{"type":"integer","format":"int32","description":"OTP validity duration in seconds","example":300},"sent":{"type":"boolean","description":"Indicates if OTP was sent successfully","example":true}},"required":["expiresAt","otpHash","phoneNumber"]},"KycStatusUpdateDto":{"type":"object","properties":{"idNumber":{"type":"string"},"expiryDate":{"type":"string"},"accountId":{"type":"string"},"status":{"type":"string"},"rejectionReason":{"type":"string"}}},"KycStatusUpdateResponse":{"type":"object","description":"Response for KYC status update operation","properties":{"success":{"type":"boolean","description":"Indicates if the KYC status update was successful","example":true},"message":{"type":"string","description":"Message describing the result of the KYC status update","example":"KYC status updated successfully to VERIFIED"},"status":{"type":"string","description":"The updated KYC status","example":"VERIFIED"},"accountId":{"type":"string","description":"Account ID associated with the KYC update","example":"ACC123456789"}},"required":["message","success"]},"KycRecoveryDto":{"type":"object","properties":{"idNumber":{"type":"string"},"expiryDate":{"type":"string"},"accountId":{"type":"string"}}},"KycRecoveryResponse":{"type":"object","description":"Response object for KYC recovery operations","properties":{"status":{"type":"string","description":"Status","example":"status"},"message":{"type":"string","description":"Message","example":"message"}}},"AccountRecovery":{"type":"object","description":"Account recovery validation request","properties":{"newAccountId":{"type":"string","description":"New account ID to associate with the recovered account","example":"acc_123456789"}},"required":["newAccountId"]},"AccountRecoveryResponse":{"type":"object","description":"Account recovery response","properties":{"accountId":{"type":"string","description":"Original account ID that was recovered","example":"acc_original_123456"},"kycCertificate":{"type":"string","description":"New KYC certificate generated during recovery","example":"kyc_cert_abcdef123456"},"status":{"type":"string","description":"Status of the recovery process","example":"COMPLETED"},"message":{"type":"string","description":"Descriptive message about the recovery process","example":"Account recovery successfully completed"}},"required":["accountId","status"]},"TokenRequest":{"type":"object","properties":{"newAccountId":{"type":"string"},"oldAccountId":{"type":"string"}}},"TokenResponse":{"type":"object","description":"Response object for KYC recovery operations","properties":{"status":{"type":"string","description":"Status","example":"status"},"message":{"type":"string","description":"Message","example":"message"},"token":{"type":"string","description":"Token","example":"token"}}},"KycLocationRequest":{"type":"object","description":"KYC location submission request","properties":{"location":{"type":"string","description":"User's location/address information","example":123,"maxLength":500,"minLength":10},"accountId":{"type":"string","description":"User's account identifier","example":"ACC_1234567890"}},"required":["accountId","location"]},"KycLocationResponse":{"type":"object","description":"KYC location submission response","properties":{"kycId":{"type":"string","description":"Unique KYC location record identifier","example":"kyc_loc_1234567890"},"status":{"type":"string","description":"KYC processing status","enum":["PENDING","IN_REVIEW","APPROVED","REJECTED","REQUIRES_INFO"],"example":"PENDING"},"submittedAt":{"type":"string","format":"date-time","description":"Submission timestamp","example":"2025-01-20T15:30:00"},"message":{"type":"string","description":"Additional processing message","example":"KYC location submitted successfully"},"accountId":{"type":"string","description":"Account ID associated with the location","example":"ACC_1234567890"},"location":{"type":"string","description":"Full location/address details","example":123},"verificationStatus":{"type":"string","description":"Verification status of the location","enum":["PENDING","VERIFIED","FAILED","INCOMPLETE"],"example":"VERIFIED"},"notes":{"type":"string","description":"Additional verification notes","example":"Address format valid"}},"required":["kycId","status"]},"KycInfoRequest":{"type":"object","description":"KYC information submission request","properties":{"idNumber":{"type":"string","description":"National ID or passport number","example":"ID123456789","maxLength":20,"minLength":5},"expiryDate":{"type":"string","description":"Document expiry date in ISO format","example":"2025-12-31","pattern":"^\\d{4}-\\d{2}-\\d{2}$"},"accountId":{"type":"string","description":"User's account identifier","example":"ACC_1234567890"},"rejectionReason":{"type":"string","description":"Reason for rejection if applicable","example":"Document expired"},"rejectionNote":{"type":"string","description":"Additional notes about rejection","example":"Please provide a valid document"}},"required":["accountId","expiryDate","idNumber"]},"KycInfoResponse":{"type":"object","description":"KYC personal information submission response","properties":{"status":{"type":"string","description":"KYC processing status","enum":["PENDING","IN_REVIEW","APPROVED","REJECTED","REQUIRES_INFO"],"example":"PENDING"},"submittedAt":{"type":"string","format":"date-time","description":"Submission timestamp","example":"2025-01-20T15:30:00"},"message":{"type":"string","description":"Additional processing message","example":"KYC information submitted successfully"},"accountId":{"type":"string","description":"Account ID associated with the personal information","example":"ACC_1234567890"},"idNumber":{"type":"string","description":"Document unique ID (national ID, passport, etc.)","example":"ID123456789"},"expiryDate":{"type":"string","description":"Document expiry date","example":"2025-12-31"},"verificationStatus":{"type":"string","description":"Verification status","enum":["PENDING","VALID","REJECTED","EXPIRED","REQUIRES_MORE_INFO"],"example":"VALID"},"rejectionReason":{"type":"string","description":"Reason for rejection if applicable","example":"Document expired"}},"required":["status"]},"KycEmailRequest":{"type":"object","description":"KYC email verification request","properties":{"email":{"type":"string","description":"User's email address for verification","example":"user@example.com","pattern":"^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$"},"accountId":{"type":"string","description":"User's account identifier","example":"ACC_1234567890"}},"required":["accountId","email"]},"KycEmailResponse":{"type":"object","description":"KYC email submission response","properties":{"kycId":{"type":"string","description":"Unique KYC email record identifier","example":"kyc_email_1234567890"},"status":{"type":"string","description":"KYC processing status","enum":["PENDING","IN_REVIEW","APPROVED","REJECTED","REQUIRES_INFO"],"example":"PENDING"},"submittedAt":{"type":"string","format":"date-time","description":"Submission timestamp","example":"2025-01-20T15:30:00"},"message":{"type":"string","description":"Additional processing message","example":"Email verification sent to user@example.com"},"accountId":{"type":"string","description":"Account ID associated with the email","example":"ACC_1234567890"},"email":{"type":"string","description":"Email address","example":"user@example.com"},"verificationStatus":{"type":"string","description":"Email verification status","enum":["PENDING","VERIFICATION_SENT","REMINDER_SENT","VERIFIED","FAILED","EXPIRED"],"example":"VERIFICATION_SENT"},"verifiedAt":{"type":"string","format":"date-time","description":"Time when verification was completed, if applicable","example":"2025-01-20T15:35:00"}},"required":["kycId","status"]},"KycDocumentRequest":{"type":"object","description":"KYC document submission request containing document identifiers","properties":{"frontId":{"type":"string","description":"Front side of ID document identifier/URL","example":"doc_front_123456"},"backId":{"type":"string","description":"Back side of ID document identifier/URL","example":"doc_back_123456"},"taxId":{"type":"string","description":"Tax document identifier/URL","example":"doc_tax_123456"},"selfieId":{"type":"string","description":"Selfie photo identifier/URL for identity verification","example":"doc_selfie_123456"},"accountId":{"type":"string","description":"User's account identifier","example":"ACC_1234567890"}},"required":["accountId","backId","frontId","selfieId"]},"DocumentStatus":{"type":"object","properties":{"documentType":{"type":"string","description":"Document type","enum":["FRONT_ID","BACK_ID","TAX_DOCUMENT","SELFIE"],"example":"FRONT_ID"},"status":{"type":"string","description":"Document verification status","enum":["PENDING","VERIFIED","REJECTED","UNCLEAR"],"example":"VERIFIED"},"notes":{"type":"string","description":"Document verification notes","example":"Document image is clear"}}},"KycDocumentResponse":{"type":"object","description":"KYC document submission response","properties":{"kycId":{"type":"string","description":"Unique KYC document record identifier","example":"kyc_doc_1234567890"},"status":{"type":"string","description":"KYC processing status","enum":["PENDING","IN_REVIEW","APPROVED","REJECTED","REQUIRES_INFO"],"example":"PENDING"},"submittedAt":{"type":"string","format":"date-time","description":"Submission timestamp","example":"2025-01-20T15:30:00"},"message":{"type":"string","description":"Additional processing message","example":"KYC documents submitted successfully"},"documentStatuses":{"type":"array","description":"List of document statuses","items":{"$ref":"#/components/schemas/DocumentStatus"}},"accountId":{"type":"string","description":"Account ID associated with the documents","example":"ACC_1234567890"}},"required":["kycId","status"]},"EmailOtpValidationRequest":{"type":"object","properties":{"email":{"type":"string","description":"Email address that received the OTP","example":"user@example.com","pattern":"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"},"otpInput":{"type":"string"},"accountId":{"type":"string"}},"required":["email"]},"EmailResponse":{"type":"object","description":"Response object for email operations","properties":{"status":{"type":"string","description":"Status of the email operation","enum":["SUCCESS","PENDING","FAILED"],"example":"SUCCESS"},"timestamp":{"type":"string","format":"date-time","description":"Timestamp when the operation was performed","example":"2025-01-20T15:30:00"},"message":{"type":"string","description":"Response message with details about the operation","example":"Email OTP sent successfully"}}},"EmailOtpRequest":{"type":"object","description":"Request to generate and send email OTP","properties":{"email":{"type":"string","description":"Email address to send OTP to","example":"user@example.com","pattern":"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"},"accountId":{"type":"string","description":"Account identifier for associating the OTP","example":"acc_123456789"}},"required":["accountId","email"]},"DeviceValidateRequest":{"type":"object","description":"Request to validate device registration","properties":{"initiationNonce":{"type":"string","description":"Nonce generated during registration initialization","example":"abcdef123456"},"powHash":{"type":"string","description":"Proof of work hash","example":"a1b2c3d4e5f6g7h8i9j0"},"powNonce":{"type":"string","description":"Proof of work nonce","example":9876543210}},"required":["initiationNonce","powHash","powNonce"]},"DeviceValidationResponse":{"type":"object","description":"Response object for device validation operations","properties":{"status":{"type":"string","description":"Status of the device validation","enum":["VALIDATED","REJECTED","FAILED"],"example":"VALIDATED"},"timestamp":{"type":"string","format":"date-time","description":"Timestamp when the validation was performed","example":"2025-01-20T15:30:00"},"certificate":{"type":"string","description":"Device certificate JWT token","example":"eyJhbGciOiJFUzI1NiIsImtpZCI6IjEyMzQ1Njc4OTAiLCJ0eXAiOiJKV1QifQ..."},"message":{"type":"string","description":"Additional information about the validation process","example":"Device successfully validated and certificate issued"}}},"DeviceRegInitRequest":{"type":"object","description":"Request to initialize device registration","properties":{"timeStamp":{"type":"string","description":"Current timestamp in ISO-8601 format","example":"2025-01-20T15:30:00.000Z"}},"required":["timeStamp"]},"DeviceResponse":{"type":"object","description":"Response object for device registration initialization","properties":{"status":{"type":"string","description":"Status of the device registration initialization","enum":["INITIALIZED","FAILED"],"example":"INITIALIZED"},"timestamp":{"type":"string","format":"date-time","description":"Timestamp when the operation was performed","example":"2025-01-20T15:30:00"},"message":{"type":"string","description":"Initialization response message with information","example":"Device registration initialized."},"nonce":{"type":"string","description":"Unique nonce generated during device registration initialization","example":"abc123def456"}}},"PendingOtpDto":{"type":"object","properties":{"phoneNumber":{"type":"string"},"otpCode":{"type":"string"},"status":{"type":"string"}}},"UserInfoResponse":{"type":"object","properties":{"accountId":{"type":"string"},"idNumber":{"type":"string"},"expirationDate":{"type":"string"},"location":{"type":"string"},"email":{"type":"string"},"status":{"type":"string"},"frontID":{"type":"string"},"backID":{"type":"string"},"selfie":{"type":"string"},"taxDocument":{"type":"string"},"rejectionReason":{"type":"string"}}}},"securitySchemes":{"bearer-jwt":{"type":"http","description":"JWT authentication token","scheme":"bearer","bearerFormat":"JWT"}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "webank-prs",
+    "description": "RESTful API for managing pending user registrations, OTP verification, KYC processes, and device registration",
+    "contact": {
+      "name": "WeBank Development Team",
+      "url": "https://dev.webank.gis.ssegning.com/",
+      "email": "support@webank.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://dev.webank.gis.ssegning.com/",
+      "description": "Production Server"
+    }
+  ],
+  "security": [{ "bearer-jwt": [] }],
+  "tags": [
+    {
+      "name": "OTP Management",
+      "description": "APIs for OTP generation, sending, and validation"
+    },
+    {
+      "name": "Account Recovery",
+      "description": "Endpoints for finalizing account recovery requests"
+    },
+    {
+      "name": "Recovery",
+      "description": "Operations related to account recovery and token management"
+    },
+    {
+      "name": "OTP Retrieval",
+      "description": "Operations related to retrieving pending OTPs for tellers"
+    },
+    {
+      "name": "Device Registration",
+      "description": "Operations related to device registration processing"
+    },
+    {
+      "name": "KYC Recovery Verification",
+      "description": "Endpoints for verifying user-provided documents during the KYC recovery process"
+    },
+    { "name": "KYC", "description": "Operations related to KYC processing" },
+    {
+      "name": "KYC Management",
+      "description": "APIs for Know Your Customer (KYC) verification processes"
+    },
+    {
+      "name": "Email OTP",
+      "description": "Operations related to email OTP processing"
+    },
+    {
+      "name": "KYC Status Update",
+      "description": "APIs to update KYC status for pending registrations"
+    }
+  ],
+  "paths": {
+    "/api/prs/otp/validate": {
+      "post": {
+        "tags": ["OTP Management"],
+        "summary": "Validate OTP",
+        "description": "Validates the provided OTP code against the stored value for the given phone number",
+        "operationId": "validateOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OtpValidationRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "missing-otp": {
+                    "description": "missing-otp",
+                    "value": {
+                      "code": "MISSING_OTP",
+                      "message": "OTP code is required",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "path": "/api/prs/otp/validate"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "OTP not found or expired",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "otp-expired": {
+                    "description": "otp-expired",
+                    "value": {
+                      "code": "OTP_EXPIRED",
+                      "message": "OTP has expired or does not exist",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OTP validation result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OtpValidationResponse"
+                },
+                "examples": {
+                  "valid-otp": {
+                    "description": "valid-otp",
+                    "value": {
+                      "valid": true,
+                      "message": "OTP validated successfully",
+                      "details": null
+                    }
+                  },
+                  "invalid-otp": {
+                    "description": "invalid-otp",
+                    "value": {
+                      "valid": false,
+                      "message": "Invalid OTP",
+                      "details": "OTP does not match or has expired"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/otp/send": {
+      "post": {
+        "tags": ["OTP Management"],
+        "summary": "Generate and send OTP",
+        "description": "Generates a one-time password and sends it to the provided phone number",
+        "operationId": "sendOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OtpRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OTP generated and sent successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OtpResponse" },
+                "examples": {
+                  "successful-otp": {
+                    "description": "successful-otp",
+                    "value": {
+                      "otpHash": "a1b2c3d4e5f6",
+                      "phoneNumber": "+237691234567",
+                      "expiresAt": "2025-01-20T15:35:00",
+                      "validitySeconds": 300,
+                      "sent": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "unauthorized": {
+                    "description": "unauthorized",
+                    "value": {
+                      "code": "UNAUTHORIZED",
+                      "message": "Invalid or unauthorized JWT",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-phone": {
+                    "description": "invalid-phone",
+                    "value": {
+                      "code": "INVALID_PHONE",
+                      "message": "Phone number format is invalid",
+                      "details": "Phone number must start with + followed by country code",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "path": "/api/prs/otp/send"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/kyc/status/update": {
+      "post": {
+        "tags": ["KYC Status Update"],
+        "summary": "Update KYC status",
+        "description": "Updates the KYC status for the specified account. Accepts a JSON payload with the new status and related info.",
+        "operationId": "updateKycStatus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KycStatusUpdateDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "No KYC record found for the given account",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "kyc-record-not-found": {
+                    "description": "kyc-record-not-found",
+                    "value": {
+                      "code": "KYC_RECORD_NOT_FOUND",
+                      "message": "No KYC record found for the provided accountId",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-status": {
+                    "description": "invalid-status",
+                    "value": {
+                      "code": "INVALID_STATUS",
+                      "message": "Invalid KYC status provided",
+                      "details": "Status must be one of: PENDING, VERIFIED, REJECTED",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "path": "/api/prs/kyc/status/update"
+                    }
+                  },
+                  "missing-rejection-reason": {
+                    "description": "missing-rejection-reason",
+                    "value": {
+                      "code": "MISSING_REJECTION_REASON",
+                      "message": "Rejection reason is required when status is REJECTED",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "path": "/api/prs/kyc/status/update"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "KYC status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KycStatusUpdateResponse"
+                },
+                "examples": {
+                  "success-kyc-update": {
+                    "description": "success-kyc-update",
+                    "value": {
+                      "success": true,
+                      "message": "KYC status updated successfully",
+                      "details": null,
+                      "newStatus": "VERIFIED"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "unauthorized": {
+                    "description": "unauthorized",
+                    "value": {
+                      "code": "UNAUTHORIZED",
+                      "message": "Invalid or unauthorized JWT",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/kyc/recovery/verify": {
+      "post": {
+        "tags": ["KYC Recovery Verification"],
+        "summary": "Verify User Documents",
+        "description": "Verifies the document ID and expiration date provided by the user during the KYC recovery process.",
+        "operationId": "verifyKycRecoveryFields",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KycRecoveryDto" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized access",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "200": {
+            "description": "Document verification successful",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KycRecoveryResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid document details or account ID",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/prs/kyc/recovery/validate": {
+      "post": {
+        "tags": ["Account Recovery"],
+        "summary": "Validate recovery token",
+        "description": "Processes the final step in account recovery by validating the JWT and associating the new account ID.",
+        "operationId": "validateRecoveryToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccountRecovery" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid token or request data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-token": {
+                    "description": "invalid-token",
+                    "value": {
+                      "code": "INVALID_TOKEN",
+                      "message": "Recovery token is invalid or has expired",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error during validation process",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "200": {
+            "description": "Account recovery validated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountRecoveryResponse"
+                },
+                "examples": {
+                  "success-recovery": {
+                    "description": "success-recovery",
+                    "value": {
+                      "accountId": "acc_123456789",
+                      "status": "COMPLETED",
+                      "message": "Account recovery successfully completed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/prs/kyc/recovery/token": {
+      "post": {
+        "tags": ["Recovery"],
+        "summary": "Request Recovery Token",
+        "description": "Generates and returns a recovery token to reset account credentials or regain access.",
+        "operationId": "requestRecoveryToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TokenRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Recovery token successfully generated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing or invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or expired authorization token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TokenResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/prs/kyc/location": {
+      "post": {
+        "tags": ["KYC Management"],
+        "summary": "Submit KYC Location",
+        "description": "Submits user's location/address information for KYC verification",
+        "operationId": "sendKyclocation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KycLocationRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid location data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-location": {
+                    "description": "invalid-location",
+                    "value": {
+                      "code": "INVALID_LOCATION",
+                      "message": "Location information is too short",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "KYC location successfully submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KycLocationResponse"
+                },
+                "examples": {
+                  "success": {
+                    "description": "success",
+                    "value": {
+                      "kycId": "kyc_loc_123456",
+                      "status": "PENDING",
+                      "submittedAt": "2025-01-20T15:30:00",
+                      "message": "KYC location submitted successfully",
+                      "accountId": "ACC_123456",
+                      "location": "123 Main St, Apartment 4B, New York, NY 10001",
+                      "verificationStatus": "PENDING",
+                      "notes": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/kyc/info": {
+      "post": {
+        "tags": ["KYC Management"],
+        "summary": "Submit KYC Personal Information",
+        "description": "Submits personal identification information (ID number, expiry date) for KYC verification",
+        "operationId": "sendKycinfo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KycInfoRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "KYC information successfully submitted",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KycInfoResponse" },
+                "examples": {
+                  "success": {
+                    "description": "success",
+                    "value": {
+                      "kycId": "kyc_info_123456",
+                      "status": "PENDING",
+                      "submittedAt": "2025-01-20T15:30:00",
+                      "message": "KYC information submitted successfully",
+                      "accountId": "ACC_123456",
+                      "idNumber": "ID123456789",
+                      "expiryDate": "2025-12-31",
+                      "verificationStatus": "PENDING",
+                      "rejectionReason": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid information data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-id": {
+                    "description": "invalid-id",
+                    "value": {
+                      "code": "INVALID_ID_NUMBER",
+                      "message": "ID number format is invalid",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/kyc/email": {
+      "post": {
+        "tags": ["KYC Management"],
+        "summary": "Submit KYC Email",
+        "description": "Submits and verifies the email address for KYC purposes",
+        "operationId": "sendKycEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KycEmailRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid email data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-email": {
+                    "description": "invalid-email",
+                    "value": {
+                      "code": "INVALID_EMAIL",
+                      "message": "Email format is invalid",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "KYC email successfully processed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KycEmailResponse" },
+                "examples": {
+                  "success": {
+                    "description": "success",
+                    "value": {
+                      "kycId": "kyc_email_123456",
+                      "status": "PENDING",
+                      "submittedAt": "2025-01-20T15:30:00",
+                      "message": "Email verification sent to user@example.com",
+                      "accountId": "ACC_123456",
+                      "email": "user@example.com",
+                      "verificationStatus": "VERIFICATION_SENT",
+                      "verifiedAt": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/kyc/documents": {
+      "post": {
+        "tags": ["KYC Management"],
+        "summary": "Submit KYC Documents",
+        "description": "Submits identity documents (ID front/back, selfie, tax documents) for KYC verification",
+        "operationId": "sendKycDocument",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/KycDocumentRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Invalid document data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-document": {
+                    "description": "invalid-document",
+                    "value": {
+                      "code": "INVALID_DOCUMENT",
+                      "message": "Missing required document: frontId",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "KYC documents successfully submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KycDocumentResponse"
+                },
+                "examples": {
+                  "success": {
+                    "description": "success",
+                    "value": {
+                      "kycId": "kyc_doc_123456",
+                      "status": "PENDING",
+                      "submittedAt": "2025-01-20T15:30:00",
+                      "message": "KYC documents submitted successfully",
+                      "documentStatuses": [
+                        {
+                          "documentType": "FRONT_ID",
+                          "status": "PENDING",
+                          "notes": null
+                        }
+                      ],
+                      "accountId": "ACC_123456"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/email-otp/validate": {
+      "post": {
+        "tags": ["Email OTP"],
+        "summary": "Validate Email OTP",
+        "description": "Validates the received email OTP against the stored value",
+        "operationId": "validateEmailOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailOtpValidationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "200": {
+            "description": "OTP successfully validated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailResponse" },
+                "examples": {
+                  "validation-success": {
+                    "description": "validation-success",
+                    "value": {
+                      "operationId": "email_op_987654",
+                      "status": "SUCCESS",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "message": "Email OTP validated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid OTP",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-otp": {
+                    "description": "invalid-otp",
+                    "value": {
+                      "code": "INVALID_OTP",
+                      "message": "The OTP is invalid or has expired",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/email-otp/send": {
+      "post": {
+        "tags": ["Email OTP"],
+        "summary": "Send Email OTP",
+        "description": "Sends a one-time password to the user's email address for verification",
+        "operationId": "sendEmailOtp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EmailOtpRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "200": {
+            "description": "OTP successfully sent",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EmailResponse" },
+                "examples": {
+                  "successful-otp": {
+                    "description": "successful-otp",
+                    "value": {
+                      "operationId": "email_op_123456",
+                      "status": "SUCCESS",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "message": "Email OTP sent successfully to user@example.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid email address",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "invalid-email": {
+                    "description": "invalid-email",
+                    "value": {
+                      "code": "INVALID_EMAIL",
+                      "message": "Email format is invalid",
+                      "timestamp": "2025-01-20T15:30:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/dev/validate": {
+      "post": {
+        "tags": ["Device Registration"],
+        "summary": "Validate device",
+        "description": "Validates a device during the registration process using proof of work and returns a device certificate",
+        "operationId": "validateDeviceRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DeviceValidateRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Device validated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceValidationResponse"
+                },
+                "examples": {
+                  "successful-validation": {
+                    "description": "successful-validation",
+                    "value": {
+                      "status": "VALIDATED",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "certificate": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjEyMzQ1Njc4OTAiLCJ0eXAiOiJKV1QifQ...",
+                      "message": "Device successfully validated and certificate issued"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid device validation data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Device not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/dev/init": {
+      "post": {
+        "tags": ["Device Registration"],
+        "summary": "Initialize device registration",
+        "description": "Starts the device registration process by generating a unique nonce for device validation",
+        "operationId": "initiateDeviceRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DeviceRegInitRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Device registration initialized successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DeviceResponse" },
+                "examples": {
+                  "successful-init": {
+                    "description": "successful-init",
+                    "value": {
+                      "status": "INITIALIZED",
+                      "timestamp": "2025-01-20T15:30:00",
+                      "message": "Device registration initialized. Use the following nonce for validation: abc123def456"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid device information",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/otp/pending": {
+      "get": {
+        "tags": ["OTP Retrieval"],
+        "summary": "Get pending OTPs",
+        "description": "Fetches all pending OTPs where registration is not complete. The response includes the phone number, a masked version of the OTP, and the registration status.",
+        "operationId": "getPendingOtps",
+        "responses": {
+          "200": {
+            "description": "Pending OTPs successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PendingOtpDto" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PendingOtpDto" }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/PendingOtpDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/prs/kyc/pending": {
+      "get": {
+        "tags": ["KYC Management"],
+        "summary": "Get Pending KYC Records",
+        "description": "Fetches all KYC records with PENDING status for verification by authorized agents",
+        "operationId": "getPendingKycRecords",
+        "responses": {
+          "200": {
+            "description": "Pending KYC records retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserInfoResponse" },
+                "examples": {
+                  "pending-records": {
+                    "description": "pending-records",
+                    "value": [
+                      {
+                        "accountId": "ACC_123",
+                        "phoneNumber": "+237691234567",
+                        "email": "user@example.com",
+                        "idNumber": "ID123456",
+                        "status": "PENDING",
+                        "createdAt": "2025-01-20T15:30:00"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/kyc/findById/{DocumentUniqueId}": {
+      "get": {
+        "tags": ["KYC Management"],
+        "summary": "Find KYC Records by Document ID",
+        "description": "Retrieves KYC records associated with a specific document unique identifier",
+        "operationId": "findByDocumentUniqueId",
+        "parameters": [
+          {
+            "name": "DocumentUniqueId",
+            "in": "path",
+            "description": "Unique document identifier",
+            "required": true,
+            "schema": { "type": "string" },
+            "example": "DOC12345678"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "200": {
+            "description": "Records found successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserInfoResponse" },
+                "examples": {
+                  "found-records": {
+                    "description": "found-records",
+                    "value": [
+                      {
+                        "accountId": "ACC_123",
+                        "phoneNumber": "+237691234567",
+                        "email": "user@example.com",
+                        "idNumber": "ID123456",
+                        "status": "PENDING",
+                        "createdAt": "2025-01-20T15:30:00"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No records found with the specified document ID",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing JWT",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer-jwt": [] }]
+      }
+    },
+    "/api/prs/kyc/cert/{accountId}": {
+      "get": {
+        "tags": ["KYC"],
+        "summary": "Get KYC Certificate",
+        "description": "Retrieves the KYC certificate if the user's status is approved.",
+        "operationId": "getCert",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "KYC certificate successfully retrieved",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          },
+          "404": {
+            "description": "KYC certificate not found",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid token",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OtpValidationRequest": {
+        "type": "object",
+        "description": "Request to validate OTP",
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number that received the OTP",
+            "example": "+237691234567",
+            "pattern": "^\\+[1-9]\\d{1,14}$"
+          },
+          "otpInput": {
+            "type": "string",
+            "description": "OTP code to validate",
+            "example": 123456,
+            "pattern": "^\\d{6}$"
+          }
+        },
+        "required": ["otpInput", "phoneNumber"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "description": "Standard error response for API errors",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code",
+            "example": "INVALID_REQUEST"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Invalid request parameters"
+          },
+          "details": {
+            "type": "string",
+            "description": "Detailed error description",
+            "example": "Phone number format is invalid"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the error occurred",
+            "example": "2025-01-20T15:30:00"
+          },
+          "path": {
+            "type": "string",
+            "description": "API endpoint path where the error occurred",
+            "example": "/api/prs/otp/send"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "OtpValidationResponse": {
+        "type": "object",
+        "description": "Validation response for OTP or other validation operations",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "Indicates if validation was successful",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Validation message",
+            "example": "OTP validated successfully"
+          },
+          "details": { "description": "Additional validation details" }
+        },
+        "required": ["valid"]
+      },
+      "OtpRequest": {
+        "type": "object",
+        "description": "Request to generate and send OTP",
+        "properties": {
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number to send OTP to",
+            "example": "+237691234567",
+            "pattern": "^\\+[1-9]\\d{1,14}$"
+          }
+        },
+        "required": ["phoneNumber"]
+      },
+      "OtpResponse": {
+        "type": "object",
+        "description": "OTP generation response",
+        "properties": {
+          "otpHash": {
+            "type": "string",
+            "description": "Hashed OTP identifier for validation",
+            "example": "a1b2c3d4e5f6"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number where OTP was sent",
+            "example": "+237691234567"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "OTP expiration time",
+            "example": "2025-01-20T15:35:00"
+          },
+          "validitySeconds": {
+            "type": "integer",
+            "format": "int32",
+            "description": "OTP validity duration in seconds",
+            "example": 300
+          },
+          "sent": {
+            "type": "boolean",
+            "description": "Indicates if OTP was sent successfully",
+            "example": true
+          }
+        },
+        "required": ["expiresAt", "otpHash", "phoneNumber"]
+      },
+      "KycStatusUpdateDto": {
+        "type": "object",
+        "properties": {
+          "idNumber": { "type": "string" },
+          "expiryDate": { "type": "string" },
+          "accountId": { "type": "string" },
+          "status": { "type": "string" },
+          "rejectionReason": { "type": "string" }
+        }
+      },
+      "KycStatusUpdateResponse": {
+        "type": "object",
+        "description": "Response for KYC status update operation",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if the KYC status update was successful",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Message describing the result of the KYC status update",
+            "example": "KYC status updated successfully to VERIFIED"
+          },
+          "status": {
+            "type": "string",
+            "description": "The updated KYC status",
+            "example": "VERIFIED"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID associated with the KYC update",
+            "example": "ACC123456789"
+          }
+        },
+        "required": ["message", "success"]
+      },
+      "KycRecoveryDto": {
+        "type": "object",
+        "properties": {
+          "idNumber": { "type": "string" },
+          "expiryDate": { "type": "string" },
+          "accountId": { "type": "string" }
+        }
+      },
+      "KycRecoveryResponse": {
+        "type": "object",
+        "description": "Response object for KYC recovery operations",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status",
+            "example": "status"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message",
+            "example": "message"
+          }
+        }
+      },
+      "AccountRecovery": {
+        "type": "object",
+        "description": "Account recovery validation request",
+        "properties": {
+          "newAccountId": {
+            "type": "string",
+            "description": "New account ID to associate with the recovered account",
+            "example": "acc_123456789"
+          }
+        },
+        "required": ["newAccountId"]
+      },
+      "AccountRecoveryResponse": {
+        "type": "object",
+        "description": "Account recovery response",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Original account ID that was recovered",
+            "example": "acc_original_123456"
+          },
+          "kycCertificate": {
+            "type": "string",
+            "description": "New KYC certificate generated during recovery",
+            "example": "kyc_cert_abcdef123456"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the recovery process",
+            "example": "COMPLETED"
+          },
+          "message": {
+            "type": "string",
+            "description": "Descriptive message about the recovery process",
+            "example": "Account recovery successfully completed"
+          }
+        },
+        "required": ["accountId", "status"]
+      },
+      "TokenRequest": {
+        "type": "object",
+        "properties": {
+          "newAccountId": { "type": "string" },
+          "oldAccountId": { "type": "string" }
+        }
+      },
+      "TokenResponse": {
+        "type": "object",
+        "description": "Response object for KYC recovery operations",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status",
+            "example": "status"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message",
+            "example": "message"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token",
+            "example": "token"
+          }
+        }
+      },
+      "KycLocationRequest": {
+        "type": "object",
+        "description": "KYC location submission request",
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "User's location/address information",
+            "example": 123,
+            "maxLength": 500,
+            "minLength": 10
+          },
+          "accountId": {
+            "type": "string",
+            "description": "User's account identifier",
+            "example": "ACC_1234567890"
+          }
+        },
+        "required": ["accountId", "location"]
+      },
+      "KycLocationResponse": {
+        "type": "object",
+        "description": "KYC location submission response",
+        "properties": {
+          "kycId": {
+            "type": "string",
+            "description": "Unique KYC location record identifier",
+            "example": "kyc_loc_1234567890"
+          },
+          "status": {
+            "type": "string",
+            "description": "KYC processing status",
+            "enum": [
+              "PENDING",
+              "IN_REVIEW",
+              "APPROVED",
+              "REJECTED",
+              "REQUIRES_INFO"
+            ],
+            "example": "PENDING"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Submission timestamp",
+            "example": "2025-01-20T15:30:00"
+          },
+          "message": {
+            "type": "string",
+            "description": "Additional processing message",
+            "example": "KYC location submitted successfully"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID associated with the location",
+            "example": "ACC_1234567890"
+          },
+          "location": {
+            "type": "string",
+            "description": "Full location/address details",
+            "example": 123
+          },
+          "verificationStatus": {
+            "type": "string",
+            "description": "Verification status of the location",
+            "enum": ["PENDING", "VERIFIED", "FAILED", "INCOMPLETE"],
+            "example": "VERIFIED"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional verification notes",
+            "example": "Address format valid"
+          }
+        },
+        "required": ["kycId", "status"]
+      },
+      "KycInfoRequest": {
+        "type": "object",
+        "description": "KYC information submission request",
+        "properties": {
+          "idNumber": {
+            "type": "string",
+            "description": "National ID or passport number",
+            "example": "ID123456789",
+            "maxLength": 20,
+            "minLength": 5
+          },
+          "expiryDate": {
+            "type": "string",
+            "description": "Document expiry date in ISO format",
+            "example": "2025-12-31",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "User's account identifier",
+            "example": "ACC_1234567890"
+          },
+          "rejectionReason": {
+            "type": "string",
+            "description": "Reason for rejection if applicable",
+            "example": "Document expired"
+          },
+          "rejectionNote": {
+            "type": "string",
+            "description": "Additional notes about rejection",
+            "example": "Please provide a valid document"
+          }
+        },
+        "required": ["accountId", "expiryDate", "idNumber"]
+      },
+      "KycInfoResponse": {
+        "type": "object",
+        "description": "KYC personal information submission response",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "KYC processing status",
+            "enum": [
+              "PENDING",
+              "IN_REVIEW",
+              "APPROVED",
+              "REJECTED",
+              "REQUIRES_INFO"
+            ],
+            "example": "PENDING"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Submission timestamp",
+            "example": "2025-01-20T15:30:00"
+          },
+          "message": {
+            "type": "string",
+            "description": "Additional processing message",
+            "example": "KYC information submitted successfully"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID associated with the personal information",
+            "example": "ACC_1234567890"
+          },
+          "idNumber": {
+            "type": "string",
+            "description": "Document unique ID (national ID, passport, etc.)",
+            "example": "ID123456789"
+          },
+          "expiryDate": {
+            "type": "string",
+            "description": "Document expiry date",
+            "example": "2025-12-31"
+          },
+          "verificationStatus": {
+            "type": "string",
+            "description": "Verification status",
+            "enum": [
+              "PENDING",
+              "VALID",
+              "REJECTED",
+              "EXPIRED",
+              "REQUIRES_MORE_INFO"
+            ],
+            "example": "VALID"
+          },
+          "rejectionReason": {
+            "type": "string",
+            "description": "Reason for rejection if applicable",
+            "example": "Document expired"
+          }
+        },
+        "required": ["status"]
+      },
+      "KycEmailRequest": {
+        "type": "object",
+        "description": "KYC email verification request",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email address for verification",
+            "example": "user@example.com",
+            "pattern": "^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "User's account identifier",
+            "example": "ACC_1234567890"
+          }
+        },
+        "required": ["accountId", "email"]
+      },
+      "KycEmailResponse": {
+        "type": "object",
+        "description": "KYC email submission response",
+        "properties": {
+          "kycId": {
+            "type": "string",
+            "description": "Unique KYC email record identifier",
+            "example": "kyc_email_1234567890"
+          },
+          "status": {
+            "type": "string",
+            "description": "KYC processing status",
+            "enum": [
+              "PENDING",
+              "IN_REVIEW",
+              "APPROVED",
+              "REJECTED",
+              "REQUIRES_INFO"
+            ],
+            "example": "PENDING"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Submission timestamp",
+            "example": "2025-01-20T15:30:00"
+          },
+          "message": {
+            "type": "string",
+            "description": "Additional processing message",
+            "example": "Email verification sent to user@example.com"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID associated with the email",
+            "example": "ACC_1234567890"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address",
+            "example": "user@example.com"
+          },
+          "verificationStatus": {
+            "type": "string",
+            "description": "Email verification status",
+            "enum": [
+              "PENDING",
+              "VERIFICATION_SENT",
+              "REMINDER_SENT",
+              "VERIFIED",
+              "FAILED",
+              "EXPIRED"
+            ],
+            "example": "VERIFICATION_SENT"
+          },
+          "verifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time when verification was completed, if applicable",
+            "example": "2025-01-20T15:35:00"
+          }
+        },
+        "required": ["kycId", "status"]
+      },
+      "KycDocumentRequest": {
+        "type": "object",
+        "description": "KYC document submission request containing document identifiers",
+        "properties": {
+          "frontId": {
+            "type": "string",
+            "description": "Front side of ID document identifier/URL",
+            "example": "doc_front_123456"
+          },
+          "backId": {
+            "type": "string",
+            "description": "Back side of ID document identifier/URL",
+            "example": "doc_back_123456"
+          },
+          "taxId": {
+            "type": "string",
+            "description": "Tax document identifier/URL",
+            "example": "doc_tax_123456"
+          },
+          "selfieId": {
+            "type": "string",
+            "description": "Selfie photo identifier/URL for identity verification",
+            "example": "doc_selfie_123456"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "User's account identifier",
+            "example": "ACC_1234567890"
+          }
+        },
+        "required": ["accountId", "backId", "frontId", "selfieId"]
+      },
+      "DocumentStatus": {
+        "type": "object",
+        "properties": {
+          "documentType": {
+            "type": "string",
+            "description": "Document type",
+            "enum": ["FRONT_ID", "BACK_ID", "TAX_DOCUMENT", "SELFIE"],
+            "example": "FRONT_ID"
+          },
+          "status": {
+            "type": "string",
+            "description": "Document verification status",
+            "enum": ["PENDING", "VERIFIED", "REJECTED", "UNCLEAR"],
+            "example": "VERIFIED"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Document verification notes",
+            "example": "Document image is clear"
+          }
+        }
+      },
+      "KycDocumentResponse": {
+        "type": "object",
+        "description": "KYC document submission response",
+        "properties": {
+          "kycId": {
+            "type": "string",
+            "description": "Unique KYC document record identifier",
+            "example": "kyc_doc_1234567890"
+          },
+          "status": {
+            "type": "string",
+            "description": "KYC processing status",
+            "enum": [
+              "PENDING",
+              "IN_REVIEW",
+              "APPROVED",
+              "REJECTED",
+              "REQUIRES_INFO"
+            ],
+            "example": "PENDING"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Submission timestamp",
+            "example": "2025-01-20T15:30:00"
+          },
+          "message": {
+            "type": "string",
+            "description": "Additional processing message",
+            "example": "KYC documents submitted successfully"
+          },
+          "documentStatuses": {
+            "type": "array",
+            "description": "List of document statuses",
+            "items": { "$ref": "#/components/schemas/DocumentStatus" }
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account ID associated with the documents",
+            "example": "ACC_1234567890"
+          }
+        },
+        "required": ["kycId", "status"]
+      },
+      "EmailOtpValidationRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address that received the OTP",
+            "example": "user@example.com",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          },
+          "otpInput": { "type": "string" },
+          "accountId": { "type": "string" }
+        },
+        "required": ["email"]
+      },
+      "EmailResponse": {
+        "type": "object",
+        "description": "Response object for email operations",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status of the email operation",
+            "enum": ["SUCCESS", "PENDING", "FAILED"],
+            "example": "SUCCESS"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the operation was performed",
+            "example": "2025-01-20T15:30:00"
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message with details about the operation",
+            "example": "Email OTP sent successfully"
+          }
+        }
+      },
+      "EmailOtpRequest": {
+        "type": "object",
+        "description": "Request to generate and send email OTP",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address to send OTP to",
+            "example": "user@example.com",
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account identifier for associating the OTP",
+            "example": "acc_123456789"
+          }
+        },
+        "required": ["accountId", "email"]
+      },
+      "DeviceValidateRequest": {
+        "type": "object",
+        "description": "Request to validate device registration",
+        "properties": {
+          "initiationNonce": {
+            "type": "string",
+            "description": "Nonce generated during registration initialization",
+            "example": "abcdef123456"
+          },
+          "powHash": {
+            "type": "string",
+            "description": "Proof of work hash",
+            "example": "a1b2c3d4e5f6g7h8i9j0"
+          },
+          "powNonce": {
+            "type": "string",
+            "description": "Proof of work nonce",
+            "example": 9876543210
+          }
+        },
+        "required": ["initiationNonce", "powHash", "powNonce"]
+      },
+      "DeviceValidationResponse": {
+        "type": "object",
+        "description": "Response object for device validation operations",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status of the device validation",
+            "enum": ["VALIDATED", "REJECTED", "FAILED"],
+            "example": "VALIDATED"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the validation was performed",
+            "example": "2025-01-20T15:30:00"
+          },
+          "certificate": {
+            "type": "string",
+            "description": "Device certificate JWT token",
+            "example": "eyJhbGciOiJFUzI1NiIsImtpZCI6IjEyMzQ1Njc4OTAiLCJ0eXAiOiJKV1QifQ..."
+          },
+          "message": {
+            "type": "string",
+            "description": "Additional information about the validation process",
+            "example": "Device successfully validated and certificate issued"
+          }
+        }
+      },
+      "DeviceRegInitRequest": {
+        "type": "object",
+        "description": "Request to initialize device registration",
+        "properties": {
+          "timeStamp": {
+            "type": "string",
+            "description": "Current timestamp in ISO-8601 format",
+            "example": "2025-01-20T15:30:00.000Z"
+          }
+        },
+        "required": ["timeStamp"]
+      },
+      "DeviceResponse": {
+        "type": "object",
+        "description": "Response object for device registration initialization",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status of the device registration initialization",
+            "enum": ["INITIALIZED", "FAILED"],
+            "example": "INITIALIZED"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the operation was performed",
+            "example": "2025-01-20T15:30:00"
+          },
+          "message": {
+            "type": "string",
+            "description": "Initialization response message with information",
+            "example": "Device registration initialized."
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Unique nonce generated during device registration initialization",
+            "example": "abc123def456"
+          }
+        }
+      },
+      "PendingOtpDto": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": { "type": "string" },
+          "otpCode": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      },
+      "UserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "accountId": { "type": "string" },
+          "idNumber": { "type": "string" },
+          "expirationDate": { "type": "string" },
+          "location": { "type": "string" },
+          "email": { "type": "string" },
+          "status": { "type": "string" },
+          "frontID": { "type": "string" },
+          "backID": { "type": "string" },
+          "selfie": { "type": "string" },
+          "taxDocument": { "type": "string" },
+          "rejectionReason": { "type": "string" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer-jwt": {
+        "type": "http",
+        "description": "JWT authentication token",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

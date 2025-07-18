@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAccountStore } from "@state/accountStore";
 import { toast, Toaster } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-import { FiArrowLeft } from "react-icons/fi";
+import { ArrowLeft } from "react-feather";
 import {
   useKycManagementServiceGetApiPrsKycFindByIdByDocumentUniqueId,
   useKycRecoveryVerificationServicePostApiPrsKycRecoveryVerify,
@@ -197,7 +197,7 @@ export default function RecoveryDashboard() {
         className="p-2 rounded-full hover:bg-gray-100 transition"
         aria-label="Close form"
       >
-        <FiArrowLeft className="w-6 h-6 text-gray-600" />
+        <ArrowLeft size={24} className="text-gray-400 h-6 w-6" />
       </button>
 
       <div className="max-w-3xl mx-auto">
@@ -242,7 +242,7 @@ export default function RecoveryDashboard() {
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-800
                   p-2 rounded-full hover:bg-gray-100 transition"
               >
-                <FiArrowLeft className="w-5 h-5" />
+                <ArrowLeft size={24} className="text-gray-400 h-6 w-6" />
                 Back to Search
               </button>
               <span

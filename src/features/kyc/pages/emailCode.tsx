@@ -7,8 +7,7 @@ import {
 } from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft, CheckCircle } from "react-feather";
 import OtpInput from "@features/auth/components/OtpInput";
 
 const EmailCode: React.FC = () => {
@@ -43,8 +42,9 @@ const EmailCode: React.FC = () => {
             accountId,
           },
         });
-        if (result?.status === "PENDING") {
-          toast.success("OTP Resend, please check your email.", {
+        console.log("Result:", result);
+        if (result?.status === "SUCCESS") {
+          toast.success("OTP resent, please check your email.", {
             duration: 5000,
           });
         }
@@ -118,10 +118,7 @@ const EmailCode: React.FC = () => {
             className="text-xl cursor-pointer p-2 focus:outline-none"
             aria-label="Back"
           >
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              className="h-6 w-6 text-gray-600"
-            />
+            <ArrowLeft className="h-6 w-6 text-gray-600" />
           </button>
         </div>
         {/* Custom Header */}
@@ -164,31 +161,29 @@ const EmailCode: React.FC = () => {
             Verify
           </button>
         </div>
-        {showSuccess && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-2 sm:px-4">
-            <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-xl text-center w-full max-w-xs sm:max-w-sm mx-auto border border-gray-100">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 text-blue-500 rounded-full mx-auto mb-3 sm:mb-4 flex items-center justify-center">
-                <FontAwesomeIcon
-                  icon={faCheckCircle}
-                  className="text-2xl sm:text-3xl"
-                />
-              </div>
-              <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-blue-700">
-                Successful Email Verification
-              </h2>
-              <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">
-                Your email has been successfully verified!
-              </p>
-              <button
-                className="py-2 px-4 w-full sm:w-auto sm:px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-full shadow hover:from-blue-600 hover:to-blue-700 transition text-sm sm:text-base border border-blue-500"
-                onClick={() => navigate({ to: "/settings" })}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      {showSuccess && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+            <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <CheckCircle className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-bold mb-3">
+              Successful Email Verification
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Your email has been successfully verified!
+            </p>
+            <button
+              className="py-2 px-6 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition"
+              onClick={() => navigate({ to: "/settings" })}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

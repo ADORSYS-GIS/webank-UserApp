@@ -4,13 +4,7 @@ import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useAccountRecoveryServicePostApiPrsKycRecoveryValidate } from "@openapi/generated/prs/queries/queries";
 import { useAccountRecoveryServicePostApiAccountsRecovery } from "@openapi/generated/obs/queries/queries";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faKey,
-  faIdCard,
-  faCheck,
-  faArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
+import { Repeat, CreditCard, ArrowLeft, Key } from "react-feather";
 import { AccountRecoveryResponse } from "@openapi/generated/prs/requests/types.gen";
 
 const RecoverAccountPage: React.FC = () => {
@@ -63,9 +57,9 @@ const RecoverAccountPage: React.FC = () => {
           const { accountId, kycCertificate } = data;
 
           // Values are valid non-empty strings
-          setAccountId(accountId);
+          localStorage.setItem("accountId", accountId);
           if (kycCertificate) {
-            setKycCert(kycCertificate);
+            localStorage.setItem("kycCertificate", kycCertificate);
           }
           setShowTokenInput(false);
           setShowConfirmation(true);
@@ -97,6 +91,8 @@ const RecoverAccountPage: React.FC = () => {
             );
           } else if (data?.startsWith("ey")) {
             setAccountCert(data);
+            setAccountId(localStorage.getItem("accountId") ?? "");
+            setKycCert(localStorage.getItem("kycCertificate") ?? "");
             toast.success("Account recovery successful!");
             setTimeout(() => {
               navigate({ to: "/" });
@@ -129,10 +125,7 @@ const RecoverAccountPage: React.FC = () => {
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="Go Back"
           >
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              className="h-5 w-5 text-gray-600"
-            />
+            <ArrowLeft className="h-5 w-5 text-gray-600" />
           </button>
           <h1 className="text-xl font-semibold mx-auto pr-10">
             Account Recovery
@@ -144,7 +137,7 @@ const RecoverAccountPage: React.FC = () => {
       <main className="flex-1 p-4 max-w-md mx-auto w-full">
         <div className="mb-6 text-center">
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FontAwesomeIcon icon={faKey} className="text-blue-500 text-2xl" />
+            <Repeat className="w-8 h-8 text-blue-500" />
           </div>
           <h2 className="text-xl font-bold mb-2">Recover Your Account</h2>
           <p className="text-gray-600 text-sm">
@@ -158,7 +151,7 @@ const RecoverAccountPage: React.FC = () => {
             className="w-full p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center hover:border-blue-500 transition-colors"
           >
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-              <FontAwesomeIcon icon={faIdCard} className="text-blue-500" />
+              <CreditCard className="w-6 h-6 text-blue-500" />
             </div>
             <div className="text-left">
               <h3 className="font-semibold">Initiate KYC Recovery</h3>
@@ -173,7 +166,7 @@ const RecoverAccountPage: React.FC = () => {
             className="w-full p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center hover:border-blue-500 transition-colors"
           >
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-              <FontAwesomeIcon icon={faKey} className="text-blue-500" />
+              <Key className="w-6 h-6 text-blue-500" />
             </div>
             <div className="text-left">
               <h3 className="font-semibold">Input Recovery Token</h3>
@@ -236,10 +229,7 @@ const RecoverAccountPage: React.FC = () => {
               </div>
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FontAwesomeIcon
-                    icon={faCheck}
-                    className="text-blue-500 text-2xl"
-                  />
+                  <Key className="w-8 h-8 text-blue-500" />
                 </div>
                 <h2 className="text-xl font-bold">Confirm Recovery</h2>
                 <p className="text-gray-600 mt-2">

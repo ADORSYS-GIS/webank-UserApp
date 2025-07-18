@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { AlertTriangle } from "react-feather";
 
 interface KycRejectionPopupProps {
   reason: string;
@@ -33,10 +32,7 @@ const KycRejectionPopup: React.FC<KycRejectionPopupProps> = ({
         </div>
         <div className="flex flex-col items-center mb-4">
           <div className="bg-red-100 rounded-full p-4 mb-3">
-            <FontAwesomeIcon
-              icon={faExclamationTriangle}
-              className="text-red-500 text-3xl"
-            />
+            <AlertTriangle className="text-red-500 text-3xl" />
           </div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">
             Verification Failed

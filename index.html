@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Webank</title>
     <link rel="icon" type="image/x-icon" href="/Webank.png" />
-    
   </head>
   <body>
     <!-- Root React App Container -->
@@ -13,10 +12,15 @@
 
     <!-- Message & Error Display -->
     <div id="messageContainer"></div>
-    <div id="authError" style="color: red;"></div>
-    <div id="registerError" style="color: red;"></div>
+    <div id="authError" style="color: red"></div>
+    <div id="registerError" style="color: red"></div>
 
-    <input type="text" id="messageInput" placeholder="Enter message..." style="display: none;" />
+    <input
+      type="text"
+      id="messageInput"
+      placeholder="Enter message..."
+      style="display: none"
+    />
 
     <!-- Main Script -->
     <script type="module" src="./src/main.tsx"></script>

@@ -1,11 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheckCircle,
-  faIdCard,
-  faShieldAlt,
-  faHome,
-} from "@fortawesome/free-solid-svg-icons";
+import { CheckCircle, User, Shield, Home } from "react-feather";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -32,10 +26,7 @@ export default function KYCSubmissionCompleted() {
         {/* Success banner */}
         <div className="bg-blue-500 py-6 px-6 flex items-center justify-center">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-            <FontAwesomeIcon
-              icon={faCheckCircle}
-              className="text-blue-500 text-4xl"
-            />
+            <CheckCircle className="text-blue-500 text-4xl" size={40} />
           </div>
         </div>
 
@@ -52,7 +43,7 @@ export default function KYCSubmissionCompleted() {
           <div className="bg-blue-50 rounded-xl p-6 mb-8">
             <div className="flex items-center space-x-4 mb-4">
               <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center">
-                <FontAwesomeIcon icon={faIdCard} />
+                <User size={20} />
               </div>
               <div>
                 <h3 className="font-medium text-gray-800">Identity Verified</h3>
@@ -64,7 +55,7 @@ export default function KYCSubmissionCompleted() {
 
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-500 flex items-center justify-center">
-                <FontAwesomeIcon icon={faShieldAlt} />
+                <Shield size={20} />
               </div>
               <div>
                 <h3 className="font-medium text-gray-800">Account Secured</h3>
@@ -80,7 +71,7 @@ export default function KYCSubmissionCompleted() {
               onClick={handleReturnToDashboard}
               className="py-4 px-6 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-sm flex items-center justify-center"
             >
-              <FontAwesomeIcon icon={faHome} className="mr-2" />
+              <Home className="mr-2" size={20} />
               Return to Dashboard
             </button>
           </div>

@@ -1,5 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { AlertTriangle } from "react-feather";
 import { useNavigate } from "@tanstack/react-router";
 
 interface ErrorStateProps {
@@ -16,10 +15,7 @@ export default function ErrorState({
   return (
     <div className="max-w-2xl mx-auto p-4">
       <div className="text-red-500 text-center">
-        <FontAwesomeIcon
-          icon={faTriangleExclamation}
-          className="text-3xl mb-3"
-        />
+        <AlertTriangle className="text-3xl mb-3 mx-auto" size={36} />
         <h2 className="text-xl font-semibold mb-2">Storage Access Issue</h2>
         <p className="mb-4">{error}</p>
 

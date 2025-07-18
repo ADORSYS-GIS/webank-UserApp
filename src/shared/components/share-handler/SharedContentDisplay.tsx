@@ -1,10 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faImage,
-  faFilePdf,
-  faFileLines,
-} from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft, Image, FileText, File } from "react-feather";
 import { useNavigate } from "@tanstack/react-router";
 
 export interface SharedContent {
@@ -26,9 +20,9 @@ interface SharedContentDisplayProps {
 }
 
 function getFileIcon(mimeType: string) {
-  if (mimeType.startsWith("image/")) return faImage;
-  if (mimeType === "application/pdf") return faFilePdf;
-  return faFileLines;
+  if (mimeType.startsWith("image/")) return <Image />;
+  if (mimeType === "application/pdf") return <FileText />;
+  return <File />;
 }
 
 function formatFileSize(bytes: number) {
@@ -56,7 +50,7 @@ export default function SharedContentDisplay({
         onClick={() => navigate({ to: "/" })}
         className="mb-6 text-[#20B2AA] hover:text-[#1C8C8A] flex items-center"
       >
-        <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+        <ArrowLeft className="mr-2" />
         Back to Home
       </button>
 
@@ -71,10 +65,7 @@ export default function SharedContentDisplay({
               className="p-4 border rounded-lg bg-white shadow-sm"
             >
               <div className="flex items-center mb-2">
-                <FontAwesomeIcon
-                  icon={getFileIcon(file.type)}
-                  className="text-[#20B2AA] mr-3 text-xl"
-                />
+                {getFileIcon(file.type)}
                 <span className="font-medium break-all">{file.name}</span>
               </div>
               <p className="text-sm text-gray-500">

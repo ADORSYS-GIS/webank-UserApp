@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { FiArrowLeft } from "react-icons/fi";
+import { ArrowLeft } from "react-feather";
 import { ImageModal } from "@features/kyc/components/ImageModal";
 import { RejectionModal } from "@features/kyc/components/RejectionModal";
 import { PendingKycList } from "@features/kyc/components/PendingKycList";
@@ -56,7 +56,7 @@ export default function KYCDashboard(): JSX.Element {
         aria-label="Back to dashboard"
         type="button"
       >
-        <FiArrowLeft className="w-6 h-6 text-gray-600" />
+        <ArrowLeft className="w-6 h-6 text-gray-600" />
       </button>
 
       <div className="max-w-3xl mx-auto">

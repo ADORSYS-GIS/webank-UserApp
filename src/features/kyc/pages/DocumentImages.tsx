@@ -7,8 +7,8 @@ import TaxpayerId from "./TaxpayerId";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-import { FaArrowLeft, FaUpload } from "react-icons/fa";
 import { useKycManagementServicePostApiPrsKycDocuments } from "@openapi/generated/prs/queries/queries";
+import { ArrowLeft, Upload } from "react-feather";
 
 type DocumentType = "frontID" | "backID" | "selfieID" | "taxDoc";
 type ActivePopup = DocumentType | null;
@@ -121,7 +121,7 @@ const DocumentImages = () => {
           onClick={() => window.history.back()}
           className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
         >
-          <FaArrowLeft className="mr-2" />
+          <ArrowLeft className="mr-2" />
           Back
         </button>
         <a
@@ -129,7 +129,7 @@ const DocumentImages = () => {
           className="text-blue-600 hover:text-blue-700 transition-colors text-sm font-medium flex items-center"
         >
           View detailed instructions
-          <FaArrowLeft className="ml-2 rotate-180" />
+          <ArrowLeft className="ml-2 rotate-180" />
         </a>
       </div>
 
@@ -157,7 +157,7 @@ const DocumentImages = () => {
               ) : (
                 <div className="text-gray-500 text-center space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full text-blue-600">
-                    <FaUpload size={24} />
+                    <Upload className="w-6 h-6" />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-700">

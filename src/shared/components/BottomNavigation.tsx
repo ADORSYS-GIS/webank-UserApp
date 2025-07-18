@@ -1,14 +1,7 @@
 //NO
 import { useState } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHome,
-  faQrcode,
-  faCog,
-  faUserTie,
-  faAddressBook,
-} from "@fortawesome/free-solid-svg-icons";
+import { Home, Code, Settings, User, Book } from "react-feather";
 import AccountQRModal from "@features/qr/pages/AccountQr";
 import AgentPage from "@features/teller/pages/AgentPage";
 
@@ -56,11 +49,8 @@ const BottomNavigation = () => {
             aria-selected={location.pathname === "/"}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faHome}
-              className={`text-lg ${
-                location.pathname === "/" ? "text-blue-500" : "text-gray-500"
-              }`}
+            <Home
+              className={`text-lg ${location.pathname === "/" ? "text-blue-500" : "text-gray-500"}`}
             />
             <span
               className={`text-xs mt-1 ${
@@ -83,11 +73,8 @@ const BottomNavigation = () => {
             aria-selected={isQRModalOpen}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faQrcode}
-              className={`text-lg ${
-                isQRModalOpen ? "text-blue-500" : "text-gray-500"
-              }`}
+            <Code
+              className={`text-lg ${isQRModalOpen ? "text-blue-500" : "text-gray-500"}`}
             />
             <span
               className={`text-xs mt-1 ${
@@ -116,13 +103,8 @@ const BottomNavigation = () => {
             aria-selected={location.pathname === "/settings"}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faCog}
-              className={`text-lg ${
-                location.pathname === "/settings"
-                  ? "text-blue-500"
-                  : "text-gray-500"
-              }`}
+            <Settings
+              className={`text-lg ${location.pathname === "/settings" ? "text-blue-500" : "text-gray-500"}`}
             />
             <span
               className={`text-xs mt-1 ${
@@ -153,13 +135,8 @@ const BottomNavigation = () => {
             aria-selected={location.pathname === "/contacts"}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faAddressBook}
-              className={`text-lg ${
-                location.pathname === "/contacts"
-                  ? "text-blue-500"
-                  : "text-gray-500"
-              }`}
+            <Book
+              className={`text-lg ${location.pathname === "/contacts" ? "text-blue-500" : "text-gray-500"}`}
             />
             <span
               className={`text-xs mt-1 ${
@@ -184,8 +161,7 @@ const BottomNavigation = () => {
             aria-selected={isAgentModalOpen}
             tabIndex={0}
           >
-            <FontAwesomeIcon
-              icon={faUserTie}
+            <User
               className={`text-lg ${
                 isAgentModalOpen ? "text-blue-500" : "text-gray-500"
               }`}

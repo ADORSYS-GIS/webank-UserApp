@@ -16,8 +16,7 @@ const QRGenerator: React.FC = () => {
       isClientOnline?: boolean;
       show?: string;
     };
-  const { accountId } = useAccountStore();
-  const { accountJwt } = location.state as { accountJwt?: string };
+  const { accountId, accountCert } = useAccountStore();
 
   const [signatureValue, setSignatureValue] = useState<string | null>(null);
   const qrRef = useRef<HTMLCanvasElement>(null);
@@ -25,11 +24,11 @@ const QRGenerator: React.FC = () => {
   useEffect(() => {
     const generateSignature = async () => {
       try {
-        if (accountId && totalAmount && accountJwt) {
+        if (accountId && totalAmount && accountCert) {
           const signature = await signTransaction(
             accountId,
             totalAmount,
-            accountJwt,
+            accountCert,
           );
           setSignatureValue(signature);
           console.log("Generated Signature:", signature);
@@ -41,7 +40,7 @@ const QRGenerator: React.FC = () => {
       }
     };
     generateSignature();
-  }, [accountId, totalAmount, accountJwt]);
+  }, [accountId, totalAmount, accountCert]);
 
   const qrValue = JSON.stringify({
     accountId: accountId,

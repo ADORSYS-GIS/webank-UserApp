@@ -1,6 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { Eye, EyeOff } from "react-feather";
 
 interface BalanceCardProps {
   balanceVisible: boolean;
@@ -28,7 +27,7 @@ const BalanceCard: React.FC<BalanceCardProps> = ({
               {balanceVisible ? `XAF ${balance}` : "XAF •••••••"}
             </p>
             <button onClick={viewBalance} className="ml-2 text-white">
-              <FontAwesomeIcon icon={balanceVisible ? faEyeSlash : faEye} />
+              {balanceVisible ? <EyeOff /> : <Eye />}
             </button>
           </div>
         </div>

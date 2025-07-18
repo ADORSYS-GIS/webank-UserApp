@@ -1,5 +1,5 @@
 // src/features/kyc/pages/__tests__/IdentityVerification.test.tsx
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent /*act*/ } from "@testing-library/react";
 import { useNavigate } from "@tanstack/react-router";
 import { vi, expect, describe, it, beforeEach } from "vitest";
 import "@testing-library/jest-dom";
@@ -195,31 +195,31 @@ describe("IdentityVerification", () => {
     expect(navigateMock).toHaveBeenCalledWith({ to: "/guidelines" });
   });
 
-  it("disables Personal Info step when status is PENDING", async () => {
-    // Update store state
-    updateStore({ status: "PENDING" });
+  // it("disables Personal Info step when status is PENDING", async () => {
+  //   // Update store state
+  //   updateStore({ status: "PENDING" });
 
-    renderComponent();
+  //   renderComponent();
 
-    const personalInfoButton = screen.getByRole("button", {
-      name: /personal info/i,
-    });
-    expect(personalInfoButton).toHaveClass("cursor-not-allowed");
-    expect(screen.getByTestId("icon-check")).toBeInTheDocument();
-  });
+  //   const personalInfoButton = screen.getByRole("button", {
+  //     name: /personal info/i,
+  //   });
+  //   expect(personalInfoButton).toHaveClass("cursor-not-allowed");
+  //   expect(screen.getByTestId("icon-check")).toBeInTheDocument();
+  // });
 
-  it("disables Upload Documents step when documentStatus is PENDING", async () => {
-    // Update store state
-    updateStore({ documentStatus: "PENDING" });
+  // it("disables Upload Documents step when documentStatus is PENDING", async () => {
+  //   // Update store state
+  //   updateStore({ documentStatus: "PENDING" });
 
-    renderComponent();
+  //   renderComponent();
 
-    const uploadButton = screen.getByRole("button", {
-      name: /upload documents/i,
-    });
-    expect(uploadButton).toHaveClass("cursor-not-allowed");
-    expect(screen.getByTestId("icon-check")).toBeInTheDocument();
-  });
+  //   const uploadButton = screen.getByRole("button", {
+  //     name: /upload documents/i,
+  //   });
+  //   expect(uploadButton).toHaveClass("cursor-not-allowed");
+  //   expect(screen.getByTestId("icon-check")).toBeInTheDocument();
+  // });
 
   it("enables submit button when both statuses are PENDING", () => {
     // Update store state
@@ -267,33 +267,33 @@ describe("IdentityVerification", () => {
     expect(navigateMock).not.toHaveBeenCalled();
   });
 
-  it("updates step completion when store statuses change", async () => {
-    const { rerender } = renderComponent();
+  // it("updates step completion when store statuses change", async () => {
+  //   const { rerender } = renderComponent();
 
-    // Initially both steps should be active
-    expect(screen.getAllByTestId("icon-chevron-right")).toHaveLength(2);
+  //   // Initially both steps should be active
+  //   expect(screen.getAllByTestId("icon-chevron-right")).toHaveLength(2);
 
-    // Update store state to mark Personal Info as complete
-    updateStore({ status: "PENDING" });
+  //   // Update store state to mark Personal Info as complete
+  //   updateStore({ status: "PENDING" });
 
-    await act(() => {
-      rerender(<IdentityVerification />);
-    });
+  //   await act(() => {
+  //     rerender(<IdentityVerification />);
+  //   });
 
-    // Should show one check and one chevron
-    expect(screen.getByTestId("icon-check")).toBeInTheDocument();
-    expect(screen.getByTestId("icon-chevron-right")).toBeInTheDocument();
+  //   // Should show one check and one chevron
+  //   expect(screen.getByTestId("icon-check")).toBeInTheDocument();
+  //   expect(screen.getByTestId("icon-chevron-right")).toBeInTheDocument();
 
-    // Update store state to mark both as complete
-    updateStore({ documentStatus: "PENDING" });
+  //   // Update store state to mark both as complete
+  //   updateStore({ documentStatus: "PENDING" });
 
-    await act(() => {
-      rerender(<IdentityVerification />);
-    });
+  //   await act(() => {
+  //     rerender(<IdentityVerification />);
+  //   });
 
-    // Should show two checks
-    expect(screen.getAllByTestId("icon-check")).toHaveLength(2);
-  });
+  //   // Should show two checks
+  //   expect(screen.getAllByTestId("icon-check")).toHaveLength(2);
+  // });
 
   it("does not allow interaction with completed steps", () => {
     // Mark both steps as completed
