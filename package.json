@@ -116,5 +116,8 @@
   "overrides": {
     "sharp": "0.32.6",
     "sharp-ico": "0.1.5"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-musl": "4.9.5"
   }
 }
