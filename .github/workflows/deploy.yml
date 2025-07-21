@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-      - 343-standardize-on-a-single-icon-library-to-reduce-bundle-size
 
 env:
   REGISTRY: ghcr.io
