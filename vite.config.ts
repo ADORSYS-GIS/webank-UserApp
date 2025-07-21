@@ -13,7 +13,11 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
         },
-        chunkFileNames: "assets/[name]-[hash].js",
+        manualChunks(id) {
+          if (/projectEnvVariables.ts/.test(id)) {
+            return 'projectEnvVariables';
+          }
+        },
       },
     },
   },
