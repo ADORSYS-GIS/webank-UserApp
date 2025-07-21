@@ -3,6 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+COPY openapi/obs-api.json openapi/prs-api.json ./openapi/
 
 RUN npm ci
 
