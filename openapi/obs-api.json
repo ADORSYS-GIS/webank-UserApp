@@ -16,7 +16,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8081",
+      "url": "https://dev.webank.gis.ssegning.com/",
       "description": "Local development server"
     }
   ],

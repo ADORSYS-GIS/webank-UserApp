@@ -1,18 +1,12 @@
 type ProjectEnvVariablesType = Pick<
   ImportMetaEnv,
-  | "VITE_WEBANK_OBS_URL"
-  | "VITE_WEBANK_PRS_URL"
-  | "VITE_WEBANK_TELLER_PASSWORD"
-  | "VITE_WEBANK_WEBAUTH_RP_ID"
-  | "VITE_WEBANK_WEBAUTH_RP_NAME"
+  "VITE_WEBANK_OBS_URL" | "VITE_WEBANK_PRS_URL" | "VITE_WEBANK_TELLER_PASSWORD"
 >;
 
 const projectEnvVariables: ProjectEnvVariablesType = {
   VITE_WEBANK_OBS_URL: "${VITE_WEBANK_OBS_URL}",
   VITE_WEBANK_PRS_URL: "${VITE_WEBANK_PRS_URL}",
   VITE_WEBANK_TELLER_PASSWORD: "${VITE_WEBANK_TELLER_PASSWORD}",
-  VITE_WEBANK_WEBAUTH_RP_ID: "${VITE_WEBANK_WEBAUTH_RP_ID}",
-  VITE_WEBANK_WEBAUTH_RP_NAME: "${VITE_WEBANK_WEBAUTH_RP_NAME}",
 };
 
 interface ProjectEnvVariables {
@@ -39,18 +33,6 @@ export const getProjectEnvVariables = (): ProjectEnvVariables => {
         )
           ? projectEnvVariables.VITE_WEBANK_TELLER_PASSWORD
           : import.meta.env.VITE_WEBANK_TELLER_PASSWORD,
-
-      VITE_WEBANK_WEBAUTH_RP_ID:
-        !projectEnvVariables.VITE_WEBANK_WEBAUTH_RP_ID.includes("VITE_WEBANK_")
-          ? projectEnvVariables.VITE_WEBANK_WEBAUTH_RP_ID
-          : import.meta.env.VITE_WEBANK_WEBAUTH_RP_ID,
-
-      VITE_WEBANK_WEBAUTH_RP_NAME:
-        !projectEnvVariables.VITE_WEBANK_WEBAUTH_RP_NAME.includes(
-          "VITE_WEBANK_",
-        )
-          ? projectEnvVariables.VITE_WEBANK_WEBAUTH_RP_NAME
-          : import.meta.env.VITE_WEBANK_WEBAUTH_RP_NAME,
     },
   };
 };
