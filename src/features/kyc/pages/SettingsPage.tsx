@@ -1,13 +1,13 @@
 import React from "react";
 import {
   ChevronRight,
-  LogOut,
   User,
   Shield,
   HelpCircle,
   Mail,
   Phone,
   Repeat,
+  ChevronLeft,
 } from "react-feather";
 import { useNavigate } from "@tanstack/react-router";
 import { useAccountStore } from "@state/accountStore";
@@ -71,7 +71,7 @@ const SettingsPage: React.FC = () => {
 
   const handleSupportClick = () => {
     const customMessage = encodeURIComponent(
-      "Hello Webank Support, I would like your help concerning...",
+      "Hello Webank Support, I would like your help concerning..."
     );
     const whatsappLink = `https://api.whatsapp.com/send?phone=${supportPhoneNumber}&text=${customMessage}`;
     window.open(whatsappLink, "_blank");
@@ -93,22 +93,28 @@ const SettingsPage: React.FC = () => {
     <div className="bg-black-50 min-h-screen">
       <div className="max-w-xl mx-auto pb-6">
         <div className="pt-6 px-4 flex items-center mb-4">
+          {/* Back Button */}
           <button
             onClick={handleBack}
-            className="p-2 rounded-full hover:bg-black-200 active:bg-black-300 transition-colors duration-200"
+            className="flex items-center space-x-2 p-2 rounded-full transition-colors duration-200 hover:bg-gray-100 active:bg-gray-200 hover:text-blue-500 text-gray-600"
             aria-label="Go back"
           >
-            <LogOut className="text-black-700" size={20} />
+            <ChevronLeft className="w-6 h-6 transition-colors" />
+            <span className="text-sm font-medium transition-colors">Back</span>
           </button>
+
+          {/* Title + Description */}
           <div className="flex-1 ml-2">
-            <h1 className="text-xl font-semibold text-center text-black-800">
+            <h1 className="text-xl font-semibold text-center text-gray-800">
               Settings
             </h1>
-            <p className="text-center text-sm text-black-500">
+            <p className="text-center text-sm text-gray-500">
               Manage your account preferences
             </p>
           </div>
-          <div className="w-8"></div>
+
+          {/* Placeholder for spacing */}
+          <div className="w-8" />
         </div>
 
         <div className="mx-4 my-6">

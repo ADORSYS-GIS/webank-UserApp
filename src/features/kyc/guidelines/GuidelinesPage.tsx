@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-import { Info, ArrowLeft } from "react-feather";
+import { Info, ArrowLeft, ChevronLeft } from "react-feather";
 import { useNavigate } from "@tanstack/react-router";
 
 // Define proper TypeScript interfaces for the component props
@@ -172,10 +172,10 @@ const GuidelinesPage: React.FC = () => {
       <div className="w-full max-w-3xl bg-white shadow-xl rounded-2xl p-6 md:p-10 transition-all duration-300">
         <button
           onClick={handleBack}
-          className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition duration-200 mb-6"
+          className="flex items-center text-gray-700 hover:text-blue-600 transition duration-200 mb-6"
           aria-label="Go back"
         >
-          <ArrowLeft
+          <ChevronLeft
             size={16}
             color="#374151"
             style={{ marginRight: 8 }}

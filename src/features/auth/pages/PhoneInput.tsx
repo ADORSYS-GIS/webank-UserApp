@@ -7,7 +7,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import useDisableScroll from "@shared/hooks/useDisableScroll.ts";
 import { useAccountStore } from "@state/accountStore";
-import { ArrowLeft } from "react-feather";
+import { ChevronLeft } from "react-feather";
 
 type CountryOption = {
   value: string;
@@ -99,30 +99,44 @@ const PhoneInput: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <div className="flex-1 flex flex-col items-center justify-center px-6 lg:px-20 lg:py-10">
-        <div className="w-full max-w-md mx-auto">
-          <div className="flex items-center mb-6">
-            <button
-              onClick={() => navigate({ to: "/settings" })}
-              className="text-xl cursor-pointer p-2 focus:outline-none"
-              aria-label="Back"
-            >
-              <ArrowLeft className="h-6 w-6 text-gray-600" />
-            </button>
-          </div>
+    <div
+      className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative overflow-x-hidden"
+      style={{ fontFamily: "Poppins, sans-serif" }}
+    >
+      {/* Enhanced Header */}
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/settings" })}
+        className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
+      >
+        <ChevronLeft className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
+        <span className="text-gray-600 group-hover:text-blue-500 transition-colors text-sm font-medium">
+          Back
+        </span>
+      </button>
 
-          <div className="space-y-2 mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto px-4 pt-2 flex flex-col items-center">
+        <div className="w-full max-w-sm">
+          <div className="flex justify-center mb-6">
+            <img
+              src="/recover.jpg"
+              alt="Phone Verification"
+              className="w-20 h-20 rounded-full object-cover shadow-lg"
+            />
+          </div>
+          <div className="space-y-4 text-center">
+            <h1 className="text-3xl font-bold text-gray-900">
               Verify Your Phone Number
             </h1>
-            <p className="text-gray-600 text-sm leading-relaxed">
+            <p className="text-gray-600 leading-relaxed">
               We'll send a 5-digit verification code to your WhatsApp number to
               ensure your account security.
             </p>
           </div>
 
-          <div className="space-y-6">
+          {/* Phone Input */}
+          <div className="space-y-6 mt-8">
             <div className="space-y-2">
               <label
                 htmlFor="phone"
@@ -197,7 +211,7 @@ const PhoneInput: React.FC = () => {
             </button>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

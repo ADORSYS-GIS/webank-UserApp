@@ -91,7 +91,7 @@ export default function IdentityVerification() {
           <img
             src="https://img.icons8.com/?size=100&id=qs973rWPpRhU&format=png&color=3B82F6"
             alt="Verification Icon"
-            className="w-15 h-15 md:w-10 md:h-10 object-contain"
+            className="w-20 h-20 md:w-10 md:h-10 object-contain"
           />
         </div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
