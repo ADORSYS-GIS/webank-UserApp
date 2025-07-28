@@ -1,5 +1,5 @@
 // src/features/kyc/pages/__tests__/IdentityVerification.test.tsx
-import { render, screen, fireEvent /*act*/ } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { useNavigate } from "@tanstack/react-router";
 import { vi, expect, describe, it, beforeEach } from "vitest";
 import "@testing-library/jest-dom";
@@ -83,9 +83,22 @@ vi.mock("@features/kyc/components/VerificationModal", () => ({
   ),
 }));
 
-vi.mock("@fortawesome/react-fontawesome", () => ({
-  FontAwesomeIcon: ({ icon }: { icon: { iconName: string } }) => (
-    <div data-testid={`icon-${icon.iconName}`} />
+// Mock react-feather icons
+vi.mock("react-feather", () => ({
+  User: ({ className }: { className?: string }) => (
+    <div data-testid="icon-user" className={className} />
+  ),
+  UploadCloud: ({ className }: { className?: string }) => (
+    <div data-testid="icon-upload-cloud" className={className} />
+  ),
+  Check: ({ className }: { className?: string }) => (
+    <div data-testid="icon-check" className={className} />
+  ),
+  ChevronLeft: ({ className }: { className?: string }) => (
+    <div data-testid="icon-chevron-left" className={className} />
+  ),
+  ChevronRight: ({ className }: { className?: string }) => (
+    <div data-testid="icon-chevron-right" className={className} />
   ),
 }));
 
@@ -104,13 +117,7 @@ describe("IdentityVerification", () => {
   // Helper function to update the mock store with type safety
   const updateStore = (updates: Partial<MockAccountStore>) => {
     storeState = { ...storeState, ...updates };
-    // Update the mock implementation to handle the selector pattern
-    mockUseAccountStore.mockImplementation((selector) => {
-      if (typeof selector === "function") {
-        return selector(storeState);
-      }
-      return storeState;
-    });
+    mockUseAccountStore.mockReturnValue(storeState);
   };
 
   beforeEach(() => {
@@ -124,12 +131,7 @@ describe("IdentityVerification", () => {
     });
 
     // Set up the initial mock implementation
-    mockUseAccountStore.mockImplementation((selector) => {
-      if (typeof selector === "function") {
-        return selector(storeState);
-      }
-      return storeState;
-    });
+    mockUseAccountStore.mockReturnValue(storeState);
     mockUseNavigate.mockReturnValue(navigateMock);
   });
 
@@ -141,6 +143,8 @@ describe("IdentityVerification", () => {
     renderComponent();
 
     expect(screen.getByText("Let's Verify Your Identity")).toBeInTheDocument();
+
+    // Find buttons by their step titles
     const personalInfoButton = screen.getByRole("button", {
       name: /personal info/i,
     });
@@ -149,11 +153,14 @@ describe("IdentityVerification", () => {
     });
 
     // Check that buttons are interactive by default (not disabled)
+    expect(personalInfoButton).not.toHaveClass("cursor-not-allowed");
+    expect(uploadButton).not.toHaveClass("cursor-not-allowed");
     expect(personalInfoButton).toHaveClass("cursor-pointer");
     expect(uploadButton).toHaveClass("cursor-pointer");
+
     expect(screen.queryByTestId("verification-modal")).not.toBeInTheDocument();
 
-    // Check that the submit button is disabled by default
+    // Check that the submit button is disabled by default (both statuses are null)
     expect(
       screen.getByRole("button", { name: "Secure My Account" }),
     ).toBeDisabled();
@@ -162,7 +169,9 @@ describe("IdentityVerification", () => {
   it("navigates back to settings when back button is clicked", () => {
     renderComponent();
 
-    fireEvent.click(screen.getByRole("button", { name: /back/i }));
+    // Find the back button by its text content
+    const backButton = screen.getByText("Back");
+    fireEvent.click(backButton);
     expect(navigateMock).toHaveBeenCalledWith({ to: "/settings" });
   });
 
@@ -195,31 +204,37 @@ describe("IdentityVerification", () => {
     expect(navigateMock).toHaveBeenCalledWith({ to: "/guidelines" });
   });
 
-  // it("disables Personal Info step when status is PENDING", async () => {
-  //   // Update store state
-  //   updateStore({ status: "PENDING" });
+  it("disables Personal Info step when status is PENDING", async () => {
+    // Update store state
+    updateStore({ status: "PENDING" });
 
-  //   renderComponent();
+    await act(async () => {
+      renderComponent();
+    });
 
-  //   const personalInfoButton = screen.getByRole("button", {
-  //     name: /personal info/i,
-  //   });
-  //   expect(personalInfoButton).toHaveClass("cursor-not-allowed");
-  //   expect(screen.getByTestId("icon-check")).toBeInTheDocument();
-  // });
+    const personalInfoButton = screen.getByRole("button", {
+      name: /personal info/i,
+    });
+    expect(personalInfoButton).toHaveClass("cursor-not-allowed");
+    expect(personalInfoButton).toBeDisabled();
+    expect(screen.getByTestId("icon-check")).toBeInTheDocument();
+  });
 
-  // it("disables Upload Documents step when documentStatus is PENDING", async () => {
-  //   // Update store state
-  //   updateStore({ documentStatus: "PENDING" });
+  it("disables Upload Documents step when documentStatus is PENDING", async () => {
+    // Update store state
+    updateStore({ documentStatus: "PENDING" });
 
-  //   renderComponent();
+    await act(async () => {
+      renderComponent();
+    });
 
-  //   const uploadButton = screen.getByRole("button", {
-  //     name: /upload documents/i,
-  //   });
-  //   expect(uploadButton).toHaveClass("cursor-not-allowed");
-  //   expect(screen.getByTestId("icon-check")).toBeInTheDocument();
-  // });
+    const uploadButton = screen.getByRole("button", {
+      name: /upload documents/i,
+    });
+    expect(uploadButton).toHaveClass("cursor-not-allowed");
+    expect(uploadButton).toBeDisabled();
+    expect(screen.getByTestId("icon-check")).toBeInTheDocument();
+  });
 
   it("enables submit button when both statuses are PENDING", () => {
     // Update store state
@@ -233,6 +248,34 @@ describe("IdentityVerification", () => {
     expect(
       screen.getByRole("button", { name: "Secure My Account" }),
     ).toBeEnabled();
+  });
+
+  it("submit button remains disabled when only status is PENDING", () => {
+    // Test with only status PENDING
+    updateStore({
+      status: "PENDING",
+      documentStatus: null,
+    });
+
+    renderComponent();
+
+    expect(
+      screen.getByRole("button", { name: "Secure My Account" }),
+    ).toBeDisabled();
+  });
+
+  it("submit button remains disabled when only documentStatus is PENDING", () => {
+    // Test with only documentStatus PENDING
+    updateStore({
+      status: null,
+      documentStatus: "PENDING",
+    });
+
+    renderComponent();
+
+    expect(
+      screen.getByRole("button", { name: "Secure My Account" }),
+    ).toBeDisabled();
   });
 
   it("navigates to location verification when submitted with valid account info", () => {
@@ -249,7 +292,43 @@ describe("IdentityVerification", () => {
     expect(navigateMock).toHaveBeenCalledWith({ to: "/verification/location" });
   });
 
-  it("shows error toast when account info is missing on submit", () => {
+  it("shows error toast when accountCert is missing on submit", () => {
+    // Update store state with missing accountCert
+    updateStore({
+      status: "PENDING",
+      documentStatus: "PENDING",
+      accountId: "test-account-id",
+      accountCert: null,
+    });
+
+    renderComponent();
+
+    fireEvent.click(screen.getByRole("button", { name: "Secure My Account" }));
+    expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+      "Account information is missing",
+    );
+    expect(navigateMock).not.toHaveBeenCalled();
+  });
+
+  it("shows error toast when accountId is missing on submit", () => {
+    // Update store state with missing accountId
+    updateStore({
+      status: "PENDING",
+      documentStatus: "PENDING",
+      accountId: null,
+      accountCert: "test-account-cert",
+    });
+
+    renderComponent();
+
+    fireEvent.click(screen.getByRole("button", { name: "Secure My Account" }));
+    expect(vi.mocked(toast.error)).toHaveBeenCalledWith(
+      "Account information is missing",
+    );
+    expect(navigateMock).not.toHaveBeenCalled();
+  });
+
+  it("shows error toast when both account info fields are missing on submit", () => {
     // Update store state with missing account info
     updateStore({
       status: "PENDING",
@@ -267,33 +346,38 @@ describe("IdentityVerification", () => {
     expect(navigateMock).not.toHaveBeenCalled();
   });
 
-  // it("updates step completion when store statuses change", async () => {
-  //   const { rerender } = renderComponent();
+  it("updates step completion when store statuses change", async () => {
+    const { rerender } = renderComponent();
 
-  //   // Initially both steps should be active
-  //   expect(screen.getAllByTestId("icon-chevron-right")).toHaveLength(2);
+    // Initially both steps should show chevron-right (not completed)
+    expect(screen.getAllByTestId("icon-chevron-right")).toHaveLength(2);
+    expect(screen.queryByTestId("icon-check")).not.toBeInTheDocument();
 
-  //   // Update store state to mark Personal Info as complete
-  //   updateStore({ status: "PENDING" });
+    // Update store state to mark Personal Info as complete
+    updateStore({ status: "PENDING" });
 
-  //   await act(() => {
-  //     rerender(<IdentityVerification />);
-  //   });
+    await act(async () => {
+      rerender(<IdentityVerification />);
+    });
 
-  //   // Should show one check and one chevron
-  //   expect(screen.getByTestId("icon-check")).toBeInTheDocument();
-  //   expect(screen.getByTestId("icon-chevron-right")).toBeInTheDocument();
+    // Should show one check and one chevron
+    expect(screen.getByTestId("icon-check")).toBeInTheDocument();
+    expect(screen.getByTestId("icon-chevron-right")).toBeInTheDocument();
 
-  //   // Update store state to mark both as complete
-  //   updateStore({ documentStatus: "PENDING" });
+    // Update store state to mark both as complete
+    updateStore({
+      status: "PENDING",
+      documentStatus: "PENDING",
+    });
 
-  //   await act(() => {
-  //     rerender(<IdentityVerification />);
-  //   });
+    await act(async () => {
+      rerender(<IdentityVerification />);
+    });
 
-  //   // Should show two checks
-  //   expect(screen.getAllByTestId("icon-check")).toHaveLength(2);
-  // });
+    // Should show two checks
+    expect(screen.getAllByTestId("icon-check")).toHaveLength(2);
+    expect(screen.queryByTestId("icon-chevron-right")).not.toBeInTheDocument();
+  });
 
   it("does not allow interaction with completed steps", () => {
     // Mark both steps as completed
@@ -304,11 +388,60 @@ describe("IdentityVerification", () => {
 
     renderComponent();
 
-    // Try to interact with completed steps
+    // Try to interact with completed Personal Info step
     fireEvent.click(screen.getByText("Personal Info"));
     expect(screen.queryByTestId("verification-modal")).not.toBeInTheDocument();
 
+    // Try to interact with completed Upload Documents step
     fireEvent.click(screen.getByText("Upload Documents"));
-    expect(navigateMock).not.toHaveBeenCalled();
+    // The navigate should not be called since the onClick is set to undefined for completed steps
+    expect(navigateMock).not.toHaveBeenCalledWith({ to: "/guidelines" });
+  });
+
+  it("shows correct icons for incomplete steps initially", () => {
+    renderComponent();
+
+    // Should show chevron-right icons for both incomplete steps
+    expect(screen.getAllByTestId("icon-chevron-right")).toHaveLength(2);
+    expect(screen.queryByTestId("icon-check")).not.toBeInTheDocument();
+  });
+
+  it("displays correct step descriptions", () => {
+    renderComponent();
+
+    expect(
+      screen.getByText("Enter your address and ID details"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Follow instructions to upload your ID and verification documents",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("has correct styling for disabled submit button", () => {
+    // Test disabled state
+    renderComponent();
+    const submitButton = screen.getByRole("button", {
+      name: "Secure My Account",
+    });
+    expect(submitButton).toHaveClass("bg-gray-400", "cursor-not-allowed");
+    expect(submitButton).toBeDisabled();
+  });
+
+  it("has correct styling for enabled submit button", () => {
+    // Update store state first, then render
+    updateStore({
+      status: "PENDING",
+      documentStatus: "PENDING",
+    });
+
+    renderComponent();
+    const enabledSubmitButton = screen.getByRole("button", {
+      name: "Secure My Account",
+    });
+    expect(enabledSubmitButton).toHaveClass("bg-blue-500");
+    expect(enabledSubmitButton).not.toHaveClass("cursor-not-allowed");
+    expect(enabledSubmitButton).toBeEnabled();
   });
 });

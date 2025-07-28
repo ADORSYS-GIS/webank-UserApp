@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-import { Info, ArrowLeft, ChevronLeft } from "react-feather";
+import { Info, ChevronLeft } from "react-feather";
 import { useNavigate } from "@tanstack/react-router";
 
 // Define proper TypeScript interfaces for the component props

@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import useDisableScroll from "@shared/hooks/useDisableScroll";
 import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
-import { ArrowLeft, ChevronLeft, Mail } from "react-feather";
+import { ChevronLeft, Mail } from "react-feather";
 import axios from "axios";
 import { useEmailOtpServicePostApiPrsEmailOtpSend } from "@openapi/generated/prs/queries/queries";
 
@@ -35,7 +35,7 @@ const InputEmail: React.FC = () => {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
         toast.error(
-          "This email is not associated with any existing account. Please complete your registration first."
+          "This email is not associated with any existing account. Please complete your registration first.",
         );
       } else {
         toast.error("Something went wrong. Please try again later.");
