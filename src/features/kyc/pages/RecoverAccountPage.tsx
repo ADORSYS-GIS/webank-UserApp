@@ -4,7 +4,7 @@ import { useAccountStore } from "@state/accountStore";
 import { toast } from "sonner";
 import { useAccountRecoveryServicePostApiPrsKycRecoveryValidate } from "@openapi/generated/prs/queries/queries";
 import { useAccountRecoveryServicePostApiAccountsRecovery } from "@openapi/generated/obs/queries/queries";
-import { Repeat, CreditCard, ArrowLeft, Key } from "react-feather";
+import { CreditCard, Key, ChevronLeft } from "react-feather";
 import { AccountRecoveryResponse } from "@openapi/generated/prs/requests/types.gen";
 
 const RecoverAccountPage: React.FC = () => {
@@ -111,38 +111,39 @@ const RecoverAccountPage: React.FC = () => {
     );
   };
 
-  const handleCancel = () => {
-    navigate({ to: "/settings" });
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <header className="bg-white p-4 shadow-sm">
-        <div className="max-w-md mx-auto flex items-center">
-          <button
-            onClick={handleCancel}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Go Back"
-          >
-            <ArrowLeft className="h-5 w-5 text-gray-600" />
-          </button>
-          <h1 className="text-xl font-semibold mx-auto pr-10">
-            Account Recovery
-          </h1>
-        </div>
-      </header>
-
+    <div
+      className="min-h-screen bg-white p-4 md:p-6 max-w-2xl mx-auto flex flex-col relative overflow-x-hidden"
+      style={{ fontFamily: "Poppins, sans-serif" }}
+    >
+      <button
+        type="button"
+        onClick={() => navigate({ to: "/settings" })}
+        className="absolute top-6 left-4 md:left-6 flex items-center space-x-2 group"
+      >
+        <ChevronLeft className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
+        <span className="text-gray-600 group-hover:text-blue-500 transition-colors text-sm font-medium">
+          Back
+        </span>
+      </button>
       {/* Main Content */}
-      <main className="flex-1 p-4 max-w-md mx-auto w-full">
-        <div className="mb-6 text-center">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Repeat className="w-8 h-8 text-blue-500" />
+      <main className="flex-1 overflow-auto px-4 pt-10 flex flex-col items-center">
+        <div className="w-full max-w-sm">
+          <div className="flex justify-center mb-6">
+            <img
+              src="/trans.jpg"
+              alt="Email Verification"
+              className="w-20 h-20 rounded-full object-cover shadow-lg"
+            />
           </div>
-          <h2 className="text-xl font-bold mb-2">Recover Your Account</h2>
-          <p className="text-gray-600 text-sm">
-            Choose one of the options below to recover your account access
-          </p>
+          <div className="space-y-4 text-center">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Recover Your Account
+            </h1>
+            <p className="text-gray-600 text-sm">
+              Choose one of the options below to recover your account access
+            </p>
+          </div>
         </div>
 
         <div className="space-y-4">

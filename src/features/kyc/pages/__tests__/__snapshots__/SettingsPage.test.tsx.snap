@@ -1,0 +1,541 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsPage > matches snapshot 1`] = `
+<div>
+  <div
+    class="bg-black-50 min-h-screen"
+  >
+    <div
+      class="max-w-xl mx-auto pb-6"
+    >
+      <div
+        class="pt-6 px-4 flex items-center mb-4"
+      >
+        <button
+          aria-label="Go back"
+          class="flex items-center space-x-2 p-2 rounded-full transition-colors duration-200 hover:bg-gray-100 active:bg-gray-200 hover:text-blue-500 text-gray-600"
+        >
+          <svg
+            class="w-6 h-6 transition-colors"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polyline
+              points="15 18 9 12 15 6"
+            />
+          </svg>
+          <span
+            class="text-sm font-medium transition-colors"
+          >
+            Back
+          </span>
+        </button>
+        <div
+          class="flex-1 ml-2"
+        >
+          <h1
+            class="text-xl font-semibold text-center text-gray-800"
+          >
+            Settings
+          </h1>
+          <p
+            class="text-center text-sm text-gray-500"
+          >
+            Manage your account preferences
+          </p>
+        </div>
+        <div
+          class="w-8"
+        />
+      </div>
+      <div
+        class="mx-4 my-6"
+      >
+        <div
+          class="bg-white rounded-lg shadow-sm p-4 flex items-center"
+        >
+          <div
+            class="w-16 h-16 bg-blue-100 text-blue-500 rounded-lg flex items-center justify-center mr-4"
+          >
+            <svg
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+              />
+              <circle
+                cx="12"
+                cy="7"
+                r="4"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2
+              class="font-medium text-black-800"
+            >
+              Your Account
+            </h2>
+            <div
+              class="flex flex-col gap-2 mt-1"
+            >
+              <div
+                class="flex items-center"
+              >
+                <svg
+                  class="text-amber-500 mr-2"
+                  fill="none"
+                  height="16"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                  />
+                </svg>
+                <p
+                  class="text-sm text-gray-600"
+                >
+                  Email Not Verified
+                </p>
+              </div>
+              <div
+                class="flex items-center"
+              >
+                <svg
+                  class="text-amber-500 mr-2"
+                  fill="none"
+                  height="16"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                  />
+                </svg>
+                <p
+                  class="text-sm text-gray-600"
+                >
+                  Phone Number Not Verified
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="mx-4 bg-white rounded-lg shadow-sm overflow-hidden"
+      >
+        <div
+          class="group"
+        >
+          <button
+            class="w-full p-4 flex items-center justify-between transition-all duration-200
+                hover:bg-black-50 active:bg-black-100
+                focus:outline-none"
+          >
+            <div
+              class="flex items-center w-full"
+            >
+               
+              <div
+                class="w-12 h-12 rounded-lg flex items-center justify-center 
+                    mr-4 transition-all duration-200
+                    bg-blue-100 text-blue-500
+                    "
+              >
+                <svg
+                  fill="none"
+                  height="20"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                  />
+                </svg>
+              </div>
+              <div
+                class="flex-1 text-left"
+              >
+                 
+                <p
+                  class="font-medium text-black-800"
+                >
+                  Secure your account
+                </p>
+                <p
+                  class="text-sm text-black-500 mt-1"
+                >
+                  Complete your account verification
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-black-400"
+            >
+              <svg
+                class="text-gray-400"
+                fill="none"
+                height="20"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline
+                  points="9 18 15 12 9 6"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
+        <div
+          class="group"
+        >
+          <button
+            class="w-full p-4 flex items-center justify-between transition-all duration-200
+                hover:bg-black-50 active:bg-black-100
+                focus:outline-none"
+          >
+            <div
+              class="flex items-center w-full"
+            >
+               
+              <div
+                class="w-12 h-12 rounded-lg flex items-center justify-center 
+                    mr-4 transition-all duration-200
+                    bg-blue-100 text-blue-500
+                    "
+              >
+                <svg
+                  fill="none"
+                  height="20"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                  />
+                  <polyline
+                    points="22,6 12,13 2,6"
+                  />
+                </svg>
+              </div>
+              <div
+                class="flex-1 text-left"
+              >
+                 
+                <p
+                  class="font-medium text-black-800"
+                >
+                  Email verification
+                </p>
+                <p
+                  class="text-sm text-black-500 mt-1"
+                >
+                  Secure your account with email verification
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-black-400"
+            >
+              <svg
+                class="text-gray-400"
+                fill="none"
+                height="20"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline
+                  points="9 18 15 12 9 6"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
+        <div
+          class="group"
+        >
+          <button
+            class="w-full p-4 flex items-center justify-between transition-all duration-200
+                hover:bg-black-50 active:bg-black-100
+                focus:outline-none"
+          >
+            <div
+              class="flex items-center w-full"
+            >
+               
+              <div
+                class="w-12 h-12 rounded-lg flex items-center justify-center 
+                    mr-4 transition-all duration-200
+                    bg-blue-100 text-blue-500
+                    "
+              >
+                <svg
+                  fill="none"
+                  height="20"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                  />
+                </svg>
+              </div>
+              <div
+                class="flex-1 text-left"
+              >
+                 
+                <p
+                  class="font-medium text-black-800"
+                >
+                  Phone number verification
+                </p>
+                <p
+                  class="text-sm text-black-500 mt-1"
+                >
+                  Secure your account with phone verification
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-black-400"
+            >
+              <svg
+                class="text-gray-400"
+                fill="none"
+                height="20"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline
+                  points="9 18 15 12 9 6"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
+        <div
+          class="group"
+        >
+          <button
+            class="w-full p-4 flex items-center justify-between transition-all duration-200
+                hover:bg-black-50 active:bg-black-100
+                focus:outline-none"
+          >
+            <div
+              class="flex items-center w-full"
+            >
+               
+              <div
+                class="w-12 h-12 rounded-lg flex items-center justify-center 
+                    mr-4 transition-all duration-200
+                    bg-blue-100 text-blue-500
+                    "
+              >
+                <svg
+                  fill="none"
+                  height="20"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <polyline
+                    points="17 1 21 5 17 9"
+                  />
+                  <path
+                    d="M3 11V9a4 4 0 0 1 4-4h14"
+                  />
+                  <polyline
+                    points="7 23 3 19 7 15"
+                  />
+                  <path
+                    d="M21 13v2a4 4 0 0 1-4 4H3"
+                  />
+                </svg>
+              </div>
+              <div
+                class="flex-1 text-left"
+              >
+                 
+                <p
+                  class="font-medium text-black-800"
+                >
+                  Recover your account
+                </p>
+                <p
+                  class="text-sm text-black-500 mt-1"
+                >
+                  Restore access to your account
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-black-400"
+            >
+              <svg
+                class="text-gray-400"
+                fill="none"
+                height="20"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline
+                  points="9 18 15 12 9 6"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
+        <div
+          class="group"
+        >
+          <button
+            class="w-full p-4 flex items-center justify-between transition-all duration-200
+                hover:bg-black-50 active:bg-black-100
+                focus:outline-none"
+          >
+            <div
+              class="flex items-center w-full"
+            >
+               
+              <div
+                class="w-12 h-12 rounded-lg flex items-center justify-center 
+                    mr-4 transition-all duration-200
+                    bg-blue-100 text-blue-500
+                    "
+              >
+                <svg
+                  fill="none"
+                  height="20"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                  />
+                  <path
+                    d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+                  />
+                  <line
+                    x1="12"
+                    x2="12.01"
+                    y1="17"
+                    y2="17"
+                  />
+                </svg>
+              </div>
+              <div
+                class="flex-1 text-left"
+              >
+                 
+                <p
+                  class="font-medium text-black-800"
+                >
+                  Help & Support
+                </p>
+                <p
+                  class="text-sm text-black-500 mt-1"
+                >
+                  Chat with our team for assistance
+                </p>
+              </div>
+            </div>
+            <div
+              class="text-black-400"
+            >
+              <svg
+                class="text-gray-400"
+                fill="none"
+                height="20"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline
+                  points="9 18 15 12 9 6"
+                />
+              </svg>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -13,18 +13,20 @@ vi.mock("sonner", () => ({
 }));
 vi.mock("@state/accountStore");
 vi.mock("@openapi/generated/prs/queries/queries");
-vi.mock("@fortawesome/react-fontawesome", () => ({
-  FontAwesomeIcon: ({
-    icon,
-    className,
-  }: {
-    icon: { iconName: string };
-    className: string;
-  }) => <div data-testid={`icon-${icon.iconName}`} className={className} />,
+vi.mock("@shared/hooks/useDisableScroll", () => ({
+  default: vi.fn(),
+}));
+vi.mock("react-feather", () => ({
+  ChevronLeft: ({ className }: { className: string }) => (
+    <div data-testid="chevron-left" className={className} />
+  ),
+  Mail: ({ className }: { className: string }) => (
+    <div data-testid="mail-icon" className={className} />
+  ),
 }));
 
 // Import the component after setting up mocks
-import EmailVerification from "../emailVerification";
+import InputEmail from "../emailVerification"; // Ajustez le chemin selon votre structure
 import { useAccountStore } from "@state/accountStore";
 import { useEmailOtpServicePostApiPrsEmailOtpSend } from "@openapi/generated/prs/queries/queries";
 import { toast } from "sonner";
@@ -133,14 +135,14 @@ const createMockMutation = (overrides = {}) => ({
   ...overrides,
 });
 
-describe("EmailVerification", () => {
+describe("InputEmail", () => {
   let store: MockAccountStore;
   let navigateMock: ReturnType<typeof vi.fn>;
   let mutateAsyncMock: ReturnType<typeof vi.fn>;
   let mutation: ReturnType<typeof createMockMutation>;
 
   const renderComponent = () => {
-    return render(<EmailVerification />);
+    return render(<InputEmail />);
   };
 
   beforeEach(() => {
@@ -161,12 +163,7 @@ describe("EmailVerification", () => {
 
     // Set up the mocks
     mockUseNavigate.mockReturnValue(navigateMock);
-    mockUseAccountStore.mockImplementation((selector) => {
-      if (typeof selector === "function") {
-        return selector(store);
-      }
-      return store;
-    });
+    mockUseAccountStore.mockReturnValue(store);
     mockUseEmailOtp.mockReturnValue(
       mutation as unknown as ReturnType<
         typeof useEmailOtpServicePostApiPrsEmailOtpSend
@@ -181,12 +178,14 @@ describe("EmailVerification", () => {
   // Helper function to update the store
   const updateStore = (updates: Partial<MockAccountStore>) => {
     Object.assign(store, updates);
+    // Re-mock the store with updated values
+    mockUseAccountStore.mockReturnValue({ ...store, ...updates });
   };
 
   it("renders correctly with initial state", () => {
     renderComponent();
 
-    expect(screen.getByText("Secure Your Account")).toBeInTheDocument();
+    expect(screen.getByText("Email Verification")).toBeInTheDocument();
     expect(
       screen.getByText(
         "We'll send a 6-digit verification code to your email address to ensure your account security.",
@@ -200,7 +199,9 @@ describe("EmailVerification", () => {
   it("navigates back when back button is clicked", () => {
     renderComponent();
 
-    fireEvent.click(screen.getByRole("button", { name: /go back/i }));
+    // Find the back button by its text content
+    const backButton = screen.getByText("Back");
+    fireEvent.click(backButton);
     expect(navigateMock).toHaveBeenCalledWith({ to: "/settings" });
   });
 
@@ -209,9 +210,12 @@ describe("EmailVerification", () => {
 
     const emailInput = screen.getByPlaceholderText("name@example.com");
     fireEvent.change(emailInput, { target: { value: "invalid-email" } });
-    fireEvent.click(
-      screen.getByRole("button", { name: "Send Verification Code" }),
-    );
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Send Verification Code" }),
+      );
+    });
 
     expect(mockToast.error).toHaveBeenCalledWith(
       "Please enter a valid email address.",
@@ -219,7 +223,7 @@ describe("EmailVerification", () => {
     expect(mutateAsyncMock).not.toHaveBeenCalled();
   });
 
-  it("handles missing account info", async () => {
+  it("handles missing account info - redirects to home", async () => {
     // Setup mock to simulate missing account info
     updateStore({
       accountId: null,
@@ -230,13 +234,44 @@ describe("EmailVerification", () => {
 
     const emailInput = screen.getByPlaceholderText("name@example.com");
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.click(
-      screen.getByRole("button", { name: "Send Verification Code" }),
-    );
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Send Verification Code" }),
+      );
+    });
 
     expect(mockToast.error).toHaveBeenCalledWith(
       "Account information is missing.",
     );
+    expect(navigateMock).toHaveBeenCalledWith({ to: "/" });
+    expect(mutateAsyncMock).not.toHaveBeenCalled();
+  });
+
+  it("handles missing account ID after validation - redirects to home", async () => {
+    // First setup with valid account info, then simulate accountId becoming null
+    updateStore({
+      accountId: null,
+      accountCert: "test-cert",
+    });
+
+    renderComponent();
+
+    const testEmail = "test@example.com";
+    const emailInput = screen.getByPlaceholderText("name@example.com");
+
+    fireEvent.change(emailInput, { target: { value: testEmail } });
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Send Verification Code" }),
+      );
+    });
+
+    expect(mockToast.error).toHaveBeenCalledWith(
+      "Account information is missing.",
+    );
+    expect(navigateMock).toHaveBeenCalledWith({ to: "/" });
     expect(mutateAsyncMock).not.toHaveBeenCalled();
   });
 
@@ -247,9 +282,15 @@ describe("EmailVerification", () => {
     const emailInput = screen.getByPlaceholderText("name@example.com");
 
     fireEvent.change(emailInput, { target: { value: testEmail } });
-    fireEvent.click(
-      screen.getByRole("button", { name: "Send Verification Code" }),
-    );
+
+    // Mock successful response
+    mutateAsyncMock.mockResolvedValueOnce({ status: true });
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Send Verification Code" }),
+      );
+    });
 
     expect(mutateAsyncMock).toHaveBeenCalledWith({
       requestBody: {
@@ -264,23 +305,17 @@ describe("EmailVerification", () => {
     const testEmail = "test@example.com";
     mutateAsyncMock.mockResolvedValueOnce({ status: true });
 
-    // First render the component
     renderComponent();
 
-    // Wait for the component to be fully rendered
     const emailInput = await screen.findByPlaceholderText("name@example.com");
-
-    // Interact with the component
     fireEvent.change(emailInput, { target: { value: testEmail } });
 
-    // Click the button and wait for the async operation to complete
     await act(async () => {
       fireEvent.click(
         screen.getByRole("button", { name: "Send Verification Code" }),
       );
     });
 
-    // Verify the expected outcomes
     expect(mockToast.success).toHaveBeenCalledWith(
       "OTP sent, please check your email.",
       { duration: 5000 },
@@ -291,10 +326,20 @@ describe("EmailVerification", () => {
     });
   });
 
-  it("handles OTP submission error", async () => {
-    // Mock a failed mutation
-    const errorMessage = "Failed to send OTP";
-    mutateAsyncMock.mockRejectedValueOnce(new Error(errorMessage));
+  it("handles OTP submission with 404 error", async () => {
+    // Mock a 404 error (email not found)
+    const axiosError = {
+      isAxiosError: true,
+      response: { status: 404 },
+    };
+
+    // Mock axios.isAxiosError to return true for our mock error
+    vi.doMock("axios", () => ({
+      default: {},
+      isAxiosError: vi.fn(() => true),
+    }));
+
+    mutateAsyncMock.mockRejectedValueOnce(axiosError);
 
     renderComponent();
 
@@ -302,6 +347,57 @@ describe("EmailVerification", () => {
     const emailInput = screen.getByPlaceholderText("name@example.com");
 
     fireEvent.change(emailInput, { target: { value: testEmail } });
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Send Verification Code" }),
+      );
+    });
+
+    expect(mockToast.error).toHaveBeenCalledWith(
+      "This email is not associated with any existing account. Please complete your registration first.",
+    );
+  });
+
+  it("handles OTP submission with other axios errors", async () => {
+    // Mock an axios error with different status
+    const axiosError = {
+      isAxiosError: true,
+      response: { status: 500 },
+    };
+
+    mutateAsyncMock.mockRejectedValueOnce(axiosError);
+
+    renderComponent();
+
+    const testEmail = "test@example.com";
+    const emailInput = screen.getByPlaceholderText("name@example.com");
+
+    fireEvent.change(emailInput, { target: { value: testEmail } });
+
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Send Verification Code" }),
+      );
+    });
+
+    expect(mockToast.error).toHaveBeenCalledWith(
+      "Something went wrong. Please try again later.",
+    );
+  });
+
+  it("handles non-axios errors", async () => {
+    // Mock a non-axios error
+    const genericError = new Error("Generic error");
+    mutateAsyncMock.mockRejectedValueOnce(genericError);
+
+    renderComponent();
+
+    const testEmail = "test@example.com";
+    const emailInput = screen.getByPlaceholderText("name@example.com");
+
+    fireEvent.change(emailInput, { target: { value: testEmail } });
+
     await act(async () => {
       fireEvent.click(
         screen.getByRole("button", { name: "Send Verification Code" }),
